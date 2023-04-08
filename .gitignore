@@ -1,0 +1,31 @@
+*.pyc
+*.pyo
+*.fzn
+pandac/
+*.dis
+*.log
+screenshots/
+user/screenshots/
+user/spellbook.json
+sign/
+whitelist/
+news/
+Library/
+*.buildings
+*.trackRecords
+*.DS_Store
+backups/
+settings.json
+errorCode
+
+# Backups
+dependencies/astron/backups/*
+
+# PyCharm IDE
+.idea
+venv
+.run
+
+# PYTHON_PATH
+
+PYTHON_PATH
