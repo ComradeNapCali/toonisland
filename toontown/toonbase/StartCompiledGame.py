@@ -177,4 +177,12 @@ class ConnectionRepository_override(ConnectionRepository.ConnectionRepository):
 ConnectionRepository.ConnectionRepository = ConnectionRepository_override
 
 # Everything's been done that needs to be, so let's start Toontown!
-import toontown.launcher.TIAQuickStartLauncher
+
+# First astron tho
+from subprocess import Popen
+DETACHED_PROCESS = 0x00000008
+cmd = "astron/astrond_win32.exe", "-p", "--loglevel", "info", "astron/config/astrond.yml"
+Popen(cmd, shell=False, stdin=None, stdout=None, stderr=None,
+    close_fds=True, creationflags=DETACHED_PROCESS)
+
+import toontown.launcher.TIAQuickStartLauncher, toontown.ai.AIStart, toontown.uberdog.UDStart

@@ -185,7 +185,7 @@ CRBootedReasons = {
     BootedLoggedInElsewhere: 'You have been disconnected because someone else just logged in using your account on another computer.',
     BootedKeyboardChatAuth: 'You have been disconnected because of a problem with your authorization to use keyboard chat.',
     BootedConnectionKilled: 'There has been an unexpected problem logging you in. If this issue persists, please contact Toon Island: Aftermath support.',
-    BootedVersionMismatch: 'You are running a different version of the game than the server host. If you have just updated your game, please ask the server host to update and restart their server.',
+    BootedVersionMismatch: 'Your client build does not match the server version inside the astron config. Please change it and launch again.',
     BootedFileMismatch: 'Your installed files appear to be invalid.  If you are getting this error repeatedly, the server host is likely running a different version of the game.',
     BootedNoAdminPrivileges: 'You are not authorized to use administrator privileges.',
     BootedToonIssue: 'A problem has occurred with your Toon.  If this issue persists, please contact Toon Island: Aftermath support.',

@@ -2,10 +2,12 @@
 cd ..
 mkdir "bin\panda3d\"
 mkdir "bin\user"
-COPY "C:\OpenPanda\bin\*.dll" "bin\panda3d\"
-COPY "C:\OpenPanda\panda3d\*.pyd" "bin\panda3d\"
-COPY "C:\OpenPanda\python\DLLs\*" "bin\"
-COPY "C:\OpenPanda\python\python39.dll" "bin\user\"
+
+XCOPY "..\dependencies\astron" "bin/astron" /E /H /C /I /Y
+COPY "C:\Panda3D4TIA\bin\*.dll" "bin\panda3d\"
+COPY "C:\Panda3D4TIA\panda3d\*.pyd" "bin\panda3d\"
+COPY "C:\Panda3D4TIA\python\DLLs\*" "bin\"
+COPY "C:\Panda3D4TIA\python\python39.dll" "bin\"
 COPY "..\user\*" "bin\"
 DEL "bin\_msi.pyd"
 DEL "bin\python_lib.cat"

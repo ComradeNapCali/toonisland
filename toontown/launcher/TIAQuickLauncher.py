@@ -30,9 +30,10 @@ class TIAQuickLauncher(TIALauncherBase):
 
     def getTestServerFlag(self):
         return self.getValue('IS_TEST_SERVER', 0)
-
+    
     def getGameServer(self):
-        return 'gs1.toonisland.online'
+        return '127.0.0.1'
+    
     def getLogFileName(self):
         return 'TIA'
 

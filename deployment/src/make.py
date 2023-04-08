@@ -9,7 +9,7 @@ parser.add_argument('--build-dir', default='build',
                     help='The directory of which the build was prepared.')
 
 #Argument for the Directory to Output the distribution to
-parser.add_argument('--output-dir', default='build/pre_obf',
+parser.add_argument('--output-dir', default='bin',
                     help='The directory of which the build was prepared.')
 
 #Argument for the Executable of the compiled code
