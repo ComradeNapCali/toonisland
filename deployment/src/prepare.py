@@ -117,8 +117,6 @@ for module in args.modules:
         for filename in files:
             if not filename.endswith('.py'):
                 continue
-            if filename in excludes:
-                continue
             with open(os.path.join(root, filename), 'r') as f:
                 data = minify(f)
             with open(os.path.join(outputDir, filename), 'w') as f:
