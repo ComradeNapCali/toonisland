@@ -49,7 +49,12 @@ cd ..
 goto game
 
 :connect
-cls
+echo = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+echo Gameserver [!]
+echo = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+set /P TIA_GAMESERVER="Gameserver: "
+SET TIA_GAMESERVER=%TIA_GAMESERVER%
+echo.
 goto game
 
 :game

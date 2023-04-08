@@ -32,7 +32,7 @@ class TIAQuickLauncher(TIALauncherBase):
         return self.getValue('IS_TEST_SERVER', 0)
     
     def getGameServer(self):
-        return '127.0.0.1'
+        return self.getValue('TIA_GAMESERVER')
     
     def getLogFileName(self):
         return 'TIA'
