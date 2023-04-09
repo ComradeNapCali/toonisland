@@ -2,7 +2,7 @@
 # specific to developer instances of Toon Island: Aftermath.
 
 # Window settings
-window-title Toon Island: Aftermath [DEV]
+window-title Toon Island: Aftermath
 
 # Notify settings
 console-output true

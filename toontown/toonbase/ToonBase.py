@@ -338,51 +338,26 @@ class ToonBase(OTPBase.OTPBase):
         self.downloadWatcher = None
         return
 
-    def startShow(self, cr, launcherServer = None):
-        self.cr = cr
-        if base.config.GetBool('framebuffer-multisample', False):
-            render.setAntialias(AntialiasAttrib.MAuto)
-        base.graphicsEngine.renderFrame()
-        self.downloadWatcher = ToontownDownloadWatcher.ToontownDownloadWatcher(TTLocalizer.LauncherPhaseNames)
-        if launcher.isDownloadComplete():
-            self.cleanupDownloadWatcher()
-        else:
-            self.acceptOnce('launcherAllPhasesComplete', self.cleanupDownloadWatcher)
-        gameServer = base.config.GetString('game-server', '')
-        if gameServer:
-            self.notify.info('Using game-server from Configrc: %s ' % gameServer)
-        elif launcherServer:
-            gameServer = launcherServer
-            self.notify.info('Using gameServer from launcher: %s ' % gameServer)
-        else:
-            gameServer = '127.0.0.1'
-        serverPort = base.config.GetInt('server-port', 7198)
-        serverList = []
-        for name in gameServer.split(';'):
-            url = URLSpec(name, 1)
-            if config.GetBool('want-ssl', False):
-                url.setScheme('s')
-            if not url.hasPort():
-                url.setPort(serverPort)
-            serverList.append(url)
-
-        if len(serverList) == 1:
-            failover = base.config.GetString('server-failover', '')
-            serverURL = serverList[0]
-            for arg in failover.split():
-                try:
-                    port = int(arg)
-                    url = URLSpec(serverURL)
-                    url.setPort(port)
-                except:
-                    url = URLSpec(arg, 1)
-
-                if url != serverURL:
-                    serverList.append(url)
-
-        cr.loginFSM.request('connect', [serverList])
+    def startShow(self, gameserver=None):
+        import random, time
+        if self.cr is None:
+            return
+        if gameserver is None:
+            gameserver = os.environ.get('TIA_GAMESERVER', '127.0.0.1')
+        gameserverPort = base.config.GetInt('server-port', 7198)
+        clientagents = base.config.GetInt('client-agents', 1) - 1
+        gameserverPort += random.randint(0, clientagents) * 100
+        gameserver = URLSpec(gameserver, 1)
+        if base.config.GetBool('server-force-ssl', False):
+            gameserver.setScheme('s')
+        if not gameserver.hasPort():
+            gameserver.setPort(gameserverPort)
+        self.cr.loginFSM.request('connect', [[gameserver]])
         self.ttAccess = ToontownAccess.ToontownAccess()
         self.ttAccess.initModuleInfo()
+        self.lastSpeedHackCheck = time.time()
+        self.lastTrueClockTime = TrueClock.getGlobalPtr().getLongTime()
+        return
 
     def removeGlitchMessage(self):
         self.ignore('InputState-forward')

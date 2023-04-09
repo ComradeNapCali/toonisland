@@ -53,7 +53,7 @@ LEO | Seashell Street
 Shaping Insanity | Logo
 
 \1limeText\1Special Thanks To\2
-Toontown Infinite | Various Concepts and Ideas
+Toon Island: Aftermath | Various Concepts and Ideas
 Toontown Event Horizons | Axolotl Inspiration
 satire6 | Pandora and Anesidora
 Contributors of Panda3D

@@ -51,7 +51,7 @@ class OTPClientRepository(ClientRepositoryBase):
         ClientRepositoryBase.__init__(self)
         self.handler = None
         self.launcher = launcher
-        base.launcher = launcher
+        self.introDone = False
         self.__currentAvId = 0
         self.productName = config.GetString('product-name', 'DisneyOnline-US')
         self.createAvatarClass = None
@@ -451,10 +451,14 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterConnect(self, serverList):
         self.serverList = serverList
-        dialogClass = OTPGlobals.getGlobalDialogClass()
-        self.connectingBox = dialogClass(message=OTPLocalizer.CRConnecting)
-        self.connectingBox.show()
-        self.renderFrame()
+        if not self.introDone:
+            if self.introduction.getCurrentOrNextState() not in ('Disclaimer', 'Presents'):
+                self.introduction.request('Label', OTPLocalizer.CRConnecting)
+        else:
+            dialogClass = OTPGlobals.getGlobalDialogClass()
+            self.connectingBox = dialogClass(message=OTPLocalizer.CRConnecting)
+            self.connectingBox.show()
+            self.renderFrame()
         self.handler = self.handleConnecting
         self.connect(self.serverList, successCallback=self._sendHello,
                      failureCallback=self.failedToConnect)
@@ -478,8 +482,11 @@ class OTPClientRepository(ClientRepositoryBase):
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitConnect(self):
-        self.connectingBox.cleanup()
-        del self.connectingBox
+        if not self.introDone:
+            pass
+        else:
+            self.connectingBox.cleanup()
+            del self.connectingBox
 
     def handleSystemMessage(self, di):
         message = ClientRepositoryBase.handleSystemMessage(self, di)
@@ -512,8 +519,10 @@ class OTPClientRepository(ClientRepositoryBase):
         self.loginDoneEvent = 'loginDone'
         self.accept(self.loginDoneEvent, self.__handleLoginDone)
         self.gameServicesManager.login(self.loginDoneEvent)
-        self.waitForDatabaseTimeout(requestName='WaitForGSMLoginResponse')
-
+        if not self.introDone:
+            pass
+        else:
+            self.waitForDatabaseTimeout(requestName='WaitOnCSMLoginResponse')
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def __handleLoginDone(self, doneStatus):
         mode = doneStatus['mode']
@@ -539,7 +548,10 @@ class OTPClientRepository(ClientRepositoryBase):
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitLogin(self):
-        self.cleanupWaitingForDatabase()
+        if not self.introDone:
+            pass
+        else:
+            self.cleanupWaitingForDatabase()
         self.ignore(self.loginDoneEvent)
         del self.loginDoneEvent
         self.handler = None
@@ -594,6 +606,8 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterFailedToConnect(self, statusCode, statusString):
         self.handler = self.handleMessageType
+        self.bootedIndex = statusCode
+        self.bootedText = statusString
         messenger.send('connectionIssue')
         url = self.serverList[0]
         self.notify.warning('Failed to connect to %s (%s %s).  Notifying user.' % (
@@ -606,12 +620,19 @@ class OTPClientRepository(ClientRepositoryBase):
             message = OTPLocalizer.CRNoConnectTryAgain % (
                 url.getServer(), url.getPort())
             style = OTPDialog.TwoChoice
-        dialogClass = OTPGlobals.getGlobalDialogClass()
-        self.failedToConnectBox = dialogClass(
-            message=message, doneEvent='failedToConnectAck', text_wordwrap=18, style=style)
-        self.failedToConnectBox.show()
         self.notify.info(message)
-        self.accept('failedToConnectAck', self.__handleFailedToConnectAck)
+        if self.introduction.getCurrentOrNextState() in ('Disclaimer', 'Presents'):
+            return
+        if not self.introDone:
+            if style == OTPDialog.CancelOnly:
+                self.introduction.request('ExitDialog', message, self.loginFSM.request, ['shutdown'])
+            else:
+                self.introduction.request('YesNoDialog', message, self.loginFSM.request, ['connect', [self.serverList]], self.loginFSM.request, ['shutdown'])
+        else:
+            dialogClass = OTPGlobals.getGlobalDialogClass()
+            self.failedToConnectBox = dialogClass(message=message, doneEvent='failedToConnectAck', text_wordwrap=18, style=style)
+            self.failedToConnectBox.show()
+            self.accept('failedToConnectAck', self.__handleFailedToConnectAck)
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def __handleFailedToConnectAck(self):
@@ -627,9 +648,12 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitFailedToConnect(self):
         self.handler = None
-        self.ignore('failedToConnectAck')
-        self.failedToConnectBox.cleanup()
-        del self.failedToConnectBox
+        if not self.introDone:
+            pass
+        else:
+            self.ignore('failedToConnectAck')
+            self.failedToConnectBox.cleanup()
+            del self.failedToConnectBox
         return
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
@@ -727,12 +751,16 @@ class OTPClientRepository(ClientRepositoryBase):
     def enterMissingGameRootObject(self):
         self.notify.warning('missing some game root objects.')
         self.handler = self.handleMessageType
-        dialogClass = OTPGlobals.getGlobalDialogClass()
-        self.missingGameRootObjectBox = dialogClass(
-            message=OTPLocalizer.CRMissingGameRootObject, doneEvent='missingGameRootObjectBoxAck', style=OTPDialog.TwoChoice)
-        self.missingGameRootObjectBox.show()
-        self.accept('missingGameRootObjectBoxAck',
-                    self.__handleMissingGameRootObjectAck)
+        if self.introduction.getCurrentOrNextState() in ('Disclaimer', 'Presents'):
+            return
+        if not self.introDone:
+            self.introduction.request('YesNoDialog', OTPLocalizer.CRMissingGameRootObject, self.loginFSM.request, ['waitForGameList'], self.loginFSM.request, ['shutdown'])
+        else:
+            dialogClass = OTPGlobals.getGlobalDialogClass()
+            self.missingGameRootObjectBox = dialogClass(message=OTPLocalizer.CRMissingGameRootObject, doneEvent='missingGameRootObjectBoxAck', style=OTPDialog.TwoChoice)
+            self.missingGameRootObjectBox.show()
+            self.accept('missingGameRootObjectBoxAck', self.__handleMissingGameRootObjectAck)
+
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def __handleMissingGameRootObjectAck(self):
@@ -747,10 +775,17 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitMissingGameRootObject(self):
         self.handler = None
-        self.ignore('missingGameRootObjectBoxAck')
-        self.missingGameRootObjectBox.cleanup()
-        del self.missingGameRootObjectBox
-        return
+        if self.introduction.getCurrentOrNextState() in ('Disclaimer', 'Presents'):
+            return
+        else:
+            if not self.introDone:
+                pass
+            else:
+                self.ignore('missingGameRootObjectBoxAck')
+                self.missingGameRootObjectBox.cleanup()
+                del self.missingGameRootObjectBox
+            return
+
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterWaitForShardList(self):
@@ -786,11 +821,15 @@ class OTPClientRepository(ClientRepositoryBase):
     def enterNoShards(self):
         messenger.send('connectionIssue')
         self.handler = self.handleMessageType
-        dialogClass = OTPGlobals.getGlobalDialogClass()
-        self.noShardsBox = dialogClass(
-            message=OTPLocalizer.CRNoDistrictsTryAgain, doneEvent='noShardsAck', style=OTPDialog.TwoChoice)
-        self.noShardsBox.show()
-        self.accept('noShardsAck', self.__handleNoShardsAck)
+        if self.introduction.getCurrentOrNextState() in ('Disclaimer', 'Presents'):
+            return
+        if not self.introDone:
+            self.introduction.request('YesNoDialog', OTPLocalizer.CRNoDistrictsTryAgain, self.loginFSM.request, ['noShardsWait'], self.loginFSM.request, ['shutdown'])
+        else:
+            dialogClass = OTPGlobals.getGlobalDialogClass()
+            self.noShardsBox = dialogClass(message=OTPLocalizer.CRNoDistrictsTryAgain, doneEvent='noShardsAck', style=OTPDialog.TwoChoice)
+            self.noShardsBox.show()
+            self.accept('noShardsAck', self.__handleNoShardsAck)
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def __handleNoShardsAck(self):
@@ -806,34 +845,46 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitNoShards(self):
         self.handler = None
-        self.ignore('noShardsAck')
-        self.noShardsBox.cleanup()
-        del self.noShardsBox
-        return
+        if self.introduction.getCurrentOrNextState() in ('Disclaimer', 'Presents'):
+            return
+        else:
+            if not self.introDone:
+                pass
+            else:
+                self.ignore('noShardsAck')
+                self.noShardsBox.cleanup()
+                del self.noShardsBox
+            return
+
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterNoShardsWait(self):
-        dialogClass = OTPGlobals.getGlobalDialogClass()
-        self.connectingBox = dialogClass(message=OTPLocalizer.CRConnecting)
-        self.connectingBox.show()
-        self.renderFrame()
         self.noShardsWaitTaskName = 'noShardsWait'
-
+        if not self.introDone:
+            self.introduction.request('Label', OTPLocalizer.CRConnecting)
+        else:
+            dialogClass = OTPGlobals.getGlobalDialogClass()
+            self.connectingBox = dialogClass(message=OTPLocalizer.CRConnecting)
+            self.connectingBox.show()
+            self.renderFrame()
         def doneWait(task, self=self):
             self.loginFSM.request('waitForShardList')
 
         if __dev__:
             delay = 0.0
         else:
-            delay = 6.5 + random.random() * 2.0
+            delay = 3
         taskMgr.doMethodLater(delay, doneWait, self.noShardsWaitTaskName)
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitNoShardsWait(self):
         taskMgr.remove(self.noShardsWaitTaskName)
         del self.noShardsWaitTaskName
-        self.connectingBox.cleanup()
-        del self.connectingBox
+        if not self.introDone:
+            pass
+        else:
+            self.connectingBox.cleanup()
+            del self.connectingBox
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterReject(self):
@@ -952,21 +1003,31 @@ class OTPClientRepository(ClientRepositoryBase):
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def _requestAvatarList(self):
         self.gameServicesManager.requestAvatarList()
-        self.waitForDatabaseTimeout(requestName='WaitForAvatarList')
+        if not self.introDone:
+            pass
+        else:
+            self.waitForDatabaseTimeout(requestName='WaitForAvatarList')
         self.acceptOnce(
             OtpAvatarManager.OtpAvatarManager.OnlineEvent, self._requestAvatarList)
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def exitWaitForAvatarList(self):
-        self.cleanupWaitingForDatabase()
+        if not self.introDone:
+            pass
+        else:
+            self.cleanupWaitingForDatabase()
         self.ignore(OtpAvatarManager.OtpAvatarManager.OnlineEvent)
         self.handler = None
         return
 
     def handleAvatarsList(self, avatars):
         self.avList = avatars
-        self.loginFSM.request('chooseAvatar', [self.avList])
-
+        if not self.introDone:
+            if self.introduction.getCurrentOrNextState() not in ('Disclaimer', 'Presents'):
+                self.introduction.request('ClickToStart')
+        else:
+            self.loginFSM.request('chooseAvatar', [self.avList])
+    
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterChooseAvatar(self, avList):
         pass
@@ -1710,7 +1771,10 @@ class OTPClientRepository(ClientRepositoryBase):
         return
 
     def lostConnection(self):
-        ClientRepositoryBase.lostConnection(self)
+        if not self.introDone:
+            pass
+        else:
+            ClientRepositoryBase.lostConnection(self)
         self.loginFSM.request('noConnection')
 
     def waitForDatabaseTimeout(self, extraTimeout=0, requestName='unknown'):

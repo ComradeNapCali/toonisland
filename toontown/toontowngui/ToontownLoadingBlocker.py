@@ -20,7 +20,7 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
         else:
             TTDialog.TTDialog.__init__(self)
             gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')
-            #img = gui.find('**/tt_t_gui_pat_loadingPopup')
+            img = None
             self['image'] = img
             self['image_scale'] = (1, 0, 1)
             self['image_pos'] = (0, 0, -0.4)
@@ -152,9 +152,7 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             return False
 
         if hasPlayableToon(avList):
-            if not (base.launcher.getPhaseComplete(3.5) and base.launcher.getPhaseComplete(4)):
-                return True
-        return False
+            return True
 
     def __shrinkLoadingBar(self):
         if self.__isValidDownloadBar():

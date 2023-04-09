@@ -8956,3 +8956,10 @@ GagShopNotEnoughJellybeans = 'You do not have enough Jellybeans for that gag'
 AvatarPanelCogHealth = 'HP: %s/%s'
 
 InventoryMaxed = 'Maxed'
+
+IntroDisclaimer = 'Disclaimer:\n\nToon Island: Aftermath is not affiliated with The Walt Disney Company, and/or the Disney Interactive Media Group. All rights and intellectual property are owned by The Walt Disney Company. Toon Island: Aftermath is free to play, and has no intentions of making revenue.'
+IntroPresents = 'Introducing the toontastic world of...'
+IntroExitButton = 'Exit'
+IntroYesButton = 'Yes'
+IntroNoButton = 'No'
+ClickToStartLabel = '\x01shadow\x01Click to begin your journey!\x02'

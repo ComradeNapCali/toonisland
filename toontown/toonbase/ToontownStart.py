@@ -36,108 +36,144 @@ except:
 
 launcher.setRegistry('EXIT_PAGE', 'normal')
 pollingDelay = 0.5
-print('ToontownStart: Polling for game2 to finish...')
 while not launcher.getGame2Done():
     time.sleep(pollingDelay)
 
-print('ToontownStart: Game2 is finished.')
-print('ToontownStart: Starting the game.')
+print('Starting Toon Island Aftermath...')
 if launcher.isDummy():
     http = HTTPClient()
 else:
     http = launcher.http
-tempLoader = Loader()
-backgroundNode = tempLoader.loadSync(Filename('phase_3/models/gui/loading-background'))
 from direct.gui import DirectGuiGlobals
-print('ToontownStart: setting default font')
-from . import ToontownGlobals
+from toontown.toonbase import ToontownGlobals
 DirectGuiGlobals.setDefaultFontFunc(ToontownGlobals.getInterfaceFont)
 launcher.setPandaErrorCode(7)
-from . import ToonBase
+from toontown.toonbase import ToonBase
 ToonBase.ToonBase()
-from toontown.toonbase.TTFrameRateMeter import *
-TTFrameRateMeter()
-from toontown.distributed.DiscordRPC import *
-try:
-    Discord = DiscordRPC()
-    Discord.Launching()
-except:
-    pass
-if base.win == None:
-    print('Unable to open window; aborting.')
-    sys.exit()
+if base.win is None:
+    notify.error('Unable to open window; aborting.')
 launcher.setPandaErrorCode(0)
 launcher.setPandaWindowOpen()
-ConfigVariableDouble('decompressor-step-time').setValue(0.01)
-ConfigVariableDouble('extractor-step-time').setValue(0.01)
-backgroundNodePath = aspect2d.attachNewNode(backgroundNode, 0)
-backgroundNodePath.setPos(0.0, 0.0, 0.0)
-backgroundNodePath.setScale(aspect2d, VBase3(1.33, 1, 1))
-backgroundNodePath.find('**/fg').setBin('fixed', 20)
-backgroundNodePath.find('**/bg').setBin('fixed', 10)
-backgroundNodePath.find('**/bg').setScale(aspect2d, VBase3(base.getAspectRatio(), 1, 1))
+from panda3d.core import Vec4
+base.setBackgroundColor(Vec4(0, 0, 0, 0))
 base.graphicsEngine.renderFrame()
-DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
-DirectGuiGlobals.setDefaultClickSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
-DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui'))
-from . import TTLocalizer
-from otp.otpbase import OTPGlobals
-OTPGlobals.setDefaultProductPrefix(TTLocalizer.ProductPrefix)
+DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
+DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
+DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialog_box_gui.bam'))
+#from toontown.toon import Toon
+#Toon.preload()
+#from toontown.suit import Suit
+#Suit.preload()
+#Removed this.
+#from toontown.login import AvatarChooser
+#AvatarChooser.preload()
+#from toontown.shtiker import ShtikerGUI
+#ShtikerGUI.preload()
+from toontown.toonbase.Introduction import Introduction
+introduction = Introduction()
+from toontown.toonbase.ClickToStart import ClickToStart
+version = ConfigVariableString('server-version', 'n/a')
+clickToStart = ClickToStart(version=version.getValue())
+clickToStart.setColorScale(0, 0, 0, 0)
+music = None
 if base.musicManagerIsValid:
-    music = base.musicManager.getSound('phase_3/audio/bgm/tt_theme.ogg')
+    music = base.loadMusic('phase_3/audio/bgm/tt_theme.ogg')
     if music:
         music.setLoop(1)
         music.setVolume(0.9)
         music.play()
-    print('ToontownStart: Loading default gui sounds')
-    DirectGuiGlobals.setDefaultRolloverSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
-    DirectGuiGlobals.setDefaultClickSound(base.loader.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
+    DirectGuiGlobals.setDefaultRolloverSound(base.loadSfx('phase_3/audio/sfx/GUI_rollover.ogg'))
+    DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
 else:
     music = None
-from . import ToontownLoader
-from direct.gui.DirectGui import *
-serverVersion = base.config.GetString('server-version', 'no_version_set')
-print('ToontownStart: serverVersion: ', serverVersion)
-version = OnscreenText(serverVersion, pos=(-1.3, -0.975), scale=0.07, fg=Vec4(0, 1, 0, 0.8), align=TextNode.ARight, font=ToontownGlobals.getSignFont())
-loader.beginBulkLoad('init', TTLocalizer.LoaderLabel, 138, 0, TTLocalizer.TIP_NONE, 0)
-version.setPos(-0.03, 0.03)
-version.reparentTo(base.a2dBottomRight)
-gameAlphaText = "Pre-Alpha Test"
-alphaText = OnscreenText(gameAlphaText, pos=(0, 0), scale=0.07, fg=Vec4(1, 1, 1, 1), align=TextNode.ALeft, font=ToontownGlobals.getSignFont())
-alphaText.setPos(0.03, 0.03)
-alphaText.reparentTo(base.a2dBottomLeft)
-from .ToonBaseGlobal import *
-from direct.showbase.MessengerGlobal import *
+    if music is not None:
+        music.setLoop(1)
+        music.setVolume(0.9)
+from toontown.toonbase import TTLocalizer
+from otp.otpbase import OTPLocalizer
+from otp.otpgui import OTPDialog
+
+def syncLoginFSM(task = None):
+    stateName = base.cr.loginFSM.getCurrentState().getName()
+    if introduction.getCurrentOrNextState() != 'Label' and introduction.label.getText() != TTLocalizer.LoaderLabel:
+            introduction.request('Label', TTLocalizer.LoaderLabel)
+            taskMgr.doMethodLater(1, syncLoginFSM, 'syncLoginFSM-task')
+    elif stateName in ('connect', 'login', 'waitForGameList', 'waitForShardList'):
+        introduction.request('Label', OTPLocalizer.CRConnecting)
+    elif stateName == 'failedToConnect':
+        url = base.cr.serverList[0]
+        if base.cr.bootedIndex in (1400, 1403, 1405):
+            message = OTPLocalizer.CRNoConnectProxyNoPort % (url.getServer(), url.getPort(), url.getPort())
+            style = OTPDialog.CancelOnly
+        else:
+            message = OTPLocalizer.CRNoConnectTryAgain % (url.getServer(), url.getPort())
+            style = OTPDialog.TwoChoice
+        if style == OTPDialog.CancelOnly:
+            introduction.request('ExitDialog', message, base.cr.loginFSM.request, ['shutdown'])
+        else:
+            introduction.request('YesNoDialog', message, base.cr.loginFSM.request, ['connect', [base.cr.serverList]], base.cr.loginFSM.request, ['shutdown'])
+    elif stateName == 'noConnection':
+        if base.cr.bootedIndex is not None and base.cr.bootedIndex in OTPLocalizer.CRBootedReasons:
+            message = OTPLocalizer.CRBootedReasons[base.cr.bootedIndex]
+        elif base.cr.bootedIndex == 155:
+            message = base.cr.bootedText
+        elif base.cr.bootedText is not None:
+            message = OTPLocalizer.CRBootedReasonUnknownCode % base.cr.bootedIndex
+        else:
+            message = OTPLocalizer.CRLostConnection
+        if base.cr.bootedIndex == 152:
+            message %= {'name': base.cr.bootedText}
+        introduction.request('ExitDialog', message, base.cr.loginFSM.request, ['shutdown'])
+    elif stateName == 'missingGameRootObject':
+        introduction.request('YesNoDialog', OTPLocalizer.CRMissingGameRootObject, base.cr.loginFSM.request, ['waitForGameList'], base.cr.loginFSM.request, ['shutdown'])
+    elif stateName == 'noShards':
+        introduction.request('YesNoDialog', OTPLocalizer.CRNoDistrictsTryAgain, base.cr.loginFSM.request, ['noShardsWait'], base.cr.loginFSM.request, ['shutdown'])
+    else:
+        introduction.request('ClickToStart')
+    if task is not None:
+        return task.done
+    else:
+        return
+
+
+
+from direct.interval.IntervalGlobal import Sequence, Func, Wait
+presentsTrack = Sequence(Func(introduction.request, 'Presents'), Wait(7), Func(syncLoginFSM))
+disclaimerTrack = Sequence(Func(introduction.request, 'Disclaimer'), Wait(7), Func(presentsTrack.start))
 from toontown.distributed import ToontownClientRepository
-cr = ToontownClientRepository.ToontownClientRepository(serverVersion, launcher)
-cr.music = music
-del music
+base.cr = ToontownClientRepository.ToontownClientRepository(version.getValue(), launcher)
+base.cr.music = music
+base.cr.introduction = introduction
+base.cr.clickToStart = clickToStart
 base.initNametagGlobals()
-base.cr = cr
-loader.endBulkLoad('init')
-from otp.friends import FriendManager
-from otp.distributed.OtpDoGlobals import *
-cr.generateGlobalObject(OTP_DO_ID_FRIEND_MANAGER, 'FriendManager')
+from otp.distributed.OtpDoGlobals import OTP_DO_ID_FRIEND_MANAGER
+base.cr.generateGlobalObject(OTP_DO_ID_FRIEND_MANAGER, 'FriendManager')
 if not launcher.isDummy():
-    base.startShow(cr, launcher.getGameServer())
+    base.startShow(launcher.getGameServer())
 else:
-    base.startShow(cr)
-backgroundNodePath.reparentTo(hidden)
-backgroundNodePath.removeNode()
-del backgroundNodePath
-del backgroundNode
-del tempLoader
-version.cleanup()
-del version
-base.loader = base.loader
+    base.startShow()
 builtins.loader = base.loader
-autoRun = ConfigVariableBool('toontown-auto-run', 1)
-if autoRun and launcher.isDummy() and (not Thread.isTrueThreads() or __name__ == '__main__'):
-    try:
-        base.run()
-    except SystemExit:
-        raise
-    except:
-        from otp.otpbase import PythonUtil
-        print(PythonUtil.describeException())
-        raise
+disclaimerTrack.start()
+if music is not None:
+    music.play()
+
+def skip():
+    if disclaimerTrack.isPlaying():
+        disclaimerTrack.finish()
+    elif presentsTrack.isPlaying():
+        presentsTrack.finish()
+
+
+#base.accept('mouse1', skip)
+#gc.enable()
+#gc.collect()
+try:
+    if config.GetBool('want-leak-graph-client', False):
+        from toontown.debug import LeakGraph
+        LeakGraph.outputLeaking()
+    base.run()
+except SystemExit:
+    pass
+except Exception:
+    import traceback
+    traceback.print_exc()
