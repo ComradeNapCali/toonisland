@@ -51,6 +51,7 @@ class OTPClientRepository(ClientRepositoryBase):
         ClientRepositoryBase.__init__(self)
         self.handler = None
         self.launcher = launcher
+        base.launcher = launcher
         self.introDone = False
         self.__currentAvId = 0
         self.productName = config.GetString('product-name', 'DisneyOnline-US')
