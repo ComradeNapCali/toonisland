@@ -31,6 +31,7 @@ try:
     launcher
 except:
     from toontown.launcher.TIADummyLauncher import TIADummyLauncher
+    
     launcher = TIADummyLauncher()
     builtins.launcher = launcher
 
