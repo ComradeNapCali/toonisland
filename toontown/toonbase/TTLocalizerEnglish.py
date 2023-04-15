@@ -500,6 +500,8 @@ QuestsItemDict = {
  38: ["The Lexicon Transcriber", "The Lexicon Transcibers", 'a '],
  39: ["Treasure Key", "Treasure Keys", 'a '],
  40: ["Vacation Ticket", "Vacation Tickets", 'a '],
+ 41: ["Key", "Keys", 'a '],
+ 42: ["Evidence", "Evidence", 'some '],
  110: ['TIP Clothing Ticket', 'Clothing Tickets', 'a '],
  1000: ['Clothing Ticket', 'Clothing Tickets', 'a '],
  2001: ['Inner Tube', 'Inner Tubes', 'an '],
@@ -922,7 +924,7 @@ QuestDialogDict = {
  2206: {QUEST: "You did it lets see here yes it worked take this back to Gibby it should work now!_where_"},
  2207: {QUEST: "Yes lets see here lets open up the machine and see whats inside.\x07What? A book just a normal book this cant be Impossibl\x07let Gibby read this book!\x07NO YOU WILL GET NO TREASURE\x07GET OUT OF MY SHOP"},
  2208: {QUEST: "Your back i heard the terrible news are you alright?\x07Its Gibby that book she read it made her go mad i think that book has some type of dark magic or curse put on it.\x07Gibby ran off somewhere screaming and shouting that she was going to takeover toon island\x07for her dark lord and the treasure is all hers i managed to pick up this note that gibby dropped telling of the location of the treasure if you hurry\x07maybe you can retrieve the treasure but you will need a key first im sure one of the cogs around here will have the key",
-        COMPLETE: "You found the key great but i have more updates on Gibby. It Turns out after all that book was cursed i talked to my friends dangolf and  Archmage Angelics and we have come to the conclusion that the disappearance of the toonvari was no random occurrence they  disappeared because they angered this same dark lord that is controlling Gibby.\x07We have also founded that pretty much\x07All of the artifacts of the toonvari except the treasure have been cursed thats why the dark lord is controlling Gibby he wants the treasure for his self we have made a huge mistake helping gibby\x07But in time we will be able to Stop her here for all your troubles take this Jellybean Jar"},
+        COMPLETE: "You found the key great but i have more updates on Gibby. It Turns out after all that book was cursed i talked to my friends dangolf and  Archmage Angelics and we have come to the conclusion that the disappearance of the toonvari was no random occurrence they  disappeared because they angered this same dark lord that is controlling Gibby.\x07We have also founded that pretty much\x07All of the artifacts of the toonvari except the treasure have been cursed thats why the dark lord is controlling Gibby he wants the treasure for his self we have made a huge mistake helping Gibby\x07But in time we will be able to Stop her here for all your troubles take this Jellybean Jar"},
 
  # Task 10: Taking A Vacation In Withering Woods
  # Reward: TP Access to Withering Woods
@@ -940,7 +942,17 @@ QuestDialogDict = {
  2220: {QUEST: "Great you have found all the tickets now hurry and take this one to Howard Horse at The Family Friendly Bronco and then you can receive your reward._where_"}, 
  2221: {QUEST: "Hows it going bro\x07Welcome to the family friendly bronco where the whole family can come to have fun what brings you here?\x07Great thanks for this ticket my friend i will be packing my things as soon as you leave\x07Tell Slippery Sloppy i said whats up!_where_", 
         COMPLETE: "Wow you did it _avName_\x07You have returned withering woods to its former glory our ratings have went way up since you gave away these free vacation tickets\x07I have you to thank so here"}, 
-
+ 
+ # Task 11: The Withering Finale
+ # Reward: Last Gag Track Frame
+ 2222: {QUEST: "Return to Instructor Gandling he needs you urgently._where_"},
+ 2223: {QUEST: "You are finally ready to earn your final track frame _avName_\x07You have done this town a great deal.\x07Ill tell you that my friend but you have also caused one big problem\x07And as you probably know it has to do with Gossipping Gibby\x07I Hate To Inform you but it seems she has gone completely insane she has gone completely mad and is now working with the cogs to try and destroy Withering Woods\x07Its up to you to stop her first\x07You will need to head over to my friend at Withering The Witcher he has a task for you that is urgently in need of completion if we are gonna stop Gibby._where_"},
+ 2224: {QUEST: "Howdy _avName_\x07Gandling told me alot about you.\x07Well now that you are hereheres the plan\x07Have you ever noticed that giant pumpkin in the middle of the town?\x07We call it the Grandfather Pumpkin because its as old as toon island its self\x07It dates back to when all the lands split apart due to a massive earthquake.\x07It truly is an mystical ancient phenomenon.\x07Well that is your first target its been taken over by the cogs.\x07You must relight it because its power will greatly help us in this fight against Gibby but its not gonna be that easy\x07It is heavily guarded by the strongest of cogs in Withering Woods\x07You will have to Gather a group of toons and clear it out then once you do you must relight it as its bright lights will protect us from Gibby and her Dark Lords dark magic\x07To gain access to the grandfather pumpkin you will need to recover a key to the grandfather pumpkin from the cogs"},
+ 2225: {QUEST: "Aw man this isnt the correct\x07You will have to recover the key from a specific cog\x07but since we have no idea which cog took it\x07we will need to find evidence on it\x07Im sure if you fight more of the cogs you can find a note that details the cogs plans to steal the key"},
+ 2226: {QUEST: "Yes ive put the evidence together and it seems that the real key is held by a Loan Shark\x07Defeat Loan Sharks pronto to recover that key!"},
+ 2227: {QUEST: "Great you recovered the real key.\x07Since its too dangerous for you to go\x07and partly because Toon Island does not have many developers\x07Im going to try to take down Gibby\x07Thank you so much toon\x07But if you could clear out some of these cog buildings, that would be a big help\x07Thank you so much.",
+        COMPLETE: "You did it!\x07While you were gone I defeated Gibby and her evil magic.\x07Thank you so much for making Withering Woods not so Withering\x07How could i ever thank you.\x07Oh the gags right."}
+ 
  # ==========================w
  #       Rainbow Rise
  # ==========================
@@ -6635,7 +6647,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  5316: 'Uncle Spud',
  5317: 'Detective Lima',
  5318: 'Caesar',
- 5319: 'Rose',
+ 5319: 'Geralt',
  5320: 'Doug',
  5321: 'Pizza Taco',
  5322: 'Fisherman Rose',
@@ -7128,7 +7140,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  5828: ('Couch Potato Furniture', ''),
  5830: ('Spill the Beans', ''),
  5833: ('The Salad Bar', ''),
- 5835: ('Flower Bed and Breakfast', ''),
+ 5835: ('Withering The Witcher', ''),
  5836: ("Got Any Grapes?", ''),
  5837: ('Pizza Taco Burgers', ''),
  9501: ('Lullaby Library', ''),

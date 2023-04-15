@@ -58,6 +58,7 @@ Easy = 75
 Medium = 50
 Hard = 25
 VeryHard = 20
+Impossible = 10
 TT_TIER = 0 # 0: Toontorial - 1: Toontorial Pt2 - 2: Main Taskline - 3: Final Gag Training
 WW_TIER = 4 # 4: Gag Training - 5: Main Taskline - 6: Final Gag Training
 RR_TIER = 7 # 7: Gag Training - 8: Main Taskline - 9: Final Gag Training
@@ -2037,7 +2038,7 @@ QuestDict = {
 
     # Task 2: Decisions, Decisions
     # Reward: Gag Training (Toonup or Sound)
-    120: (TT_TIER + 1, Start, (VisitQuest,), Any, 2113, NA, 121, TTLocalizer.QuestDialogDict[120]),
+    120: (TT_TIER + 1, Start, (VisitQuest,), ToonHQ, 2113, NA, 121, TTLocalizer.QuestDialogDict[120]),
     121: (TT_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 19, Easy, Any, 'l'), Any, 2113, Any, 400,
           TTLocalizer.QuestDialogDict[121]),
     400: (TT_TIER + 1, Cont, (TrackChoiceQuest, ToontownBattleGlobals.SOUND_TRACK, ToontownBattleGlobals.HEAL_TRACK), Same, Same, 400, NA, TTLocalizer.QuestDialogDict[400]),
@@ -2084,7 +2085,7 @@ QuestDict = {
 
     # Task 3: Blue Goo that Sticks to You
     # Reward: +2 Laff (max 18)
-    1039: (TT_TIER + 2, Start, (VisitQuest,), Any, 2208, NA, 1040, TTLocalizer.QuestDialogDict[1039]),
+    1039: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2208, NA, 1040, TTLocalizer.QuestDialogDict[1039]),
     1040: (TT_TIER + 2, Cont, (VisitQuest,), Any, 2403, NA, 1041, TTLocalizer.QuestDialogDict[1040]),
     1041: (TT_TIER + 2, Cont, (CogQuest, Any, 5, Any), Same, 2403, NA, 1042, TTLocalizer.QuestDialogDict[1041]),
     1042: (TT_TIER + 2, Cont, (VisitQuest,), Any, 2208, NA, 1043, TTLocalizer.QuestDialogDict[1042]),
@@ -2095,7 +2096,7 @@ QuestDict = {
 
     # Task 4: Cheating the Cheetah
     # Reward: +1 Laff (max 19)
-    1047: (TT_TIER + 2, Start, (VisitQuest,), Any, 2209, NA, 1048, TTLocalizer.QuestDialogDict[1047]),
+    1047: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2209, NA, 1048, TTLocalizer.QuestDialogDict[1047]),
     1048: (TT_TIER + 2, Cont, (CogTrackQuest, Anywhere, 7, 's'), Same, Same, NA, 1049, TTLocalizer.QuestDialogDict[1048]),
     1049: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 1, 18, Medium, AnyFish), 2209, Same, NA, 1050,
            TTLocalizer.QuestDialogDict[1049]),
@@ -2106,7 +2107,7 @@ QuestDict = {
 
     # Task 5, Lean Mean Jellybean Machine | Yes its a Coach Z Evil Twin's Reference
     # Reward: Carry 50 Beans
-    1053: (TT_TIER + 2, Start, (VisitQuest,), Any, 2405, NA, 1054, TTLocalizer.QuestDialogDict[1053]),
+    1053: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2405, NA, 1054, TTLocalizer.QuestDialogDict[1053]),
     1054: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 1, 16, Hard, Any, 'track'), 2209, Same, NA, 1055,
            TTLocalizer.QuestDialogDict[1054]),
     1055: (TT_TIER + 2, Cont, (VisitQuest,), Any, 2221, NA, 1056, TTLocalizer.QuestDialogDict[1055]),
@@ -2115,7 +2116,7 @@ QuestDict = {
 
     # Task 6: Something Sus-swiss-cious
     # Reward: +3 Laff (max laff 22)
-    1058: (TT_TIER + 2, Start, (VisitQuest,), Any, 2312, NA, 1059, TTLocalizer.QuestDialogDict[1058]),
+    1058: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2312, NA, 1059, TTLocalizer.QuestDialogDict[1058]),
     1059: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 5, 15, Medium, 'tm'), Same, Same, NA, 1060,
            TTLocalizer.QuestDialogDict[1059]),
     1060: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 7, 14, Medium, 'ym'), Same, Same, NA, 1061,
@@ -2128,7 +2129,7 @@ QuestDict = {
 
     # Task 7: Melodious Mathematical Mayhem
     # Reward: +1 Laff (max laff 23)
-    1065: (TT_TIER + 2, Start, (VisitQuest,), Any, 2103, NA, 1066, TTLocalizer.QuestDialogDict[1065]),
+    1065: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2103, NA, 1066, TTLocalizer.QuestDialogDict[1065]),
     1066: (TT_TIER + 2, Cont, (CogTrackQuest, Anywhere, 3, 'm'), Same, Same, NA, 1067,
            TTLocalizer.QuestDialogDict[1066]),
     1067: (TT_TIER + 2, Cont, (VisitQuest,), Same, 2309, NA, 1068,
@@ -2139,7 +2140,7 @@ QuestDict = {
 
     # Task 8: Traveling Around The Island
     # Reward: TP Access to TIC
-    1071: (TT_TIER + 2, Start, (VisitQuest,), Any, 2123, NA, 1072, TTLocalizer.QuestDialogDict[1071]),
+    1071: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2123, NA, 1072, TTLocalizer.QuestDialogDict[1071]),
     1072: (TT_TIER + 2, Cont, (CogLevelQuest, Any, 6, 2), Same, Same, NA, 1073,
            TTLocalizer.QuestDialogDict[1072]),
     1073: (TT_TIER + 2, Cont, (CogLevelQuest, Any, 3, 3), Same, Same, NA, 1074,
@@ -2148,7 +2149,7 @@ QuestDict = {
 
     # Task 9: Gag's O' Plenty
     # Reward: Carry 30 Gags
-    1075: (TT_TIER + 2, Start, (VisitQuest,), Any, 2404, NA, 1076, TTLocalizer.QuestDialogDict[1075]),
+    1075: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2404, NA, 1076, TTLocalizer.QuestDialogDict[1075]),
     1076: (TT_TIER + 2, Cont, (CogLevelQuest, Any, 6, 3), Same, Same, NA, 1077,
            TTLocalizer.QuestDialogDict[1076]),
     1077: (TT_TIER + 2, Cont, (CogQuest, Any, 5, Any), Same, Same, 200, NA,
@@ -2156,7 +2157,7 @@ QuestDict = {
 
     # Task 10: More Tasks, More Fun
     # Reward: Carry 2 Tasks
-    1078: (TT_TIER + 2, Start, (VisitQuest,), Any, 2103, NA, 1079, TTLocalizer.QuestDialogDict[1078]),
+    1078: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2103, NA, 1079, TTLocalizer.QuestDialogDict[1078]),
     1079: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 1, 12, Hard, Any, Any), Same, Same, NA, 1080,
            TTLocalizer.QuestDialogDict[1079]),
     1080: (TT_TIER + 2, Cont, (VisitQuest,), Same, 2213, NA, 1081,
@@ -2167,7 +2168,7 @@ QuestDict = {
     
     # Task 11: Liar, Liar, Baking Contest
     # Reward: +2 Laff
-    1083: (TT_TIER + 2, Start, (VisitQuest,), Any, 2117, NA, 1084, TTLocalizer.QuestDialogDict[1083]),
+    1083: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2117, NA, 1084, TTLocalizer.QuestDialogDict[1083]),
     1084: (TT_TIER + 2, Cont, (VisitQuest,), Same, 2407, NA, 1085,
            TTLocalizer.QuestDialogDict[1084]),
     1085: (TT_TIER + 2, Cont, (CogQuest, Any, 12, Any), Same, 2407, NA, 1086,
@@ -2184,7 +2185,7 @@ QuestDict = {
 
     # Task 12: Comet Conspiracy
     # Reward: Sound/TU Gags
-    1091: (TT_TIER + 3, Start, (VisitQuest,), Any, 2139, NA, 1092, TTLocalizer.QuestDialogDict[1091]),
+    1091: (TT_TIER + 3, Start, (VisitQuest,), ToonHQ, 2139, NA, 1092, TTLocalizer.QuestDialogDict[1091]),
     1092: (TT_TIER + 3, Cont, (RecoverItemQuest, Anywhere, 20, 9, VeryEasy, Any, Any), Same, 2139, NA, 1093,
            TTLocalizer.QuestDialogDict[1092]),
     1093: (TT_TIER + 3, Cont, (VisitQuest,), Any, ToonHQ, NA, 1094,
@@ -2219,7 +2220,7 @@ QuestDict = {
     # Task 1
     # Reward: Gag Training
     
-    2001: (WW_TIER, Start, (VisitQuest,), Any, 5201, NA, 2002, TTLocalizer.QuestDialogDict[2001]),
+    2001: (WW_TIER, Start, (VisitQuest,), ToonHQ, 5201, NA, 2002, TTLocalizer.QuestDialogDict[2001]),
     2002: (WW_TIER, Cont, (RecoverItemQuest, Anywhere, 1, 21, Medium, 'ds'), Same, Same, NA, 2003, TTLocalizer.QuestDialogDict[2002]),
     2003: (WW_TIER, Cont, (RecoverItemQuest, ToontownGlobals.RainbowRise, 1, 22, Medium, AnyFish), Same, Same, NA, 401, TTLocalizer.QuestDialogDict[2003]),
     401: (WW_TIER, Cont, (TrackChoiceQuest, ToontownBattleGlobals.DROP_TRACK, ToontownBattleGlobals.LURE_TRACK), Same, Same, 400, NA, TTLocalizer.QuestDialogDict[401]),       
@@ -2298,7 +2299,7 @@ QuestDict = {
 
     # Task 2: Training with Oak
     # Reward: +2 Laff
-    2165: (WW_TIER + 1, Start, (VisitQuest,), Any, 5127, NA, 2166, TTLocalizer.QuestDialogDict[2165]),
+    2165: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5127, NA, 2166, TTLocalizer.QuestDialogDict[2165]),
     2166: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 23, Medium, 'tf'), Same, Same, NA, 2167, TTLocalizer.QuestDialogDict[2166]),
     2167: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 24, Medium, 'nc'), Same, Same, NA, 2168, TTLocalizer.QuestDialogDict[2167]),
     2168: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 25, Hard, Any), Same, Same, NA, 2169, TTLocalizer.QuestDialogDict[2168]),
@@ -2306,7 +2307,7 @@ QuestDict = {
 
     # Task 3: Food Fright
     # Reward: +2 Laff
-    2170: (WW_TIER + 1, Start, (VisitQuest,), Any, 5321, NA, 2171, TTLocalizer.QuestDialogDict[2170]),
+    2170: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5321, NA, 2171, TTLocalizer.QuestDialogDict[2170]),
     2171: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5120, NA, 2172, TTLocalizer.QuestDialogDict[2171]),
     2172: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5306, NA, 2173, TTLocalizer.QuestDialogDict[2172]),
     2173: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 27, VeryHard, Any), Same, Same, NA, 2174, TTLocalizer.QuestDialogDict[2173]),
@@ -2316,20 +2317,20 @@ QuestDict = {
 
     # Task 4: Got any Grapes
     # Reward: +2 Laff
-    2177: (WW_TIER + 1, Start, (VisitQuest,), Any, 5320, NA, 2178, TTLocalizer.QuestDialogDict[2177]),
+    2177: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5320, NA, 2178, TTLocalizer.QuestDialogDict[2177]),
     2178: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 29, Medium, Any), Same, Same, NA, 2179, TTLocalizer.QuestDialogDict[2178]),
     2179: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 30, VeryHard, Any), Same, Same, NA, 2180, TTLocalizer.QuestDialogDict[2179]),
     2180: (WW_TIER + 1, Cont, (BuildingQuest, Anywhere, 1, Any, 3), Same, Same, 101, NA, TTLocalizer.QuestDialogDict[2180]),
 
     # Task 5: House Of Junky
     # Reward: Carry 30 Gags
-    2181: (WW_TIER + 1, Start, (VisitQuest,), Any, 5223, NA, 2182, TTLocalizer.QuestDialogDict[2181]),
+    2181: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5223, NA, 2182, TTLocalizer.QuestDialogDict[2181]),
     2182: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 20, 31, Easy, Any), Same, Same, NA, 2183, TTLocalizer.QuestDialogDict[2182]),
     2183: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 32, VeryHard, 'mb'), Same, Same, 201, NA, TTLocalizer.QuestDialogDict[2183]),
 
     # Task 6: The Training Of A Warrior
     # Reward: +4 Laff
-    2184: (WW_TIER + 1, Start, (VisitQuest,), Any, 5103, NA, 2185, TTLocalizer.QuestDialogDict[2184]),
+    2184: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5103, NA, 2185, TTLocalizer.QuestDialogDict[2184]),
     2185: (WW_TIER + 1, Cont, (CogTrackQuest, Anywhere, 5, 's'), Same, Same, NA, 2186, TTLocalizer.QuestDialogDict[2185]),
     2186: (WW_TIER + 1, Cont, (CogTrackQuest, Anywhere, 10, 'c'), Same, Same, NA, 2187, TTLocalizer.QuestDialogDict[2186]),
     2187: (WW_TIER + 1, Cont, (CogTrackQuest, Anywhere, 15, 'l'), Same, Same, NA, 2188, TTLocalizer.QuestDialogDict[2187]),
@@ -2337,7 +2338,7 @@ QuestDict = {
 
     # Task 7: Its Never Ogre
     # Reward: +3 Laff
-    2189: (WW_TIER + 1, Start, (VisitQuest,), Any, 5309, NA, 2190, TTLocalizer.QuestDialogDict[2189]),
+    2189: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5309, NA, 2190, TTLocalizer.QuestDialogDict[2189]),
     2190: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 33, Medium, Any), Same, Same, NA, 2191, TTLocalizer.QuestDialogDict[2190]),
     2191: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5315, NA, 2192, TTLocalizer.QuestDialogDict[2191]),
     2192: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 34, Hard, 'bf'), Same, Same, NA, 2193, TTLocalizer.QuestDialogDict[2192]),
@@ -2347,7 +2348,7 @@ QuestDict = {
 
     # Task 8: The Hunt For "The" Ring
     # Reward: +3 Laff
-    2196: (WW_TIER + 1, Start, (VisitQuest,), Any, 5226, NA, 2197, TTLocalizer.QuestDialogDict[2196]),
+    2196: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5226, NA, 2197, TTLocalizer.QuestDialogDict[2196]),
     2197: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 35, VeryEasy, 'cr'), Same, Same, NA, 2198, TTLocalizer.QuestDialogDict[2197]),
     2198: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 36, Medium, 'cr'), Same, Same, NA, 2199, TTLocalizer.QuestDialogDict[2198]),
     2199: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5124, NA, 2200, TTLocalizer.QuestDialogDict[2199]),
@@ -2357,7 +2358,7 @@ QuestDict = {
 
     # Task 9: A Little Birdie Told Me
     # Reward: Carry 60 Beans
-    2203: (WW_TIER + 1, Start, (VisitQuest,), Any, 5108, NA, 2204, TTLocalizer.QuestDialogDict[2203]),
+    2203: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5108, NA, 2204, TTLocalizer.QuestDialogDict[2203]),
     2204: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5106, NA, 2205, TTLocalizer.QuestDialogDict[2204]),
     2205: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 38, Easy, 'pp'), Same, Same, NA, 2206, TTLocalizer.QuestDialogDict[2205]),
     2206: (WW_TIER + 1, Start, (VisitQuest,), Any, 5108, NA, 2207, TTLocalizer.QuestDialogDict[2206]),
@@ -2366,7 +2367,7 @@ QuestDict = {
 
     # Task 10: Taking A Vacation In Withering Woods
     # Reward: TP Access to Withering Woods
-    2209: (WW_TIER + 1, Start, (VisitQuest,), Any, 5224, NA, 2210, TTLocalizer.QuestDialogDict[2209]),
+    2209: (WW_TIER + 1, Start, (VisitQuest,), ToonHQ, 5224, NA, 2210, TTLocalizer.QuestDialogDict[2209]),
     2210: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 40, Easy, 'tf'), Same, Same, NA, 2211, TTLocalizer.QuestDialogDict[2210]),
     2211: (WW_TIER + 1, Cont, (DeliverItemQuest, 40), Any, 2125, NA, 2212, TTLocalizer.QuestDialogDict[2211]),
     2212: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5224, NA, 2213, TTLocalizer.QuestDialogDict[2212]),
@@ -2379,6 +2380,15 @@ QuestDict = {
     2219: (WW_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 1, 40, Hard, Any), Same, Same, NA, 2220, TTLocalizer.QuestDialogDict[2219]),
     2220: (WW_TIER + 1, Cont, (DeliverItemQuest, 40), Any, 1313, NA, 2221, TTLocalizer.QuestDialogDict[2220]),
     2221: (WW_TIER + 1, Cont, (VisitQuest,), Any, 5224, 302, NA, TTLocalizer.QuestDialogDict[2221]),
+
+    # Task 11: The Withering Finale
+    # Reward: Last Gag Track Frame
+    2222: (WW_TIER + 2, Start, (VisitQuest,), ToonHQ, 5201, NA, 2223, TTLocalizer.QuestDialogDict[2222]),
+    2223: (WW_TIER + 2, Cont, (VisitQuest,), ToonHQ, 5319, NA, 2224, TTLocalizer.QuestDialogDict[2223]),
+    2224: (WW_TIER + 2, Cont, (RecoverItemQuest, ToontownGlobals.WitheringWoods, 1, 41, Medium, Any), Same, Same, NA, 2225, TTLocalizer.QuestDialogDict[2224]),
+    2225: (WW_TIER + 2, Cont, (RecoverItemQuest, ToontownGlobals.WitheringWoods, 1, 42, Easy, Any), Same, Same, NA, 2226, TTLocalizer.QuestDialogDict[2225]),
+    2226: (WW_TIER + 2, Cont, (RecoverItemQuest, ToontownGlobals.WitheringWoods, 1, 41, VeryHard, 'ls'), Same, Same, NA, 2227, TTLocalizer.QuestDialogDict[2226]),
+    2227: (WW_TIER + 2, Cont, (BuildingQuest, Anywhere, 3, Any, 3), Same, Same, 900, NA, TTLocalizer.QuestDialogDict[2227]),
 
 }
 Tier2QuestsDict = {}
