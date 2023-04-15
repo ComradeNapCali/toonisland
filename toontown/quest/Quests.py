@@ -2119,7 +2119,7 @@ QuestDict = {
     1058: (TT_TIER + 2, Start, (VisitQuest,), ToonHQ, 2312, NA, 1059, TTLocalizer.QuestDialogDict[1058]),
     1059: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 5, 15, Medium, 'tm'), Same, Same, NA, 1060,
            TTLocalizer.QuestDialogDict[1059]),
-    1060: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 7, 14, Medium, 'ym'), Same, Same, NA, 1061,
+    1060: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 3, 14, Medium, 'ym'), Same, Same, NA, 1061,
            TTLocalizer.QuestDialogDict[1060]),
     1061: (TT_TIER + 2, Cont, (VisitQuest,), Any, 2138, NA, 1062, TTLocalizer.QuestDialogDict[1061]),
     1062: (TT_TIER + 2, Cont, (RecoverItemQuest, Anywhere, 5, 13, Medium, Any, 'track'), Same, Same, NA, 1063,
