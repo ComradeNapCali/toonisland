@@ -12,11 +12,6 @@ class ClickToStart(DirectObject):
 
     def __init__(self, version = 'n/a'):
         DirectObject.__init__(self)
-        self.backgroundNodePath = render2d.attachNewNode('background', 0)
-        self.backgroundModel = loader.loadModel('phase_3/models/gui/loading-background.bam')
-        self.backgroundModel.reparentTo(self.backgroundNodePath)
-        self.backgroundNodePath.find('**/fg').removeNode()
-        self.backgroundNodePath.setScale(1, 1, 1)
         self.logo = OnscreenImage(parent=base.a2dTopCenter, image='phase_3/maps/toontown-logo.png', scale=(0.9, 1, 0.4), pos=(0, 0, -0.9))
         self.logo.setTransparency(TransparencyAttrib.MAlpha)
         clickToStartText = TTLocalizer.ClickToStartLabel
@@ -58,12 +53,6 @@ class ClickToStart(DirectObject):
         if self.logo is not None:
             self.logo.destroy()
             self.logo = None
-        if self.backgroundNodePath is not None:
-            self.backgroundNodePath.removeNode()
-            self.backgroundNodePath = None
-        if self.backgroundModel is not None:
-            self.backgroundModel.removeNode()
-            self.backgroundModel = None
         return
 
     def start(self):
@@ -125,7 +114,6 @@ class ClickToStart(DirectObject):
         return
 
     def setColorScale(self, *args, **kwargs):
-        self.backgroundNodePath.setColorScale(*args, **kwargs)
         self.logo.setColorScale(*args, **kwargs)
         self.label.setColorScale(*args, **kwargs)
         self.versionLabel.setColorScale(*args, **kwargs)

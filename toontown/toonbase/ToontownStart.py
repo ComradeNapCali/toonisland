@@ -87,9 +87,6 @@ if base.musicManagerIsValid:
     DirectGuiGlobals.setDefaultClickSound(base.loadSfx('phase_3/audio/sfx/GUI_create_toon_fwd.ogg'))
 else:
     music = None
-    if music is not None:
-        music.setLoop(1)
-        music.setVolume(0.9)
 from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPLocalizer
 from otp.otpgui import OTPDialog
@@ -155,8 +152,8 @@ else:
     base.startShow()
 builtins.loader = base.loader
 disclaimerTrack.start()
-if music is not None:
-    music.play()
+#if music is not None:
+    #music.play()
 
 def skip():
     if disclaimerTrack.isPlaying():
@@ -165,7 +162,7 @@ def skip():
         presentsTrack.finish()
 
 
-#base.accept('mouse1', skip)
+base.accept('mouse1', skip)
 #gc.enable()
 #gc.collect()
 try:

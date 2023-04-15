@@ -119,7 +119,7 @@ class ToonAvatarPanel(AvatarPanelBase.AvatarPanelBase):
             relief=None,
             text=TTLocalizer.AvatarPanelFriends,
             text_scale=0.06,
-            pos=(-0.103, 0, 0.133),
+            pos=(-0.103, 0, 0.045),
             text0_fg=self.text0Color,
             text1_fg=self.text1Color,
             text2_fg=self.text2Color,
@@ -147,7 +147,7 @@ class ToonAvatarPanel(AvatarPanelBase.AvatarPanelBase):
             image3_color=self.disabledImageColor,
             image_scale=0.9,
             relief=None,
-            pos=(-0.103, 0, 0.045),
+            pos=(-0.103, 0, -0.0375),
             text=TTLocalizer.AvatarPanelGoTo,
             text0_fg=self.text0Color,
             text1_fg=self.text1Color,
@@ -173,7 +173,7 @@ class ToonAvatarPanel(AvatarPanelBase.AvatarPanelBase):
             image3_color=self.disabledImageColor,
             image_scale=0.9,
             relief=None,
-            pos=(-0.103, 0, -0.0375),
+            pos=(-0.103, 0, -0.013),
             text=TTLocalizer.AvatarPanelWhisper,
             text0_fg=self.text0Color,
             text1_fg=self.text1Color,
@@ -188,29 +188,6 @@ class ToonAvatarPanel(AvatarPanelBase.AvatarPanelBase):
 
         if base.cr.avatarFriendsManager.checkIgnored(self.avId):
             self.whisperButton['state'] = DGG.DISABLED
-
-        self.secretsButton = DirectButton(
-            parent=self.frame,
-            image=(
-                gui.find('**/Amuse_Btn_UP'),
-                gui.find('**/Amuse_Btn_DN'),
-                gui.find('**/Amuse_Btn_RLVR'),
-                gui.find('**/Amuse_Btn_UP')),
-            image3_color=self.disabledImageColor,
-            image_scale=0.9,
-            relief=None,
-            pos=(-0.103, 0, -0.13),
-            text=TTLocalizer.AvatarPanelSecrets,
-            text0_fg=self.text0Color,
-            text1_fg=self.text1Color,
-            text2_fg=self.text2Color,
-            text3_fg=self.text3Color,
-            text_scale=TTLocalizer.TAPsecretsButton,
-            text_pos=(0.055, -0.01),
-            text_align=TextNode.ALeft,
-            command=self.__handleSecrets)
-
-
 
         if base.cr.avatarFriendsManager.checkIgnored(self.avId):
             self.secretsButton['state'] = DGG.DISABLED

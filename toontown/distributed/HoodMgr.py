@@ -777,7 +777,7 @@ class HoodMgr(DirectObject.DirectObject):
      'oo': ToontownGlobals.OliveOasis,
      'ww': ToontownGlobals.WitheringWoods,
      'oz': ToontownGlobals.OutdoorZone,
-     'ff': ToontownGlobals.FunnyFarms,
+     'ff': ToontownGlobals.CirrusCircus,
      'gs': ToontownGlobals.GoofySpeedway,
      'mm': ToontownGlobals.MintyMines,
      'bosshq': ToontownGlobals.BossbotHQ,

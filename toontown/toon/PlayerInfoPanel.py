@@ -141,7 +141,7 @@ class PlayerInfoPanel(AvatarPanelBase.AvatarPanelBase):
             relief=None,
             text=TTLocalizer.AvatarPanelFriends,
             text_scale=0.06,
-            pos=(-0.103, 0, 0.133),
+            pos=(-0.103, 0, 0.045),
             text0_fg=text0Color,
             text1_fg=text1Color,
             text2_fg=text2Color,
@@ -183,39 +183,17 @@ class PlayerInfoPanel(AvatarPanelBase.AvatarPanelBase):
             image3_color=disabledImageColor,
             relief=None,
             image_scale=0.9,
-            pos=(-0.103, 0, -0.0375),
+            pos=(-0.103, 0, -0.13),
             text=TTLocalizer.AvatarPanelWhisper,
             text0_fg=text0Color,
             text1_fg=text1Color,
             text2_fg=text2Color,
             text3_fg=text3Color,
             text_scale=TTLocalizer.PIPwisperButton,
-            text_pos=(0.06, -0.0125),
+            text_pos=(0.055, -0.01),
             text_align=TextNode.ALeft,
             state=onlineButtonState,
             command=self.__handleWhisper)
-        self.secretsButton = DirectButton(
-            parent=self.frame,
-            image=(
-                gui.find('**/ChtBx_ChtBtn_UP'),
-                gui.find('**/ChtBx_ChtBtn_DN'),
-                gui.find('**/ChtBx_ChtBtn_RLVR'),
-                gui.find('**/ChtBx_ChtBtn_UP')),
-            image3_color=disabledImageColor,
-            image_scale=0.9,
-            relief=None,
-            pos=(-0.103, 0, -0.13),
-            text=TTLocalizer.AvatarPanelSecrets,
-            text0_fg=text0Color,
-            text1_fg=text1Color,
-            text2_fg=text2Color,
-            text3_fg=text3Color,
-            text_scale=TTLocalizer.PIPsecretsButton,
-            text_pos=(0.055, -0.01),
-            text_align=TextNode.ALeft,
-            state=avButtonState,
-            command=self.__handleSecrets)
-        self.secretsButton['state'] = DGG.DISABLED
         if not base.localAvatar.isTeleportAllowed():
             self.goToButton['state'] = DGG.DISABLED
         ignoreStr, ignoreCmd, ignoreSize = self.getIgnoreButtonInfo()
