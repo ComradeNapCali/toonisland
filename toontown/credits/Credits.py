@@ -12,7 +12,7 @@ class Credits:
 
     def __init__(self):
         #setup
-        self.creditsSequence = None
+        self.showCredits = None
         self.text = None
         self.roleText = None
         cm = CardMaker('screen-cover')
@@ -24,7 +24,7 @@ class Credits:
         self.screenCover.setTransparency(1)
 
         #run
-        self.extremelylargecredits = '''
+        self.credits = '''
 \1limeText\1Credits\2
 
 \1limeText\1Management Team\2
@@ -32,7 +32,6 @@ Nayla | Director
 
 \1limeText\1Technical Team\2
 Prof. Robin | Game & Web Developer
-Zen | Game Developer
 
 \1limeText\1Creative Team\2
 April | Concept Artist, Moderator
@@ -41,16 +40,11 @@ Pizza Taco Burger | Storyline Writer
 The Player Zero | Creaive
 Tom Bumberpop | Composer
 
-\1limeText\1Community Team\2
-
-
-\1limeText\1Moderation Team\2
-April | Concept Artist, Moderator
-
 \1limeText\1Contributors\2
-Supertricky, Disyer | Sellbot Fatal Factory
-LEO | Seashell Street
-Shaping Insanity | Logo
+Supertricky | Sellbot Fatal Factory
+Leo, Rocket | Seashell Street, FPS Meter
+Pythology | Click To Start
+Shaping Insanity | Toon Island Logo
 
 \1limeText\1Special Thanks To\2
 Toon Island: Aftermath | Various Concepts and Ideas
@@ -65,7 +59,7 @@ You | Playing the game and supporting it
 
 \1limeText\Thanks for everything!\2
         '''
-        self.text = OnscreenText(text = self.extremelylargecredits, style = 3, fg = (1, 1, 1, 1), align = TextNode.ACenter, scale = 0.08, wordwrap = 30, parent = aspect2d)
+        self.text = OnscreenText(text = self.credits, style = 3, fg = (1, 1, 1, 1), align = TextNode.ACenter, scale = 0.08, wordwrap = 30, parent = aspect2d)
         self.text.setPos(0, -1)
         self.text.setColorScale(1, 1, 1, 0)
         self.logo = OnscreenImage(image = 'phase_3/maps/toontown-logo.png',
@@ -83,7 +77,7 @@ You | Playing the game and supporting it
         self.creditsMusic = base.loader.loadMusic('phase_3.5/audio/bgm/hall_of_fame.ogg')
         base.playMusic(self.creditsMusic, looping=0, volume=0.9)
 
-        self.creditsSequence = Sequence(
+        self.showCredits = Sequence(
         LerpColorScaleInterval(self.screenCover, 1, Vec4(1, 1, 1, 1), startColorScale = Vec4(1, 1, 1, 0)),
         LerpColorScaleInterval(self.text, 1, Vec4(1, 1, 1, 1), startColorScale = Vec4(1, 1, 1, 0)),
         Wait(1),
@@ -99,9 +93,9 @@ You | Playing the game and supporting it
         base.transitions.noFade()
         self.creditsMusic = base.loader.loadMusic('phase_3/audio/bgm/tt_theme.ogg')
         base.playMusic(self.creditsMusic, looping=1, volume=0.9)
-        if self.creditsSequence:
-            self.creditsSequence.finish()
-            self.creditsSequence = None
+        if self.showCredits:
+            self.showCredits.finish()
+            self.showCredits = None
         if self.text:
             self.text.destroy()
             self.text = None

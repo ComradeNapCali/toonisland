@@ -70,9 +70,9 @@ DirectGuiGlobals.setDefaultDialogGeom(loader.loadModel('phase_3/models/gui/dialo
 #AvatarChooser.preload()
 #from toontown.shtiker import ShtikerGUI
 #ShtikerGUI.preload()
-from toontown.toonbase.Introduction import Introduction
+from toontown.clicktostart.Introduction import Introduction
 introduction = Introduction()
-from toontown.toonbase.ClickToStart import ClickToStart
+from toontown.clicktostart.ClickToStart import ClickToStart
 version = ConfigVariableString('server-version', 'n/a')
 clickToStart = ClickToStart(version=version.getValue())
 clickToStart.setColorScale(0, 0, 0, 0)

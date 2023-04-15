@@ -1,3 +1,10 @@
+##################################################
+# The Big Ned Frame Rate Meter
+##################################################
+# Author: Leo
+# Copyright: Copyright 2018, Big Ned Stride Mods
+##################################################
+
 from panda3d.core import TextNode
 from toontown.toonbase import ToontownGlobals
 import random

@@ -1,4 +1,10 @@
-# Embedded file name: toontown.toontowngui.ClickToStart
+##################################################
+# The Toontown Infinite ClickToStart
+##################################################
+# Author: Pythology
+# Copyright: Copyright 2016, Toontown Infnite
+##################################################
+
 from direct.gui.DirectGui import OnscreenImage, OnscreenText
 from panda3d.core import TransparencyAttrib, Point3, Vec4, Vec3, TextNode
 from direct.interval.IntervalGlobal import LerpPosInterval, Wait, Func
