@@ -173,7 +173,7 @@ class ToonAvatarPanel(AvatarPanelBase.AvatarPanelBase):
             image3_color=self.disabledImageColor,
             image_scale=0.9,
             relief=None,
-            pos=(-0.103, 0, -0.013),
+            pos=(-0.103, 0, -0.13),
             text=TTLocalizer.AvatarPanelWhisper,
             text0_fg=self.text0Color,
             text1_fg=self.text1Color,
