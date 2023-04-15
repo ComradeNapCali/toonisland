@@ -771,7 +771,7 @@ class HoodMgr(DirectObject.DirectObject):
                                  -777.98,
                                  0,
                                  0])}
-    hoodName2Id = {'rr': ToontownGlobals.RainbowRise,
+    hoodName2Id = {'dd': ToontownGlobals.RainbowRise,
      'tt': ToontownGlobals.ToonIslandCentral,
      'br': ToontownGlobals.CirrusCircus,
      'mm': ToontownGlobals.OliveOasis,
