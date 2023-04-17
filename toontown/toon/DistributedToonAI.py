@@ -101,16 +101,20 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         self.cogTypes = [0,
          0,
          0,
+         0,
          0]
         self.cogLevel = [0,
+         0,
          0,
          0,
          0]
         self.cogParts = [0,
          0,
          0,
+         0,
          0]
         self.cogRadar = [0,
+         0,
          0,
          0,
          0]
@@ -118,6 +122,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         self.disguisePageFlag = 0
         self.sosPageFlag = 0
         self.buildingRadar = [0,
+         0,
          0,
          0,
          0]
@@ -2543,7 +2548,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             self.b_setNumPies(self.numPies - 1)
 
     def b_setNumPies(self, numPies):
-        self.setNumPies(numPies)
+        self.seNumPies(numPies)
         self.d_setNumPies(numPies)
 
     def d_setNumPies(self, numPies):

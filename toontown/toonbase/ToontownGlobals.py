@@ -213,7 +213,8 @@ DynamicZonesEnd = 1 << 20
 cogDept2index = {'c': 0,
  'l': 1,
  'm': 2,
- 's': 3}
+ 's': 3,
+ 't': 4}
 cogIndex2dept = invertDict(cogDept2index)
 HQToSafezone = {SellbotHQ: WitheringWoods,
  CashbotHQ: MintyMines,
@@ -222,7 +223,8 @@ HQToSafezone = {SellbotHQ: WitheringWoods,
 CogDeptNames = [TTLocalizer.Bossbot,
  TTLocalizer.Lawbot,
  TTLocalizer.Cashbot,
- TTLocalizer.Sellbot]
+ TTLocalizer.Sellbot,
+ TTLocalizer.Studybot]
 
 def cogHQZoneId2deptIndex(zone):
     if zone >= 13000 and zone <= 13999:

@@ -710,6 +710,8 @@ class Suit(Avatar.Avatar):
                 texType = 'lawbot'
             elif dept == 's':
                 texType = 'sellbot'
+            elif dept == 't':
+                texType = 'studybot'
             if self.find('**/body').isEmpty():
                 __doItTheOldWay__()
             else:
@@ -799,6 +801,8 @@ class Suit(Avatar.Avatar):
             tieTex = loader.loadTexture('phase_5/maps/cog_robot_tie_legal.jpg')
         elif dept == 'm':
             tieTex = loader.loadTexture('phase_5/maps/cog_robot_tie_money.jpg')
+        elif dept == 't':
+            tieTex = loader.loadTexture('phase_5/maps/cog_robot_tie_study.jpg')
         tieTex.setMinfilter(Texture.FTLinearMipmapLinear)
         tieTex.setMagfilter(Texture.FTLinear)
         tie.setTexture(tieTex, 1)
@@ -820,6 +824,8 @@ class Suit(Avatar.Avatar):
             self.corpMedallion = icons.find('**/LegalIcon').copyTo(chestNull)
         elif dept == 'm':
             self.corpMedallion = icons.find('**/MoneyIcon').copyTo(chestNull)
+        elif dept == 't':
+            self.corpMedallion = icons.find('**/StudyIcon').copyTo(chestNull)
         self.corpMedallion.setPosHprScale(0.02, 0.05, 0.04, 180.0, 0.0, 0.0, 0.51, 0.51, 0.51)
         self.corpMedallion.setColor(self.medallionColors[dept])
         icons.removeNode()
