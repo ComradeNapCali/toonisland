@@ -802,7 +802,7 @@ QuestDialogDict = {
  1092: {
   QUEST: 'I have some very strange problems with my comet I was researching.\x07You see this comet is unlike any other thing we’ve ever seen.\x07Like HQ probably told you\x07We don’t believe it is even Toony.\x07I have devised a machine capable of harnessing this device to use it to stop the Cogs\x07Well it has not been tested yet.\x07When I did test it well…\x07It came to such failure and I need Cog gears to fix it.\x07Defeat about 20 Cogs so I can fix the machine pronto.'},
  1093: {
-  QUEST: 'Ah ok thanks for the Cog gears I really needed them.\x07Ok I’m going to try and configure this into the machine. Ahh\x07I dont know where they need to go!\x07Mind going over to HQ and asking them for some information on Cog gears.\x07Toon HQs can be found anywhere\x07Including on this street'},
+  QUEST: 'Ah ok thanks for the Cog gears I really needed them.\x07Ok I’m going to try and configure this into the machine. Ahh\x07I dont know where they need to go!\x07Mind going over to HQ and asking them for some information on Cog gears.\x07Toon HQs can be found anywhere\x07including on this street._where_'},
  1094: {
   QUEST: 'I heard you need some information on how to use Cog gears.\x07We dont keep this information here because no one reads manuals.\x07However Edwin may be able to help you._where_'},
  1095: {
