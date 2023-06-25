@@ -9011,37 +9011,3 @@ IntroExitButton = 'Exit'
 IntroYesButton = 'Yes'
 IntroNoButton = 'No'
 ClickToStartLabel = '\x01shadow\x01Click to begin your journey!\x02'
-
-Studybot = 'Studybot'
-StudybotS = 'a Studybot'
-StudybotP = 'Studybots'
-
-StudybotSkelS = 'a Studybot Skelecog'
-StudybotSkelP = 'Studybot Skelecogs'
-
-SuitDrudge = "Drudge"
-SuitSuckUp = "The Suck-Up"
-SuitKissUp = "The Kiss-Up"
-SuitSycophant = "Sycophant"
-SuitBootlicker = "Bootlicker"
-SuitToady = "The Toady"
-SuitApplePolisher = "Apple Polisher"
-SuitBouncer = "The Bouncer"
-
-SuitDrudgeS = "a Drudge"
-SuitSuckUpS = "a The Suck-Up"
-SuitKissUpS = "a The Kiss-Up"
-SuitSycophantS = "a Sycophant"
-SuitBootlickerS = "a Bootlicker"
-SuitToadyS = "a The Toady"
-SuitApplePolisherS = "a Apple Polisher"
-SuitBouncerS = "a The Bouncer"
-
-SuitDrudgeP = "Drudges"
-SuitSuckUpP = "Suck-Ups"
-SuitKissUpP = "Kiss-Ups"
-SuitSycophantP = "Sycophants"
-SuitBootlickerP = "Bootlickers"
-SuitToadyP = "The Toadies"
-SuitApplePolisherP = "Apple Polishers"
-SuitBouncerP = "The Bouncers"

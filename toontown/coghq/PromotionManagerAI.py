@@ -21,11 +21,9 @@ class PromotionManagerAI:
         meritsRecovered = [0,
          0,
          0,
-         0,
          0]
         if extraMerits is None:
             extraMerits = [0,
-             0,
              0,
              0,
              0]
@@ -58,10 +56,8 @@ class PromotionManagerAI:
         if meritsRecovered != [0,
          0,
          0,
-         0,
          0]:
             actualCounted = [0,
-             0,
              0,
              0,
              0]
@@ -78,6 +74,6 @@ class PromotionManagerAI:
                     av.b_setCogMerits(merits)
 
             if reduce(lambda x, y: x + y, actualCounted):
-                self.air.writeServerEvent('merits', avId, '%s|%s|%s|%s|%s' % tuple(actualCounted))
+                self.air.writeServerEvent('merits', avId, '%s|%s|%s|%s' % tuple(actualCounted))
                 self.notify.debug('recoverMerits: av %s recovered merits %s' % (avId, actualCounted))
         return meritsRecovered
