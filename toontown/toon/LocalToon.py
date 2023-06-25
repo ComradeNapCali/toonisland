@@ -55,9 +55,6 @@ from . import LaffMeter
 from toontown.quest import QuestMap
 from toontown.toon.DistributedNPCToonBase import DistributedNPCToonBase
 WantNewsPage = base.config.GetBool('want-news-page', ToontownGlobals.DefaultWantNewsPageSetting)
-from toontown.toontowngui import NewsPageButtonManager
-if WantNewsPage:
-    from toontown.shtiker import NewsPage
 AdjustmentForNewsButton = -0.275
 ClaraBaseXPos = 0.116667
 if (__debug__):
@@ -250,7 +247,6 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         if hasattr(self, 'purchaseButton'):
             self.purchaseButton.destroy()
             del self.purchaseButton
-        self.newsButtonMgr.request('Off')
         base.whiteList.unload()
         self.book.unload()
         del self.optionsPage
@@ -319,8 +315,6 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         return
 
     def initInterface(self):
-        self.newsButtonMgr = NewsPageButtonManager.NewsPageButtonManager()
-        self.newsButtonMgr.request('Hidden')
         self.book = ShtikerBook.ShtikerBook('bookDone')
         self.book.load()
         self.book.hideButton()
@@ -1037,8 +1031,6 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
             self.__clarabelleButton['text'] = ['', TTLocalizer.CatalogNewCatalogButton, TTLocalizer.CatalogNewCatalogButton]
         if not self.mailboxNotify and not self.awardNotify and self.catalogNotify == ToontownGlobals.OldItems and (self.simpleMailNotify != ToontownGlobals.NoItems or self.inviteMailNotify != ToontownGlobals.NoItems):
             self.__clarabelleButton['text'] = ['', TTLocalizer.MailNewMailButton, TTLocalizer.MailNewMailButton]
-        if self.newsButtonMgr.isNewIssueButtonShown():
-            self.clarabelleNewsPageCollision(True)
         self.__clarabelleButton.show()
         self.__clarabelleFlash.resume()
 

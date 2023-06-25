@@ -36,8 +36,8 @@ class DiscordRPC:
         
         5000: ["daffodil-gardens", "In Withering Woods"],
         5100: ["daffodil-gardens", "On Willow Way"],
-        5200: ["daffodil-gardens", "On Torched Terrace"],
-        5300: ["daffodil-gardens", "On Dastardly Drive"],
+        5200: ["daffodil-gardens", "On Crow Circle"],
+        5300: ["daffodil-gardens", "On Raven Road"],
         
         6000: ["acorn-acres", "At Acorn Acres"],
         

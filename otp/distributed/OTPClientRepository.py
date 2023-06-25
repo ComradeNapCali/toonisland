@@ -1585,6 +1585,8 @@ class OTPClientRepository(ClientRepositoryBase):
 
     @report(types=['args', 'deltaStamp'], dConfigParam='teleport')
     def enterSwitchShards(self, shardId, hoodId, zoneId, avId):
+        with open("user/district.txt", "w") as file:
+                file.write(base.cr.activeDistrictMap[shardId].name)
         try:
             Discord = DiscordRPC()
             Discord.setDistrict(base.cr.activeDistrictMap[shardId].name)
@@ -1734,6 +1736,8 @@ class OTPClientRepository(ClientRepositoryBase):
                 Discord.setDistrict(district.name)
             except:
                 pass
+            with open("user/district.txt", "w") as file:
+                file.write(district.name)
         return district
 
     def getShardName(self, shardId):

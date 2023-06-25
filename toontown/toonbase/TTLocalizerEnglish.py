@@ -502,6 +502,9 @@ QuestsItemDict = {
  40: ["Vacation Ticket", "Vacation Tickets", 'a '],
  41: ["Key", "Keys", 'a '],
  42: ["Evidence", "Evidence", 'some '],
+ 43: ["Cannoball", "Cannoballs", "some "],
+ 44: ["Anti Invisiblity Shampoo", "Anti Invisiblity Shampoo", "bottles of "],
+ 45: ["Invisiblity Spray", "Invisiblity Spray", "cans of "],
  110: ['TIP Clothing Ticket', 'Clothing Tickets', 'a '],
  1000: ['Clothing Ticket', 'Clothing Tickets', 'a '],
  2001: ['Inner Tube', 'Inner Tubes', 'an '],
@@ -939,8 +942,8 @@ QuestDialogDict = {
  2217: {QUEST: "Only One More to go after this one keep it up!\x07Take this to Rod Rooster at Rock-A-Doodle-Doo in Minty Mines._where_"}, 
  2218: {QUEST: "Welcome to the best shop to hear some Rock N Roll Baby! Whats this you have something for me?\x07A Vacation Trip to Withering Woods?\x07Why would i want to go there that place is almost as bad as Olive Oasis.\x07You say it will be worth my while?\x07Fine i guess ill believe you tell Slippery Sloppy that i will come stay at this resort for a vacation._where_"}, 
  2219: {QUEST: "Great ok for the last ticket it seems i have no knowledge of what cog took it\x07So just fight cogs till you find it good luck!"}, 
- 2220: {QUEST: "Great you have found all the tickets now hurry and take this one to Howard Horse at The Family Friendly Bronco and then you can receive your reward._where_"}, 
- 2221: {QUEST: "Hows it going bro\x07Welcome to the family friendly bronco where the whole family can come to have fun what brings you here?\x07Great thanks for this ticket my friend i will be packing my things as soon as you leave\x07Tell Slippery Sloppy i said whats up!_where_", 
+ 2220: {QUEST: "Great you have found all the tickets now hurry and take this one to Howard Horse at The Family Friendly Stern and then you can receive your reward._where_"}, 
+ 2221: {QUEST: "Hows it going bro\x07Welcome to the Family Friendly Stern where the whole family can come to have fun what brings you here?\x07Great thanks for this ticket my friend i will be packing my things as soon as you leave\x07Tell Slippery Sloppy i said whats up!_where_", 
         COMPLETE: "Wow you did it _avName_\x07You have returned withering woods to its former glory our ratings have went way up since you gave away these free vacation tickets\x07I have you to thank so here"}, 
  
  # Task 11: The Withering Finale
@@ -951,13 +954,47 @@ QuestDialogDict = {
  2225: {QUEST: "Aw man this isnt the correct\x07You will have to recover the key from a specific cog\x07but since we have no idea which cog took it\x07we will need to find evidence on it\x07Im sure if you fight more of the cogs you can find a note that details the cogs plans to steal the key"},
  2226: {QUEST: "Yes ive put the evidence together and it seems that the real key is held by a Loan Shark\x07Defeat Loan Sharks pronto to recover that key!"},
  2227: {QUEST: "Great you recovered the real key.\x07Since its too dangerous for you to go\x07and partly because Toon Island does not have many developers\x07Im going to try to take down Gibby\x07Thank you so much toon\x07But if you could clear out some of these cog buildings, that would be a big help\x07Thank you so much.",
-        COMPLETE: "You did it!\x07While you were gone I defeated Gibby and her evil magic.\x07Thank you so much for making Withering Woods not so Withering\x07How could i ever thank you.\x07Oh the gags right."}
+        COMPLETE: "You did it!\x07While you were gone I defeated Gibby and her evil magic.\x07Thank you so much for making Withering Woods not so Withering\x07How could i ever thank you.\x07Oh the gags right."},
  
  # ==========================w
  #       Rainbow Rise
  # ==========================
 
- # Task 1: Gag Training
+ # Task 1: Meeting The Captain
+ # Reward: Gag Training
+ 3001: {QUEST: "How's it going, _avName_?\x07We heard great things about your efforts in Toon Island Central and Withering Woods.\x07Rainbow Rise could really use a toon like you.\x07Speak to Pegleg Peg at Peg's Pegged Peg Legs._where_"},
+ 3002: {QUEST: "Yar Matey, welcome to Rainbow Rise!\x07Ye be the one I've been hearing good things about.\x07Well, allow me to introduce myself.\x07My name is Pegleg Peg, and I am the captain of the largest ship across the seven seas\x07The Red Cloud!\x07Ye see, me and my crew were the most feared pirates across the seven seas till them darn cogs started their own crew\x07Tthey have been taking all our treasures.\x07This is where you will come in handy.\x07Yer gunna unite Rainbow Rise, and together we will be able to take down them Cogs. Well,\x07I assume ya ain't gonna work for free, so every task you complete here will be heavily rewarded.\x07And speaking of tasks, I got one for ya right now.\x07If we gonna be taking the fight to dem cogs, we are gonna need some fire powa, and I know just where we can get it from.\x07Them Corporate Raiders usually carry cannonballs on them.\x07We will need a bunch of them if we hope to take out the cogs.\x07Recover 5 cannonballs from Corporate Raiders."},
+ 3003: {GREETING: '',
+       QUEST: "Great job, matey! You won't have to walk the plank after all.\x07You have earned your reward.\x07You may now choose to train for Toon-up or Trap.",
+       INCOMPLETE_PROGRESS: 'Think about your decision before choosing.',
+       INCOMPLETE_WRONG_NPC: 'Think about your decision before choosing.',
+       COMPLETE: 'Eh? Thats a great choice',
+       LEAVING: 'See you around Rainbow Rise matey!'},
+ 3004: {GREETING: '',
+       QUEST: "Great job, matey! You won't have to walk the plank after all.\x07You have earned your reward.\x07You may now choose to train for Sound or Trap.",
+       INCOMPLETE_PROGRESS: 'Think about your decision before choosing.',
+       INCOMPLETE_WRONG_NPC: 'Think about your decision before choosing.',
+       COMPLETE: 'Eh? Thats a great choice',
+       LEAVING: 'See you around Rainbow Rise matey!'},
+
+  # Task 2: Freaks in Control
+  # Reward: +3 Laff Boost
+  3161: {QUEST: "Report to Howard Horse at The Family Friendly Stern.\x07He is having problems with cogs hacking into his television channel\x07spreading non-toony propaganda._where_"},
+  3162: {QUEST: "Hello, _avName_!\x07Good thing you made it.\x07How am I supposed to make a profit off my television channel with the cogs hacking into it\x07spreading non-toony propaganda?\x07If you can help me out, I'll reward you well.\x07I bet if you take down three 3-story Bossbot buildings, it will prevent the cogs from hacking into my channel."},
+  3163: {QUEST: "That didn't seem to work.\x07Maybe if we try a 4-story Bossbot building, it will stop this nonsense."},
+  3164: {QUEST: "Hmm, that didn't work either. While you were gone, I've come up with the solution.\x07We need to take out the head honcho of this operation.\x07You need to defeat a Big Cheese to stop this madness.\x07That should work.", # Swap to Control Freak when Cog Update is done.
+         COMPLETE: "Purrfecto!\x07You did it!\x07Well, I am going to be a man of my word.\x07Here is a +3 Laff Boost. Remember, _avName_, keep it family-friendly."}, 
+
+  # Task 3: You Cant Sea Me
+  # Reward: +4 Laff Boost + Invisible Toon Cheesy Effect
+  3165: {QUEST: "Jonathan Sea-No has sprayed himself with invisibility spray and is stuck invisible.\x07He needs your help to become visible again.\x07I'm sure he will reward you if you help him._where_"},
+  3166: {QUEST: "It's a disaster, _avName_!\x07I sprayed myself with this invisibility spray because I wanted to scare my friend as a prank, but now I'm stuck like this.\x07It seems the cogs switched my temporary spray out with a permanent one, and now I'm stuck.\x07There has to be a way to reverse this.\x07I got an idea, go see my friend Baron Corbear at Rain-Below 5$ Or Less.\x07I'm sure he has a product that can help reverse this."},
+  3167: {QUEST: "Welcome _avName!\x07So Jonathan sent you.\x07Very well, you need a product that will help him reverse his invisibility.\x07Well, you came to the right place.\x07I have some Anti-Invisibility Shampoo, but they are currently out of stock.\x07They won't be in stock for another couple of days.\x07If you go defeat some cogs, that should kill some time."},
+  3168: {QUEST: "Good job on defeating those cogs.\x07The shampoo came back in stock, but some Big Wigs came by and stole all the shampoo.\x07I guess that's how they keep their hair so perfect\x07but that's beside the point.\x07Before I give you any\x07I need you to recover all of the shampoo that they stole."},
+  3169: {QUEST: "Great, you did it!\x07I knew I could trust you. Here, keep some Anti-Invisibility Shampoo.\x07It should work.\x07Take this to, Jonathan Sea-No._where_"},
+  3170: {QUEST: "Thanks! It took you long enough, though.\x07Well, while I'm taking a shower, why don't you go recover my real invisibility spray so no one has to suffer this fate again?\x07You can find them on any cogs in Rainbow Rise.",
+         COMPLETE: "It worked! Wow, you did me a good deed here today, _avName_! You deserve a reward. Here, take this +4 Laff Boost"}, # add this in later -> and also an Invisibility Spray. The invisibility spray will allow you to be an invisible toon whenever you want. You can switch out your cheesy effects by opening your sticker book."}, 
+
 
  # ==========================
  #       Cirrus Circus
@@ -6245,7 +6282,7 @@ NPCToonNames = {20000: 'Tutorial Tom',
  1113: 'Lisa Luff',
  1114: 'Charlie Chum',
  1115: 'Sheila Squid, Atty',
- 1116: 'Barnacle Bessie',
+ 1116: 'Pegleg Peg',
  1117: 'Captain Yucks',
  1118: 'Choppy McDougal',
  1121: 'Linda Landlubber',
@@ -6891,7 +6928,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  1609: ('Every Little Bait', ''),
  1612: ('Dime & Quarterdeck Bank', ''),
  1613: ('Squid Pro Quo, Attorneys at Law', ''),
- 1614: ('Trim the Nail Boutique', ''),
+ 1614: ('Peg’s Pegged Peg Legs', ''),
  1615: ("Yacht's All, Folks!", ''),
  1616: ("Blackbeard's Beauty Parlor", ''),
  1617: ('Out to See Optics', ''),
@@ -6933,7 +6970,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  1805: ('Tackle Box Lunches', ''),
  1806: ('Cap Size Hat Store', ''),
  1807: ('Keel Deals', ''),
- 1808: ('Family Friendly Bronco', ''),
+ 1808: ('Family Friendly Stern', ''),
  1809: ('Rusty Buckets', ''),
  1810: ('Anchor Management', ''),
  1811: ("What's Canoe With You?", ''),

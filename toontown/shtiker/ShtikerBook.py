@@ -190,8 +190,6 @@ class ShtikerBook(DirectFrame, StateData.StateData):
             self.setPage(page)
             if base.config.GetBool('want-qa-regression', 0):
                 self.notify.info('QA-REGRESSION: SHTICKERBOOK: Browse tabs %s' % page.pageName)
-            localAvatar.newsButtonMgr.setGoingToNewsPageFromStickerBook(False)
-            localAvatar.newsButtonMgr.showAppropriateButton()
 
         yOffset = 0.07 * pageIndex
         iconGeom = None
@@ -323,12 +321,10 @@ class ShtikerBook(DirectFrame, StateData.StateData):
     def showButton(self):
         self.__shown = 1
         self.__setButtonVisibility()
-        localAvatar.newsButtonMgr.showAppropriateButton()
 
     def hideButton(self):
         self.__shown = 0
         self.__setButtonVisibility()
-        localAvatar.newsButtonMgr.request('Hidden')
 
     def __setButtonVisibility(self):
         if self.__isOpen:
@@ -412,14 +408,11 @@ class ShtikerBook(DirectFrame, StateData.StateData):
     def goToNewsPage(self, page):
         messenger.send('wakeup')
         base.playSfx(self.pageSound)
-        localAvatar.newsButtonMgr.setGoingToNewsPageFromStickerBook(True)
-        localAvatar.newsButtonMgr.showAppropriateButton()
         self.setPage(page)
         if base.config.GetBool('want-qa-regression', 0):
             self.notify.info('QA-REGRESSION: SHTICKERBOOK: Browse tabs %s' % page.pageName)
         self.ignore(ToontownGlobals.StickerBookHotkey)
         self.ignore(ToontownGlobals.OptionsPageHotkey)
-        localAvatar.newsButtonMgr.acceptEscapeKeyPress()
 
     def disableBookCloseButton(self):
         if self.bookCloseButton:
