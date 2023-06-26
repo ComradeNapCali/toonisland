@@ -2475,21 +2475,30 @@ QuestDict = {
     3159: (RR_TIER + 1, Start, (DeliverGagQuest, 4, ToontownBattleGlobals.SQUIRT_TRACK, 3), Any, Any , Any, NA, DefaultDialog),
     3160: (RR_TIER + 1, Start, (DeliverGagQuest, 3, ToontownBattleGlobals.SQUIRT_TRACK, 4), Any, Any , Any, NA, DefaultDialog),
 
-    # Task 1: Freaks in Control
+    # Task 2: Freaks in Control
     # Reward: +3 Laff Boost
     3161: (RR_TIER, Start, (VisitQuest,), Any, 1313, NA, 3162, TTLocalizer.QuestDialogDict[3161]),
     3162: (RR_TIER + 1, Cont, (BuildingQuest, Anywhere, 3, 'm', 3), Same, Same, NA, 3163, TTLocalizer.QuestDialogDict[3162]),
     3163: (RR_TIER + 1, Cont, (BuildingQuest, Anywhere, 1, 'm', 4), Same, Same, NA, 3164, TTLocalizer.QuestDialogDict[3163]),
     3164: (RR_TIER + 1, Cont, (CogQuest, Anywhere, 1, 'tbc'),  Same, Same, 102, NA, TTLocalizer.QuestDialogDict[3164]), # Control Freak Tier 8 Bossbot Change
 
-    # Task 2: You Cant Sea Me
+    # Task 3: You Cant Sea Me
     # Reward: +4 Laff Boost + Invisible Toon Cheesy Effect
-    3165: (RR_TIER + 1, Start, (VisitQuest,), Any, 1313, NA, 3166, TTLocalizer.QuestDialogDict[3165]),
-    3166: (RR_TIER + 1, Cont, (VisitQuest,), Any, 1313, NA, 3167, TTLocalizer.QuestDialogDict[3166]),
-    3167: (RR_TIER + 1, Cont, (CogQuest, ToontownGlobals.RainbowRise, 15, Any),  Same, Same, NA, 3168, TTLocalizer.QuestDialogDict[3167]), # Control Freak Tier 8 Bossbot Change
-    3168: (RR_TIER + 1, Cont, (VisitQuest,), Any, 1313, NA, 3169, TTLocalizer.QuestDialogDict[3168]),
+    3165: (RR_TIER + 1, Start, (VisitQuest,), Any, 1226, NA, 3166, TTLocalizer.QuestDialogDict[3165]),
+    3166: (RR_TIER + 1, Cont, (VisitQuest,), Same, 1123, NA, 3167, TTLocalizer.QuestDialogDict[3166]),
+    3167: (RR_TIER + 1, Cont, (CogQuest, ToontownGlobals.RainbowRise, 15, Any),  Same, Same, NA, 3168, TTLocalizer.QuestDialogDict[3167]),
+    3168: (RR_TIER + 1, Cont, (VisitQuest,), Same, 1226, NA, 3169, TTLocalizer.QuestDialogDict[3168]),
     3169: (RR_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 10, 44, Medium, 'bw'), Same, Same, NA, 3170, TTLocalizer.QuestDialogDict[3169]),
     3170: (RR_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 5, 45, Hard, Any), Same, Same, 103, NA, TTLocalizer.QuestDialogDict[3170]),
+
+    # Task 4: A Grassy Accident
+    # Reward: +3 Laff Boost
+    3171: (RR_TIER + 1, Start, (VisitQuest,), Any, 1104, NA, 3172, TTLocalizer.QuestDialogDict[3171]),
+    3172: (RR_TIER + 1, Cont, (VisitQuest,), Same, 1312, NA, 3173, TTLocalizer.QuestDialogDict[3172]),
+    3173: (RR_TIER + 1, Cont, (VisitQuest,), Same, 1104, NA, 3174, TTLocalizer.QuestDialogDict[3173]),
+    3174: (RR_TIER + 1, Cont, (DeliverItemQuest, 46), Same, 1312, NA, 3175, TTLocalizer.QuestDialogDict[3174]),
+    3175: (RR_TIER + 1, Cont, (CogQuest, ToontownGlobals.RainbowRise, 20, Any),  Same, Same, NA, 3176, TTLocalizer.QuestDialogDict[3175]),
+    3176: (RR_TIER + 1, Cont, (VisitQuest,), Any, 1104, 102, NA, TTLocalizer.QuestDialogDict[3176]),
 
 }
 Tier2QuestsDict = {}
