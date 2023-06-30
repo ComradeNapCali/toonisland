@@ -1,24 +1,27 @@
 from .CatalogSurfaceItem import *
+
 MTTextureName = 0
 MTColor = 1
 MTBasePrice = 2
-MouldingTypes = {1000: ('phase_3.5/maps/molding_wood1.jpg', CTBasicWoodColorOnWhite, 150),
- 1010: ('phase_5.5/maps/bd_grey_border1.jpg', CTFlatColorDark, 150),
- 1020: ('phase_5.5/maps/dental_Border_wood_neutral.jpg', CTFlatColorDark, 150),
- 1030: ('phase_5.5/maps/littleFlowers_border.jpg', CTWhite, 150),
- 1040: ('phase_5.5/maps/littleFlowers_border_neutral.jpg', CTFlatColorDark, 150),
- 1050: ('phase_5.5/maps/ladybugs2_Border.jpg', CTFlatColorDark, 150),
- 1060: ('phase_5.5/maps/bd_grey_border1.jpg', CTValentinesColors, 150),
- 1070: ('phase_5.5/maps/bd_grey_border1.jpg', CTUnderwaterColors, 150),
- 1080: ('phase_5.5/maps/tt_t_ara_int_border_winterLights1.jpg', CTWhite, 150),
- 1085: ('phase_5.5/maps/tt_t_ara_int_border_winterLights2.jpg', CTWhite, 150),
- 1090: ('phase_5.5/maps/tt_t_ara_int_border_winterLights3.jpg', CTWhite, 150),
- 1100: ('phase_5.5/maps/tt_t_ara_int_border_valentine_cupid.jpg', CTWhite, 150),
- 1110: ('phase_5.5/maps/tt_t_ara_int_border_valentine_heart1.jpg', CTWhite, 150),
- 1120: ('phase_5.5/maps/tt_t_ara_int_border_valentine_heart2.jpg', CTWhite, 150)}
+MouldingTypes = {
+    1000: ("phase_3.5/maps/molding_wood1.jpg", CTBasicWoodColorOnWhite, 150),
+    1010: ("phase_5.5/maps/bd_grey_border1.jpg", CTFlatColorDark, 150),
+    1020: ("phase_5.5/maps/dental_Border_wood_neutral.jpg", CTFlatColorDark, 150),
+    1030: ("phase_5.5/maps/littleFlowers_border.jpg", CTWhite, 150),
+    1040: ("phase_5.5/maps/littleFlowers_border_neutral.jpg", CTFlatColorDark, 150),
+    1050: ("phase_5.5/maps/ladybugs2_Border.jpg", CTFlatColorDark, 150),
+    1060: ("phase_5.5/maps/bd_grey_border1.jpg", CTValentinesColors, 150),
+    1070: ("phase_5.5/maps/bd_grey_border1.jpg", CTUnderwaterColors, 150),
+    1080: ("phase_5.5/maps/tt_t_ara_int_border_winterLights1.jpg", CTWhite, 150),
+    1085: ("phase_5.5/maps/tt_t_ara_int_border_winterLights2.jpg", CTWhite, 150),
+    1090: ("phase_5.5/maps/tt_t_ara_int_border_winterLights3.jpg", CTWhite, 150),
+    1100: ("phase_5.5/maps/tt_t_ara_int_border_valentine_cupid.jpg", CTWhite, 150),
+    1110: ("phase_5.5/maps/tt_t_ara_int_border_valentine_heart1.jpg", CTWhite, 150),
+    1120: ("phase_5.5/maps/tt_t_ara_int_border_valentine_heart2.jpg", CTWhite, 150),
+}
+
 
 class CatalogMouldingItem(CatalogSurfaceItem):
-
     def makeNewItem(self, patternIndex, colorIndex):
         self.patternIndex = patternIndex
         self.colorIndex = colorIndex
@@ -39,10 +42,10 @@ class CatalogMouldingItem(CatalogSurfaceItem):
     def getPicture(self, avatar):
         self.hasPicture = True
         frame = self.makeFrame()
-        sample = loader.loadModel('phase_5.5/models/estate/wallpaper_sample')
-        a = sample.find('**/a')
-        b = sample.find('**/b')
-        c = sample.find('**/c')
+        sample = loader.loadModel("phase_5.5/models/estate/wallpaper_sample")
+        a = sample.find("**/a")
+        b = sample.find("**/b")
+        c = sample.find("**/c")
         a.setTexture(self.loadTexture(), 1)
         a.setColorScale(*self.getColor())
         b.hide()
@@ -50,8 +53,12 @@ class CatalogMouldingItem(CatalogSurfaceItem):
         sample.reparentTo(frame)
         return (frame, None)
 
-    def output(self, store = -1):
-        return 'CatalogMouldingItem(%s, %s%s)' % (self.patternIndex, self.colorIndex, self.formatOptionalData(store))
+    def output(self, store=-1):
+        return "CatalogMouldingItem(%s, %s%s)" % (
+            self.patternIndex,
+            self.colorIndex,
+            self.formatOptionalData(store),
+        )
 
     def getFilename(self):
         return MouldingTypes[self.patternIndex][MTTextureName]
@@ -69,6 +76,7 @@ class CatalogMouldingItem(CatalogSurfaceItem):
 
     def loadTexture(self):
         from panda3d.core import Texture
+
         filename = MouldingTypes[self.patternIndex][MTTextureName]
         texture = loader.loadTexture(filename)
         texture.setMinfilter(Texture.FTLinearMipmapLinear)
@@ -85,7 +93,7 @@ class CatalogMouldingItem(CatalogSurfaceItem):
             if colorIndex < len(colors):
                 return colors[colorIndex]
             else:
-                print('Warning: colorIndex not in colors. Returning white.')
+                print("Warning: colorIndex not in colors. Returning white.")
                 return CT_WHITE
         else:
             return CT_WHITE

@@ -1,8 +1,9 @@
 from otp.level import DistributedEntityAI
 from direct.directnotify import DirectNotifyGlobal
 
+
 class ActiveCellAI(DistributedEntityAI.DistributedEntityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('ActiveCellAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("ActiveCellAI")
 
     def __init__(self, level, entId):
         self.state = 0
@@ -10,7 +11,7 @@ class ActiveCellAI(DistributedEntityAI.DistributedEntityAI):
         self.occupantIds = []
         DistributedEntityAI.DistributedEntityAI.__init__(self, level, entId)
 
-        def setGrid(gridId = self.gridId, self = self):
+        def setGrid(gridId=self.gridId, self=self):
             self.grid = self.level.entities.get(gridId, None)
             if self.grid:
                 self.grid.addActiveCell(self)
@@ -25,23 +26,23 @@ class ActiveCellAI(DistributedEntityAI.DistributedEntityAI):
         DistributedEntityAI.DistributedEntityAI.generate(self)
 
     def delete(self):
-        self.notify.debug('delete')
+        self.notify.debug("delete")
         self.ignoreAll()
         DistributedEntityAI.DistributedEntityAI.delete(self)
 
     def getState(self):
         return self.state
 
-    def b_setState(self, state, objId = None):
+    def b_setState(self, state, objId=None):
         self.setState(state, objId)
         self.d_setState(state, objId)
 
-    def d_setState(self, state, objId = None):
+    def d_setState(self, state, objId=None):
         if not objId:
             objId = 0
-        self.sendUpdate('setState', [state, objId])
+        self.sendUpdate("setState", [state, objId])
 
-    def setState(self, state, objId = None):
+    def setState(self, state, objId=None):
         self.state = state
         if state:
             self.occupantIds.append(objId)

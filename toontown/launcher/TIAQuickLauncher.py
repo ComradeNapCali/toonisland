@@ -3,39 +3,40 @@ from direct.showbase.EventManagerGlobal import *
 from toontown.launcher.TIALauncherBase import TIALauncherBase
 from toontown.toonbase import TTLocalizer
 
+
 class TIAQuickLauncher(TIALauncherBase):
-    GameName = 'Toon Island: Aftermath'
+    GameName = "Toon Island: Aftermath"
     ForegroundSleepTime = 0.001
     Localizer = TTLocalizer
 
     def __init__(self):
-        print('Running: TIAQuickLauncher')
+        print("Running: TIAQuickLauncher")
         TIALauncherBase.__init__(self)
-        self.useTIASpecificLogin = config.GetBool('TIA-specific-login', 0)
+        self.useTIASpecificLogin = config.GetBool("TIA-specific-login", 0)
         if self.useTIASpecificLogin:
-            self.TIAPlayTokenKey = 'TIA_PLAYCOOKIE'
+            self.TIAPlayTokenKey = "TIA_PLAYCOOKIE"
         else:
-            self.TIAPlayTokenKey = 'TIA_PLAYCOOKIE'
-        print('useTIASpecificLogin=%s' % self.useTIASpecificLogin)
+            self.TIAPlayTokenKey = "TIA_PLAYCOOKIE"
+        print("useTIASpecificLogin=%s" % self.useTIASpecificLogin)
         self.parseWebAcctParams()
         self.showPhase = -1
         self.maybeStartGame()
         self.mainLoop()
 
-    def getValue(self, key, default = None):
+    def getValue(self, key, default=None):
         return os.environ.get(key, default)
 
     def setValue(self, key, value):
         os.environ[key] = str(value)
 
     def getTestServerFlag(self):
-        return self.getValue('IS_TEST_SERVER', 0)
-    
+        return self.getValue("IS_TEST_SERVER", 0)
+
     def getGameServer(self):
-        return self.getValue('TIA_GAMESERVER')
-    
+        return self.getValue("TIA_GAMESERVER")
+
     def getLogFileName(self):
-        return 'TIA'
+        return "TIA"
 
     def parseWebAcctParams(self):
         # these aren't ever used, as self.useTIASpecificLogin should
@@ -49,19 +50,19 @@ class TIAQuickLauncher(TIALauncherBase):
 
     def getPlayToken(self):
         playToken = self.getValue(self.TIAPlayTokenKey)
-        self.setValue(self.TIAPlayTokenKey, '')
-        if playToken == 'NO PLAYTOKEN':
+        self.setValue(self.TIAPlayTokenKey, "")
+        if playToken == "NO PLAYTOKEN":
             playToken = None
         return playToken
 
     def setRegistry(self, name, value):
         pass
 
-    def getRegistry(self, name, missingValue = None):
-        self.notify.info('getRegistry %s' % ((name, missingValue),))
-        self.notify.info('checking env' % os.environ)
+    def getRegistry(self, name, missingValue=None):
+        self.notify.info("getRegistry %s" % ((name, missingValue),))
+        self.notify.info("checking env" % os.environ)
         if missingValue == None:
-            missingValue = ''
+            missingValue = ""
         value = os.environ.get(name, missingValue)
         try:
             value = int(value)
@@ -71,21 +72,21 @@ class TIAQuickLauncher(TIALauncherBase):
         return value
 
     def getAccountServer(self):
-        return ''
+        return ""
 
     def getGame2Done(self):
         return True
 
     def getNeedPwForSecretKey(self):
         if self.useTIASpecificLogin:
-            self.notify.info('getNeedPwForSecretKey using TIA-specific-login')
+            self.notify.info("getNeedPwForSecretKey using TIA-specific-login")
             return False
         else:
             return self.secretNeedsParentPasswordKey
 
     def getParentPasswordSet(self):
         if self.useTIASpecificLogin:
-            self.notify.info('getParentPasswordSet using TIA-specific-login')
+            self.notify.info("getParentPasswordSet using TIA-specific-login")
             return True
         else:
             return self.chatEligibleKey

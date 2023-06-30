@@ -1,11 +1,14 @@
 from toontown.makeatoon import ClothesGUI
 from . import ToonDNA
 
+
 class TailorClothesGUI(ClothesGUI.ClothesGUI):
-    notify = directNotify.newCategory('MakeClothesGUI')
+    notify = directNotify.newCategory("MakeClothesGUI")
 
     def __init__(self, doneEvent, swapEvent, tailorId):
-        ClothesGUI.ClothesGUI.__init__(self, ClothesGUI.CLOTHES_TAILOR, doneEvent, swapEvent)
+        ClothesGUI.ClothesGUI.__init__(
+            self, ClothesGUI.CLOTHES_TAILOR, doneEvent, swapEvent
+        )
         self.tailorId = tailorId
 
     def setupScrollInterface(self):

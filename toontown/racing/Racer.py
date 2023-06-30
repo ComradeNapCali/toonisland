@@ -3,7 +3,7 @@ from direct.distributed.ClockDelta import globalClockDelta
 
 
 class Racer:
-    notify = DirectNotifyGlobal.directNotify.newCategory('Racer')
+    notify = DirectNotifyGlobal.directNotify.newCategory("Racer")
 
     def __init__(self, race, air, avId, zoneId):
         self.race = race

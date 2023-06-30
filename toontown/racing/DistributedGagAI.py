@@ -4,7 +4,7 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class DistributedGagAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedGagAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedGagAI")
 
     def __init__(self, air, avId, race, todo1, x, y, z, type):
         DistributedObjectAI.__init__(self, air)

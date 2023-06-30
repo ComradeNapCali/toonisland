@@ -4,8 +4,7 @@ from . import LoginTTAccount
 
 
 class LoginWebPlayTokenAccount(LoginTTAccount.LoginTTAccount):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        'LoginWebPlayTokenAccount')
+    notify = DirectNotifyGlobal.directNotify.newCategory("LoginWebPlayTokenAccount")
 
     def supportsRelogin(self):
         return 0
@@ -41,9 +40,9 @@ class LoginWebPlayTokenAccount(LoginTTAccount.LoginTTAccount):
         pass
 
     def getErrorCode(self):
-        if 'response' not in self:
+        if "response" not in self:
             return 0
-        return self.response.getInt('errorCode', 0)
+        return self.response.getInt("errorCode", 0)
 
     def needToSetParentPassword(self):
         return 0

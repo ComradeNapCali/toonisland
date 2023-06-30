@@ -32,13 +32,15 @@ def xnorTest(self, a, b):
 
 
 class LogicGate(Entity.Entity, DirectObject.DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('LogicGate')
-    logicTests = {'and': andTest,
-                  'or': orTest,
-                  'xor': xorTest,
-                  'nand': nandTest,
-                  'nor': norTest,
-                  'xnor': xnorTest}
+    notify = DirectNotifyGlobal.directNotify.newCategory("LogicGate")
+    logicTests = {
+        "and": andTest,
+        "or": orTest,
+        "xor": xorTest,
+        "nand": nandTest,
+        "nor": norTest,
+        "xnor": xnorTest,
+    }
 
     def __init__(self, level, entId):
         self.input1Event = None
@@ -89,4 +91,4 @@ class LogicGate(Entity.Entity, DirectObject.DirectObject):
             self.accept(self.input2Event, self.setIsInput2)
 
     def getName(self):
-        return 'switch-%s' % (self.entId,)
+        return "switch-%s" % (self.entId,)

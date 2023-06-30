@@ -10,16 +10,15 @@ from toontown.cogdominium.DistCogdoCraneCogAI import DistCogdoCraneCogAI
 from toontown.suit.SuitDNA import SuitDNA
 import random
 
+
 class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):
-    notify = directNotify.newCategory('DistCogdoCraneGameAI')
+    notify = directNotify.newCategory("DistCogdoCraneGameAI")
 
     def __init__(self, air, interior):
-        NodePath.__init__(self, uniqueName('CraneGameAI'))
+        NodePath.__init__(self, uniqueName("CraneGameAI"))
         DistCogdoLevelGameAI.__init__(self, air, interior)
-        self._cranes = [
-            None] * CogdoGameConsts.MaxPlayers
-        self._moneyBags = [
-            None] * 8
+        self._cranes = [None] * CogdoGameConsts.MaxPlayers
+        self._moneyBags = [None] * 8
 
     def delete(self):
         DistCogdoLevelGameAI.delete(self)
@@ -27,8 +26,8 @@ class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):
 
     def enterLoaded(self):
         DistCogdoLevelGameAI.enterLoaded(self)
-        self.scene = NodePath('scene')
-        cn = CollisionNode('walls')
+        self.scene = NodePath("scene")
+        cn = CollisionNode("walls")
         cs = CollisionSphere(0, 0, 0, 13)
         cn.addSolid(cs)
         cs = CollisionInvSphere(0, 0, 0, 42)
@@ -60,20 +59,30 @@ class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):
     def enterGame(self):
         DistCogdoLevelGameAI.enterGame(self)
         for i in range(self.getNumPlayers()):
-            self._cranes[i].request('Controlled', self.getToonIds()[i])
+            self._cranes[i].request("Controlled", self.getToonIds()[i])
 
         for i in range(len(self._moneyBags)):
             if self._moneyBags[i]:
-                self._moneyBags[i].request('Initial')
+                self._moneyBags[i].request("Initial")
 
-        self._cog = DistCogdoCraneCogAI(self.air, self, self.getDroneCogDNA(), random.randrange(4), globalClock.getFrameTime())
+        self._cog = DistCogdoCraneCogAI(
+            self.air,
+            self,
+            self.getDroneCogDNA(),
+            random.randrange(4),
+            globalClock.getFrameTime(),
+        )
         self._cog.generateWithRequired(self.zoneId)
         self._scheduleGameDone()
 
     def _scheduleGameDone(self):
-        timeLeft = GameConsts.Settings.GameDuration.get() - (globalClock.getRealTime() - self.getStartTime())
+        timeLeft = GameConsts.Settings.GameDuration.get() - (
+            globalClock.getRealTime() - self.getStartTime()
+        )
         if timeLeft > 0:
-            self._gameDoneEvent = taskMgr.doMethodLater(timeLeft, self._gameDoneDL, self.uniqueName('boardroomGameDone'))
+            self._gameDoneEvent = taskMgr.doMethodLater(
+                timeLeft, self._gameDoneDL, self.uniqueName("boardroomGameDone")
+            )
         else:
             self._gameDoneDL()
 
@@ -83,13 +92,15 @@ class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):
         taskMgr.remove(self._gameDoneEvent)
         self._gameDoneEvent = None
 
-    def _gameDoneDL(self, task = None):
+    def _gameDoneDL(self, task=None):
         self._handleGameFinished()
         return task.done
 
     def enterFinish(self):
         DistCogdoLevelGameAI.enterFinish(self)
-        self._finishDoneEvent = taskMgr.doMethodLater(10.0, self._finishDoneDL, self.uniqueName('boardroomFinishDone'))
+        self._finishDoneEvent = taskMgr.doMethodLater(
+            10.0, self._finishDoneDL, self.uniqueName("boardroomFinishDone")
+        )
 
     def exitFinish(self):
         taskMgr.remove(self._finishDoneEvent)
@@ -102,6 +113,6 @@ class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):
     if __dev__:
 
         def _handleGameDurationChanged(self, gameDuration):
-            if hasattr(self, '_gameDoneEvent') and self._gameDoneEvent != None:
+            if hasattr(self, "_gameDoneEvent") and self._gameDoneEvent != None:
                 taskMgr.remove(self._gameDoneEvent)
                 self._scheduleGameDone()

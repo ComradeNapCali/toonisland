@@ -11,19 +11,20 @@ from direct.interval.IntervalGlobal import Sequence, Parallel, Func, Wait
 from direct.task import Task
 import random
 
+
 class ToontownLoadingBlocker(TTDialog.TTDialog):
-    notify = DirectNotifyGlobal.directNotify.newCategory('ToontownLoadingBlocker')
+    notify = DirectNotifyGlobal.directNotify.newCategory("ToontownLoadingBlocker")
 
     def __init__(self, avList):
         if not self.__shouldShowBlocker(avList):
             return
         else:
             TTDialog.TTDialog.__init__(self)
-            gui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')
+            gui = loader.loadModel("phase_3/models/gui/tt_m_gui_pat_mainGui")
             img = None
-            self['image'] = img
-            self['image_scale'] = (1, 0, 1)
-            self['image_pos'] = (0, 0, -0.4)
+            self["image"] = img
+            self["image_scale"] = (1, 0, 1)
+            self["image_pos"] = (0, 0, -0.4)
             gui.removeNode()
             self.loadingTextChangeTimer = 10.0
             self.loadingTextTimerVariant = 3.0
@@ -36,16 +37,16 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             self.__createToonTip()
             self.__createLoadingText()
             self.__showBlocker()
-            self.accept('phaseComplete-4', self.__shrinkLoadingBar)
-            self.accept('launcherPercentPhaseComplete', self.__update)
+            self.accept("phaseComplete-4", self.__shrinkLoadingBar)
+            self.accept("launcherPercentPhaseComplete", self.__update)
             return
 
     def destroy(self):
-        taskMgr.remove('changeLoadingTextTask')
-        taskMgr.remove('canChangeLoadingTextTask')
-        taskMgr.remove('changeToonTipTask')
-        self.ignore('phaseComplete-4')
-        self.ignore('launcherPercentPhaseComplete')
+        taskMgr.remove("changeLoadingTextTask")
+        taskMgr.remove("canChangeLoadingTextTask")
+        taskMgr.remove("changeToonTipTask")
+        self.ignore("phaseComplete-4")
+        self.ignore("launcherPercentPhaseComplete")
         self.__cleanupHideBlockerIval()
         self.title.destroy()
         self.title = None
@@ -70,8 +71,25 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             base.downloadWatcher.text.hide()
 
     def __setupLoadingBar(self):
-        self.bar = DirectWaitBar(parent=self, guiId='DownloadBlockerBar', pos=(0, 0, -0.3138), relief=DGG.SUNKEN, frameSize=(-0.6, 0.6, -0.1, 0.1), borderWidth=(0.02, 0.02), scale=(0.8, 0.8, 0.5), range=100, sortOrder=5000, frameColor=(0.5, 0.5, 0.5, 0.5), barColor=(0.2, 0.7, 0.2, 0.5), text='0%', text_scale=(0.08, 0.128), text_fg=(1, 1, 1, 1), text_align=TextNode.ACenter, text_pos=(0, -0.035))
-        self.bar.setBin('gui-popup', 1)
+        self.bar = DirectWaitBar(
+            parent=self,
+            guiId="DownloadBlockerBar",
+            pos=(0, 0, -0.3138),
+            relief=DGG.SUNKEN,
+            frameSize=(-0.6, 0.6, -0.1, 0.1),
+            borderWidth=(0.02, 0.02),
+            scale=(0.8, 0.8, 0.5),
+            range=100,
+            sortOrder=5000,
+            frameColor=(0.5, 0.5, 0.5, 0.5),
+            barColor=(0.2, 0.7, 0.2, 0.5),
+            text="0%",
+            text_scale=(0.08, 0.128),
+            text_fg=(1, 1, 1, 1),
+            text_align=TextNode.ACenter,
+            text_pos=(0, -0.035),
+        )
+        self.bar.setBin("gui-popup", 1)
         if self.__isValidDownloadBar():
             base.downloadWatcher.bar.hide()
 
@@ -81,24 +99,50 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             base.downloadWatcher.bar.show()
 
     def __isValidDownloadBar(self):
-        if hasattr(base, 'downloadWatcher') and base.downloadWatcher:
-            if hasattr(base.downloadWatcher, 'bar') and base.downloadWatcher.bar:
+        if hasattr(base, "downloadWatcher") and base.downloadWatcher:
+            if hasattr(base.downloadWatcher, "bar") and base.downloadWatcher.bar:
                 return True
         return False
 
     def __createTitleText(self):
-        self.title = DirectLabel(parent=self, relief=None, guiId='BlockerTitle', pos=(0, 0, 0.38), text=TTLocalizer.BlockerTitle, text_font=ToontownGlobals.getSignFont(), text_fg=(1, 0.9, 0.1, 1), text_align=TextNode.ACenter, text_scale=0.1, textMayChange=1, sortOrder=50)
+        self.title = DirectLabel(
+            parent=self,
+            relief=None,
+            guiId="BlockerTitle",
+            pos=(0, 0, 0.38),
+            text=TTLocalizer.BlockerTitle,
+            text_font=ToontownGlobals.getSignFont(),
+            text_fg=(1, 0.9, 0.1, 1),
+            text_align=TextNode.ACenter,
+            text_scale=0.1,
+            textMayChange=1,
+            sortOrder=50,
+        )
         return
 
     def __createLoadingText(self):
-        self.loadingText = DirectLabel(parent=self, relief=None, guiId='BlockerLoadingText', pos=(0, 0, -0.2357), text='', text_fg=(1, 1, 1, 1), text_scale=0.055, textMayChange=1, text_align=TextNode.ACenter, sortOrder=50)
+        self.loadingText = DirectLabel(
+            parent=self,
+            relief=None,
+            guiId="BlockerLoadingText",
+            pos=(0, 0, -0.2357),
+            text="",
+            text_fg=(1, 1, 1, 1),
+            text_scale=0.055,
+            textMayChange=1,
+            text_align=TextNode.ACenter,
+            sortOrder=50,
+        )
         self.loadingTextList = TTLocalizer.BlockerLoadingTexts
         self.__changeLoadingText()
-        taskMgr.doMethodLater(self.loadingTextChangeTimer, self.__changeLoadingTextTask, 'changeLoadingTextTask')
+        taskMgr.doMethodLater(
+            self.loadingTextChangeTimer,
+            self.__changeLoadingTextTask,
+            "changeLoadingTextTask",
+        )
         return
 
     def __changeLoadingText(self):
-
         def getLoadingText():
             listLen = len(self.loadingTextList)
             if listLen > 0:
@@ -108,13 +152,19 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             self.loadingTextList = TTLocalizer.BlockerLoadingTexts
 
         if self.canChangeLoadingText:
-            self.loadingText['text'] = getLoadingText()
+            self.loadingText["text"] = getLoadingText()
             self.canChangeLoadingText = False
-            taskMgr.doMethodLater(self.loadingTextFreezeTime, self.__canChangeLoadingTextTask, 'canChangeLoadingTextTask')
+            taskMgr.doMethodLater(
+                self.loadingTextFreezeTime,
+                self.__canChangeLoadingTextTask,
+                "canChangeLoadingTextTask",
+            )
 
     def __changeLoadingTextTask(self, task):
         self.__changeLoadingText()
-        randVariation = random.uniform(-self.loadingTextTimerVariant, self.loadingTextTimerVariant)
+        randVariation = random.uniform(
+            -self.loadingTextTimerVariant, self.loadingTextTimerVariant
+        )
         task.delayTime = self.loadingTextChangeTimer + randVariation
         return task.again
 
@@ -123,24 +173,40 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
         return task.done
 
     def __createToonTip(self):
-        self.toonTipText = DirectLabel(parent=self, relief=None, guiId='BlockerToonTip', pos=(0, 0, -0.4688), text='', text_fg=(1, 1, 1, 1), text_scale=0.05, textMayChange=1, text_align=TextNode.ACenter, text_wordwrap=32, sortOrder=50)
+        self.toonTipText = DirectLabel(
+            parent=self,
+            relief=None,
+            guiId="BlockerToonTip",
+            pos=(0, 0, -0.4688),
+            text="",
+            text_fg=(1, 1, 1, 1),
+            text_scale=0.05,
+            textMayChange=1,
+            text_align=TextNode.ACenter,
+            text_wordwrap=32,
+            sortOrder=50,
+        )
         self.__changeToonTip()
-        taskMgr.doMethodLater(self.toonTipChangeTimer, self.__changeToonTipTask, 'changeToonTipTask')
+        taskMgr.doMethodLater(
+            self.toonTipChangeTimer, self.__changeToonTipTask, "changeToonTipTask"
+        )
         return
 
     def __changeToonTip(self):
-
         def getTip(tipCategory):
-            return TTLocalizer.TipTitle + '\n' + random.choice(TTLocalizer.TipDict.get(tipCategory))
+            return (
+                TTLocalizer.TipTitle
+                + "\n"
+                + random.choice(TTLocalizer.TipDict.get(tipCategory))
+            )
 
-        self.toonTipText['text'] = getTip(TTLocalizer.TIP_GENERAL)
+        self.toonTipText["text"] = getTip(TTLocalizer.TIP_GENERAL)
 
     def __changeToonTipTask(self, task):
         self.__changeToonTip()
         return task.again
 
     def __shouldShowBlocker(self, avList):
-
         def hasPlayableToon(avList):
             if len(avList) > 0:
                 if base.cr.isPaid():
@@ -161,15 +227,31 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
             barScaleIval = LerpScaleInterval(self.bar, ivalDuration, (0.25, 0.25, 0.25))
 
             def posText(pos):
-                self.bar['text_pos'] = (0, pos)
+                self.bar["text_pos"] = (0, pos)
 
             def scaleText(scale):
-                self.bar['text_scale'] = (scale, scale)
+                self.bar["text_scale"] = (scale, scale)
 
-            textScaleIval = LerpFunc(scaleText, fromData=0.08, toData=0.16, duration=ivalDuration)
-            textPosIval = LerpFunc(posText, fromData=-0.035, toData=-0.05, duration=ivalDuration)
-            shrinkIval = Parallel(barPosIval, barScaleIval, textPosIval, textScaleIval, Func(self.loadingText.hide))
-            self.hideBlockerIval = Sequence(shrinkIval, Wait(0.5), Func(self.__hideBlocker), Func(self.__resetLoadingBar), Func(self.destroy))
+            textScaleIval = LerpFunc(
+                scaleText, fromData=0.08, toData=0.16, duration=ivalDuration
+            )
+            textPosIval = LerpFunc(
+                posText, fromData=-0.035, toData=-0.05, duration=ivalDuration
+            )
+            shrinkIval = Parallel(
+                barPosIval,
+                barScaleIval,
+                textPosIval,
+                textScaleIval,
+                Func(self.loadingText.hide),
+            )
+            self.hideBlockerIval = Sequence(
+                shrinkIval,
+                Wait(0.5),
+                Func(self.__hideBlocker),
+                Func(self.__resetLoadingBar),
+                Func(self.destroy),
+            )
             self.hideBlockerIval.start()
 
     def __cleanupHideBlockerIval(self):
@@ -180,8 +262,8 @@ class ToontownLoadingBlocker(TTDialog.TTDialog):
 
     def __update(self, phase, percent, reqByteRate, actualByteRate):
         if self.__isValidDownloadBar():
-            percent = base.downloadWatcher.bar['value']
-            self.bar['text'] = '%s %%' % percent
-            self.bar['value'] = percent
+            percent = base.downloadWatcher.bar["value"]
+            self.bar["text"] = "%s %%" % percent
+            self.bar["value"] = percent
         if percent == 0:
             self.__changeLoadingText()

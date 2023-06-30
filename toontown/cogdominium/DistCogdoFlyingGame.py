@@ -5,13 +5,14 @@ from .DistCogdoGame import DistCogdoGame
 from . import CogdoFlyingGameGlobals
 from . import CogdoFlyingGameGlobals as Globals
 
+
 class DistCogdoFlyingGame(DistCogdoGame):
-    notify = directNotify.newCategory('DistCogdoFlyingGame')
+    notify = directNotify.newCategory("DistCogdoFlyingGame")
 
     def __init__(self, cr):
         DistCogdoGame.__init__(self, cr)
-        if __debug__ and base.config.GetBool('schellgames-dev', True):
-            self.accept('onCodeReload', self.__sgOnCodeReload)
+        if __debug__ and base.config.GetBool("schellgames-dev", True):
+            self.accept("onCodeReload", self.__sgOnCodeReload)
         self.game = CogdoFlyingGame(self)
 
     def delete(self):
@@ -28,7 +29,7 @@ class DistCogdoFlyingGame(DistCogdoGame):
         self.game.placeEntranceElevator(elev)
 
     def d_sendRequestAction(self, action, data):
-        self.sendUpdate('requestAction', [action, data])
+        self.sendUpdate("requestAction", [action, data])
 
     def doAction(self, action, data):
         messenger.send(self.getRemoteActionEventName(), [action, data])
@@ -77,7 +78,7 @@ class DistCogdoFlyingGame(DistCogdoGame):
         self.game.pickUp(toonId, pickupNum, elapsedTime)
 
     def d_sendRequestPickup(self, pickupNum, pickupType):
-        self.sendUpdate('requestPickUp', [pickupNum, pickupType])
+        self.sendUpdate("requestPickUp", [pickupNum, pickupType])
 
     def toonSetBlades(self, toonId, fuelState):
         if toonId != base.localAvatar.doId:
@@ -107,12 +108,12 @@ class DistCogdoFlyingGame(DistCogdoGame):
         DistCogdoGame.setToonDisconnect(self, toonId)
 
     def __handleUnexpectedExit(self, toonId):
-        self.notify.warning('%s: unexpected exit for %s' % (self.doId, toonId))
+        self.notify.warning("%s: unexpected exit for %s" % (self.doId, toonId))
         self.game.removePlayer(toonId)
 
     def enterLoaded(self):
         DistCogdoGame.enterLoaded(self)
-        self._remoteActionEventName = self.uniqueName('doAction')
+        self._remoteActionEventName = self.uniqueName("doAction")
         self.game.load()
         self.game.initPlayers()
 

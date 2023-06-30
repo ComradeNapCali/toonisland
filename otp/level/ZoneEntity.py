@@ -3,17 +3,16 @@ from . import BasicEntities
 
 
 class ZoneEntity(ZoneEntityBase.ZoneEntityBase, BasicEntities.NodePathAttribs):
-
     def __init__(self, level, entId):
         ZoneEntityBase.ZoneEntityBase.__init__(self, level, entId)
         self.nodePath = self.level.getZoneNode(self.entId)
         if self.nodePath is None:
             if __dev__:
                 self.level.reportModelSpecSyncError(
-                    'unknown zoneNum %s; zone was removed from model?' % self.entId)
+                    "unknown zoneNum %s; zone was removed from model?" % self.entId
+                )
             else:
-                self.notify.error(
-                    'zone %s not found in level model' % self.entId)
+                self.notify.error("zone %s not found in level model" % self.entId)
         BasicEntities.NodePathAttribs.initNodePathAttribs(self, doReparent=0)
         self.visibleZoneNums = {}
         self.incrementRefCounts(self.visibility)

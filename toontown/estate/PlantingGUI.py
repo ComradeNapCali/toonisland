@@ -7,6 +7,7 @@ from direct.task import Task
 from toontown.estate import GardenGlobals
 from direct.interval.IntervalGlobal import *
 from toontown.estate import SpecialsPhoto
+
 USE_SCROLLING_BEAN_BOX = False
 JELLY_BEAN_PICKER_HAS_EMPTY_BOX = False
 CAN_CHANGE_BEAN_COLOR = True
@@ -15,41 +16,57 @@ ONLY_ONE_SPIFFY_BOX_CAN_BE_CLICKED = True
 DO_PICKER_INTERVAL = False
 PICKER_ALWAYS_UP = True
 
+
 def loadJellyBean(parent, beanIndex):
-    gui = loader.loadModel('phase_5.5/models/estate/jellyBean')
+    gui = loader.loadModel("phase_5.5/models/estate/jellyBean")
     newBean = gui.instanceTo(parent)
     parent.setScale(0.09)
     colors = GardenGlobals.BeanColors[beanIndex]
-    parent.setColorScale(colors[0] / 255.0 * 1.0, colors[1] / 255.0 * 1.0, colors[2] / 255.0 * 1.0, 1)
+    parent.setColorScale(
+        colors[0] / 255.0 * 1.0, colors[1] / 255.0 * 1.0, colors[2] / 255.0 * 1.0, 1
+    )
 
 
 class GenericBoxScrollList(DirectScrolledList):
-
     def __init__(self, parent, items, **kw):
-        gui = loader.loadModel('phase_3.5/models/gui/friendslist_gui')
+        gui = loader.loadModel("phase_3.5/models/gui/friendslist_gui")
         self.forceHeight = 1
-        optiondefs = (('parent', parent, None),
-         ('relief', None, None),
-         ('incButton_image', (gui.find('**/FndsLst_ScrollUp'),
-           gui.find('**/FndsLst_ScrollDN'),
-           gui.find('**/FndsLst_ScrollUp_Rllvr'),
-           gui.find('**/FndsLst_ScrollUp')), None),
-         ('incButton_relief', None, None),
-         ('incButton_scale', (1.3, 1.3, -1.3), None),
-         ('incButton_pos', (0, 0, -0.525), None),
-         ('incButton_image3_color', Vec4(0.8, 0.8, 0.8, 0.5), None),
-         ('decButton_image', (gui.find('**/FndsLst_ScrollUp'),
-           gui.find('**/FndsLst_ScrollDN'),
-           gui.find('**/FndsLst_ScrollUp_Rllvr'),
-           gui.find('**/FndsLst_ScrollUp')), None),
-         ('decButton_relief', None, None),
-         ('decButton_scale', (1.3, 1.3, 1.3), None),
-         ('decButton_pos', (0, 0, 0.525), None),
-         ('decButton_image3_color', Vec4(0.8, 0.8, 0.8, 0.5), None),
-         ('numItemsVisible', 1, None),
-         ('items', items, None),
-         ('scrollSpeed', 1.0, None),
-         ('forceHeight', 1, None))
+        optiondefs = (
+            ("parent", parent, None),
+            ("relief", None, None),
+            (
+                "incButton_image",
+                (
+                    gui.find("**/FndsLst_ScrollUp"),
+                    gui.find("**/FndsLst_ScrollDN"),
+                    gui.find("**/FndsLst_ScrollUp_Rllvr"),
+                    gui.find("**/FndsLst_ScrollUp"),
+                ),
+                None,
+            ),
+            ("incButton_relief", None, None),
+            ("incButton_scale", (1.3, 1.3, -1.3), None),
+            ("incButton_pos", (0, 0, -0.525), None),
+            ("incButton_image3_color", Vec4(0.8, 0.8, 0.8, 0.5), None),
+            (
+                "decButton_image",
+                (
+                    gui.find("**/FndsLst_ScrollUp"),
+                    gui.find("**/FndsLst_ScrollDN"),
+                    gui.find("**/FndsLst_ScrollUp_Rllvr"),
+                    gui.find("**/FndsLst_ScrollUp"),
+                ),
+                None,
+            ),
+            ("decButton_relief", None, None),
+            ("decButton_scale", (1.3, 1.3, 1.3), None),
+            ("decButton_pos", (0, 0, 0.525), None),
+            ("decButton_image3_color", Vec4(0.8, 0.8, 0.8, 0.5), None),
+            ("numItemsVisible", 1, None),
+            ("items", items, None),
+            ("scrollSpeed", 1.0, None),
+            ("forceHeight", 1, None),
+        )
         gui.removeNode()
         self.defineoptions(kw, optiondefs)
         DirectScrolledList.__init__(self, parent, forceHeight=self.forceHeight)
@@ -58,7 +75,6 @@ class GenericBoxScrollList(DirectScrolledList):
 
 
 class BoxItem(NodePath):
-
     def getHeight(self):
         return 0.05
 
@@ -69,17 +85,32 @@ if JELLY_BEAN_PICKER_HAS_EMPTY_BOX:
     JellyBeanPickerGeomScale = (1.0, 1.0, 1.0)
 else:
     JellyBeanPickerGeomScale = (0.9, 1.0, 1.0)
-JellyBeanPickerScaleInverse = (1.0 / JellyBeanPickerScale[0], 1.0 / JellyBeanPickerScale[1], 1.0 / JellyBeanPickerScale[2])
+JellyBeanPickerScaleInverse = (
+    1.0 / JellyBeanPickerScale[0],
+    1.0 / JellyBeanPickerScale[1],
+    1.0 / JellyBeanPickerScale[2],
+)
+
 
 class JellyBeanPicker(DirectFrame):
-    notify = DirectNotifyGlobal.directNotify.newCategory('PlantingGUI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("PlantingGUI")
 
     def __init__(self, parent, callBack, boxPosition, **kw):
         self.index = 0
         self.selectedIndex = 0
         self.callBack = callBack
         self.boxPosition = boxPosition
-        DirectFrame.__init__(self, relief=None, state='normal', geom=DGG.getDefaultDialogGeom(), geom_color=(0.8, 0.8, 0.8, 1.0), geom_scale=JellyBeanPickerGeomScale, scale=JellyBeanPickerScale, frameSize=(-1, 1, -1, 1), pos=(0, 0, 0))
+        DirectFrame.__init__(
+            self,
+            relief=None,
+            state="normal",
+            geom=DGG.getDefaultDialogGeom(),
+            geom_color=(0.8, 0.8, 0.8, 1.0),
+            geom_scale=JellyBeanPickerGeomScale,
+            scale=JellyBeanPickerScale,
+            frameSize=(-1, 1, -1, 1),
+            pos=(0, 0, 0),
+        )
         self.initialiseoptions(JellyBeanPicker)
         self.jellyBeanBoxList = []
         self.createJellyBeanBoxes()
@@ -95,13 +126,31 @@ class JellyBeanPicker(DirectFrame):
         geomColor = (1, 1, 1, 1)
         state = DGG.NORMAL
         command = self.jellyBeanBoxClicked
-        newBox = DirectButton(parent=self, pos=(xPos, 0, zPos), geom=DGG.getDefaultDialogGeom(), geom_scale=(0.1, 1.0, 0.1), geom_color=geomColor, scale=JellyBeanPickerScaleInverse, relief=None, state=state, command=command, extraArgs=[beanIndex], text='', text_pos=(0.0, 0.1), text_scale=0.07, text_fg=Vec4(0, 0, 0, 0), text1_fg=Vec4(0, 0, 0, 0), text2_fg=Vec4(0, 0, 0, 1), text3_fg=Vec4(0, 0, 0, 0))
+        newBox = DirectButton(
+            parent=self,
+            pos=(xPos, 0, zPos),
+            geom=DGG.getDefaultDialogGeom(),
+            geom_scale=(0.1, 1.0, 0.1),
+            geom_color=geomColor,
+            scale=JellyBeanPickerScaleInverse,
+            relief=None,
+            state=state,
+            command=command,
+            extraArgs=[beanIndex],
+            text="",
+            text_pos=(0.0, 0.1),
+            text_scale=0.07,
+            text_fg=Vec4(0, 0, 0, 0),
+            text1_fg=Vec4(0, 0, 0, 0),
+            text2_fg=Vec4(0, 0, 0, 1),
+            text3_fg=Vec4(0, 0, 0, 0),
+        )
         if JELLY_BEAN_PICKER_HAS_EMPTY_BOX:
             if beanIndex:
-                beanParent = newBox.attachNewNode('bean_%d' % (beanIndex - 1))
+                beanParent = newBox.attachNewNode("bean_%d" % (beanIndex - 1))
                 loadJellyBean(beanParent, beanIndex - 1)
         else:
-            beanParent = newBox.attachNewNode('bean_%d' % beanIndex)
+            beanParent = newBox.attachNewNode("bean_%d" % beanIndex)
             loadJellyBean(beanParent, beanIndex)
         self.jellyBeanBoxList.append(newBox)
         return
@@ -111,10 +160,10 @@ class JellyBeanPicker(DirectFrame):
             if JELLY_BEAN_PICKER_HAS_EMPTY_BOX:
                 if beanIndex:
                     box = self.jellyBeanBoxList[beanIndex]
-                    box['text'] = TTLocalizer.BeanColorWords[beanIndex - 1]
+                    box["text"] = TTLocalizer.BeanColorWords[beanIndex - 1]
             else:
                 box = self.jellyBeanBoxList[beanIndex]
-                box['text'] = TTLocalizer.BeanColorWords[beanIndex]
+                box["text"] = TTLocalizer.BeanColorWords[beanIndex]
 
     def createJellyBeanBoxes(self):
         zCoord = 0
@@ -130,7 +179,6 @@ class JellyBeanPicker(DirectFrame):
 
 
 class SpiffyBeanBox(DirectButton):
-
     def __init__(self, parent, index, **kw):
         self.boxIndex = index
         self.selectedIndex = 0
@@ -138,42 +186,94 @@ class SpiffyBeanBox(DirectButton):
         self.defineoptions(kw, optiondefs)
         DirectButton.__init__(self, parent=parent)
         self.initialiseoptions(SpiffyBeanBox)
-        self.selectedBean = self.attachNewNode('selectedBean')
+        self.selectedBean = self.attachNewNode("selectedBean")
 
     def getSelectedIndex(self):
-        if hasattr(self, 'selectedIndex'):
+        if hasattr(self, "selectedIndex"):
             return self.selectedIndex
         return 0
 
     def setSelectedIndex(self, newIndex):
         self.selectedIndex = newIndex
         self.selectedBean.removeNode()
-        self.selectedBean = self.attachNewNode('selectedBean')
+        self.selectedBean = self.attachNewNode("selectedBean")
         if newIndex:
             newIndex -= 1
             loadJellyBean(self.selectedBean, newIndex)
 
 
 class PlantingGUI(DirectFrame):
-    notify = DirectNotifyGlobal.directNotify.newCategory('PlantingGUI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("PlantingGUI")
 
-    def __init__(self, doneEvent, specialBoxActive = False):
+    def __init__(self, doneEvent, specialBoxActive=False):
         if specialBoxActive:
             instructions = TTLocalizer.GardeningChooseBeansItem
             instructionsPos = (0, 0.4)
         else:
             instructions = TTLocalizer.GardeningChooseBeans
             instructionsPos = (0, 0.35)
-        DirectFrame.__init__(self, relief=None, state='normal', geom=DGG.getDefaultDialogGeom(), geom_color=ToontownGlobals.GlobalDialogColor, geom_scale=(1.5, 1.0, 1.0), frameSize=(-1, 1, -1, 1), pos=(0, 0, 0), text=instructions, text_wordwrap=20, text_scale=0.08, text_pos=instructionsPos)
+        DirectFrame.__init__(
+            self,
+            relief=None,
+            state="normal",
+            geom=DGG.getDefaultDialogGeom(),
+            geom_color=ToontownGlobals.GlobalDialogColor,
+            geom_scale=(1.5, 1.0, 1.0),
+            frameSize=(-1, 1, -1, 1),
+            pos=(0, 0, 0),
+            text=instructions,
+            text_wordwrap=20,
+            text_scale=0.08,
+            text_pos=instructionsPos,
+        )
         self.initialiseoptions(PlantingGUI)
         self.doneEvent = doneEvent
-        buttons = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
-        okImageList = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
-        cancelImageList = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
-        resetImageList = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
-        self.cancelButton = DirectButton(parent=self, relief=None, image=cancelImageList, pos=(-0.3, 0, -0.35), text=TTLocalizer.PlantingGuiCancel, text_scale=0.06, text_pos=(0, -0.1), command=self.__cancel)
-        self.okButton = DirectButton(parent=self, relief=None, image=okImageList, pos=(0.3, 0, -0.35), text=TTLocalizer.PlantingGuiOk, text_scale=0.06, text_pos=(0, -0.1), command=self.__doPlant)
-        self.resetButton = DirectButton(parent=self, relief=None, image=resetImageList, pos=(0.0, 0, -0.35), text=TTLocalizer.PlantingGuiReset, text_scale=0.06, text_pos=(0, -0.1), command=self.__reset)
+        buttons = loader.loadModel("phase_3/models/gui/dialog_box_buttons_gui")
+        okImageList = (
+            buttons.find("**/ChtBx_OKBtn_UP"),
+            buttons.find("**/ChtBx_OKBtn_DN"),
+            buttons.find("**/ChtBx_OKBtn_Rllvr"),
+        )
+        cancelImageList = (
+            buttons.find("**/CloseBtn_UP"),
+            buttons.find("**/CloseBtn_DN"),
+            buttons.find("**/CloseBtn_Rllvr"),
+        )
+        resetImageList = (
+            buttons.find("**/CloseBtn_UP"),
+            buttons.find("**/CloseBtn_DN"),
+            buttons.find("**/CloseBtn_Rllvr"),
+        )
+        self.cancelButton = DirectButton(
+            parent=self,
+            relief=None,
+            image=cancelImageList,
+            pos=(-0.3, 0, -0.35),
+            text=TTLocalizer.PlantingGuiCancel,
+            text_scale=0.06,
+            text_pos=(0, -0.1),
+            command=self.__cancel,
+        )
+        self.okButton = DirectButton(
+            parent=self,
+            relief=None,
+            image=okImageList,
+            pos=(0.3, 0, -0.35),
+            text=TTLocalizer.PlantingGuiOk,
+            text_scale=0.06,
+            text_pos=(0, -0.1),
+            command=self.__doPlant,
+        )
+        self.resetButton = DirectButton(
+            parent=self,
+            relief=None,
+            image=resetImageList,
+            pos=(0.0, 0, -0.35),
+            text=TTLocalizer.PlantingGuiReset,
+            text_scale=0.06,
+            text_pos=(0, -0.1),
+            command=self.__reset,
+        )
         buttons.removeNode()
         self.availableBoxes = base.localAvatar.getBoxCapability()
         self.maxBoxes = GardenGlobals.getNumberOfShovelBoxes()
@@ -184,8 +284,21 @@ class PlantingGUI(DirectFrame):
         self.jellyBeanPicker = None
         self.jellyBeanPickerInterval = None
         self.createBoxes()
-        guiItems = loader.loadModel('phase_5.5/models/gui/catalog_gui')
-        self.beanBank = DirectLabel(self, relief=None, image=guiItems.find('**/bean_bank'), text=str(base.localAvatar.getMoney() + base.localAvatar.getBankMoney()), text_align=TextNode.ARight, text_scale=0.11, text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1), text_pos=(0.75, -0.81), text_font=ToontownGlobals.getSignFont(), pos=(-0.85, 0, 0.2), scale=0.5)
+        guiItems = loader.loadModel("phase_5.5/models/gui/catalog_gui")
+        self.beanBank = DirectLabel(
+            self,
+            relief=None,
+            image=guiItems.find("**/bean_bank"),
+            text=str(base.localAvatar.getMoney() + base.localAvatar.getBankMoney()),
+            text_align=TextNode.ARight,
+            text_scale=0.11,
+            text_fg=(0.95, 0.95, 0, 1),
+            text_shadow=(0, 0, 0, 1),
+            text_pos=(0.75, -0.81),
+            text_font=ToontownGlobals.getSignFont(),
+            pos=(-0.85, 0, 0.2),
+            scale=0.5,
+        )
         self.matchBoxesToAvailableMoney()
         if PICKER_ALWAYS_UP:
             self.spiffyBeanBoxClicked(0)
@@ -205,7 +318,7 @@ class PlantingGUI(DirectFrame):
         if self.jellyBeanPicker:
             self.jellyBeanPicker.destroy()
         self.jellyBeanPicker = None
-        if hasattr(self, 'specialPhotoList') and self.specialPhotoList:
+        if hasattr(self, "specialPhotoList") and self.specialPhotoList:
             for photo in self.specialPhotoList:
                 photo.destroy()
 
@@ -213,8 +326,8 @@ class PlantingGUI(DirectFrame):
         return
 
     def __cancel(self):
-        messenger.send(self.doneEvent, [0, '', -1])
-        messenger.send('wakeup')
+        messenger.send(self.doneEvent, [0, "", -1])
+        messenger.send("wakeup")
 
     def __reset(self):
         if self.jellyBeanPicker:
@@ -222,14 +335,16 @@ class PlantingGUI(DirectFrame):
         for box in self.boxList:
             box.setSelectedIndex(0)
 
-        self.beanBank['text'] = str(base.localAvatar.getMoney() + base.localAvatar.getBankMoney())
+        self.beanBank["text"] = str(
+            base.localAvatar.getMoney() + base.localAvatar.getBankMoney()
+        )
         self.matchBoxesToAvailableMoney()
         if PICKER_ALWAYS_UP:
             self.spiffyBeanBoxClicked(0)
-        messenger.send('wakeup')
+        messenger.send("wakeup")
 
     def getRecipeStr(self):
-        retval = ''
+        retval = ""
         for box in self.boxList:
             beanIndex = box.getSelectedIndex()
             if beanIndex:
@@ -244,7 +359,7 @@ class PlantingGUI(DirectFrame):
         selectedSpecial = self.specialButton.getSelectedIndex()
         selectedSpecial -= 1
         messenger.send(self.doneEvent, [1, recipeStr, selectedSpecial])
-        messenger.send('wakeup')
+        messenger.send("wakeup")
 
     def createBoxes(self):
         zCoord = -0.15
@@ -274,28 +389,48 @@ class PlantingGUI(DirectFrame):
             geomColor = (0.5, 0.5, 0.5, 1)
         geomScaleX = 0.2
         geomScaleZ = 0.2
-        self.specialButtonFrame = DirectFrame(parent=self, pos=(xPos, 0, zPos), geom=DGG.getDefaultDialogGeom(), geom_scale=(geomScaleX, 1.0, geomScaleZ), geom_color=geomColor, relief=None)
+        self.specialButtonFrame = DirectFrame(
+            parent=self,
+            pos=(xPos, 0, zPos),
+            geom=DGG.getDefaultDialogGeom(),
+            geom_scale=(geomScaleX, 1.0, geomScaleZ),
+            geom_color=geomColor,
+            relief=None,
+        )
         items = []
         if self.specialBoxActive:
             gardenSpecials = base.localAvatar.getGardenSpecials()
-            tempItem = BoxItem(self.attachNewNode('blankSpecial'))
+            tempItem = BoxItem(self.attachNewNode("blankSpecial"))
             items.append(tempItem)
             self.specialPhotoList = []
             for item in gardenSpecials:
-                tempItem = BoxItem(self.specialButtonFrame.attachNewNode('temp1'))
+                tempItem = BoxItem(self.specialButtonFrame.attachNewNode("temp1"))
                 specialsPhoto = SpecialsPhoto.SpecialsPhoto(item[0], parent=tempItem)
-                specialsPhoto.setBackBounds(-geomScaleX / 2.0, geomScaleX / 2.0, -geomScaleZ / 2.0, geomScaleZ / 2.0)
+                specialsPhoto.setBackBounds(
+                    -geomScaleX / 2.0,
+                    geomScaleX / 2.0,
+                    -geomScaleZ / 2.0,
+                    geomScaleZ / 2.0,
+                )
                 specialsPhoto.setBackColor(1.0, 1.0, 1.0, 1.0)
                 items.append(tempItem)
                 self.specialPhotoList.append(specialsPhoto)
 
-        self.specialButton = GenericBoxScrollList(self.specialButtonFrame, items, incButton_pos=(0, 0, -0.135), incButton_scale=(0.75, 1.0, -1.0), decButton_pos=(0, 0, 0.135), decButton_scale=(0.75, 1.0, 1.0), command=self.photoSpecialChanged)
+        self.specialButton = GenericBoxScrollList(
+            self.specialButtonFrame,
+            items,
+            incButton_pos=(0, 0, -0.135),
+            incButton_scale=(0.75, 1.0, -1.0),
+            decButton_pos=(0, 0, 0.135),
+            decButton_scale=(0.75, 1.0, 1.0),
+            command=self.photoSpecialChanged,
+        )
         return
 
     def photoSpecialChanged(self):
-        if not hasattr(self, 'specialButton'):
+        if not hasattr(self, "specialButton"):
             return
-        messenger.send('wakeup')
+        messenger.send("wakeup")
         selectedSpecial = self.specialButton.getSelectedIndex()
         if selectedSpecial == 0:
             for photo in self.specialPhotoList:
@@ -306,31 +441,45 @@ class PlantingGUI(DirectFrame):
             self.specialPhotoList[selectedSpecial].show()
 
     def showFirstSpecial(self):
-        if len(self.specialButton['items']) > 1:
+        if len(self.specialButton["items"]) > 1:
             self.specialButton.scrollTo(self.specialButton.getSelectedIndex() + 1)
 
     def createScrollingBeanBox(self, index, xPos, zPos, active):
         geomColor = (1, 1, 1, 1)
         if not active:
             geomColor = (0.5, 0.5, 0.5, 1)
-        boxFrame = DirectFrame(parent=self, pos=(xPos, 0, zPos), geom=DGG.getDefaultDialogGeom(), geom_scale=(0.1, 1.0, 0.1), geom_color=geomColor, relief=None)
+        boxFrame = DirectFrame(
+            parent=self,
+            pos=(xPos, 0, zPos),
+            geom=DGG.getDefaultDialogGeom(),
+            geom_scale=(0.1, 1.0, 0.1),
+            geom_color=geomColor,
+            relief=None,
+        )
         items = []
         if active:
-            tempItem = BoxItem(self.attachNewNode('emptyBean'))
+            tempItem = BoxItem(self.attachNewNode("emptyBean"))
             items.append(tempItem)
             for curBean in range(len(GardenGlobals.BeanColors)):
-                tempItem = BoxItem(self.attachNewNode('bean-%d-%d' % (index, curBean)))
+                tempItem = BoxItem(self.attachNewNode("bean-%d-%d" % (index, curBean)))
                 loadJellyBean(tempItem, curBean)
                 items.append(tempItem)
 
-        box = GenericBoxScrollList(boxFrame, items, incButton_pos=(0, 0, -0.07), incButton_scale=(0.4, 1.0, -1.0), decButton_pos=(0, 0, 0.065), decButton_scale=(0.4, 1.0, 1.0))
+        box = GenericBoxScrollList(
+            boxFrame,
+            items,
+            incButton_pos=(0, 0, -0.07),
+            incButton_scale=(0.4, 1.0, -1.0),
+            decButton_pos=(0, 0, 0.065),
+            decButton_scale=(0.4, 1.0, 1.0),
+        )
         self.boxList.append(box)
         return
 
     def spiffyBeanBoxClicked(self, index):
         if self.jellyBeanPicker:
             self.jellyBeanPicker.destroy()
-        outOfMoney = int(self.beanBank['text']) <= 0
+        outOfMoney = int(self.beanBank["text"]) <= 0
         if self.boxList[index].getSelectedIndex() == 0 and outOfMoney:
             return
         if not CAN_CHANGE_BEAN_COLOR and self.boxList[index].getSelectedIndex():
@@ -340,23 +489,39 @@ class PlantingGUI(DirectFrame):
         if DO_PICKER_INTERVAL:
             boxPos = self.boxList[index].getPos()
             self.jellyBeanPicker.setPos(boxPos)
-            self.jellyBeanPickerInterval = Sequence(Parallel(self.jellyBeanPicker.posInterval(duration=0.3, pos=VBase3(*JellyBeanPickerEndPos)), self.jellyBeanPicker.scaleInterval(duration=0.3, startScale=VBase3(JellyBeanPickerScale[0] / 10.0, JellyBeanPickerScale[1], JellyBeanPickerScale[2]), scale=VBase3(*JellyBeanPickerScale))), Func(self.jellyBeanPicker.setColorText))
+            self.jellyBeanPickerInterval = Sequence(
+                Parallel(
+                    self.jellyBeanPicker.posInterval(
+                        duration=0.3, pos=VBase3(*JellyBeanPickerEndPos)
+                    ),
+                    self.jellyBeanPicker.scaleInterval(
+                        duration=0.3,
+                        startScale=VBase3(
+                            JellyBeanPickerScale[0] / 10.0,
+                            JellyBeanPickerScale[1],
+                            JellyBeanPickerScale[2],
+                        ),
+                        scale=VBase3(*JellyBeanPickerScale),
+                    ),
+                ),
+                Func(self.jellyBeanPicker.setColorText),
+            )
             self.jellyBeanPickerInterval.start()
         else:
             self.jellyBeanPicker.setColorText()
 
     def matchBoxesToAvailableMoney(self):
-        outOfMoney = int(self.beanBank['text']) <= 0
+        outOfMoney = int(self.beanBank["text"]) <= 0
         if outOfMoney:
             for box in self.boxList:
                 if box.getSelectedIndex() == 0:
-                    box['state'] = DGG.DISABLED
+                    box["state"] = DGG.DISABLED
                     box.setState()
                     box.setColorScale(0.5, 0.5, 0.5, 1)
 
         else:
             for box in self.boxList:
-                box['state'] = DGG.NORMAL
+                box["state"] = DGG.NORMAL
                 box.setState()
                 box.setColorScale(1, 1, 1, 1)
 
@@ -365,19 +530,19 @@ class PlantingGUI(DirectFrame):
             for i in range(0, boxIndexToEnable):
                 box = self.boxList[i]
                 if ONLY_ONE_SPIFFY_BOX_CAN_BE_CLICKED:
-                    box['state'] = DGG.DISABLED
+                    box["state"] = DGG.DISABLED
                     box.setState()
                     box.setColorScale(0.875, 0.875, 0.875, 1)
 
             if boxIndexToEnable < self.maxBoxes:
                 box = self.boxList[boxIndexToEnable]
                 if boxIndexToEnable >= self.availableBoxes:
-                    box['state'] = DGG.DISABLED
+                    box["state"] = DGG.DISABLED
                     box.setState()
                     box.setColorScale(0.5, 0.5, 0.5, 1)
             for i in range(boxIndexToEnable + 1, len(self.boxList)):
                 box = self.boxList[i]
-                box['state'] = DGG.DISABLED
+                box["state"] = DGG.DISABLED
                 box.setState()
                 box.setColorScale(0.5, 0.5, 0.5, 1)
 
@@ -388,9 +553,9 @@ class PlantingGUI(DirectFrame):
             self.jellyBeanPicker = None
         cost = len(self.getRecipeStr())
         newMoney = base.localAvatar.getMoney() + base.localAvatar.getBankMoney() - cost
-        self.beanBank['text'] = str(newMoney)
+        self.beanBank["text"] = str(newMoney)
         self.matchBoxesToAvailableMoney()
-        messenger.send('wakeup')
+        messenger.send("wakeup")
         if PICKER_ALWAYS_UP:
             numBoxesFilled = len(self.getRecipeStr())
             if numBoxesFilled < self.availableBoxes:
@@ -405,6 +570,17 @@ class PlantingGUI(DirectFrame):
             geomColor = (0.5, 0.5, 0.5, 1)
             command = None
             state = DGG.DISABLED
-        newBox = SpiffyBeanBox(index=index, parent=self, pos=(xPos, 0, zPos), geom=DGG.getDefaultDialogGeom(), geom_scale=(0.1, 1.0, 0.1), geom_color=geomColor, relief=None, state=state, command=command, extraArgs=[index])
+        newBox = SpiffyBeanBox(
+            index=index,
+            parent=self,
+            pos=(xPos, 0, zPos),
+            geom=DGG.getDefaultDialogGeom(),
+            geom_scale=(0.1, 1.0, 0.1),
+            geom_color=geomColor,
+            relief=None,
+            state=state,
+            command=command,
+            extraArgs=[index],
+        )
         self.boxList.append(newBox)
         return

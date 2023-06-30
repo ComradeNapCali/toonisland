@@ -3,11 +3,11 @@ from .TTSCToontaskTerminal import TTSCToontaskTerminal
 from otp.speedchat.SCStaticTextTerminal import SCStaticTextTerminal
 from toontown.quest import Quests
 
-class TTSCToontaskMenu(SCMenu):
 
+class TTSCToontaskMenu(SCMenu):
     def __init__(self):
         SCMenu.__init__(self)
-        self.accept('questsChanged', self.__tasksChanged)
+        self.accept("questsChanged", self.__tasksChanged)
         self.__tasksChanged()
 
     def destroy(self):
@@ -22,7 +22,7 @@ class TTSCToontaskMenu(SCMenu):
 
         phrases = []
 
-        def addTerminal(terminal, self = self, phrases = phrases):
+        def addTerminal(terminal, self=self, phrases=phrases):
             displayText = terminal.getDisplayText()
             if displayText not in phrases:
                 self.append(terminal)
@@ -37,10 +37,12 @@ class TTSCToontaskMenu(SCMenu):
             if type(msgs) != type([]):
                 msgs = [msgs]
             for i in range(len(msgs)):
-                addTerminal(TTSCToontaskTerminal(msgs[i], taskId, toNpcId, toonProgress, i))
+                addTerminal(
+                    TTSCToontaskTerminal(msgs[i], taskId, toNpcId, toonProgress, i)
+                )
 
         needToontask = 1
-        if hasattr(lt, 'questCarryLimit'):
+        if hasattr(lt, "questCarryLimit"):
             needToontask = len(lt.quests) != lt.questCarryLimit
         if needToontask:
             addTerminal(SCStaticTextTerminal(1299))

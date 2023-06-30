@@ -4,7 +4,8 @@ from otp.level.DistributedEntityAI import DistributedEntityAI
 
 class DistributedInteractiveEntityAI(DistributedEntityAI):
     notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedInteractiveEntityAI")
+        "DistributedInteractiveEntityAI"
+    )
 
     def setAvatarInteract(self, todo0):
         pass

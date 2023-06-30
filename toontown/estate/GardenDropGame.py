@@ -20,15 +20,15 @@ from . import GameSprite
 from math import pi
 from . import GardenProgressMeter
 
-class GardenDropGame(DirectObject.DirectObject):
 
+class GardenDropGame(DirectObject.DirectObject):
     def __init__(self):
         self.acceptErrorDialog = None
-        self.doneEvent = 'game Done'
+        self.doneEvent = "game Done"
         self.sprites = []
         self.load()
-        thing = self.model.find('**/item_board')
-        self.block = self.model1.find('**/minnieCircle')
+        thing = self.model.find("**/item_board")
+        self.block = self.model1.find("**/minnieCircle")
         self.colorRed = (1, 0, 0, 1)
         self.colorBlue = (0, 0, 1, 1)
         self.colorGreen = (0, 1, 0, 1)
@@ -59,7 +59,7 @@ class GardenDropGame(DirectObject.DirectObject):
         self.controlOffsetX = 0.0
         self.controlOffsetZ = 0.0
         self.queExtent = 3
-        print('Grid Dimensions X%s Z%s' % (gX, gZ))
+        print("Grid Dimensions X%s Z%s" % (gX, gZ))
         self.grid = []
         self.gridDimX = gX
         self.gridDimZ = gZ
@@ -71,7 +71,13 @@ class GardenDropGame(DirectObject.DirectObject):
                 offset = 0
                 if countZ % 2 == 0:
                     offset = size / 2
-                newRow.append([None, countX * size + self.minX + offset, countZ * sizeZ + self.minZ])
+                newRow.append(
+                    [
+                        None,
+                        countX * size + self.minX + offset,
+                        countZ * sizeZ + self.minZ,
+                    ]
+                )
 
             self.grid.append(newRow)
 
@@ -80,7 +86,9 @@ class GardenDropGame(DirectObject.DirectObject):
         self.cogSprite.setColor(self.colorShadow)
         for ball in range(0, 3):
             place = random.random() * self.rangeX
-            newSprite = self.addSprite(self.block, size=0.5, posX=self.minX + place, posZ=0.0, found=1)
+            newSprite = self.addSprite(
+                self.block, size=0.5, posX=self.minX + place, posZ=0.0, found=1
+            )
             self.stickInGrid(newSprite, 1)
 
         self.queBall = self.addSprite(self.block, posX=0.25, posZ=0.5, found=0)
@@ -94,13 +102,19 @@ class GardenDropGame(DirectObject.DirectObject):
         self.__run()
         return
 
-    def findGrid(self, x, z, force = 0):
+    def findGrid(self, x, z, force=0):
         currentClosest = None
         currentDist = 10000000
         for countX in range(self.gridDimX):
             for countZ in range(self.gridDimZ):
-                testDist = self.testPointDistanceSquare(x, z, self.grid[countX][countZ][1], self.grid[countX][countZ][2])
-                if self.grid[countX][countZ][0] == None and testDist < currentDist and (force or self.hasNeighbor(countX, countZ)):
+                testDist = self.testPointDistanceSquare(
+                    x, z, self.grid[countX][countZ][1], self.grid[countX][countZ][2]
+                )
+                if (
+                    self.grid[countX][countZ][0] == None
+                    and testDist < currentDist
+                    and (force or self.hasNeighbor(countX, countZ))
+                ):
                     currentClosest = self.grid[countX][countZ]
                     self.closestX = countX
                     self.closestZ = countZ
@@ -245,7 +259,7 @@ class GardenDropGame(DirectObject.DirectObject):
         tileDimZ = rangeZ / self.gridDimZ
         tileX = int(framedX / tileDimX)
         tileZ = int(framedZ / tileDimZ)
-        print('find Grid tileX%s tileZ%s' % (tileX, tileZ))
+        print("find Grid tileX%s tileZ%s" % (tileX, tileZ))
         return (tileX, tileZ)
 
     def findPos(self, x, z):
@@ -255,7 +269,7 @@ class GardenDropGame(DirectObject.DirectObject):
         tileDimZ = rangeZ / self.gridDimZ
         posX = tileDimX * x + self.minX
         posZ = tileDimZ * z + self.minZ
-        print('find Pos X%s Z%s' % (posX, posZ))
+        print("find Pos X%s Z%s" % (posX, posZ))
         return (posX, posZ)
 
     def placeIntoGrid(self, sprite, x, z):
@@ -265,12 +279,12 @@ class GardenDropGame(DirectObject.DirectObject):
             newX, newZ = self.findPos(x, z)
             sprite.setX(newX)
             sprite.setZ(newZ)
-            print('Setting Final Pos X%s Z%s' % (newX, newZ))
+            print("Setting Final Pos X%s Z%s" % (newX, newZ))
         else:
             self.placeIntoGrid(sprite, x + 1, z - 1)
         return
 
-    def stickInGrid(self, sprite, force = 0):
+    def stickInGrid(self, sprite, force=0):
         if sprite.isActive and not sprite.isQue:
             gridCell = self.findGrid(sprite.getX(), sprite.getZ(), force)
             if gridCell:
@@ -290,20 +304,49 @@ class GardenDropGame(DirectObject.DirectObject):
             sprite.isActive = 0
 
     def load(self):
-        model = loader.loadModel('phase_5.5/models/gui/package_delivery_panel')
-        model1 = loader.loadModel('phase_3.5/models/gui/matching_game_gui')
+        model = loader.loadModel("phase_5.5/models/gui/package_delivery_panel")
+        model1 = loader.loadModel("phase_3.5/models/gui/matching_game_gui")
         self.model = model
         self.model1 = model1
-        background = model.find('**/bg')
-        itemBoard = model.find('**/item_board')
-        self.frame = DirectFrame(scale=1.1, relief=DGG.FLAT, frameSize=(-0.5,
-         0.5,
-         -0.45,
-         -0.05), frameColor=(0.737, 0.573, 0.345, 1.0))
-        self.background = DirectFrame(self.frame, image=background, image_scale=0.05, relief=None, pos=(0, 1, 0))
-        self.itemBoard = DirectFrame(parent=self.frame, image=itemBoard, image_scale=0.05, image_color=(0.922, 0.922, 0.753, 1), relief=None, pos=(0, 1, 0))
-        gui2 = loader.loadModel('phase_3/models/gui/quit_button')
-        self.quitButton = DirectButton(parent=self.frame, relief=None, image=(gui2.find('**/QuitBtn_UP'), gui2.find('**/QuitBtn_DN'), gui2.find('**/QuitBtn_RLVR')), pos=(0.5, 1.0, -0.42), scale=0.9, text='Exit Mini Game', text_font=ToontownGlobals.getSignFont(), text0_fg=(1, 1, 1, 1), text1_fg=(1, 1, 1, 1), text2_fg=(1, 1, 1, 1), text_scale=0.045, text_pos=(0, -0.01), command=self.__handleExit)
+        background = model.find("**/bg")
+        itemBoard = model.find("**/item_board")
+        self.frame = DirectFrame(
+            scale=1.1,
+            relief=DGG.FLAT,
+            frameSize=(-0.5, 0.5, -0.45, -0.05),
+            frameColor=(0.737, 0.573, 0.345, 1.0),
+        )
+        self.background = DirectFrame(
+            self.frame, image=background, image_scale=0.05, relief=None, pos=(0, 1, 0)
+        )
+        self.itemBoard = DirectFrame(
+            parent=self.frame,
+            image=itemBoard,
+            image_scale=0.05,
+            image_color=(0.922, 0.922, 0.753, 1),
+            relief=None,
+            pos=(0, 1, 0),
+        )
+        gui2 = loader.loadModel("phase_3/models/gui/quit_button")
+        self.quitButton = DirectButton(
+            parent=self.frame,
+            relief=None,
+            image=(
+                gui2.find("**/QuitBtn_UP"),
+                gui2.find("**/QuitBtn_DN"),
+                gui2.find("**/QuitBtn_RLVR"),
+            ),
+            pos=(0.5, 1.0, -0.42),
+            scale=0.9,
+            text="Exit Mini Game",
+            text_font=ToontownGlobals.getSignFont(),
+            text0_fg=(1, 1, 1, 1),
+            text1_fg=(1, 1, 1, 1),
+            text2_fg=(1, 1, 1, 1),
+            text_scale=0.045,
+            text_pos=(0, -0.01),
+            command=self.__handleExit,
+        )
         return
 
     def unload(self):
@@ -312,7 +355,7 @@ class GardenDropGame(DirectObject.DirectObject):
         if self.acceptErrorDialog:
             self.acceptErrorDialog.cleanup()
             self.acceptErrorDialog = None
-        taskMgr.remove('gameTask')
+        taskMgr.remove("gameTask")
         self.ignoreAll()
         return
 
@@ -325,14 +368,21 @@ class GardenDropGame(DirectObject.DirectObject):
     def __handleExit(self):
         self.__acceptExit()
 
-    def __acceptExit(self, buttonValue = None):
-        if hasattr(self, 'frame'):
+    def __acceptExit(self, buttonValue=None):
+        if hasattr(self, "frame"):
             self.hide()
             self.unload()
             messenger.send(self.doneEvent)
 
-    def addSprite(self, image, size = 0.5, posX = 0, posZ = 0, found = 0):
-        nodeObj = DirectLabel(parent=self.frame, relief=None, image=image, pos=(posX, 0.0, posZ), scale=size, image_color=(1.0, 1.0, 1.0, 1))
+    def addSprite(self, image, size=0.5, posX=0, posZ=0, found=0):
+        nodeObj = DirectLabel(
+            parent=self.frame,
+            relief=None,
+            image=image,
+            pos=(posX, 0.0, posZ),
+            scale=size,
+            image_color=(1.0, 1.0, 1.0, 1),
+        )
         colorChoice = random.choice(range(0, 3))
         newSprite = GameSprite.GameSprite(nodeObj, colorChoice, found)
         self.sprites.append(newSprite)
@@ -340,13 +390,20 @@ class GardenDropGame(DirectObject.DirectObject):
             self.foundCount += 1
         return newSprite
 
-    def addUnSprite(self, image, size = 0.5, posX = 0, posZ = 0):
-        nodeObj = DirectLabel(parent=self.frame, relief=None, image=image, pos=(posX, 0.0, posZ), scale=size, image_color=(1.0, 1.0, 1.0, 1))
+    def addUnSprite(self, image, size=0.5, posX=0, posZ=0):
+        nodeObj = DirectLabel(
+            parent=self.frame,
+            relief=None,
+            image=image,
+            pos=(posX, 0.0, posZ),
+            scale=size,
+            image_color=(1.0, 1.0, 1.0, 1),
+        )
         newSprite = GameSprite.GameSprite(nodeObj)
         newSprite = GameSprite.GameSprite(nodeObj)
         return newSprite
 
-    def __run(self, cont = 1):
+    def __run(self, cont=1):
         if self.lastTime == None:
             self.lastTime = globalClock.getRealTime()
         timeDelta = globalClock.getRealTime() - self.lastTime
@@ -394,7 +451,7 @@ class GardenDropGame(DirectObject.DirectObject):
         if self.foundCount <= 0:
             self.__handleWin()
         if cont and not self.running:
-            taskMgr.add(self.__run, 'gameTask')
+            taskMgr.add(self.__run, "gameTask")
             self.running = 1
         return Task.cont
 
@@ -402,12 +459,12 @@ class GardenDropGame(DirectObject.DirectObject):
         GardenProgressMeter.GardenProgressMeter()
         self.__handleExit()
 
-    def addControlSprite(self, x = 0.0, z = 0.0):
+    def addControlSprite(self, x=0.0, z=0.0):
         newSprite = self.addSprite(self.block, posX=x, posZ=z)
         self.controlSprite = newSprite
 
     def __colTest(self):
-        if not hasattr(self, 'tick'):
+        if not hasattr(self, "tick"):
             self.tick = 0
         self.tick += 1
         if self.tick > 5:
@@ -418,11 +475,18 @@ class GardenDropGame(DirectObject.DirectObject):
                 movingSprite = self.getSprite(movingSpriteIndex)
                 testSprite = self.getSprite(testSpriteIndex)
                 if testSprite and movingSprite:
-                    if movingSpriteIndex != testSpriteIndex and (movingSprite.isActive or testSprite.isActive):
+                    if movingSpriteIndex != testSpriteIndex and (
+                        movingSprite.isActive or testSprite.isActive
+                    ):
                         if movingSprite.isQue or testSprite.isQue:
-                            if self.testDistance(movingSprite.nodeObj, testSprite.nodeObj) < self.queExtent * (movingSprite.size + testSprite.size):
+                            if self.testDistance(
+                                movingSprite.nodeObj, testSprite.nodeObj
+                            ) < self.queExtent * (movingSprite.size + testSprite.size):
                                 self.push(movingSprite, testSprite)
-                        elif self.testDistance(movingSprite.nodeObj, testSprite.nodeObj) < movingSprite.size + testSprite.size:
+                        elif (
+                            self.testDistance(movingSprite.nodeObj, testSprite.nodeObj)
+                            < movingSprite.size + testSprite.size
+                        ):
                             if not (movingSprite.isActive and testSprite.isActive):
                                 self.__collide(movingSprite, testSprite)
                         if self.tick == 5:

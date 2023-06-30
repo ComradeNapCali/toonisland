@@ -13,11 +13,13 @@ from otp.level import LevelConstants
 from toontown.toonbase import TTLocalizer
 from toontown.coghq import FactoryCameraViews
 from direct.distributed.DistributedObject import DistributedObject
+
 if __dev__:
     from otp.level import EditorGlobals
 
+
 class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLawOffice')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedLawOffice")
 
     def __init__(self, cr):
         DistributedObject.__init__(self, cr)
@@ -32,18 +34,18 @@ class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
         return
 
     def generate(self):
-        self.notify.debug('generate')
-        self.accept('lawOfficeFloorDone', self.handleFloorDone)
+        self.notify.debug("generate")
+        self.accept("lawOfficeFloorDone", self.handleFloorDone)
 
     def delete(self):
         base.localAvatar.chatMgr.chatInputSpeedChat.removeFactoryMenu()
-        self.ignore('lawOfficeFloorDone')
+        self.ignore("lawOfficeFloorDone")
 
     def setLawOfficeId(self, id):
         LawOfficeBase.LawOfficeBase.setLawOfficeId(self, id)
 
     def levelAnnounceGenerate(self):
-        self.notify.debug('levelAnnounceGenerate')
+        self.notify.debug("levelAnnounceGenerate")
 
     def handleSOSPanel(self, panel):
         avIds = []
@@ -54,10 +56,10 @@ class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
         panel.setFactoryToonIdList(avIds)
 
     def handleFloorDone(self):
-        self.sendUpdate('readyForNextFloor')
+        self.sendUpdate("readyForNextFloor")
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         base.localAvatar.setCameraCollisionsCanMove(0)
 
     def getTaskZoneId(self):

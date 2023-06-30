@@ -3,7 +3,7 @@ from otp.avatar import Avatar
 
 
 class AvatarDetail:
-    notify = directNotify.newCategory('AvatarDetail')
+    notify = directNotify.newCategory("AvatarDetail")
 
     def __init__(self, doId, callWhenDone):
         self.id = doId
@@ -27,8 +27,7 @@ class AvatarDetail:
             self.createdAvatar = 1
             self.avatar.doId = self.id
             dclass = self.getDClass()
-            base.cr.getAvatarDetails(
-                self.avatar, self.__handleResponse, dclass)
+            base.cr.getAvatarDetails(self.avatar, self.__handleResponse, dclass)
         return
 
     def exitQuery(self):
@@ -43,7 +42,8 @@ class AvatarDetail:
     def __handleResponse(self, gotData, avatar, dclass):
         if avatar != self.avatar:
             self.notify.warning(
-                'Ignoring unexpected request for avatar %s' % avatar.doId)
+                "Ignoring unexpected request for avatar %s" % avatar.doId
+            )
             return
         if gotData:
             self.callWhenDone(self.avatar)

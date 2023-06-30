@@ -4,15 +4,23 @@ from . import HTTPUtil
 
 
 class RemoteValueSet:
-    notify = DirectNotifyGlobal.directNotify.newCategory('RemoteValueSet')
+    notify = DirectNotifyGlobal.directNotify.newCategory("RemoteValueSet")
 
-    def __init__(self, url, http, body='', expectedHeader=None, expectedFields=[], onUnexpectedResponse=None):
+    def __init__(
+        self,
+        url,
+        http,
+        body="",
+        expectedHeader=None,
+        expectedFields=[],
+        onUnexpectedResponse=None,
+    ):
         if onUnexpectedResponse is None:
             onUnexpectedResponse = self.__onUnexpectedResponse
         response = HTTPUtil.getHTTPResponse(url, http, body)
         if expectedHeader is not None:
             if response[0] != expectedHeader:
-                errMsg = 'unexpected response: %s' % response
+                errMsg = "unexpected response: %s" % response
                 self.notify.warning(errMsg)
                 onUnexpectedResponse(errMsg)
                 return
@@ -22,9 +30,9 @@ class RemoteValueSet:
             if not len(line):
                 continue
             try:
-                name, value = line.split('=', 1)
+                name, value = line.split("=", 1)
             except ValueError as e:
-                errMsg = 'unexpected response: %s' % response
+                errMsg = "unexpected response: %s" % response
                 self.notify.warning(errMsg)
                 onUnexpectedResponse(errMsg)
                 return
@@ -32,7 +40,8 @@ class RemoteValueSet:
             if len(expectedFields):
                 if name not in expectedFields:
                     self.notify.warning(
-                        "received field '%s' that is not in expected field list" % name)
+                        "received field '%s' that is not in expected field list" % name
+                    )
             self.dict[name] = value
 
         for name in expectedFields:
@@ -45,7 +54,7 @@ class RemoteValueSet:
         return
 
     def __repr__(self):
-        return 'RemoteValueSet:%s' % str(self.dict)
+        return "RemoteValueSet:%s" % str(self.dict)
 
     def hasKey(self, key):
         return key in self.dict

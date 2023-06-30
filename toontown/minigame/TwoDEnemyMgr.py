@@ -4,8 +4,9 @@ from direct.showbase.DirectObject import DirectObject
 from toontown.minigame import ToonBlitzGlobals
 from toontown.minigame import TwoDEnemy
 
+
 class TwoDEnemyMgr(DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TwoDEnemyMgr')
+    notify = DirectNotifyGlobal.directNotify.newCategory("TwoDEnemyMgr")
 
     def __init__(self, section, enemyList):
         self.section = section
@@ -24,7 +25,7 @@ class TwoDEnemyMgr(DirectObject):
 
     def load(self):
         if len(self.enemyList):
-            self.enemiesNP = NodePath('Enemies')
+            self.enemiesNP = NodePath("Enemies")
             self.enemiesNP.reparentTo(self.section.sectionNP)
         self.enemies = []
         for index in range(len(self.enemyList)):

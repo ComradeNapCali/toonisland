@@ -13,16 +13,34 @@ from direct.fsm import State
 from direct.fsm import ClassicFSM, State
 from otp.otpbase import PythonUtil
 
-class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleBldgAI')
 
-    def __init__(self, air, zoneId, roundCallback = None, finishCallback = None, maxSuits = 4, bossBattle = 0):
-        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxSuits, bossBattle)
+class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedBattleBldgAI")
+
+    def __init__(
+        self,
+        air,
+        zoneId,
+        roundCallback=None,
+        finishCallback=None,
+        maxSuits=4,
+        bossBattle=0,
+    ):
+        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(
+            self, air, zoneId, finishCallback, maxSuits, bossBattle
+        )
         self.streetBattle = 0
         self.roundCallback = roundCallback
-        self.fsm.addState(State.State('BuildingReward', self.enterBuildingReward, self.exitBuildingReward, ['Resume']))
-        playMovieState = self.fsm.getStateNamed('PlayMovie')
-        playMovieState.addTransition('BuildingReward')
+        self.fsm.addState(
+            State.State(
+                "BuildingReward",
+                self.enterBuildingReward,
+                self.exitBuildingReward,
+                ["Resume"],
+            )
+        )
+        playMovieState = self.fsm.getStateNamed("PlayMovie")
+        playMovieState.addTransition("BuildingReward")
         self.elevatorPos = Point3(0, -30, 0)
         self.resumeNeedUpdate = 0
 
@@ -33,7 +51,7 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         for toonId in toonIds:
             self.addToon(toonId)
 
-        self.fsm.request('FaceOff')
+        self.fsm.request("FaceOff")
 
     def delete(self):
         del self.roundCallback
@@ -42,16 +60,18 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
     def faceOffDone(self):
         toonId = self.air.getAvatarIdFromSender()
         if self.ignoreResponses == 1:
-            self.notify.debug('faceOffDone() - ignoring toon: %d' % toonId)
+            self.notify.debug("faceOffDone() - ignoring toon: %d" % toonId)
             return
-        elif self.fsm.getCurrentState().getName() != 'FaceOff':
-            self.notify.warning('faceOffDone() - in state: %s' % self.fsm.getCurrentState().getName())
+        elif self.fsm.getCurrentState().getName() != "FaceOff":
+            self.notify.warning(
+                "faceOffDone() - in state: %s" % self.fsm.getCurrentState().getName()
+            )
             return
         elif self.toons.count(toonId) == 0:
-            self.notify.warning('faceOffDone() - toon: %d not in toon list' % toonId)
+            self.notify.warning("faceOffDone() - toon: %d not in toon list" % toonId)
             return
         self.responses[toonId] += 1
-        self.notify.debug('toon: %d done facing off' % toonId)
+        self.notify.debug("toon: %d done facing off" % toonId)
         if not self.ignoreFaceOffDone:
             if self.allToonsResponded():
                 self.handleFaceOffDone()
@@ -60,14 +80,19 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
                 self.timer.startCallback(TIMEOUT_PER_USER, self.__serverFaceOffDone)
 
     def enterFaceOff(self):
-        self.notify.debug('enterFaceOff()')
-        self.joinableFsm.request('Joinable')
-        self.runableFsm.request('Unrunable')
-        self.timer.startCallback(self.calcToonMoveTime(self.pos, self.elevatorPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME, self.__serverFaceOffDone)
+        self.notify.debug("enterFaceOff()")
+        self.joinableFsm.request("Joinable")
+        self.runableFsm.request("Unrunable")
+        self.timer.startCallback(
+            self.calcToonMoveTime(self.pos, self.elevatorPos)
+            + FACEOFF_TAUNT_T
+            + SERVER_BUFFER_TIME,
+            self.__serverFaceOffDone,
+        )
         return None
 
     def __serverFaceOffDone(self):
-        self.notify.debug('faceoff timed out on server')
+        self.notify.debug("faceoff timed out on server")
         self.ignoreFaceOffDone = 1
         self.handleFaceOffDone()
 
@@ -85,7 +110,7 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             self.sendEarnedExperience(toon)
 
         self.d_setMembers()
-        self.b_setState('WaitForInput')
+        self.b_setState("WaitForInput")
 
     def localMovieDone(self, needUpdate, deadToons, deadSuits, lastActiveSuitDied):
         self.timer.stop()
@@ -95,7 +120,7 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.resumeLastActiveSuitDied = lastActiveSuitDied
         if len(self.toons) == 0:
             self.d_setMembers()
-            self.b_setState('Resume')
+            self.b_setState("Resume")
         else:
             totalHp = 0
             for suit in self.suits:
@@ -105,45 +130,65 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             self.roundCallback(self.activeToons, totalHp, deadSuits)
 
     def __goToResumeState(self, task):
-        self.b_setState('Resume')
+        self.b_setState("Resume")
 
-    def resume(self, currentFloor = 0, topFloor = 0):
+    def resume(self, currentFloor=0, topFloor=0):
         if len(self.suits) == 0:
             self.d_setMembers()
             self.suitsKilledPerFloor.append(self.suitsKilledThisBattle)
             if topFloor == 0:
-                self.b_setState('Reward')
+                self.b_setState("Reward")
             else:
-                for floorNum, cogsThisFloor in PythonUtil.enumerate(self.suitsKilledPerFloor):
+                for floorNum, cogsThisFloor in PythonUtil.enumerate(
+                    self.suitsKilledPerFloor
+                ):
                     for toonId in self.activeToons:
                         toon = self.getToon(toonId)
                         if toon:
-                            recovered, notRecovered = self.air.questManager.recoverItems(toon, cogsThisFloor, self.zoneId)
+                            (
+                                recovered,
+                                notRecovered,
+                            ) = self.air.questManager.recoverItems(
+                                toon, cogsThisFloor, self.zoneId
+                            )
                             self.toonItems[toonId][0].extend(recovered)
                             self.toonItems[toonId][1].extend(notRecovered)
-                            meritArray = self.air.promotionMgr.recoverMerits(toon, cogsThisFloor, self.zoneId, getCreditMultiplier(floorNum))
+                            meritArray = self.air.promotionMgr.recoverMerits(
+                                toon,
+                                cogsThisFloor,
+                                self.zoneId,
+                                getCreditMultiplier(floorNum),
+                            )
                             if toonId in self.helpfulToons:
-                                self.toonMerits[toonId] = addListsByValue(self.toonMerits[toonId], meritArray)
+                                self.toonMerits[toonId] = addListsByValue(
+                                    self.toonMerits[toonId], meritArray
+                                )
                             else:
-                                self.notify.debug('toon %d not helpful, skipping merits' % toonId)
+                                self.notify.debug(
+                                    "toon %d not helpful, skipping merits" % toonId
+                                )
 
                 self.d_setBattleExperience()
-                self.b_setState('BuildingReward')
+                self.b_setState("BuildingReward")
         else:
             if self.resumeNeedUpdate == 1:
                 self.d_setMembers()
-                if len(self.resumeDeadSuits) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
+                if (
+                    len(self.resumeDeadSuits) > 0
+                    and self.resumeLastActiveSuitDied == 0
+                    or len(self.resumeDeadToons) > 0
+                ):
                     self.needAdjust = 1
-            self.setState('WaitForJoin')
+            self.setState("WaitForJoin")
         self.resumeNeedUpdate = 0
         self.resumeDeadToons = []
         self.resumeDeadSuits = []
         self.resumeLastActiveSuitDied = 0
 
-    def enterReservesJoining(self, ts = 0):
+    def enterReservesJoining(self, ts=0):
         return None
 
-    def exitReservesJoining(self, ts = 0):
+    def exitReservesJoining(self, ts=0):
         return None
 
     def enterReward(self):
@@ -169,5 +214,5 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
 
     def exitResume(self):
         DistributedBattleBaseAI.DistributedBattleBaseAI.exitResume(self)
-        taskName = self.taskName('finish')
+        taskName = self.taskName("finish")
         taskMgr.remove(taskName)

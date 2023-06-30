@@ -4,8 +4,9 @@ from toontown.suit import DistributedSellbotBoss
 from direct.directnotify import DirectNotifyGlobal
 from toontown.coghq import CogHQBossBattle
 
+
 class SellbotHQBossBattle(CogHQBossBattle.CogHQBossBattle):
-    notify = DirectNotifyGlobal.directNotify.newCategory('SellbotHQBossBattle')
+    notify = DirectNotifyGlobal.directNotify.newCategory("SellbotHQBossBattle")
 
     def __init__(self, loader, parentFSM, doneEvent):
         CogHQBossBattle.CogHQBossBattle.__init__(self, loader, parentFSM, doneEvent)
@@ -18,7 +19,9 @@ class SellbotHQBossBattle(CogHQBossBattle.CogHQBossBattle):
         CogHQBossBattle.CogHQBossBattle.unload(self)
 
     def enter(self, requestStatus):
-        CogHQBossBattle.CogHQBossBattle.enter(self, requestStatus, DistributedSellbotBoss.OneBossCog)
+        CogHQBossBattle.CogHQBossBattle.enter(
+            self, requestStatus, DistributedSellbotBoss.OneBossCog
+        )
         self.__setupHighSky()
 
     def exit(self):

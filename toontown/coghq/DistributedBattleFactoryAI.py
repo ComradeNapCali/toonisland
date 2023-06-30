@@ -6,35 +6,79 @@ from toontown.battle.BattleBase import *
 from . import CogDisguiseGlobals
 from direct.showbase.PythonUtil import addListsByValue
 
-class DistributedBattleFactoryAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleFactoryAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback = None, finishCallback = None, maxSuits = 4):
-        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'FactoryReward', roundCallback, finishCallback, maxSuits)
+class DistributedBattleFactoryAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedBattleFactoryAI")
+
+    def __init__(
+        self,
+        air,
+        battleMgr,
+        pos,
+        suit,
+        toonId,
+        zoneId,
+        level,
+        battleCellId,
+        roundCallback=None,
+        finishCallback=None,
+        maxSuits=4,
+    ):
+        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(
+            self,
+            air,
+            battleMgr,
+            pos,
+            suit,
+            toonId,
+            zoneId,
+            level,
+            battleCellId,
+            "FactoryReward",
+            roundCallback,
+            finishCallback,
+            maxSuits,
+        )
         self.battleCalc.setSkillCreditMultiplier(1)
         if self.bossBattle:
             self.level.d_setForemanConfronted(toonId)
-        self.fsm.addState(State.State('FactoryReward', self.enterFactoryReward, self.exitFactoryReward, ['Resume']))
-        playMovieState = self.fsm.getStateNamed('PlayMovie')
-        playMovieState.addTransition('FactoryReward')
+        self.fsm.addState(
+            State.State(
+                "FactoryReward",
+                self.enterFactoryReward,
+                self.exitFactoryReward,
+                ["Resume"],
+            )
+        )
+        playMovieState = self.fsm.getStateNamed("PlayMovie")
+        playMovieState.addTransition("FactoryReward")
 
     def getTaskZoneId(self):
         return self.level.factoryId
 
     def handleToonsWon(self, toons):
         for toon in toons:
-            recovered, notRecovered = self.air.questManager.recoverItems(toon, self.suitsKilled, self.getTaskZoneId())
+            recovered, notRecovered = self.air.questManager.recoverItems(
+                toon, self.suitsKilled, self.getTaskZoneId()
+            )
             self.toonItems[toon.doId][0].extend(recovered)
             self.toonItems[toon.doId][1].extend(notRecovered)
-            meritArray = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.getTaskZoneId(), getFactoryMeritMultiplier(self.getTaskZoneId()))
+            meritArray = self.air.promotionMgr.recoverMerits(
+                toon,
+                self.suitsKilled,
+                self.getTaskZoneId(),
+                getFactoryMeritMultiplier(self.getTaskZoneId()),
+            )
             if toon.doId in self.helpfulToons:
-                self.toonMerits[toon.doId] = addListsByValue(self.toonMerits[toon.doId], meritArray)
+                self.toonMerits[toon.doId] = addListsByValue(
+                    self.toonMerits[toon.doId], meritArray
+                )
             else:
-                self.notify.debug('toon %d not helpful, skipping merits' % toon.doId)
+                self.notify.debug("toon %d not helpful, skipping merits" % toon.doId)
 
     def enterFactoryReward(self):
-        self.joinableFsm.request('Unjoinable')
-        self.runableFsm.request('Unrunable')
+        self.joinableFsm.request("Unjoinable")
+        self.runableFsm.request("Unrunable")
         self.resetResponses()
         self.assignRewards()
         self.bossDefeated = 1

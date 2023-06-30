@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobalUD
 
+
 class DistributedSecurityMgrUD(DistributedObjectGlobalUD):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedSecurityMgrUD")
 
@@ -9,4 +10,3 @@ class DistributedSecurityMgrUD(DistributedObjectGlobalUD):
 
     def requestAccountIdResponse(self, todo0, todo1):
         pass
-

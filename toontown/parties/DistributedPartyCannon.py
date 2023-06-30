@@ -6,7 +6,10 @@ from toontown.minigame.CannonGameGlobals import *
 from toontown.parties.Cannon import Cannon
 from toontown.parties.CannonGui import CannonGui
 from toontown.parties import PartyGlobals
-from toontown.parties.DistributedPartyCannonActivity import DistributedPartyCannonActivity
+from toontown.parties.DistributedPartyCannonActivity import (
+    DistributedPartyCannonActivity,
+)
+
 LAND_TIME = 2
 WORLD_SCALE = 2.0
 GROUND_SCALE = 1.4 * WORLD_SCALE
@@ -36,9 +39,10 @@ TOWER_X_RANGE = int(TOWER_Y_RANGE / 2.0)
 INITIAL_VELOCITY = 80.0
 WHISTLE_SPEED = INITIAL_VELOCITY * 0.35
 
+
 class DistributedPartyCannon(DistributedObject, Cannon):
-    notify = directNotify.newCategory('DistributedPartyCannon')
-    LOCAL_CANNON_MOVE_TASK = 'localCannonMoveTask'
+    notify = directNotify.newCategory("DistributedPartyCannon")
+    LOCAL_CANNON_MOVE_TASK = "localCannonMoveTask"
 
     def __init__(self, cr):
         DistributedObject.__init__(self, cr)
@@ -58,10 +62,10 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         self.activate()
 
     def load(self):
-        self.notify.debug('load')
-        Cannon.load(self, self.uniqueName('Cannon'))
+        self.notify.debug("load")
+        Cannon.load(self, self.uniqueName("Cannon"))
         if base.cr and base.cr.partyManager and base.cr.partyManager.getShowDoid():
-            nameText = TextNode('nameText')
+            nameText = TextNode("nameText")
             nameText.setCardAsMargin(0.1, 0.1, 0.1, 0.1)
             nameText.setCardDecal(True)
             nameText.setCardColor(1.0, 1.0, 1.0, 0.0)
@@ -78,12 +82,14 @@ class DistributedPartyCannon(DistributedObject, Cannon):
             namePlate.setScale(3)
 
     def announceGenerate(self):
-        self.sign = self.activity.sign.instanceUnderNode(self.activity.getParentNodePath(), self.uniqueName('sign'))
+        self.sign = self.activity.sign.instanceUnderNode(
+            self.activity.getParentNodePath(), self.uniqueName("sign")
+        )
         self.sign.reparentTo(self.activity.getParentNodePath())
         self.sign.setPos(self.parentNode, self.sign.getPos())
 
     def unload(self):
-        self.notify.debug('unload')
+        self.notify.debug("unload")
         if self.gui is not None:
             self.gui.unload()
             del self.gui
@@ -95,14 +101,21 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         return
 
     def getParentNodePath(self):
-        if hasattr(base.cr.playGame, 'hood') and base.cr.playGame.hood and hasattr(base.cr.playGame.hood, 'loader') and base.cr.playGame.hood.loader and hasattr(base.cr.playGame.hood.loader, 'geom') and base.cr.playGame.hood.loader.geom:
+        if (
+            hasattr(base.cr.playGame, "hood")
+            and base.cr.playGame.hood
+            and hasattr(base.cr.playGame.hood, "loader")
+            and base.cr.playGame.hood.loader
+            and hasattr(base.cr.playGame.hood.loader, "geom")
+            and base.cr.playGame.hood.loader.geom
+        ):
             return base.cr.playGame.hood.loader.geom
         else:
-            self.notify.warning('Hood or loader not created, defaulting to render')
+            self.notify.warning("Hood or loader not created, defaulting to render")
             return render
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         self.ignoreAll()
         self.__disableCannonControl()
         self.setMovie(PartyGlobals.CANNON_MOVIE_CLEAR, 0)
@@ -113,7 +126,7 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         DistributedObject.delete(self)
 
     def destroy(self):
-        self.notify.debug('destroy')
+        self.notify.debug("destroy")
         DistributedObject.destroy(self)
 
     def setPosHpr(self, x, y, z, h, p, r):
@@ -134,7 +147,7 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         self.active = False
 
     def setMovie(self, mode, avId):
-        self.notify.debug('%s setMovie(%s, %s)' % (self.doId, avId, mode))
+        self.notify.debug("%s setMovie(%s, %s)" % (self.doId, avId, mode))
         if mode == PartyGlobals.CANNON_MOVIE_CLEAR:
             self.setClear()
         elif mode == PartyGlobals.CANNON_MOVIE_FORCE_EXIT:
@@ -145,59 +158,72 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         elif mode == PartyGlobals.CANNON_MOVIE_LANDED:
             self.setLanded(avId)
         else:
-            self.notify.error('setMovie Unhandled case mode=%d avId=%d' % (mode, avId))
+            self.notify.error("setMovie Unhandled case mode=%d avId=%d" % (mode, avId))
 
     def __handleToonCollisionWithCannon(self, collEntry):
-        self.notify.debug('collEntry: %s' % collEntry)
-        if base.cr.playGame.getPlace().getState() == 'walk' and self.toonInsideAvId == 0:
-            base.cr.playGame.getPlace().setState('activity')
+        self.notify.debug("collEntry: %s" % collEntry)
+        if (
+            base.cr.playGame.getPlace().getState() == "walk"
+            and self.toonInsideAvId == 0
+        ):
+            base.cr.playGame.getPlace().setState("activity")
             self.d_requestEnter()
 
     def d_requestEnter(self):
-        self.sendUpdate('requestEnter', [])
+        self.sendUpdate("requestEnter", [])
 
     def requestExit(self):
-        self.notify.debug('requestExit')
+        self.notify.debug("requestExit")
         base.localAvatar.reparentTo(render)
-        base.cr.playGame.getPlace().setState('walk')
+        base.cr.playGame.getPlace().setState("walk")
 
     def __avatarGone(self, avId):
         if self.toonInsideAvId == avId:
-            self.notify.debug('__avatarGone in if')
+            self.notify.debug("__avatarGone in if")
             if self.toonInside and not self.toonInside.isEmpty():
                 self.removeToonDidNotFire()
             self.setMovie(PartyGlobals.CANNON_MOVIE_CLEAR, 0)
         else:
-            self.notify.debug('__avatarGone in else, self.toonInsideAvId=%s avId=%s' % (self.toonInsideAvId, avId))
+            self.notify.debug(
+                "__avatarGone in else, self.toonInsideAvId=%s avId=%s"
+                % (self.toonInsideAvId, avId)
+            )
 
     def enterCannon(self, avId):
         if avId == base.localAvatar.doId:
-            base.localAvatar.pose('lose', 110)
-            base.localAvatar.pose('slip-forward', 25)
-            base.cr.playGame.getPlace().setState('activity')
+            base.localAvatar.pose("lose", 110)
+            base.localAvatar.pose("slip-forward", 25)
+            base.cr.playGame.getPlace().setState("activity")
             base.localAvatar.collisionsOff()
             camera.reparentTo(self.barrelNode)
             camera.setPos(0, -2, 5)
             camera.setP(-20)
             if not self.activity.hasPlayedBefore():
                 self.activity.displayRules()
-                self.acceptOnce(DistributedPartyCannonActivity.RULES_DONE_EVENT, self.__enableCannonControl)
+                self.acceptOnce(
+                    DistributedPartyCannonActivity.RULES_DONE_EVENT,
+                    self.__enableCannonControl,
+                )
             else:
                 self.__enableCannonControl()
             self.controllingToonAvId = avId
         if avId in self.cr.doId2do:
             self.toonInsideAvId = avId
-            self.notify.debug('enterCannon self.toonInsideAvId=%d' % self.toonInsideAvId)
+            self.notify.debug(
+                "enterCannon self.toonInsideAvId=%d" % self.toonInsideAvId
+            )
             toon = base.cr.doId2do[avId]
             if toon:
-                self.acceptOnce(toon.uniqueName('disable'), self.__avatarGone, extraArgs=[avId])
+                self.acceptOnce(
+                    toon.uniqueName("disable"), self.__avatarGone, extraArgs=[avId]
+                )
                 toon.stopSmooth()
                 toon.dropShadow.hide()
                 self.placeToonInside(toon)
             else:
                 self.__avatarGone(avId)
         else:
-            self.notify.warning('Unknown avatar %d in cannon %d' % (avId, self.doId))
+            self.notify.warning("Unknown avatar %d in cannon %d" % (avId, self.doId))
 
     def exitCannon(self, avId):
         if avId == base.localAvatar.doId:
@@ -210,35 +236,48 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         if toon and self.getToonInside() == toon:
             self.resetToon()
         else:
-            self.notify.debug('not resetting toon, toon=%s, self.getToonInside()=%s' % (toon, self.getToonInside()))
+            self.notify.debug(
+                "not resetting toon, toon=%s, self.getToonInside()=%s"
+                % (toon, self.getToonInside())
+            )
 
-    def resetToon(self, pos = None):
-        self.notify.debug('resetToon')
+    def resetToon(self, pos=None):
+        self.notify.debug("resetToon")
         toon = self.getToonInside()
         toonInsideAvId = self.toonInsideAvId
-        self.notify.debug('%d resetToon self.toonInsideAvId=%d' % (self.doId, self.toonInsideAvId))
+        self.notify.debug(
+            "%d resetToon self.toonInsideAvId=%d" % (self.doId, self.toonInsideAvId)
+        )
         self.removeToonDidNotFire()
         self.__setToonUpright(toon, pos)
         if toonInsideAvId == base.localAvatar.doId:
-            self.notify.debug('%d resetToon toonInsideAvId ==localAvatar.doId' % self.doId)
+            self.notify.debug(
+                "%d resetToon toonInsideAvId ==localAvatar.doId" % self.doId
+            )
             if pos:
-                self.notify.debug('toon setting position to %s' % pos)
+                self.notify.debug("toon setting position to %s" % pos)
                 base.localAvatar.setPos(pos)
             camera.reparentTo(base.localAvatar)
             base.localAvatar.collisionsOn()
             base.localAvatar.startPosHprBroadcast()
             base.localAvatar.enableAvatarControls()
-            self.notify.debug('currentState=%s, requesting walk' % base.cr.playGame.getPlace().getState())
-            base.cr.playGame.getPlace().setState('walk')
-            self.notify.debug('after request walk currentState=%s,' % base.cr.playGame.getPlace().getState())
+            self.notify.debug(
+                "currentState=%s, requesting walk"
+                % base.cr.playGame.getPlace().getState()
+            )
+            base.cr.playGame.getPlace().setState("walk")
+            self.notify.debug(
+                "after request walk currentState=%s,"
+                % base.cr.playGame.getPlace().getState()
+            )
         toon.dropShadow.show()
         self.d_setLanded()
 
-    def __setToonUpright(self, toon, pos = None):
+    def __setToonUpright(self, toon, pos=None):
         if not pos:
             pos = toon.getPos(render)
         toon.setPos(render, pos)
-        toon.loop('neutral')
+        toon.loop("neutral")
         toon.lookAt(self.parentNode)
         toon.setP(0)
         toon.setR(0)
@@ -247,7 +286,7 @@ class DistributedPartyCannon(DistributedObject, Cannon):
     def d_setLanded(self):
         self.notify.debugStateCall(self)
         if self.toonInsideAvId == base.localAvatar.doId:
-            self.sendUpdate('setLanded', [base.localAvatar.doId])
+            self.sendUpdate("setLanded", [base.localAvatar.doId])
 
     def setLanded(self, avId):
         self.removeAvFromCannon(avId)
@@ -256,35 +295,37 @@ class DistributedPartyCannon(DistributedObject, Cannon):
     def removeAvFromCannon(self, avId):
         place = base.cr.playGame.getPlace()
         av = base.cr.doId2do.get(avId)
-        print('removeAvFromCannon')
+        print("removeAvFromCannon")
         if place:
-            if not hasattr(place, 'fsm'):
+            if not hasattr(place, "fsm"):
                 return
             placeState = place.fsm.getCurrentState().getName()
             print(placeState)
-            if placeState != 'fishing':
+            if placeState != "fishing":
                 if av != None:
                     av.startSmooth()
                     self.__destroyToonModels(avId)
                     return
-        self.notify.debug('%s removeAvFromCannon' % self.doId)
+        self.notify.debug("%s removeAvFromCannon" % self.doId)
         if av != None:
-            self.notify.debug('%d removeAvFromCannon: destroying toon models' % self.doId)
+            self.notify.debug(
+                "%d removeAvFromCannon: destroying toon models" % self.doId
+            )
             av.resetLOD()
             if av == base.localAvatar:
                 if place:
-                    place.fsm.request('walk')
-            av.setPlayRate(1.0, 'run')
+                    place.fsm.request("walk")
+            av.setPlayRate(1.0, "run")
             if av.nametag and self.toonHead:
                 av.nametag.removeNametag(self.toonHead.tag)
-            if av.getParent().getName() == 'toonOriginChange':
+            if av.getParent().getName() == "toonOriginChange":
                 av.wrtReparentTo(render)
                 self.__setToonUpright(av)
             if av == base.localAvatar:
                 av.startPosHprBroadcast()
             av.startSmooth()
             av.setScale(1, 1, 1)
-            self.ignore(av.uniqueName('disable'))
+            self.ignore(av.uniqueName("disable"))
             self.__destroyToonModels(avId)
         return
 
@@ -318,18 +359,18 @@ class DistributedPartyCannon(DistributedObject, Cannon):
 
     def setClear(self):
         toon = base.cr.doId2do.get(self.toonInsideAvId)
-        toonName = 'None'
+        toonName = "None"
         self.ignoreDisableForAvId(self.toonInsideAvId)
         if toon and self.isToonInside():
             toonName = toon.getName()
             toon.resetLOD()
-            toon.setPlayRate(1.0, 'run')
-            if toon.getParent().getName() == 'toonOriginChange':
+            toon.setPlayRate(1.0, "run")
+            if toon.getParent().getName() == "toonOriginChange":
                 toon.wrtReparentTo(render)
                 self.__setToonUpright(toon)
             toon.startSmooth()
             toon.setScale(1, 1, 1)
-            self.ignore(toon.uniqueName('disable'))
+            self.ignore(toon.uniqueName("disable"))
             if self.toonInsideAvId == base.localAvatar.doId:
                 toon.startPosHprBroadcast()
                 try:
@@ -337,13 +378,16 @@ class DistributedPartyCannon(DistributedObject, Cannon):
                 except:
                     self.notify.warning("couldn't enable avatar controls")
 
-                base.cr.playGame.getPlace().setState('walk')
+                base.cr.playGame.getPlace().setState("walk")
         else:
-            self.notify.debug('setClear in else toon=%s, self.isToonInsde()=%s' % (toonName, self.isToonInside()))
+            self.notify.debug(
+                "setClear in else toon=%s, self.isToonInsde()=%s"
+                % (toonName, self.isToonInside())
+            )
         self.toonInsideAvId = 0
-        self.notify.debug('setClear self.toonInsideAvId=%d' % self.toonInsideAvId)
+        self.notify.debug("setClear self.toonInsideAvId=%d" % self.toonInsideAvId)
         if self.controllingToonAvId == base.localAvatar.doId:
-            self.notify.debug('set_clear turning off cannon control')
+            self.notify.debug("set_clear turning off cannon control")
             self.__disableCannonControl()
         self.controllingToonAvId = 0
 
@@ -357,7 +401,7 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         self.__startLocalCannonMoveTask()
 
     def d_setTimeout(self):
-        self.sendUpdate('setTimeout')
+        self.sendUpdate("setTimeout")
 
     def __disableCannonControl(self):
         if self.gui:
@@ -396,37 +440,42 @@ class DistributedPartyCannon(DistributedObject, Cannon):
                 self.loopMovingSound()
             self.updateModel()
             if task.time - task.lastPositionBroadcastTime > CANNON_MOVE_UPDATE_FREQ:
-                self.notify.debug('Broadcast local cannon %s position' % self.doId)
+                self.notify.debug("Broadcast local cannon %s position" % self.doId)
                 task.lastPositionBroadcastTime = task.time
                 self.__broadcastLocalCannonPosition()
         elif self.localCannonMoving:
             self.localCannonMoving = False
             self.stopMovingSound()
             self.__broadcastLocalCannonPosition()
-            self.notify.debug('Cannon Rot = %s, Angle = %s' % (self._rotation, self._angle))
+            self.notify.debug(
+                "Cannon Rot = %s, Angle = %s" % (self._rotation, self._angle)
+            )
         return Task.cont
 
     def __broadcastLocalCannonPosition(self):
         self.d_setCannonPosition(self._rotation, self._angle)
 
     def d_setCannonPosition(self, zRot, angle):
-        self.sendUpdate('setCannonPosition', [zRot, angle])
+        self.sendUpdate("setCannonPosition", [zRot, angle])
 
     def updateCannonPosition(self, avId, zRot, angle):
         if avId and avId == self.toonInsideAvId and avId != base.localAvatar.doId:
-            self.notify.debug('update cannon %s position zRot = %d, angle = %d' % (self.doId, zRot, angle))
+            self.notify.debug(
+                "update cannon %s position zRot = %d, angle = %d"
+                % (self.doId, zRot, angle)
+            )
             self.setRotation(zRot)
             self.setAngle(angle)
             self.updateModel()
 
     def __handleFirePressed(self):
-        self.notify.debug('fire pressed')
+        self.notify.debug("fire pressed")
         self.__disableCannonControl()
         self.__broadcastLocalCannonPosition()
         self.d_setCannonLit(self._rotation, self._angle)
 
     def d_setCannonLit(self, zRot, angle):
-        self.sendUpdate('setCannonLit', [zRot, angle])
+        self.sendUpdate("setCannonLit", [zRot, angle])
 
     def fire(self):
         if base.localAvatar.doId == self.controllingToonAvId:
@@ -437,13 +486,13 @@ class DistributedPartyCannon(DistributedObject, Cannon):
         return
 
     def d_setFired(self):
-        self.sendUpdate('setFired', [])
+        self.sendUpdate("setFired", [])
 
     def ignoreDisableForAvId(self, avId):
         toon = base.cr.doId2do.get(avId)
         if toon:
-            self.notify.debug('ignoring %s' % toon.uniqueName('disable'))
-            self.ignore(toon.uniqueName('disable'))
+            self.notify.debug("ignoring %s" % toon.uniqueName("disable"))
+            self.ignore(toon.uniqueName("disable"))
         else:
-            self.notify.debug('ignoring disable-%s' % self.toonInsideAvId)
-            self.ignore('disable-%s' % self.toonInsideAvId)
+            self.notify.debug("ignoring disable-%s" % self.toonInsideAvId)
+            self.ignore("disable-%s" % self.toonInsideAvId)

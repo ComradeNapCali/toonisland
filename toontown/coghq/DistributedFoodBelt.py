@@ -2,34 +2,38 @@ from panda3d.core import NodePath, Point3, CollisionTube, CollisionNode
 from direct.fsm import FSM
 from direct.distributed import DistributedObject
 from direct.directnotify import DirectNotifyGlobal
-from direct.interval.IntervalGlobal import Sequence, Wait, LerpPosInterval, ProjectileInterval, Func, SoundInterval
+from direct.interval.IntervalGlobal import (
+    Sequence,
+    Wait,
+    LerpPosInterval,
+    ProjectileInterval,
+    Func,
+    SoundInterval,
+)
 from direct.actor import Actor
 from toontown.toonbase import ToontownGlobals
 from toontown.coghq.FoodBeltBase import FoodBeltBase
 
+
 class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBeltBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFoodBelt')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFoodBelt")
     BeltSpeed = 5
     OnDuration = 300
     ToonupBeltSpeed = 1.0
     BeltActorPlayRate = 5.35
     ToonupBeltActorPlayRate = BeltActorPlayRate * ToonupBeltSpeed / BeltSpeed
-    ToonupModels = ['phase_6/models/golf/picnic_apple.bam',
-     'phase_6/models/golf/picnic_cupcake.bam',
-     'phase_6/models/golf/picnic_sandwich.bam',
-     'phase_6/models/golf/picnic_chocolate_cake.bam']
-    ToonupScales = [5,
-     5,
-     5,
-     4]
-    ToonupZOffsets = [-0.25,
-     -0.25,
-     -0,
-     -0.25]
+    ToonupModels = [
+        "phase_6/models/golf/picnic_apple.bam",
+        "phase_6/models/golf/picnic_cupcake.bam",
+        "phase_6/models/golf/picnic_sandwich.bam",
+        "phase_6/models/golf/picnic_chocolate_cake.bam",
+    ]
+    ToonupScales = [5, 5, 5, 4]
+    ToonupZOffsets = [-0.25, -0.25, -0, -0.25]
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
-        FSM.FSM.__init__(self, 'DistributedFoodBelt')
+        FSM.FSM.__init__(self, "DistributedFoodBelt")
         self.boss = None
         self.bossCogId = 0
         self.index = -1
@@ -55,7 +59,10 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
             self.boss.setBelt(self, self.index)
             self.loadAssets()
         else:
-            self.notify.warning('announceGenerate self.boss is None, self.bossCogId = %d' % self.bossCogId)
+            self.notify.warning(
+                "announceGenerate self.boss is None, self.bossCogId = %d"
+                % self.bossCogId
+            )
 
     def setBossCogId(self, bossCogId):
         self.bossCogId = bossCogId
@@ -65,26 +72,31 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         self.index = index
 
     def setState(self, state):
-        if state == 'F':
-            self.demand('Off')
-        elif state == 'N':
-            self.demand('On')
-        elif state == 'I':
-            self.demand('Inactive')
-        elif state == 'T':
-            self.demand('Toonup')
+        if state == "F":
+            self.demand("Off")
+        elif state == "N":
+            self.demand("On")
+        elif state == "I":
+            self.demand("Inactive")
+        elif state == "T":
+            self.demand("Toonup")
         else:
-            self.notify.error('Invalid state from AI: %s' % state)
+            self.notify.error("Invalid state from AI: %s" % state)
 
     def enterOn(self):
         self.beltSoundInterval.loop()
         for i in range(len(self.foodNodes)):
-            self.doMethodLater(self.foodWaitTimes[i], self.startFoodMoving, 'start-%d-%d' % (self.index, i), extraArgs=[i])
+            self.doMethodLater(
+                self.foodWaitTimes[i],
+                self.startFoodMoving,
+                "start-%d-%d" % (self.index, i),
+                extraArgs=[i],
+            )
 
     def exitOn(self):
         self.beltSoundInterval.finish()
         for i in range(len(self.foodNodes)):
-            taskName = 'start-%d-%d' % (self.index, i)
+            taskName = "start-%d-%d" % (self.index, i)
             self.removeTask(taskName)
 
     def enterToonup(self):
@@ -92,13 +104,18 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         self.beltSoundInterval.loop()
         for i in range(len(self.foodNodes)):
             self.removeFood(i)
-            self.beltActor.setPlayRate(self.ToonupBeltActorPlayRate, 'idle')
-            self.doMethodLater(self.toonupWaitTimes[i], self.startToonupMoving, 'startToonup-%d-%d' % (self.index, i), extraArgs=[i])
+            self.beltActor.setPlayRate(self.ToonupBeltActorPlayRate, "idle")
+            self.doMethodLater(
+                self.toonupWaitTimes[i],
+                self.startToonupMoving,
+                "startToonup-%d-%d" % (self.index, i),
+                extraArgs=[i],
+            )
 
     def exitToonup(self):
         self.beltSoundInterval.finish()
         for i in range(len(self.foodNodes)):
-            taskName = 'startToonup-%d-%d' % (self.index, i)
+            taskName = "startToonup-%d-%d" % (self.index, i)
             self.removeTask(taskName)
 
     def enterInactive(self):
@@ -122,61 +139,86 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         if foodIndex < len(self.foodIvals):
             self.foodIvals[foodIndex].loop()
         else:
-            self.notify.warning('startFoodMoving invalid index %d' % foodIndex)
+            self.notify.warning("startFoodMoving invalid index %d" % foodIndex)
         if self.beltActor:
-            self.beltActor.loop('idle')
+            self.beltActor.loop("idle")
 
     def startToonupMoving(self, toonupIndex):
         if toonupIndex < len(self.toonupIvals):
             self.toonupIvals[toonupIndex].loop()
         else:
-            self.notify.warning('startToonupMoving invalid index %d' % toonupIndex)
+            self.notify.warning("startToonupMoving invalid index %d" % toonupIndex)
         if self.beltActor:
-            self.beltActor.loop('idle')
+            self.beltActor.loop("idle")
 
     def loadAssets(self):
-        self.beltModel = NodePath('beltModel')
+        self.beltModel = NodePath("beltModel")
         self.beltModel.reparentTo(self.boss.geom)
-        self.startLocator = self.boss.geom.find('**/conveyer_belt_start_%d' % (self.index + 1))
-        self.endLocator = self.boss.geom.find('**/conveyer_belt_end_%d' % (self.index + 1))
+        self.startLocator = self.boss.geom.find(
+            "**/conveyer_belt_start_%d" % (self.index + 1)
+        )
+        self.endLocator = self.boss.geom.find(
+            "**/conveyer_belt_end_%d" % (self.index + 1)
+        )
         center = (self.startLocator.getPos() + self.endLocator.getPos()) / 2.0
         self.beltHeight = center.getZ()
         self.beltHeight += 0.1
         center.setZ(0)
-        self.beltLength = (self.endLocator.getPos() - self.startLocator.getPos()).length()
+        self.beltLength = (
+            self.endLocator.getPos() - self.startLocator.getPos()
+        ).length()
         self.distBetweenFoodNodes = self.beltLength / self.NumFoodNodes
-        self.notify.debug('setting beltModelPos to %s' % center)
+        self.notify.debug("setting beltModelPos to %s" % center)
         self.beltModel.setPos(center)
         self.setupFoodNodes()
         self.setupFoodIvals()
         self.setupToonupIvals()
         if self.index == 0:
-            self.beltActorModel = loader.loadModel('phase_12/models/bossbotHQ/food_belt1_model')
+            self.beltActorModel = loader.loadModel(
+                "phase_12/models/bossbotHQ/food_belt1_model"
+            )
         else:
-            self.beltActorModel = loader.loadModel('phase_12/models/bossbotHQ/food_belt2_model')
+            self.beltActorModel = loader.loadModel(
+                "phase_12/models/bossbotHQ/food_belt2_model"
+            )
         if self.beltActorModel:
             self.beltActor = Actor.Actor(self.beltActorModel)
             if self.index == 0:
-                self.beltActor.loadAnims({'idle': 'phase_12/models/bossbotHQ/food_belt1'})
+                self.beltActor.loadAnims(
+                    {"idle": "phase_12/models/bossbotHQ/food_belt1"}
+                )
             else:
-                self.beltActor.loadAnims({'idle': 'phase_12/models/bossbotHQ/food_belt2'})
+                self.beltActor.loadAnims(
+                    {"idle": "phase_12/models/bossbotHQ/food_belt2"}
+                )
             self.beltActor.reparentTo(render)
-            self.beltActor.setPlayRate(self.BeltActorPlayRate, 'idle')
-            mesh = self.beltActor.find('**/mesh_tide1')
-            joint = self.beltActor.find('**/uvj_WakeWhiteTide1')
-            mesh.setTexProjector(mesh.findTextureStage('default'), joint, self.beltActor)
+            self.beltActor.setPlayRate(self.BeltActorPlayRate, "idle")
+            mesh = self.beltActor.find("**/mesh_tide1")
+            joint = self.beltActor.find("**/uvj_WakeWhiteTide1")
+            mesh.setTexProjector(
+                mesh.findTextureStage("default"), joint, self.beltActor
+            )
             self.beltActor.setPos(self.startLocator.getPos())
-        self.beltSound = base.loader.loadSfx('phase_12/audio/sfx/CHQ_FACT_conveyor_belt.ogg')
+        self.beltSound = base.loader.loadSfx(
+            "phase_12/audio/sfx/CHQ_FACT_conveyor_belt.ogg"
+        )
         self.beltSound.setLoop(1)
-        self.beltSoundInterval = SoundInterval(self.beltSound, node=self.beltModel, listenerNode=base.localAvatar, seamlessLoop=True, volume=0.25, cutOff=100)
+        self.beltSoundInterval = SoundInterval(
+            self.beltSound,
+            node=self.beltModel,
+            listenerNode=base.localAvatar,
+            seamlessLoop=True,
+            volume=0.25,
+            cutOff=100,
+        )
 
     def cleanup(self):
         for i in range(len(self.foodNodes)):
-            taskName = 'start-%d-%d' % (self.index, i)
+            taskName = "start-%d-%d" % (self.index, i)
             self.removeTask(taskName)
 
         for i in range(len(self.foodNodes)):
-            taskName = 'startToonup-%d-%d' % (self.index, i)
+            taskName = "startToonup-%d-%d" % (self.index, i)
             self.removeTask(taskName)
 
         for ival in self.foodIvals:
@@ -198,7 +240,7 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         for i in range(self.NumFoodNodes):
             newPosIndex = self.NumFoodNodes - 1 - i
             yPos = -(self.beltLength / 2.0) + newPosIndex * self.distBetweenFoodNodes
-            newFoodNode = NodePath('foodNode-%d-%d' % (self.index, i))
+            newFoodNode = NodePath("foodNode-%d-%d" % (self.index, i))
             newFoodNode.reparentTo(self.beltModel)
             newFoodNode.setPos(0, yPos, self.beltHeight)
             debugFood = None
@@ -223,7 +265,22 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         totalTimeToTraverseBelt = self.beltLength / self.BeltSpeed
         startPosY = -(self.beltLength / 2.0)
         endPosY = self.beltLength / 2.0
-        retval = Sequence(Func(self.loadFood, foodIndex), LerpPosInterval(foodNode, duration=totalTimeToTraverseBelt, startPos=Point3(0, startPosY, self.beltHeight), pos=Point3(0, endPosY, self.beltHeight)), ProjectileInterval(foodNode, startPos=Point3(0, endPosY, self.beltHeight), startVel=Point3(0, self.BeltSpeed, 0), endZ=0), Func(self.removeFood, foodIndex))
+        retval = Sequence(
+            Func(self.loadFood, foodIndex),
+            LerpPosInterval(
+                foodNode,
+                duration=totalTimeToTraverseBelt,
+                startPos=Point3(0, startPosY, self.beltHeight),
+                pos=Point3(0, endPosY, self.beltHeight),
+            ),
+            ProjectileInterval(
+                foodNode,
+                startPos=Point3(0, endPosY, self.beltHeight),
+                startVel=Point3(0, self.BeltSpeed, 0),
+                endZ=0,
+            ),
+            Func(self.removeFood, foodIndex),
+        )
         return retval
 
     def loadFood(self, foodIndex):
@@ -231,26 +288,26 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         if foodIndex in self.foodModelDict:
             foodModel = self.foodModelDict[foodIndex]
             foodModel.reparentTo(self.foodNodes[foodIndex])
-            colNp = foodModel.find('**/FoodCol*')
-            colNp.setTag('foodNum', str(self.foodNum))
+            colNp = foodModel.find("**/FoodCol*")
+            colNp.setTag("foodNum", str(self.foodNum))
         else:
             foodModelScale = ToontownGlobals.BossbotFoodModelScale
-            foodModel = loader.loadModel('phase_12/models/bossbotHQ/canoffood')
+            foodModel = loader.loadModel("phase_12/models/bossbotHQ/canoffood")
             foodModel.setScale(foodModelScale)
             foodModel.reparentTo(self.foodNodes[foodIndex])
             target = CollisionTube(4, 0, 0, -4, 0, 0, 2)
             target.setTangible(0)
-            colName = 'FoodCol-%d-%d' % (self.index, foodIndex)
+            colName = "FoodCol-%d-%d" % (self.index, foodIndex)
             targetNode = CollisionNode(colName)
             targetNode.addSolid(target)
             targetNode.setCollideMask(ToontownGlobals.WallBitmask)
             targetNodePath = foodModel.attachNewNode(targetNode)
             targetNodePath.setScale(1.0 / foodModelScale)
-            targetNodePath.setTag('foodIndex', str(foodIndex))
-            targetNodePath.setTag('beltIndex', str(self.index))
-            targetNodePath.setTag('foodNum', str(self.foodNum))
+            targetNodePath.setTag("foodIndex", str(foodIndex))
+            targetNodePath.setTag("beltIndex", str(self.index))
+            targetNodePath.setTag("foodNum", str(self.foodNum))
             targetNodePath.setZ(targetNodePath.getZ() - 1.5)
-            self.accept('enter' + colName, self.touchedFood)
+            self.accept("enter" + colName, self.touchedFood)
             self.foodModelDict[foodIndex] = foodModel
 
     def removeFood(self, foodIndex):
@@ -261,17 +318,17 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
     def touchedFood(self, colEntry):
         into = colEntry.getIntoNodePath()
         try:
-            beltIndex = int(into.getTag('beltIndex'))
+            beltIndex = int(into.getTag("beltIndex"))
         except:
             beltIndex = 0
 
         try:
-            foodIndex = int(into.getTag('foodIndex'))
+            foodIndex = int(into.getTag("foodIndex"))
         except:
             foodIndex = 0
 
         try:
-            foodNum = int(into.getTag('foodNum'))
+            foodNum = int(into.getTag("foodNum"))
         except:
             foodNum = 0
 
@@ -291,7 +348,22 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         totalTimeToTraverseBelt = self.beltLength / self.ToonupBeltSpeed
         startPosY = -(self.beltLength / 2.0)
         endPosY = self.beltLength / 2.0
-        retval = Sequence(Func(self.loadToonup, toonupIndex), LerpPosInterval(foodNode, duration=totalTimeToTraverseBelt, startPos=Point3(0, startPosY, self.beltHeight), pos=Point3(0, endPosY, self.beltHeight)), ProjectileInterval(foodNode, startPos=Point3(0, endPosY, self.beltHeight), startVel=Point3(0, self.BeltSpeed, 0), endZ=0), Func(self.removeToonup, toonupIndex))
+        retval = Sequence(
+            Func(self.loadToonup, toonupIndex),
+            LerpPosInterval(
+                foodNode,
+                duration=totalTimeToTraverseBelt,
+                startPos=Point3(0, startPosY, self.beltHeight),
+                pos=Point3(0, endPosY, self.beltHeight),
+            ),
+            ProjectileInterval(
+                foodNode,
+                startPos=Point3(0, endPosY, self.beltHeight),
+                startVel=Point3(0, self.BeltSpeed, 0),
+                endZ=0,
+            ),
+            Func(self.removeToonup, toonupIndex),
+        )
         return retval
 
     def loadToonup(self, toonupIndex):
@@ -299,8 +371,8 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
         if toonupIndex in self.toonupModelDict:
             toonupModel = self.toonupModelDict[toonupIndex]
             toonupModel.reparentTo(self.foodNodes[toonupIndex])
-            colNp = toonupModel.find('**/ToonupCol*')
-            colNp.setTag('toonupNum', str(self.toonupNum))
+            colNp = toonupModel.find("**/ToonupCol*")
+            colNp.setTag("toonupNum", str(self.toonupNum))
         else:
             toonupModelScale = self.ToonupScales[toonupIndex]
             modelName = self.ToonupModels[toonupIndex]
@@ -311,17 +383,17 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
             toonupModel.reparentTo(self.foodNodes[toonupIndex])
             target = CollisionTube(4, 0, 0, -4, 0, 0, 2)
             target.setTangible(0)
-            colName = 'ToonupCol-%d-%d' % (self.index, toonupIndex)
+            colName = "ToonupCol-%d-%d" % (self.index, toonupIndex)
             targetNode = CollisionNode(colName)
             targetNode.addSolid(target)
             targetNode.setCollideMask(ToontownGlobals.WallBitmask)
             targetNodePath = toonupModel.attachNewNode(targetNode)
             targetNodePath.setScale(1.0 / toonupModelScale)
-            targetNodePath.setTag('toonupIndex', str(toonupIndex))
-            targetNodePath.setTag('beltIndex', str(self.index))
-            targetNodePath.setTag('toonupNum', str(self.toonupNum))
+            targetNodePath.setTag("toonupIndex", str(toonupIndex))
+            targetNodePath.setTag("beltIndex", str(self.index))
+            targetNodePath.setTag("toonupNum", str(self.toonupNum))
             targetNodePath.setZ(targetNodePath.getZ() - 1.5 / toonupModelScale)
-            self.accept('enter' + colName, self.touchedToonup)
+            self.accept("enter" + colName, self.touchedToonup)
             self.toonupModelDict[toonupIndex] = toonupModel
 
     def removeToonup(self, toonupIndex):
@@ -334,17 +406,17 @@ class DistributedFoodBelt(DistributedObject.DistributedObject, FSM.FSM, FoodBelt
             return
         into = colEntry.getIntoNodePath()
         try:
-            beltIndex = int(into.getTag('beltIndex'))
+            beltIndex = int(into.getTag("beltIndex"))
         except:
             beltIndex = 0
 
         try:
-            toonupIndex = int(into.getTag('toonupIndex'))
+            toonupIndex = int(into.getTag("toonupIndex"))
         except:
             toonupIndex = 0
 
         try:
-            toonupNum = int(into.getTag('toonupNum'))
+            toonupNum = int(into.getTag("toonupNum"))
         except:
             toonupNum = 0
 

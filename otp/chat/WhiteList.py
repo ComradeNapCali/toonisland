@@ -5,17 +5,16 @@ import os
 
 
 class WhiteList:
-
     def __init__(self, wordlist):
         self.words = []
         for line in wordlist:
-            self.words.append(line.strip(b'\n\r').lower())
+            self.words.append(line.strip(b"\n\r").lower())
 
         self.words.sort()
         self.numWords = len(self.words)
 
     def cleanText(self, text):
-        text = text.strip('.,?!')
+        text = text.strip(".,?!")
         text = text.lower()
         return text
 

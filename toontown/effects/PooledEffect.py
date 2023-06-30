@@ -3,12 +3,13 @@ from direct.showbase import Pool
 from direct.showbase.DirectObject import DirectObject
 import re
 
+
 class PooledEffect(DirectObject, NodePath):
     pool = None
     poolLimit = 124
 
     @classmethod
-    def getEffect(cls, context = ''):
+    def getEffect(cls, context=""):
         if cls.pool is None:
             cls.pool = Pool.Pool()
         if cls.pool.hasFree():
@@ -31,10 +32,10 @@ class PooledEffect(DirectObject, NodePath):
 
     def __init__(self):
         NodePath.__init__(self, self.__class__.__name__)
-        self.accept('clientLogout', self.__class__.cleanup)
+        self.accept("clientLogout", self.__class__.cleanup)
 
-    def destroy(self, item = None):
+    def destroy(self, item=None):
         if item:
             self.pool.remove(item)
-        self.ignore('clientLogout')
+        self.ignore("clientLogout")
         self.removeNode()

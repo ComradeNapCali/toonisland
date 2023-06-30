@@ -5,7 +5,7 @@ from toontown.estate import CannonGlobals
 
 
 class DistributedTargetAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedTargetAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedTargetAI")
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -16,14 +16,14 @@ class DistributedTargetAI(DistributedObjectAI):
 
     def announceGenerate(self):
         DistributedObjectAI.announceGenerate(self)
-        taskMgr.doMethodLater(10, self.__startGame, self.uniqueName('startGame'))
+        taskMgr.doMethodLater(10, self.__startGame, self.uniqueName("startGame"))
 
     def __startGame(self, task):
         self.enabled = 1
         self.power = 1
         self.time = CannonGlobals.CANNON_TIMEOUT
         self.d_setState()
-        taskMgr.doMethodLater(self.time, self.__endGame, self.uniqueName('endGame'))
+        taskMgr.doMethodLater(self.time, self.__endGame, self.uniqueName("endGame"))
         return task.done
 
     def __endGame(self, task):
@@ -36,16 +36,16 @@ class DistributedTargetAI(DistributedObjectAI):
         self.enabled = 0
         self.power = 0
         self.time = 0
-        self.sendUpdate('setReward', [self.getToonUpAmount()])
+        self.sendUpdate("setReward", [self.getToonUpAmount()])
         self.d_setState()
-        taskMgr.doMethodLater(10, self.__startGame, self.uniqueName('startGame'))
+        taskMgr.doMethodLater(10, self.__startGame, self.uniqueName("startGame"))
         return task.done
 
     def getPosition(self):
         return 0, 0, 40
 
     def d_setState(self):
-        self.sendUpdate('setState', self.getState())
+        self.sendUpdate("setState", self.getState())
 
     def getState(self):
         return self.enabled, self.getToonUpAmount(), self.time
@@ -54,8 +54,8 @@ class DistributedTargetAI(DistributedObjectAI):
         if self.enabled and avId:
             self.power += 1
             self.time = int(CannonGlobals.CANNON_TIMEOUT / self.power)
-            taskMgr.remove(self.uniqueName('endGame'))
-            taskMgr.doMethodLater(self.time, self.__endGame, self.uniqueName('endGame'))
+            taskMgr.remove(self.uniqueName("endGame"))
+            taskMgr.doMethodLater(self.time, self.__endGame, self.uniqueName("endGame"))
             self.d_setState()
 
     def setBonus(self, bonus):
@@ -69,13 +69,13 @@ class DistributedTargetAI(DistributedObjectAI):
         newScore = score * multiplier
         if newScore > self.highScore:
             self.highScore = newScore
-            self.sendUpdate('setPinballHiScorer', [av.getName()])
-            self.sendUpdate('setPinballHiScore', [newScore])
+            self.sendUpdate("setPinballHiScorer", [av.getName()])
+            self.sendUpdate("setPinballHiScore", [newScore])
 
     def delete(self):
         DistributedObjectAI.delete(self)
-        taskMgr.remove(self.uniqueName('startGame'))
-        taskMgr.remove(self.uniqueName('endGame'))
+        taskMgr.remove(self.uniqueName("startGame"))
+        taskMgr.remove(self.uniqueName("endGame"))
 
     def getToonUpAmount(self):
-        return 2 ** self.power
+        return 2**self.power

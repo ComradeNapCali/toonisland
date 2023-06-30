@@ -4,12 +4,13 @@ from direct.showbase import PythonUtil
 from direct.interval.MetaInterval import Sequence
 from toontown.parties.PartyGlobals import DanceReverseLoopAnims, ToonDancingStates
 
+
 class PartyDanceActivityToonFSM(FSM):
-    notify = directNotify.newCategory('PartyDanceActivityToonFSM')
+    notify = directNotify.newCategory("PartyDanceActivityToonFSM")
 
     def __init__(self, avId, activity, h):
         FSM.__init__(self, self.__class__.__name__)
-        self.notify.debug('init : avId = %s, activity = %s ' % (avId, activity))
+        self.notify.debug("init : avId = %s, activity = %s " % (avId, activity))
         self.avId = avId
         self.activity = activity
         self.isLocal = avId == base.localAvatar.doId
@@ -18,10 +19,12 @@ class PartyDanceActivityToonFSM(FSM):
         self.danceNode = None
         self.danceMoveSequence = None
         self.lastAnim = None
-        self.defaultTransitions = {'Init': ['Run', 'DanceMove', 'Cleanup'],
-         'DanceMove': ['Run', 'DanceMove', 'Cleanup'],
-         'Run': ['Run', 'DanceMove', 'Cleanup'],
-         'Cleanup': []}
+        self.defaultTransitions = {
+            "Init": ["Run", "DanceMove", "Cleanup"],
+            "DanceMove": ["Run", "DanceMove", "Cleanup"],
+            "Run": ["Run", "DanceMove", "Cleanup"],
+            "Cleanup": [],
+        }
         self.enteredAlready = False
         return
 
@@ -36,7 +39,7 @@ class PartyDanceActivityToonFSM(FSM):
 
     def enterInit(self, *args):
         if not self.enteredAlready:
-            self.danceNode = NodePath('danceNode-%s' % self.avId)
+            self.danceNode = NodePath("danceNode-%s" % self.avId)
             self.danceNode.reparentTo(render)
             self.danceNode.setPos(0, 0, 0)
             self.danceNode.setH(self.toonH)
@@ -49,7 +52,7 @@ class PartyDanceActivityToonFSM(FSM):
         pass
 
     def enterCleanup(self, *args):
-        if hasattr(base.cr.playGame.hood, 'loader'):
+        if hasattr(base.cr.playGame.hood, "loader"):
             pos = self.toon.getPos(self.activity.getParentNodePath())
             hpr = self.toon.getHpr(self.activity.getParentNodePath())
             self.toon.reparentTo(self.activity.getParentNodePath())
@@ -64,14 +67,17 @@ class PartyDanceActivityToonFSM(FSM):
     def exitCleanup(self):
         pass
 
-    def enterDanceMove(self, anim = ''):
-        if self.lastAnim is None and anim == '':
-            self.toon.loop('victory', fromFrame=98, toFrame=122)
+    def enterDanceMove(self, anim=""):
+        if self.lastAnim is None and anim == "":
+            self.toon.loop("victory", fromFrame=98, toFrame=122)
         else:
-            if anim == '':
+            if anim == "":
                 anim = self.lastAnim
             if anim in DanceReverseLoopAnims:
-                self.danceMoveSequence = Sequence(self.toon.actorInterval(anim, loop=0), self.toon.actorInterval(anim, loop=0, playRate=-1.0))
+                self.danceMoveSequence = Sequence(
+                    self.toon.actorInterval(anim, loop=0),
+                    self.toon.actorInterval(anim, loop=0, playRate=-1.0),
+                )
                 self.danceMoveSequence.loop()
             else:
                 self.toon.loop(anim)
@@ -85,8 +91,8 @@ class PartyDanceActivityToonFSM(FSM):
         return
 
     def enterRun(self, *args):
-        if self.toon.getCurrentAnim() != 'run':
-            self.toon.loop('run')
+        if self.toon.getCurrentAnim() != "run":
+            self.toon.loop("run")
 
     def exitRun(self):
         pass

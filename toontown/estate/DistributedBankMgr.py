@@ -2,8 +2,9 @@ from direct.distributed import DistributedObject
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import TTLocalizer
 
+
 class DistributedBankMgr(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBankMgr')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedBankMgr")
     neverDisable = 1
 
     def __init__(self, cr):
@@ -27,4 +28,4 @@ class DistributedBankMgr(DistributedObject.DistributedObject):
         return
 
     def d_transferMoney(self, amount):
-        self.sendUpdate('transferMoney', [amount])
+        self.sendUpdate("transferMoney", [amount])

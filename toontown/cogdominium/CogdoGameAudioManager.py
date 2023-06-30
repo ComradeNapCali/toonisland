@@ -1,9 +1,9 @@
 from panda3d.core import AudioSound
 from direct.interval.SoundInterval import SoundInterval
 
-class CogdoGameSfx:
 
-    def __init__(self, audioSound, audioMgr, source = None):
+class CogdoGameSfx:
+    def __init__(self, audioSound, audioMgr, source=None):
         self._audioSound = audioSound
         self._audioMgr = audioMgr
         self._source = source
@@ -17,13 +17,15 @@ class CogdoGameSfx:
     def getAudioSound(self):
         return self._audioSound
 
-    def play(self, loop = False, playRate = 1.0, volume = 1.0, source = None):
+    def play(self, loop=False, playRate=1.0, volume=1.0, source=None):
         if source is None:
             source = self._source
-        self._audioMgr.playSound(self._audioSound, loop=loop, source=source, playRate=playRate, volume=volume)
+        self._audioMgr.playSound(
+            self._audioSound, loop=loop, source=source, playRate=playRate, volume=volume
+        )
         return
 
-    def loop(self, playRate = 1.0, volume = 1.0, source = None):
+    def loop(self, playRate=1.0, volume=1.0, source=None):
         if source is None:
             source = self._source
         self.play(loop=True, source=source, playRate=playRate, volume=volume)
@@ -34,9 +36,9 @@ class CogdoGameSfx:
 
 
 class CogdoGameAudioManager:
-    notify = directNotify.newCategory('CogdoGameAudioManager')
+    notify = directNotify.newCategory("CogdoGameAudioManager")
 
-    def __init__(self, musicFiles, sfxFiles, listener, cutoff = 75):
+    def __init__(self, musicFiles, sfxFiles, listener, cutoff=75):
         self._sfxFiles = sfxFiles
         self._listener = listener
         self._cutoff = cutoff
@@ -65,7 +67,7 @@ class CogdoGameAudioManager:
             self.currentMusic.stop()
         return
 
-    def playMusic(self, name, loop = True, swap = False):
+    def playMusic(self, name, loop=True, swap=False):
         time = 0.0
         if self.currentMusic is not None:
             if swap:
@@ -77,7 +79,7 @@ class CogdoGameAudioManager:
         self.currentMusic.play()
         return
 
-    def createSfx(self, name, source = None):
+    def createSfx(self, name, source=None):
         sound = loader.loadSfx(self._sfxFiles[name])
         self._audioSounds.append(sound)
         gameSfx = CogdoGameSfx(sound, self, source)
@@ -93,18 +95,44 @@ class CogdoGameAudioManager:
                 ival.finish()
             del self._soundIvals[audioSound]
 
-    def createSfxIval(self, sfxName, volume = 1.0, duration = 0.0, startTime = 0.0, source = None, cutoff = None):
+    def createSfxIval(
+        self, sfxName, volume=1.0, duration=0.0, startTime=0.0, source=None, cutoff=None
+    ):
         sound = loader.loadSfx(self._sfxFiles[sfxName])
         self._audioSounds.append(sound)
-        return self._createSoundIval(sound, volume=volume, startTime=startTime, duration=duration, source=source, cutoff=cutoff)
+        return self._createSoundIval(
+            sound,
+            volume=volume,
+            startTime=startTime,
+            duration=duration,
+            source=source,
+            cutoff=cutoff,
+        )
 
-    def _createSoundIval(self, audioSound, volume = 1.0, duration = 0.0, startTime = 0.0, source = None, register = False, cutoff = None):
+    def _createSoundIval(
+        self,
+        audioSound,
+        volume=1.0,
+        duration=0.0,
+        startTime=0.0,
+        source=None,
+        register=False,
+        cutoff=None,
+    ):
         if cutoff == None:
             cutoff = self._cutoff
-        ival = SoundInterval(audioSound, node=source, duration=duration, startTime=startTime, cutOff=cutoff, seamlessLoop=True, listenerNode=self._listener)
+        ival = SoundInterval(
+            audioSound,
+            node=source,
+            duration=duration,
+            startTime=startTime,
+            cutOff=cutoff,
+            seamlessLoop=True,
+            listenerNode=self._listener,
+        )
         return ival
 
-    def playSound(self, audioSound, loop = False, source = None, playRate = 1.0, volume = 1.0):
+    def playSound(self, audioSound, loop=False, source=None, playRate=1.0, volume=1.0):
         audioSound.setPlayRate(playRate)
         if source is not None and loop:
             self._cleanupSoundIval(audioSound)
@@ -112,7 +140,14 @@ class CogdoGameAudioManager:
             self._soundIvals[audioSound] = ival
             ival.loop()
         else:
-            base.playSfx(audioSound, looping=loop, node=source, volume=volume, listener=self._listener, cutoff=self._cutoff)
+            base.playSfx(
+                audioSound,
+                looping=loop,
+                node=source,
+                volume=volume,
+                listener=self._listener,
+                cutoff=self._cutoff,
+            )
         return
 
     def stopSound(self, audioSound):

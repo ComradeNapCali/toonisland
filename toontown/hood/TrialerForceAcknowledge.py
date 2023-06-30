@@ -4,8 +4,8 @@ from . import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toontowngui import TeaserPanel
 
-class TrialerForceAcknowledge:
 
+class TrialerForceAcknowledge:
     def __init__(self, doneEvent):
         self.doneEvent = doneEvent
         self.dialog = None
@@ -14,8 +14,8 @@ class TrialerForceAcknowledge:
     def enter(self, destHood):
         doneStatus = {}
 
-        def letThrough(self = self, doneStatus = doneStatus):
-            doneStatus['mode'] = 'pass'
+        def letThrough(self=self, doneStatus=doneStatus):
+            doneStatus["mode"] = "pass"
             messenger.send(self.doneEvent, [doneStatus])
 
         if not base.restrictTrialers:
@@ -27,18 +27,24 @@ class TrialerForceAcknowledge:
         if base.cr.isPaid():
             letThrough()
             return
-        if ZoneUtil.getCanonicalHoodId(destHood) in (ToontownGlobals.ToonIslandCentral, ToontownGlobals.MyEstate, ToontownGlobals.GoofySpeedway):
+        if ZoneUtil.getCanonicalHoodId(destHood) in (
+            ToontownGlobals.ToonIslandCentral,
+            ToontownGlobals.MyEstate,
+            ToontownGlobals.GoofySpeedway,
+        ):
             letThrough()
             return
         else:
             try:
-                base.localAvatar.b_setAnimState('neutral', 1)
+                base.localAvatar.b_setAnimState("neutral", 1)
             except:
                 pass
 
-        doneStatus['mode'] = 'fail'
+        doneStatus["mode"] = "fail"
         self.doneStatus = doneStatus
-        self.dialog = TeaserPanel.TeaserPanel(pageName='otherHoods', doneFunc=self.handleOk)
+        self.dialog = TeaserPanel.TeaserPanel(
+            pageName="otherHoods", doneFunc=self.handleOk
+        )
 
     def exit(self):
         if self.dialog:

@@ -9,8 +9,9 @@ from direct.distributed import DistributedObject
 from . import SinkingPlatformGlobals
 from direct.directnotify import DirectNotifyGlobal
 
+
 class DistributedSinkingPlatform(BasicEntities.DistributedNodePathEntity):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedSinkingPlatform')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedSinkingPlatform")
 
     def __init__(self, cr):
         BasicEntities.DistributedNodePathEntity.__init__(self, cr)
@@ -18,30 +19,41 @@ class DistributedSinkingPlatform(BasicEntities.DistributedNodePathEntity):
         return
 
     def generateInit(self):
-        self.notify.debug('generateInit')
+        self.notify.debug("generateInit")
         BasicEntities.DistributedNodePathEntity.generateInit(self)
-        self.fsm = ClassicFSM.ClassicFSM('DistributedSinkingPlatform', [State.State('off', self.enterOff, self.exitOff, ['sinking']), State.State('sinking', self.enterSinking, self.exitSinking, ['rising']), State.State('rising', self.enterRising, self.exitRising, ['sinking', 'off'])], 'off', 'off')
+        self.fsm = ClassicFSM.ClassicFSM(
+            "DistributedSinkingPlatform",
+            [
+                State.State("off", self.enterOff, self.exitOff, ["sinking"]),
+                State.State("sinking", self.enterSinking, self.exitSinking, ["rising"]),
+                State.State(
+                    "rising", self.enterRising, self.exitRising, ["sinking", "off"]
+                ),
+            ],
+            "off",
+            "off",
+        )
         self.fsm.enterInitialState()
 
     def generate(self):
-        self.notify.debug('generate')
+        self.notify.debug("generate")
         BasicEntities.DistributedNodePathEntity.generate(self)
 
     def announceGenerate(self):
-        self.notify.debug('announceGenerate')
+        self.notify.debug("announceGenerate")
         BasicEntities.DistributedNodePathEntity.announceGenerate(self)
         self.loadModel()
         self.accept(self.platform.getEnterEvent(), self.localToonEntered)
         self.accept(self.platform.getExitEvent(), self.localToonLeft)
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         self.ignoreAll()
         self.fsm.requestFinalState()
         BasicEntities.DistributedNodePathEntity.disable(self)
 
     def delete(self):
-        self.notify.debug('delete')
+        self.notify.debug("delete")
         self.ignoreAll()
         if self.moveIval:
             self.moveIval.pause()
@@ -51,45 +63,45 @@ class DistributedSinkingPlatform(BasicEntities.DistributedNodePathEntity):
         BasicEntities.DistributedNodePathEntity.delete(self)
 
     def loadModel(self):
-        self.notify.debug('loadModel')
-        model = loader.loadModel('phase_9/models/cogHQ/platform1')
+        self.notify.debug("loadModel")
+        model = loader.loadModel("phase_9/models/cogHQ/platform1")
         self.platform = MovingPlatform.MovingPlatform()
-        self.platform.setupCopyModel(self.getParentToken(), model, 'platformcollision')
+        self.platform.setupCopyModel(self.getParentToken(), model, "platformcollision")
         self.platform.reparentTo(self)
         self.platform.setPos(0, 0, 0)
 
     def localToonEntered(self):
         ts = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)
-        self.sendUpdate('setOnOff', [1, ts])
+        self.sendUpdate("setOnOff", [1, ts])
 
     def localToonLeft(self):
         ts = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)
-        self.sendUpdate('setOnOff', [0, ts])
+        self.sendUpdate("setOnOff", [0, ts])
 
     def enterOff(self):
-        self.notify.debug('enterOff')
+        self.notify.debug("enterOff")
 
     def exitOff(self):
-        self.notify.debug('exitOff')
+        self.notify.debug("exitOff")
 
-    def enterSinking(self, ts = 0):
-        self.notify.debug('enterSinking')
+    def enterSinking(self, ts=0):
+        self.notify.debug("enterSinking")
         self.startMoving(SinkingPlatformGlobals.SINKING, ts)
 
     def exitSinking(self):
-        self.notify.debug('exitSinking')
+        self.notify.debug("exitSinking")
         if self.moveIval:
             self.moveIval.pause()
             del self.moveIval
             self.moveIval = None
         return
 
-    def enterRising(self, ts = 0):
-        self.notify.debug('enterRising')
+    def enterRising(self, ts=0):
+        self.notify.debug("enterRising")
         self.startMoving(SinkingPlatformGlobals.RISING, ts)
 
     def exitRising(self):
-        self.notify.debug('exitRising')
+        self.notify.debug("exitRising")
         if self.moveIval:
             self.moveIval.pause()
             del self.moveIval
@@ -97,13 +109,13 @@ class DistributedSinkingPlatform(BasicEntities.DistributedNodePathEntity):
         return
 
     def setSinkMode(self, avId, mode, ts):
-        self.notify.debug('setSinkMode %s' % mode)
+        self.notify.debug("setSinkMode %s" % mode)
         if mode == SinkingPlatformGlobals.OFF:
             self.fsm.requestInitialState()
         elif mode == SinkingPlatformGlobals.RISING:
-            self.fsm.request('rising', [ts])
+            self.fsm.request("rising", [ts])
         elif mode == SinkingPlatformGlobals.SINKING:
-            self.fsm.request('sinking', [ts])
+            self.fsm.request("sinking", [ts])
 
     def startMoving(self, direction, ts):
         if direction == SinkingPlatformGlobals.RISING:
@@ -127,6 +139,16 @@ class DistributedSinkingPlatform(BasicEntities.DistributedNodePathEntity):
         self.moveIval = Sequence()
         if pause is not None:
             self.moveIval.append(WaitInterval(pause))
-        self.moveIval.append(LerpPosInterval(moveNode, duration, endPos, startPos=moveNode.getPos(), blendType='easeInOut', name='%s-move' % self.platform.name, fluid=1))
+        self.moveIval.append(
+            LerpPosInterval(
+                moveNode,
+                duration,
+                endPos,
+                startPos=moveNode.getPos(),
+                blendType="easeInOut",
+                name="%s-move" % self.platform.name,
+                fluid=1,
+            )
+        )
         self.moveIval.start()
         return

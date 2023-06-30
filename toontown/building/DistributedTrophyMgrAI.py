@@ -7,7 +7,7 @@ from toontown.toonbase import TTLocalizer
 
 
 class DistributedTrophyMgrAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedTrophyMgrAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedTrophyMgrAI")
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -57,8 +57,8 @@ class DistributedTrophyMgrAI(DistributedObjectAI):
 
         self.sort()
 
-        messenger.send('leaderboardChanged')
-        messenger.send('leaderboardFlush')
+        messenger.send("leaderboardChanged")
+        messenger.send("leaderboardFlush")
 
         av = self.air.doId2do.get(avId)
         if av:
@@ -84,7 +84,7 @@ class DistributedTrophyMgrAI(DistributedObjectAI):
             if av:
                 av.d_setSystemMessage(0, TTLocalizer.RemoveTrophy)
 
-            messenger.send('leaderboardChanged')
-            messenger.send('leaderboardFlush')
+            messenger.send("leaderboardChanged")
+            messenger.send("leaderboardFlush")
         else:
-            self.notify.warning('removeTrophy for av %s when av had no score!' % avId)
+            self.notify.warning("removeTrophy for av %s when av had no score!" % avId)

@@ -4,8 +4,8 @@ from toontown.toonbase import TTLocalizer
 from direct.gui import DirectLabel
 from toontown.quest import Quests
 
-class NPCForceAcknowledge:
 
+class NPCForceAcknowledge:
     def __init__(self, doneEvent):
         self.doneEvent = doneEvent
         self.dialog = None
@@ -16,7 +16,7 @@ class NPCForceAcknowledge:
         questHistory = base.localAvatar.getQuestHistory()
         imgScale = 0.5
 
-        doneStatus['mode'] = 'complete'
+        doneStatus["mode"] = "complete"
         messenger.send(self.doneEvent, [doneStatus])
 
     def exit(self):

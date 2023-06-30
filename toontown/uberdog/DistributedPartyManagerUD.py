@@ -1,10 +1,13 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectUD import DistributedObjectUD
 
+
 class DistributedPartyManagerUD(DistributedObjectUD):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyManagerUD")
 
-    def addParty(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8, todo9):
+    def addParty(
+        self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8, todo9
+    ):
         pass
 
     def addPartyRequest(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7):
@@ -97,7 +100,9 @@ class DistributedPartyManagerUD(DistributedObjectUD):
     def partyHasFinishedUdToAllAi(self, todo0):
         pass
 
-    def updateToPublicPartyInfoUdToAllAi(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8):
+    def updateToPublicPartyInfoUdToAllAi(
+        self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8
+    ):
         pass
 
     def updateToPublicPartyCountUdToAllAi(self, todo0, todo1):
@@ -112,7 +117,9 @@ class DistributedPartyManagerUD(DistributedObjectUD):
     def partyManagerUdStartingUp(self):
         pass
 
-    def updateAllPartyInfoToUd(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8):
+    def updateAllPartyInfoToUd(
+        self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8
+    ):
         pass
 
     def forceCheckStart(self):
@@ -123,4 +130,3 @@ class DistributedPartyManagerUD(DistributedObjectUD):
 
     def mwResponseUdToAllAi(self, todo0, todo1, todo2, todo3):
         pass
-

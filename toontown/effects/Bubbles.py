@@ -6,18 +6,18 @@ from direct.particles import Particles
 from direct.particles import ForceGroup
 import random
 
-class Bubbles(NodePath):
 
+class Bubbles(NodePath):
     def __init__(self, parent, renderParent):
         NodePath.__init__(self)
-        self.renderParent = renderParent.attachNewNode('bubbleRenderParent')
-        self.renderParent.setBin('fixed', 0)
-        self.assign(parent.attachNewNode('bubbles'))
+        self.renderParent = renderParent.attachNewNode("bubbleRenderParent")
+        self.renderParent.setBin("fixed", 0)
+        self.assign(parent.attachNewNode("bubbles"))
         self.effect = ParticleEffect.ParticleEffect()
-        p0 = Particles.Particles('particles-1')
-        p0.setFactory('PointParticleFactory')
-        p0.setRenderer('SpriteParticleRenderer')
-        p0.setEmitter('DiscEmitter')
+        p0 = Particles.Particles("particles-1")
+        p0.setFactory("PointParticleFactory")
+        p0.setRenderer("SpriteParticleRenderer")
+        p0.setEmitter("DiscEmitter")
         p0.setPoolSize(8)
         p0.setBirthRate(0.75)
         p0.setLitterSize(2)
@@ -28,7 +28,7 @@ class Bubbles(NodePath):
         p0.factory.setTerminalVelocitySpread(40.0)
         p0.renderer.setAlphaMode(BaseParticleRenderer.PRALPHAUSER)
         p0.renderer.setUserAlpha(1.0)
-        p0.renderer.setTextureFromNode('phase_4/models/char/bubble', '**/*')
+        p0.renderer.setTextureFromNode("phase_4/models/char/bubble", "**/*")
         p0.renderer.setXScaleFlag(1)
         p0.renderer.setYScaleFlag(1)
         p0.renderer.setInitialXScale(0.07)
@@ -39,7 +39,7 @@ class Bubbles(NodePath):
         p0.emitter.setAmplitudeSpread(0.025)
         p0.emitter.setAmplitude(0.1)
         p0.emitter.setRadius(0.5)
-        gravityForceGroup = ForceGroup.ForceGroup('air')
+        gravityForceGroup = ForceGroup.ForceGroup("air")
         force0 = LinearVectorForce(Vec3(0.0, 0.0, 1.0), 1.0, 0)
         force0.setActive(1)
         force1 = LinearJitterForce(2.5, 0)

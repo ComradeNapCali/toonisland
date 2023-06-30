@@ -7,7 +7,6 @@ from direct.task import Task
 
 
 class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
-
     def __init__(self, air):
         DistributedNodeAI.DistributedNodeAI.__init__(self, air)
         self.hp = 0
@@ -18,7 +17,7 @@ class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
         self.d_setName(name)
 
     def d_setName(self, name):
-        self.sendUpdate('setName', [name])
+        self.sendUpdate("setName", [name])
 
     def setName(self, name):
         self.name = name
@@ -31,7 +30,7 @@ class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
         self.setMaxHp(maxHp)
 
     def d_setMaxHp(self, maxHp):
-        self.sendUpdate('setMaxHp', [maxHp])
+        self.sendUpdate("setMaxHp", [maxHp])
 
     def setMaxHp(self, maxHp):
         self.maxHp = maxHp
@@ -44,7 +43,7 @@ class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
         self.setHp(hp)
 
     def d_setHp(self, hp):
-        self.sendUpdate('setHp', [hp])
+        self.sendUpdate("setHp", [hp])
 
     def setHp(self, hp):
         self.hp = hp
@@ -92,14 +91,18 @@ class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
         onShard = False
         if simbase.air.doId2do.get(avId):
             onShard = True
-        self.sendUpdateToAvatarId(
-            senderId, 'confirmAvOnShard', [avId, onShard])
+        self.sendUpdateToAvatarId(senderId, "confirmAvOnShard", [avId, onShard])
 
     def setParentStr(self, parentToken):
         if parentToken:
             senderId = self.air.getAvatarIdFromSender()
             self.air.writeServerEvent(
-                'Admin chat warning', senderId, 'using setParentStr to send "%s"' % parentToken)
-            self.notify.warning('Admin chat warning: %s using setParentStr to send "%s"' % (
-                senderId, parentToken))
+                "Admin chat warning",
+                senderId,
+                'using setParentStr to send "%s"' % parentToken,
+            )
+            self.notify.warning(
+                'Admin chat warning: %s using setParentStr to send "%s"'
+                % (senderId, parentToken)
+            )
         DistributedNodeAI.DistributedNodeAI.setParentStr(self, parentToken)

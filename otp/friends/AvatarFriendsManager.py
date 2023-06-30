@@ -6,7 +6,7 @@ from otp.otpbase import OTPLocalizer
 
 
 class AvatarFriendsManager(DistributedObjectGlobal):
-    notify = directNotify.newCategory('AvatarFriendsManager')
+    notify = directNotify.newCategory("AvatarFriendsManager")
 
     def __init__(self, cr):
         DistributedObjectGlobal.__init__(self, cr)
@@ -21,27 +21,26 @@ class AvatarFriendsManager(DistributedObjectGlobal):
     def addIgnore(self, avId):
         if avId not in self.ignoredAvatarList:
             self.ignoredAvatarList.append(avId)
-            base.cr.centralLogger.writeClientEvent('ignoring %s' % (avId,))
-        messenger.send('AvatarIgnoreChange')
+            base.cr.centralLogger.writeClientEvent("ignoring %s" % (avId,))
+        messenger.send("AvatarIgnoreChange")
 
     def removeIgnore(self, avId):
         if avId in self.ignoredAvatarList:
             self.ignoredAvatarList.remove(avId)
-            base.cr.centralLogger.writeClientEvent(
-                'stopped ignoring %s' % (avId,))
-        messenger.send('AvatarIgnoreChange')
+            base.cr.centralLogger.writeClientEvent("stopped ignoring %s" % (avId,))
+        messenger.send("AvatarIgnoreChange")
 
     def checkIgnored(self, avId):
         return avId and avId in self.ignoredAvatarList
 
     def sendRequestInvite(self, avId):
         self.notify.debugCall()
-        self.sendUpdate('requestInvite', [avId])
+        self.sendUpdate("requestInvite", [avId])
         self.invitedAvatarsList.append(avId)
 
     def sendRequestRemove(self, avId):
         self.notify.debugCall()
-        self.sendUpdate('requestRemove', [avId])
+        self.sendUpdate("requestRemove", [avId])
         if avId in self.invitedAvatarsList:
             self.invitedAvatarsList.remove(avId)
 
@@ -51,8 +50,7 @@ class AvatarFriendsManager(DistributedObjectGlobal):
 
     def invitationFrom(self, avId, avatarName):
         self.notify.debugCall()
-        messenger.send(OTPGlobals.AvatarFriendInvitationEvent,
-                       [avId, avatarName])
+        messenger.send(OTPGlobals.AvatarFriendInvitationEvent, [avId, avatarName])
 
     def retractInvite(self, avId):
         self.notify.debugCall()
@@ -62,18 +60,16 @@ class AvatarFriendsManager(DistributedObjectGlobal):
 
     def rejectInvite(self, avId, reason):
         self.notify.debugCall()
-        messenger.send(
-            OTPGlobals.AvatarFriendRejectInviteEvent, [avId, reason])
+        messenger.send(OTPGlobals.AvatarFriendRejectInviteEvent, [avId, reason])
         if avId in self.invitedAvatarsList:
             self.invitedAvatarsList.remove(avId)
 
     def rejectRemove(self, avId, reason):
         self.notify.debugCall()
-        messenger.send(
-            OTPGlobals.AvatarFriendRejectRemoveEvent, [avId, reason])
+        messenger.send(OTPGlobals.AvatarFriendRejectRemoveEvent, [avId, reason])
 
     def updateAvatarFriend(self, avId, info):
-        if hasattr(info, 'avatarId') and not info.avatarId and avId:
+        if hasattr(info, "avatarId") and not info.avatarId and avId:
             info.avatarId = avId
         if avId not in self.avatarFriendsList:
             self.avatarFriendsList.add(avId)
@@ -81,7 +77,8 @@ class AvatarFriendsManager(DistributedObjectGlobal):
             messenger.send(OTPGlobals.AvatarFriendAddEvent, [avId, info])
         if self.avatarId2Info[avId].onlineYesNo != info.onlineYesNo:
             base.talkAssistant.receiveFriendUpdate(
-                avId, info.getName(), info.onlineYesNo)
+                avId, info.getName(), info.onlineYesNo
+            )
         self.avatarId2Info[avId] = info
         messenger.send(OTPGlobals.AvatarFriendUpdateEvent, [avId, info])
         if avId in self.invitedAvatarsList:

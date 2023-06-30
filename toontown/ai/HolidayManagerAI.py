@@ -4,16 +4,16 @@ from toontown.toonbase import ToontownGlobals
 
 
 class HolidayManagerAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('HolidayManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("HolidayManagerAI")
 
     def __init__(self, air):
         self.air = air
         self.currentHolidays = {}
 
     def setup(self):
-        holidays = config.GetString('active-holidays', '')
-        if holidays != '':
-            for holiday in holidays.split(', '):
+        holidays = config.GetString("active-holidays", "")
+        if holidays != "":
+            for holiday in holidays.split(", "):
                 holidayId = int(holiday)
                 if holidayId not in self.currentHolidays:
                     self.currentHolidays[holidayId] = True

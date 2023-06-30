@@ -6,10 +6,10 @@ from toontown.distributed.ToontownInternalRepository import ToontownInternalRepo
 
 
 class ToontownUberRepository(ToontownInternalRepository):
-    notify = DirectNotifyGlobal.directNotify.newCategory('ToontownUberRepository')
+    notify = DirectNotifyGlobal.directNotify.newCategory("ToontownUberRepository")
 
     def __init__(self, baseChannel, serverId):
-        ToontownInternalRepository.__init__(self, baseChannel, serverId, dcSuffix='UD')
+        ToontownInternalRepository.__init__(self, baseChannel, serverId, dcSuffix="UD")
         self.gameServicesManager = None
         self.TIAFriendsManager = None
         self.chatManager = None
@@ -23,12 +23,18 @@ class ToontownUberRepository(ToontownInternalRepository):
 
         self.createGlobals()
 
-        self.notify.info('Done.')
+        self.notify.info("Done.")
 
     def createGlobals(self):
-        self.gameServicesManager = self.generateGlobalObject(OTP_DO_ID_TOONTOWN_GAME_SERVICES_MANAGER,
-                                                             'TTGameServicesManager')
-        self.TIAFriendsManager = self.generateGlobalObject(OTP_DO_ID_TIA_FRIENDS_MANAGER, 'TIAFriendsManager')
-        self.chatManager = self.generateGlobalObject(OTP_DO_ID_CHAT_MANAGER, 'TIAChatManager')
-        self.deliveryManager = self.generateGlobalObject(OTP_DO_ID_TOONTOWN_DELIVERY_MANAGER,
-                                                         'DistributedDeliveryManager')
+        self.gameServicesManager = self.generateGlobalObject(
+            OTP_DO_ID_TOONTOWN_GAME_SERVICES_MANAGER, "TTGameServicesManager"
+        )
+        self.TIAFriendsManager = self.generateGlobalObject(
+            OTP_DO_ID_TIA_FRIENDS_MANAGER, "TIAFriendsManager"
+        )
+        self.chatManager = self.generateGlobalObject(
+            OTP_DO_ID_CHAT_MANAGER, "TIAChatManager"
+        )
+        self.deliveryManager = self.generateGlobalObject(
+            OTP_DO_ID_TOONTOWN_DELIVERY_MANAGER, "DistributedDeliveryManager"
+        )

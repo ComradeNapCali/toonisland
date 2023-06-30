@@ -1,7 +1,8 @@
 import os
 
+
 class ModuleList:
-    serverDataFolder = simbase.config.GetString('server-data-folder', '')
+    serverDataFolder = simbase.config.GetString("server-data-folder", "")
 
     def __init__(self):
         self.moduleWhitelistFilename = self.getWhitelistFilename()
@@ -10,21 +11,21 @@ class ModuleList:
         self.loadWhitelistFile()
 
     def getWhitelistFilename(self):
-        result = '%s.moduleWhiteList' % self.serverDataFolder
+        result = "%s.moduleWhiteList" % self.serverDataFolder
         return result
 
     def getBlacklistFilename(self):
-        result = '%s.moduleBlackList' % self.serverDataFolder
+        result = "%s.moduleBlackList" % self.serverDataFolder
         return result
 
     def loadBlacklistFile(self):
         try:
-            file = open(self.moduleBlacklistFilename + '.bu', 'r')
+            file = open(self.moduleBlacklistFilename + ".bu", "r")
             if os.path.exists(self.moduleBlacklistFilename):
                 os.remove(self.moduleBlacklistFilename)
         except IOError:
             try:
-                file = open(self.moduleBlacklistFilename, 'r')
+                file = open(self.moduleBlacklistFilename, "r")
             except IOError:
                 return set()
 
@@ -37,12 +38,12 @@ class ModuleList:
 
     def loadWhitelistFile(self):
         try:
-            file = open(self.moduleWhitelistFilename + '.bu', 'r')
+            file = open(self.moduleWhitelistFilename + ".bu", "r")
             if os.path.exists(self.moduleWhitelistFilename):
                 os.remove(self.moduleWhitelistFilename)
         except IOError:
             try:
-                file = open(self.moduleWhitelistFilename, 'r')
+                file = open(self.moduleWhitelistFilename, "r")
             except IOError:
                 return set()
 
@@ -68,13 +69,13 @@ class ModuleList:
 
     def updateWhitelistFile(self):
         try:
-            backup = self.getWhitelistFilename() + '.bu'
+            backup = self.getWhitelistFilename() + ".bu"
             if os.path.exists(self.getWhitelistFilename()):
                 os.rename(self.getWhitelistFilename(), backup)
-            file = open(self.getWhitelistFilename(), 'w')
+            file = open(self.getWhitelistFilename(), "w")
             file.seek(0)
             for whiteModule in self.moduleWhitelist:
-                file.write(whiteModule + '\n')
+                file.write(whiteModule + "\n")
 
             file.close()
             if os.path.exists(backup):
@@ -84,13 +85,13 @@ class ModuleList:
 
     def updateBlacklistFile(self):
         try:
-            backup = self.getBlacklistFilename() + '.bu'
+            backup = self.getBlacklistFilename() + ".bu"
             if os.path.exists(self.getBlacklistFilename()):
                 os.rename(self.getBlacklistFilename(), backup)
-            file = open(self.getBlacklistFilename(), 'w')
+            file = open(self.getBlacklistFilename(), "w")
             file.seek(0)
             for blackModule in self.moduleBlacklist:
-                file.write(blackModule + '\n')
+                file.write(blackModule + "\n")
 
             file.close()
             if os.path.exists(backup):

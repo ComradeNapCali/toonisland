@@ -9,7 +9,7 @@ from toontown.safezone.DistributedFishingSpotAI import DistributedFishingSpotAI
 
 
 class FishManagerAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('FishManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("FishManagerAI")
 
     def __init__(self, air):
         self.air = air
@@ -63,7 +63,9 @@ class FishManagerAI:
                 itemType = FishGlobals.FishItem
 
             collectionNetList = av.fishCollection.getNetLists()
-            av.d_setFishCollection(collectionNetList[0], collectionNetList[1], collectionNetList[2])
+            av.d_setFishCollection(
+                collectionNetList[0], collectionNetList[1], collectionNetList[2]
+            )
             av.fishTank.addFish(fish)
             tankNetList = av.fishTank.getNetLists()
             av.d_setFishTank(tankNetList[0], tankNetList[1], tankNetList[2])
@@ -71,7 +73,9 @@ class FishManagerAI:
             return [itemType, genus, species, weight]
 
         if itemType == FishGlobals.FishItem:
-            success, genus, species, weight = FishGlobals.getRandomFishVitals(zoneId, av.getFishingRod())
+            success, genus, species, weight = FishGlobals.getRandomFishVitals(
+                zoneId, av.getFishingRod()
+            )
             fish = FishBase(genus, species, weight)
             fishType = av.fishCollection.collectFish(fish)
             if fishType == FishGlobals.COLLECT_NEW_ENTRY:
@@ -82,7 +86,9 @@ class FishManagerAI:
                 itemType = FishGlobals.FishItem
 
             collectionNetList = av.fishCollection.getNetLists()
-            av.d_setFishCollection(collectionNetList[0], collectionNetList[1], collectionNetList[2])
+            av.d_setFishCollection(
+                collectionNetList[0], collectionNetList[1], collectionNetList[2]
+            )
             av.fishTank.addFish(fish)
             tankNetList = av.fishTank.getNetLists()
             av.d_setFishTank(tankNetList[0], tankNetList[1], tankNetList[2])

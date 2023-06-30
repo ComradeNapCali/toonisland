@@ -4,10 +4,10 @@ from direct.directnotify import DirectNotifyGlobal
 
 
 class DistributedEntityAI(DistributedObjectAI.DistributedObjectAI, Entity.Entity):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedEntityAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedEntityAI")
 
     def __init__(self, level, entId):
-        if hasattr(level, 'air'):
+        if hasattr(level, "air"):
             air = level.air
             self.levelDoId = level.doId
         else:
@@ -19,16 +19,16 @@ class DistributedEntityAI(DistributedObjectAI.DistributedObjectAI, Entity.Entity
         return
 
     def generate(self):
-        self.notify.debug('generate')
+        self.notify.debug("generate")
         DistributedObjectAI.DistributedObjectAI.generate(self)
 
     def destroy(self):
-        self.notify.debug('destroy')
+        self.notify.debug("destroy")
         Entity.Entity.destroy(self)
         self.requestDelete()
 
     def delete(self):
-        self.notify.debug('delete')
+        self.notify.debug("delete")
         DistributedObjectAI.DistributedObjectAI.delete(self)
 
     def getLevelDoId(self):

@@ -5,7 +5,6 @@ from toontown.safezone.TreasurePlannerAI import TreasurePlannerAI
 
 
 class EFlyingTreasurePlannerAI(TreasurePlannerAI):
-
     def __init__(self, zoneId, callback=None):
         self.healAmount = 9
         self.spawnPoints = []
@@ -13,7 +12,8 @@ class EFlyingTreasurePlannerAI(TreasurePlannerAI):
 
     def initSpawnPoints(self):
         z = 35
-        self.spawnPoints = [(random.randint(100, 300) - 200,
-                             random.randint(100, 300) - 200,
-                             z) for _ in range(20)]
+        self.spawnPoints = [
+            (random.randint(100, 300) - 200, random.randint(100, 300) - 200, z)
+            for _ in range(20)
+        ]
         return self.spawnPoints

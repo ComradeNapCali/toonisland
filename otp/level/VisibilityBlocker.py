@@ -2,7 +2,6 @@ from . import Entity
 
 
 class VisibilityBlocker:
-
     def __init__(self):
         self.__nextSetZoneDoneEvent = None
         return

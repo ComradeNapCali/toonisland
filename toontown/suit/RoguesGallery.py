@@ -5,10 +5,10 @@ from . import SuitDNA
 from toontown.toonbase import ToontownGlobals
 import random
 
-class RoguesGallery(StateData.StateData):
 
-    def __init__(self, rognamestr = None):
-        StateData.StateData.__init__(self, 'roguesDone')
+class RoguesGallery(StateData.StateData):
+    def __init__(self, rognamestr=None):
+        StateData.StateData.__init__(self, "roguesDone")
         self.rognamestr = rognamestr
         self.left = -1.333
         self.right = 1.333
@@ -36,7 +36,11 @@ class RoguesGallery(StateData.StateData):
                 self.ySpaceBetweenSuits = 0.0
             self.ySuitInc = (self.height + self.ySpaceBetweenSuits) / self.numSuitDepts
             self.ySuitMaxAllowed = self.ySuitInc - self.ySpaceBetweenSuits
-            self.xRowSpace = self.width - (self.numSuitTypes - 1) * self.xSpaceBetweenDifferentSuits - self.numSuitTypes * self.xSpaceBetweenSameSuits
+            self.xRowSpace = (
+                self.width
+                - (self.numSuitTypes - 1) * self.xSpaceBetweenDifferentSuits
+                - self.numSuitTypes * self.xSpaceBetweenSameSuits
+            )
             self.__makeGallery()
         return
 
@@ -68,24 +72,24 @@ class RoguesGallery(StateData.StateData):
     def animate(self):
         self.load()
         for suit in self.actors:
-            suit.pose('neutral', random.randint(0, suit.getNumFrames('neutral') - 1))
-            suit.loop('neutral', 0)
+            suit.pose("neutral", random.randint(0, suit.getNumFrames("neutral") - 1))
+            suit.loop("neutral", 0)
 
     def stop(self):
         self.load()
         for suit in self.actors:
-            suit.pose('neutral', 30)
+            suit.pose("neutral", 30)
 
     def autoExit(self):
-        self.acceptOnce('mouse1', self.exit)
+        self.acceptOnce("mouse1", self.exit)
 
     def __makeGallery(self):
-        self.gallery = hidden.attachNewNode('gallery')
+        self.gallery = hidden.attachNewNode("gallery")
         self.gallery.setDepthWrite(1)
         self.gallery.setDepthTest(1)
         self.suits = []
         self.actors = []
-        self.text = TextNode('rogues')
+        self.text = TextNode("rogues")
         self.text.setFont(ToontownGlobals.getInterfaceFont())
         self.text.setAlign(TextNode.ACenter)
         self.text.setTextColor(0.0, 0.0, 0.0, 1.0)
@@ -119,7 +123,7 @@ class RoguesGallery(StateData.StateData):
         del self.suitRow
         return
 
-    def __makeSuit(self, dept, type, name = None):
+    def __makeSuit(self, dept, type, name=None):
         dna = SuitDNA.SuitDNA()
         if name != None:
             dna.newSuit(name)
@@ -128,7 +132,7 @@ class RoguesGallery(StateData.StateData):
         suit = Suit.Suit()
         suit.setStyle(dna)
         suit.generateSuit()
-        suit.pose('neutral', 30)
+        suit.pose("neutral", 30)
         ll = Point3()
         ur = Point3()
         suit.update()
@@ -143,14 +147,10 @@ class RoguesGallery(StateData.StateData):
         profile = Suit.Suit()
         profile.setStyle(dna)
         profile.generateSuit()
-        profile.pose('neutral', 30)
+        profile.pose("neutral", 30)
         profile.reparentTo(self.gallery)
         profile.setHpr(90.0, 0.0, 0.0)
-        self.suitRow.append((type,
-         suitWidth,
-         suit,
-         suitDepth,
-         profile))
+        self.suitRow.append((type, suitWidth, suit, suitDepth, profile))
         self.actors.append(suit)
         self.actors.append(profile)
         return
@@ -179,5 +179,9 @@ class RoguesGallery(StateData.StateData):
                 x += self.xSpaceBetweenDifferentSuits + extraSpacePerSuit
                 self.text.setText(suit.getName())
                 name = self.gallery.attachNewNode(self.text.generate())
-                name.setPos((right + left) / 2.0, 0.0, y + (suit.height + self.labelScale * 0.5) * scale)
+                name.setPos(
+                    (right + left) / 2.0,
+                    0.0,
+                    y + (suit.height + self.labelScale * 0.5) * scale,
+                )
                 name.setScale(self.labelScale * scale)

@@ -4,10 +4,11 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.task import Task
 import random
 
-class TreasurePlannerAI(DirectObject.DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TreasurePlannerAI')
 
-    def __init__(self, zoneId, treasureConstructor, callback = None):
+class TreasurePlannerAI(DirectObject.DirectObject):
+    notify = DirectNotifyGlobal.directNotify.newCategory("TreasurePlannerAI")
+
+    def __init__(self, zoneId, treasureConstructor, callback=None):
         self.zoneId = zoneId
         self.treasureConstructor = treasureConstructor
         self.callback = callback
@@ -72,7 +73,9 @@ class TreasurePlannerAI(DirectObject.DirectObject):
 
     def placeTreasure(self, index):
         spawnPoint = self.spawnPoints[index]
-        treasure = self.treasureConstructor(simbase.air, self, spawnPoint[0], spawnPoint[1], spawnPoint[2])
+        treasure = self.treasureConstructor(
+            simbase.air, self, spawnPoint[0], spawnPoint[1], spawnPoint[2]
+        )
         treasure.generateWithRequired(self.zoneId)
         self.treasures[index] = treasure
 
@@ -87,7 +90,12 @@ class TreasurePlannerAI(DirectObject.DirectObject):
             else:
                 secondsPerGrab = elapsed / self.requestCount
                 if self.requestCount >= 3 and secondsPerGrab <= 0.4:
-                    simbase.air.writeServerEvent('suspicious', avId, 'TreasurePlannerAI.grabAttempt %s treasures in %s seconds' % (self.requestCount, elapsed))
+                    simbase.air.writeServerEvent(
+                        "suspicious",
+                        avId,
+                        "TreasurePlannerAI.grabAttempt %s treasures in %s seconds"
+                        % (self.requestCount, elapsed),
+                    )
         else:
             self.lastRequestId = avId
             self.requestCount = 1
@@ -98,8 +106,10 @@ class TreasurePlannerAI(DirectObject.DirectObject):
         else:
             av = simbase.air.doId2do.get(avId)
             if av == None:
-                simbase.air.writeServerEvent('suspicious', avId, 'TreasurePlannerAI.grabAttempt unknown avatar')
-                self.notify.warning('avid: %s does not exist' % avId)
+                simbase.air.writeServerEvent(
+                    "suspicious", avId, "TreasurePlannerAI.grabAttempt unknown avatar"
+                )
+                self.notify.warning("avid: %s does not exist" % avId)
             else:
                 treasure = self.treasures[index]
                 if treasure.validAvatar(av):
@@ -113,8 +123,10 @@ class TreasurePlannerAI(DirectObject.DirectObject):
         return
 
     def deleteTreasureSoon(self, treasure):
-        taskName = treasure.uniqueName('deletingTreasure')
-        taskMgr.doMethodLater(5, self.__deleteTreasureNow, taskName, extraArgs=(treasure, taskName))
+        taskName = treasure.uniqueName("deletingTreasure")
+        taskMgr.doMethodLater(
+            5, self.__deleteTreasureNow, taskName, extraArgs=(treasure, taskName)
+        )
         self.deleteTaskNames.add(taskName)
 
     def deleteAllTreasuresNow(self):

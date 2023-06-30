@@ -3,7 +3,7 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class DistributedKartPadAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedKartPadAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedKartPadAI")
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)

@@ -1,7 +1,7 @@
 from . import Street
 
-class DGStreet(Street.Street):
 
+class DGStreet(Street.Street):
     def __init__(self, loader, parentFSM, doneEvent):
         Street.Street.__init__(self, loader, parentFSM, doneEvent)
 

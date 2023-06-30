@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobalUD
 
+
 class DistributedInGameNewsMgrUD(DistributedObjectGlobalUD):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedInGameNewsMgrUD")
 
@@ -12,4 +13,3 @@ class DistributedInGameNewsMgrUD(DistributedObjectGlobalUD):
 
     def newIssueUDtoAI(self, todo0):
         pass
-

@@ -5,11 +5,11 @@ from . import RingTrack
 from . import RingTrackGroup
 from . import RingGameGlobals
 
-class RingGroup(NodePath):
 
+class RingGroup(NodePath):
     def __init__(self, trackGroup, ringModel, posScale, colorIndices):
         NodePath.__init__(self)
-        self.assign(hidden.attachNewNode(base.localAvatar.uniqueName('ring-group')))
+        self.assign(hidden.attachNewNode(base.localAvatar.uniqueName("ring-group")))
         self.__period = trackGroup.period
         self.__reverseFlag = trackGroup.reverseFlag
         self.__tOffset = trackGroup.tOffset

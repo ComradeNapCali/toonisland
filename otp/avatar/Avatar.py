@@ -1,6 +1,13 @@
 from panda3d.core import *
 from dependencies.libotp import Nametag, NametagGroup
-from dependencies.libotp import CFSpeech, CFThought, CFTimeout, CFPageButton, CFNoQuitButton, CFQuitButton
+from dependencies.libotp import (
+    CFSpeech,
+    CFThought,
+    CFTimeout,
+    CFPageButton,
+    CFNoQuitButton,
+    CFQuitButton,
+)
 from otp.otpbase import OTPGlobals
 from otp.otpbase import OTPLocalizer
 from direct.actor.Actor import Actor
@@ -9,9 +16,10 @@ from direct.distributed import ClockDelta
 from otp.avatar.ShadowCaster import ShadowCaster
 import random
 from otp.otpbase import OTPRender
-teleportNotify = DirectNotifyGlobal.directNotify.newCategory('Teleport')
+
+teleportNotify = DirectNotifyGlobal.directNotify.newCategory("Teleport")
 teleportNotify.showTime = True
-if config.GetBool('want-teleport-debug', 1):
+if config.GetBool("want-teleport-debug", 1):
     teleportNotify.setDebug(1)
 
 
@@ -21,12 +29,12 @@ def reconsiderAllUnderstandable():
 
 
 class Avatar(Actor, ShadowCaster):
-    notify = directNotify.newCategory('Avatar')
+    notify = directNotify.newCategory("Avatar")
     ActiveAvatars = []
     ManagesNametagAmbientLightChanged = False
 
     def __init__(self, other=None):
-        self._name = ''
+        self._name = ""
         try:
             self.Avatar_initialized
             return
@@ -37,7 +45,7 @@ class Avatar(Actor, ShadowCaster):
         ShadowCaster.__init__(self)
         self.__font = OTPGlobals.getInterfaceFont()
         self.soundChatBubble = None
-        self.avatarType = ''
+        self.avatarType = ""
         self.nametagNodePath = None
         self.__nameVisible = 1
         self.nametag = NametagGroup()
@@ -46,13 +54,12 @@ class Avatar(Actor, ShadowCaster):
         self.nametag2dContents = Nametag.CName | Nametag.CSpeech
         self.nametag2dDist = Nametag.CName | Nametag.CSpeech
         self.nametag2dNormalContents = Nametag.CName | Nametag.CSpeech
-        self.nametag3d = self.attachNewNode('nametag3d')
-        self.nametag3d.setTag('cam', 'nametag')
+        self.nametag3d = self.attachNewNode("nametag3d")
+        self.nametag3d.setTag("cam", "nametag")
         self.nametag3d.setLightOff()
         if self.ManagesNametagAmbientLightChanged:
             self.acceptNametagAmbientLightChange()
-        OTPRender.renderReflection(
-            False, self.nametag3d, 'otp_avatar_nametag', None)
+        OTPRender.renderReflection(False, self.nametag3d, "otp_avatar_nametag", None)
         self.getGeomNode().showThrough(OTPRender.ShadowCameraBitmask)
         self.nametag3d.hide(OTPRender.ShadowCameraBitmask)
         self.collTube = None
@@ -97,11 +104,10 @@ class Avatar(Actor, ShadowCaster):
             Actor.delete(self)
 
     def acceptNametagAmbientLightChange(self):
-        self.accept('nametagAmbientLightChanged',
-                    self.nametagAmbientLightChanged)
+        self.accept("nametagAmbientLightChanged", self.nametagAmbientLightChanged)
 
     def ignoreNametagAmbientLightChange(self):
-        self.ignore('nametagAmbientLightChanged')
+        self.ignore("nametagAmbientLightChanged")
 
     def isLocal(self):
         return 0
@@ -114,9 +120,8 @@ class Avatar(Actor, ShadowCaster):
 
     def setPlayerType(self, playerType):
         self.playerType = playerType
-        if not hasattr(self, 'nametag'):
-            self.notify.warning(
-                'no nametag attributed, but would have been used.')
+        if not hasattr(self, "nametag"):
+            self.notify.warning("no nametag attributed, but would have been used.")
             return
         if self.isUnderstandable():
             self.nametag.setColorCode(self.playerType)
@@ -137,33 +142,48 @@ class Avatar(Actor, ShadowCaster):
 
     def considerUnderstandable(self):
         speed = 0
-        if self.playerType in (NametagGroup.CCNormal, NametagGroup.CCFreeChat, NametagGroup.CCSpeedChat):
+        if self.playerType in (
+            NametagGroup.CCNormal,
+            NametagGroup.CCFreeChat,
+            NametagGroup.CCSpeedChat,
+        ):
             self.setPlayerType(NametagGroup.CCSpeedChat)
             speed = 1
-        if hasattr(base, 'localAvatar') and self == base.localAvatar:
+        if hasattr(base, "localAvatar") and self == base.localAvatar:
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCFreeChat)
         elif self.playerType == NametagGroup.CCSuit:
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCSuit)
-        elif self.playerType not in (NametagGroup.CCNormal, NametagGroup.CCFreeChat, NametagGroup.CCSpeedChat):
+        elif self.playerType not in (
+            NametagGroup.CCNormal,
+            NametagGroup.CCFreeChat,
+            NametagGroup.CCSpeedChat,
+        ):
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCNoChat)
-        elif hasattr(base, 'localAvatar') and self.commonChatFlags & base.localAvatar.commonChatFlags & OTPGlobals.CommonChat:
+        elif (
+            hasattr(base, "localAvatar")
+            and self.commonChatFlags
+            & base.localAvatar.commonChatFlags
+            & OTPGlobals.CommonChat
+        ):
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCFreeChat)
         elif self.commonChatFlags & OTPGlobals.SuperChat:
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCFreeChat)
-        elif hasattr(base, 'localAvatar') and base.localAvatar.commonChatFlags & OTPGlobals.SuperChat:
+        elif (
+            hasattr(base, "localAvatar")
+            and base.localAvatar.commonChatFlags & OTPGlobals.SuperChat
+        ):
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCFreeChat)
         elif base.cr.getFriendFlags(self.doId) & OTPGlobals.FriendChat:
             self.understandable = 1
             self.setPlayerType(NametagGroup.CCFreeChat)
         elif base.cr.playerFriendsManager.findPlayerIdFromAvId(self.doId) is not None:
-            playerInfo = base.cr.playerFriendsManager.findPlayerInfoFromAvId(
-                self.doId)
+            playerInfo = base.cr.playerFriendsManager.findPlayerInfoFromAvId(self.doId)
             if playerInfo.openChatFriendshipYesNo:
                 self.understandable = 1
                 self.nametag.setColorCode(NametagGroup.CCFreeChat)
@@ -171,13 +191,15 @@ class Avatar(Actor, ShadowCaster):
                 self.understandable = 1
             else:
                 self.understandable = 0
-        elif hasattr(base, 'localAvatar') and self.whitelistChatFlags & base.localAvatar.whitelistChatFlags:
+        elif (
+            hasattr(base, "localAvatar")
+            and self.whitelistChatFlags & base.localAvatar.whitelistChatFlags
+        ):
             self.understandable = 1
         else:
             self.understandable = 0
-        if not hasattr(self, 'nametag'):
-            self.notify.warning(
-                'no nametag attributed, but would have been used')
+        if not hasattr(self, "nametag"):
+            self.notify.warning("no nametag attributed, but would have been used")
         else:
             self.nametag.setColorCode(self.playerType)
         return
@@ -233,15 +255,15 @@ class Avatar(Actor, ShadowCaster):
         return self.avatarType
 
     def setName(self, name):
-        if hasattr(self, 'isDisguised'):
+        if hasattr(self, "isDisguised"):
             if self.isDisguised:
                 return
         self._name = name
-        if hasattr(self, 'nametag'):
+        if hasattr(self, "nametag"):
             self.nametag.setName(name)
 
     def setDisplayName(self, str):
-        if hasattr(self, 'isDisguised'):
+        if hasattr(self, "isDisguised"):
             if self.isDisguised:
                 return
         self.nametag.setDisplayName(str)
@@ -277,15 +299,15 @@ class Avatar(Actor, ShadowCaster):
     def playDialogueForString(self, chatString):
         searchString = chatString.lower()
         if searchString.find(OTPLocalizer.DialogSpecial) >= 0:
-            type = 'special'
+            type = "special"
         elif searchString.find(OTPLocalizer.DialogExclamation) >= 0:
-            type = 'exclamation'
+            type = "exclamation"
         elif searchString.find(OTPLocalizer.DialogQuestion) >= 0:
-            type = 'question'
+            type = "question"
         elif random.randint(0, 1):
-            type = 'statementA'
+            type = "statementA"
         else:
-            type = 'statementB'
+            type = "statementB"
         stringLength = len(chatString)
         if stringLength <= OTPLocalizer.DialogLength1:
             length = 1
@@ -302,22 +324,26 @@ class Avatar(Actor, ShadowCaster):
         if dialogueArray == None:
             return
         sfxIndex = None
-        if type == 'statementA' or type == 'statementB':
+        if type == "statementA" or type == "statementB":
             if length == 1:
                 sfxIndex = 0
             elif length == 2:
                 sfxIndex = 1
             elif length >= 3:
                 sfxIndex = 2
-        elif type == 'question':
+        elif type == "question":
             sfxIndex = 3
-        elif type == 'exclamation':
+        elif type == "exclamation":
             sfxIndex = 4
-        elif type == 'special':
+        elif type == "special":
             sfxIndex = 5
         else:
-            notify.error('unrecognized dialogue type: ', type)
-        if sfxIndex != None and sfxIndex < len(dialogueArray) and dialogueArray[sfxIndex] != None:
+            notify.error("unrecognized dialogue type: ", type)
+        if (
+            sfxIndex != None
+            and sfxIndex < len(dialogueArray)
+            and dialogueArray[sfxIndex] != None
+        ):
             base.playSfx(dialogueArray[sfxIndex], node=self)
         return
 
@@ -327,22 +353,26 @@ class Avatar(Actor, ShadowCaster):
         if dialogueArray == None:
             return
         sfxIndex = None
-        if type == 'statementA' or type == 'statementB':
+        if type == "statementA" or type == "statementB":
             if length == 1:
                 sfxIndex = 0
             elif length == 2:
                 sfxIndex = 1
             elif length >= 3:
                 sfxIndex = 2
-        elif type == 'question':
+        elif type == "question":
             sfxIndex = 3
-        elif type == 'exclamation':
+        elif type == "exclamation":
             sfxIndex = 4
-        elif type == 'special':
+        elif type == "special":
             sfxIndex = 5
         else:
-            notify.error('unrecognized dialogue type: ', type)
-        if sfxIndex != None and sfxIndex < len(dialogueArray) and dialogueArray[sfxIndex] != None:
+            notify.error("unrecognized dialogue type: ", type)
+        if (
+            sfxIndex != None
+            and sfxIndex < len(dialogueArray)
+            and dialogueArray[sfxIndex] != None
+        ):
             retval = dialogueArray[sfxIndex]
         return retval
 
@@ -357,7 +387,8 @@ class Avatar(Actor, ShadowCaster):
         if not base.cr.avatarFriendsManager.checkIgnored(self.doId):
             if base.talkAssistant.isThought(chatString):
                 self.nametag.setChat(
-                    base.talkAssistant.removeThoughtPrefix(chatString), CFThought)
+                    base.talkAssistant.removeThoughtPrefix(chatString), CFThought
+                )
             else:
                 self.nametag.setChat(chatString, CFSpeech | CFTimeout)
 
@@ -385,19 +416,22 @@ class Avatar(Actor, ShadowCaster):
     def showName(self):
         if self.__nameVisible and not self.ghostMode:
             self.nametag.getNametag3d().setContents(
-                Nametag.CName | Nametag.CSpeech | Nametag.CThought)
+                Nametag.CName | Nametag.CSpeech | Nametag.CThought
+            )
 
     def hideNametag2d(self):
         self.nametag2dContents = 0
         self.nametag.getNametag2d().setContents(
-            self.nametag2dContents & self.nametag2dDist)
+            self.nametag2dContents & self.nametag2dDist
+        )
 
     def showNametag2d(self):
         self.nametag2dContents = self.nametag2dNormalContents
         if self.ghostMode:
             self.nametag2dContents = Nametag.CSpeech
         self.nametag.getNametag2d().setContents(
-            self.nametag2dContents & self.nametag2dDist)
+            self.nametag2dContents & self.nametag2dDist
+        )
 
     def hideNametag3d(self):
         self.nametag.getNametag3d().setContents(0)
@@ -405,7 +439,8 @@ class Avatar(Actor, ShadowCaster):
     def showNametag3d(self):
         if self.__nameVisible and not self.ghostMode:
             self.nametag.getNametag3d().setContents(
-                Nametag.CName | Nametag.CSpeech | Nametag.CThought)
+                Nametag.CName | Nametag.CSpeech | Nametag.CThought
+            )
         else:
             self.nametag.getNametag3d().setContents(0)
 
@@ -416,9 +451,18 @@ class Avatar(Actor, ShadowCaster):
         if self.nametag.hasButton():
             self.advancePageNumber()
         elif self.nametag.isActive():
-            messenger.send('clickedNametag', [self])
+            messenger.send("clickedNametag", [self])
 
-    def setPageChat(self, addressee, paragraph, message, quitButton, extraChatFlags=None, dialogueList=[], pageButton=True):
+    def setPageChat(
+        self,
+        addressee,
+        paragraph,
+        message,
+        quitButton,
+        extraChatFlags=None,
+        dialogueList=[],
+        pageButton=True,
+    ):
         self.__chatAddressee = addressee
         self.__chatPageNumber = None
         self.__chatParagraph = paragraph
@@ -441,7 +485,9 @@ class Avatar(Actor, ShadowCaster):
             self.b_setPageNumber(self.__chatParagraph, 0)
         return
 
-    def setLocalPageChat(self, message, quitButton, extraChatFlags=None, dialogueList=[]):
+    def setLocalPageChat(
+        self, message, quitButton, extraChatFlags=None, dialogueList=[]
+    ):
         self.__chatAddressee = base.localAvatar.doId
         self.__chatPageNumber = None
         self.__chatParagraph = None
@@ -474,20 +520,23 @@ class Avatar(Actor, ShadowCaster):
             elapsed = ClockDelta.globalClockDelta.localElapsedTime(timestamp)
         self.__chatPageNumber = [paragraph, pageNumber]
         self.__updatePageChat()
-        if hasattr(self, 'uniqueName'):
+        if hasattr(self, "uniqueName"):
             if pageNumber >= 0:
-                messenger.send(self.uniqueName('nextChatPage'),
-                               [pageNumber, elapsed])
+                messenger.send(self.uniqueName("nextChatPage"), [pageNumber, elapsed])
             else:
-                messenger.send(self.uniqueName('doneChatPage'), [elapsed])
+                messenger.send(self.uniqueName("doneChatPage"), [elapsed])
         elif pageNumber >= 0:
-            messenger.send('nextChatPage', [pageNumber, elapsed])
+            messenger.send("nextChatPage", [pageNumber, elapsed])
         else:
-            messenger.send('doneChatPage', [elapsed])
+            messenger.send("doneChatPage", [elapsed])
         return
 
     def advancePageNumber(self):
-        if self.__chatAddressee == base.localAvatar.doId and self.__chatPageNumber != None and self.__chatPageNumber[0] == self.__chatParagraph:
+        if (
+            self.__chatAddressee == base.localAvatar.doId
+            and self.__chatPageNumber != None
+            and self.__chatPageNumber[0] == self.__chatParagraph
+        ):
             pageNumber = self.__chatPageNumber[1]
             if pageNumber >= 0:
                 pageNumber += 1
@@ -500,7 +549,10 @@ class Avatar(Actor, ShadowCaster):
         return
 
     def __updatePageChat(self):
-        if self.__chatPageNumber != None and self.__chatPageNumber[0] == self.__chatParagraph:
+        if (
+            self.__chatPageNumber != None
+            and self.__chatPageNumber[0] == self.__chatParagraph
+        ):
             pageNumber = self.__chatPageNumber[1]
             if pageNumber >= 0:
                 if not self.__chatSet:
@@ -508,8 +560,7 @@ class Avatar(Actor, ShadowCaster):
                         dialogue = self.__chatDialogueList[0]
                     else:
                         dialogue = None
-                    self.setChatAbsolute(
-                        self.__chatMessage, self.__chatFlags, dialogue)
+                    self.setChatAbsolute(self.__chatMessage, self.__chatFlags, dialogue)
                     self.__chatSet = 1
                 if pageNumber < self.nametag.getNumChatPages():
                     self.nametag.setPageNumber(pageNumber)
@@ -551,7 +602,8 @@ class Avatar(Actor, ShadowCaster):
 
     def initializeBodyCollisions(self, collIdStr):
         self.collTube = CollisionTube(
-            0, 0, 0.5, 0, 0, self.height - self.getRadius(), self.getRadius())
+            0, 0, 0.5, 0, 0, self.height - self.getRadius(), self.getRadius()
+        )
         self.collNode = CollisionNode(collIdStr)
         self.collNode.addSolid(self.collTube)
         self.collNodePath = self.attachNewNode(self.collNode)
@@ -561,15 +613,15 @@ class Avatar(Actor, ShadowCaster):
             self.collNode.setCollideMask(OTPGlobals.WallBitmask)
 
     def stashBodyCollisions(self):
-        if hasattr(self, 'collNodePath'):
+        if hasattr(self, "collNodePath"):
             self.collNodePath.stash()
 
     def unstashBodyCollisions(self):
-        if hasattr(self, 'collNodePath'):
+        if hasattr(self, "collNodePath"):
             self.collNodePath.unstash()
 
     def disableBodyCollisions(self):
-        if hasattr(self, 'collNodePath'):
+        if hasattr(self, "collNodePath"):
             self.collNodePath.removeNode()
             del self.collNodePath
         self.collTube = None

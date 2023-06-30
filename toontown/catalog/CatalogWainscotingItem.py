@@ -1,15 +1,18 @@
 from .CatalogSurfaceItem import *
+
 WSTTextureName = 0
 WSTColor = 1
 WSTBasePrice = 2
-WainscotingTypes = {1000: ('phase_3.5/maps/wall_paper_b3.jpg', CTFlatColorDark, 200),
- 1010: ('phase_5.5/maps/wall_paper_b4_greyscale.jpg', CTBasicWoodColorOnWhite, 200),
- 1020: ('phase_5.5/maps/wainscotings_neutral.jpg', CTBasicWoodColorOnWhite, 200),
- 1030: ('phase_3.5/maps/wall_paper_b3.jpg', CTValentinesColors, 200),
- 1040: ('phase_3.5/maps/wall_paper_b3.jpg', CTUnderwaterColors, 200)}
+WainscotingTypes = {
+    1000: ("phase_3.5/maps/wall_paper_b3.jpg", CTFlatColorDark, 200),
+    1010: ("phase_5.5/maps/wall_paper_b4_greyscale.jpg", CTBasicWoodColorOnWhite, 200),
+    1020: ("phase_5.5/maps/wainscotings_neutral.jpg", CTBasicWoodColorOnWhite, 200),
+    1030: ("phase_3.5/maps/wall_paper_b3.jpg", CTValentinesColors, 200),
+    1040: ("phase_3.5/maps/wall_paper_b3.jpg", CTUnderwaterColors, 200),
+}
+
 
 class CatalogWainscotingItem(CatalogSurfaceItem):
-
     def makeNewItem(self, patternIndex, colorIndex):
         self.patternIndex = patternIndex
         self.colorIndex = colorIndex
@@ -29,10 +32,10 @@ class CatalogWainscotingItem(CatalogSurfaceItem):
 
     def getPicture(self, avatar):
         frame = self.makeFrame()
-        sample = loader.loadModel('phase_5.5/models/estate/wallpaper_sample')
-        a = sample.find('**/a')
-        b = sample.find('**/b')
-        c = sample.find('**/c')
+        sample = loader.loadModel("phase_5.5/models/estate/wallpaper_sample")
+        a = sample.find("**/a")
+        b = sample.find("**/b")
+        c = sample.find("**/c")
         a.hide()
         b.hide()
         c.setTexture(self.loadTexture(), 1)
@@ -41,8 +44,12 @@ class CatalogWainscotingItem(CatalogSurfaceItem):
         self.hasPicture = True
         return (frame, None)
 
-    def output(self, store = -1):
-        return 'CatalogWainscotingItem(%s, %s%s)' % (self.patternIndex, self.colorIndex, self.formatOptionalData(store))
+    def output(self, store=-1):
+        return "CatalogWainscotingItem(%s, %s%s)" % (
+            self.patternIndex,
+            self.colorIndex,
+            self.formatOptionalData(store),
+        )
 
     def getFilename(self):
         return WainscotingTypes[self.patternIndex][WSTTextureName]
@@ -60,6 +67,7 @@ class CatalogWainscotingItem(CatalogSurfaceItem):
 
     def loadTexture(self):
         from panda3d.core import Texture
+
         filename = WainscotingTypes[self.patternIndex][WSTTextureName]
         texture = loader.loadTexture(filename)
         texture.setMinfilter(Texture.FTLinearMipmapLinear)
@@ -76,7 +84,7 @@ class CatalogWainscotingItem(CatalogSurfaceItem):
             if colorIndex < len(colors):
                 return colors[colorIndex]
             else:
-                print('Warning: colorIndex not in colors. Returning white.')
+                print("Warning: colorIndex not in colors. Returning white.")
                 return CT_WHITE
         else:
             return CT_WHITE

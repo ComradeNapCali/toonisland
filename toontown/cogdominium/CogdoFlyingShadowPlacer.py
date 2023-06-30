@@ -5,10 +5,12 @@ from direct.task.Task import Task
 from direct.showbase.DirectObject import DirectObject
 from direct.showbase.ShadowPlacer import ShadowPlacer
 
-class CogdoFlyingShadowPlacer(ShadowPlacer):
 
+class CogdoFlyingShadowPlacer(ShadowPlacer):
     def __init__(self, cTrav, shadowNodePath, wallCollideMask, floorCollideMask, name):
-        ShadowPlacer.__init__(self, cTrav, shadowNodePath, wallCollideMask, floorCollideMask)
+        ShadowPlacer.__init__(
+            self, cTrav, shadowNodePath, wallCollideMask, floorCollideMask
+        )
         self.name = name
 
     def setup(self, cTrav, shadowNodePath, wallCollideMask, floorCollideMask):
@@ -19,7 +21,7 @@ class CogdoFlyingShadowPlacer(ShadowPlacer):
         self.shadowNodePath = shadowNodePath
         floorOffset = 0.025
         self.cRay = CollisionRay(0.0, 0.0, 1.0, 0.0, 0.0, -1.0)
-        cRayNode = CollisionNode('shadowPlacer')
+        cRayNode = CollisionNode("shadowPlacer")
         cRayNode.addSolid(self.cRay)
         self.cRayNodePath = NodePath(cRayNode)
         self.cRayBitMask = floorCollideMask
@@ -51,7 +53,9 @@ class CogdoFlyingShadowPlacer(ShadowPlacer):
         self.cRayNodePath.reparentTo(self.shadowNodePath.getParent())
         self.cTrav.addCollider(self.cRayNodePath, self.queue)
         self.isActive = 1
-        taskMgr.add(self.update, 'ShadowPlacer.update.%s' % self.name, -45, extraArgs=[])
+        taskMgr.add(
+            self.update, "ShadowPlacer.update.%s" % self.name, -45, extraArgs=[]
+        )
 
     def off(self):
         if not self.isActive:
@@ -60,9 +64,9 @@ class CogdoFlyingShadowPlacer(ShadowPlacer):
         self.oneTimeCollide()
         self.cRayNodePath.detachNode()
         self.isActive = 0
-        taskMgr.remove('ShadowPlacer.update.%s' % self.name)
+        taskMgr.remove("ShadowPlacer.update.%s" % self.name)
 
     def oneTimeCollide(self):
-        tempCTrav = CollisionTraverser('oneTimeCollide')
+        tempCTrav = CollisionTraverser("oneTimeCollide")
         tempCTrav.addCollider(self.cRayNodePath, self.queue)
         tempCTrav.traverse(render)

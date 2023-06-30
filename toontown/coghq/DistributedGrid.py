@@ -5,8 +5,9 @@ from .CrateGlobals import *
 from otp.level import BasicEntities
 from direct.directnotify import DirectNotifyGlobal
 
+
 class DistributedGrid(BasicEntities.DistributedNodePathEntity):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedGrid')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedGrid")
 
     def __init__(self, cr):
         BasicEntities.DistributedNodePathEntity.__init__(self, cr)
@@ -14,20 +15,20 @@ class DistributedGrid(BasicEntities.DistributedNodePathEntity):
         return
 
     def generateInit(self):
-        self.notify.debug('generateInit')
+        self.notify.debug("generateInit")
         BasicEntities.DistributedNodePathEntity.generateInit(self)
 
     def generate(self):
-        self.notify.debug('generate')
+        self.notify.debug("generate")
         BasicEntities.DistributedNodePathEntity.generate(self)
 
     def announceGenerate(self):
-        self.notify.debug('announceGenerate')
+        self.notify.debug("announceGenerate")
         BasicEntities.DistributedNodePathEntity.announceGenerate(self)
         self.loadModel()
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         BasicEntities.DistributedNodePathEntity.disable(self)
         self.unloadModel()
         self.ignoreAll()
@@ -36,10 +37,10 @@ class DistributedGrid(BasicEntities.DistributedNodePathEntity):
         BasicEntities.DistributedNodePathEntity.delete(self)
 
     def loadModel(self):
-        self.notify.debug('loadModel')
+        self.notify.debug("loadModel")
         texSize = 6.0
         scale = self.cellSize / texSize
-        self.model = loader.loadModel('phase_9/models/cogHQ/FloorWear.bam')
+        self.model = loader.loadModel("phase_9/models/cogHQ/FloorWear.bam")
         self.model.reparentTo(self)
         long = self.numCol
         short = self.numRow
@@ -50,7 +51,9 @@ class DistributedGrid(BasicEntities.DistributedNodePathEntity):
             h = 90
         self.model.setScale(scale, scale * short, 1)
         self.model.setHpr(h, 180, 0)
-        self.model.setPos(self.cellSize * self.numCol / 2.0, self.cellSize * self.numRow / 2.0, 0.025)
+        self.model.setPos(
+            self.cellSize * self.numCol / 2.0, self.cellSize * self.numRow / 2.0, 0.025
+        )
         self.model.setColor(0.588, 0.588, 0.459, 0.4)
 
     def unloadModel(self):

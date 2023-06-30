@@ -1,7 +1,9 @@
 from otp.speedchat.SCTerminal import *
 from toontown.quest import Quests
 from toontown.toon import NPCToons
-TTSCToontaskMsgEvent = 'SCToontaskMsg'
+
+TTSCToontaskMsgEvent = "SCToontaskMsg"
+
 
 def decodeTTSCToontaskMsg(taskId, toNpcId, toonProgress, msgIndex):
     q = Quests.getQuest(taskId)
@@ -19,7 +21,6 @@ def decodeTTSCToontaskMsg(taskId, toNpcId, toonProgress, msgIndex):
 
 
 class TTSCToontaskTerminal(SCTerminal):
-
     def __init__(self, msg, taskId, toNpcId, toonProgress, msgIndex):
         SCTerminal.__init__(self)
         self.msg = msg
@@ -33,7 +34,7 @@ class TTSCToontaskTerminal(SCTerminal):
 
     def handleSelect(self, displayType=0):
         SCTerminal.handleSelect(self)
-        messenger.send(self.getEventName(TTSCToontaskMsgEvent), [self.taskId,
-         self.toNpcId,
-         self.toonProgress,
-         self.msgIndex])
+        messenger.send(
+            self.getEventName(TTSCToontaskMsgEvent),
+            [self.taskId, self.toNpcId, self.toonProgress, self.msgIndex],
+        )

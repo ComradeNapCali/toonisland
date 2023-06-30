@@ -5,15 +5,16 @@ from toontown.toonbase import ToontownGlobals
 from otp.otpbase import OTPGlobals
 from direct.fsm import FSM
 
+
 class DistributedLawbotBossGavelAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLawbotBossGavelAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedLawbotBossGavelAI")
 
     def __init__(self, air, boss, index):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
-        FSM.FSM.__init__(self, 'DistributedLawbotBossGavelAI')
+        FSM.FSM.__init__(self, "DistributedLawbotBossGavelAI")
         self.boss = boss
         self.index = index
-        cn = CollisionNode('controls')
+        cn = CollisionNode("controls")
         cs = CollisionSphere(0, -6, 0, 6)
         cn.addSolid(cs)
         self.goonShield = NodePath(cn)
@@ -32,34 +33,34 @@ class DistributedLawbotBossGavelAI(DistributedObjectAI.DistributedObjectAI, FSM.
 
     def d_setState(self, state):
         newState = state
-        if state == 'On':
-            newState = 'N'
-        elif state == 'Off':
-            newState = 'F'
-        self.sendUpdate('setState', [newState])
+        if state == "On":
+            newState = "N"
+        elif state == "Off":
+            newState = "F"
+        self.sendUpdate("setState", [newState])
 
     def b_setState(self, state):
         self.request(state)
         self.d_setState(state)
 
     def turnOn(self):
-        self.b_setState('On')
+        self.b_setState("On")
 
     def requestControl(self):
         avId = self.air.getAvatarIdFromSender()
         if avId in self.boss.involvedToons and self.avId == 0:
             craneId = self.__getCraneId(avId)
             if craneId == 0:
-                self.request('Controlled', avId)
+                self.request("Controlled", avId)
 
     def requestFree(self):
         avId = self.air.getAvatarIdFromSender()
         if avId == self.avId:
-            self.request('Free')
+            self.request("Free")
 
     def removeToon(self, avId):
         if avId == self.avId:
-            self.request('Free')
+            self.request("Free")
 
     def __getCraneId(self, avId):
         if self.boss and self.boss.cranes != None:
@@ -83,16 +84,16 @@ class DistributedLawbotBossGavelAI(DistributedObjectAI.DistributedObjectAI, FSM.
 
     def enterControlled(self, avId):
         self.avId = avId
-        self.d_setState('C')
+        self.d_setState("C")
 
     def exitControlled(self):
         if self.objectId:
             obj = self.air.doId2do[self.objectId]
-            obj.request('Dropped', self.avId, self.doId)
+            obj.request("Dropped", self.avId, self.doId)
 
     def enterFree(self):
         self.avId = 0
-        self.d_setState('F')
+        self.d_setState("F")
 
     def exitFree(self):
         pass

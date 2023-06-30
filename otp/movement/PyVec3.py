@@ -72,7 +72,11 @@ class PyVec3:
         return self.x * other.getX() + self.y * other.getY() + self.z * other.getZ()
 
     def _crossResults(self, other):
-        return (self.y * other.getZ() - self.z * other.getY(), self.z * other.getX() - self.x * other.getZ(), self.x * other.getY() - self.y * other.getX())
+        return (
+            self.y * other.getZ() - self.z * other.getY(),
+            self.z * other.getX() - self.x * other.getZ(),
+            self.x * other.getY() - self.y * other.getX(),
+        )
 
     def cross(self, other):
         return PyVec3(*self._crossResults(other))
@@ -173,4 +177,4 @@ class PyVec3:
             raise IndexError
 
     def __repr__(self):
-        return 'PyVec3(%s,%s,%s)' % (self.x, self.y, self.z)
+        return "PyVec3(%s,%s,%s)" % (self.x, self.y, self.z)

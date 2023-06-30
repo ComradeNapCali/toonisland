@@ -3,6 +3,7 @@ from direct.interval.IntervalGlobal import *
 import math
 import random
 
+
 class GameSprite:
     colorRed = Vec4(1, 0.2, 0.2, 1)
     colorBlue = Vec4(0.7, 0.8, 1, 1)
@@ -28,28 +29,32 @@ class GameSprite:
     colorDisolveAqua = Vec4(0.0, 1.0, 1.0, 0.0)
     colorSteel = Vec4(0.5, 0.5, 0.5, 1.0)
     colorSteelDissolve = Vec4(0.5, 0.5, 0.5, 0.0)
-    colorList = (colorRed,
-     colorBlue,
-     colorGreen,
-     colorWhite,
-     colorBlack,
-     colorPurple,
-     colorYellow,
-     colorOrange,
-     colorAqua,
-     colorSteel)
-    disolveList = (colorDisolveRed,
-     colorDisolveBlue,
-     colorDisolveGreen,
-     colorDisolveWhite,
-     colorDisolveBlack,
-     colorDisolvePurple,
-     colorDisolveYellow,
-     colorDisolveOrange,
-     colorDisolveAqua,
-     colorSteelDissolve)
+    colorList = (
+        colorRed,
+        colorBlue,
+        colorGreen,
+        colorWhite,
+        colorBlack,
+        colorPurple,
+        colorYellow,
+        colorOrange,
+        colorAqua,
+        colorSteel,
+    )
+    disolveList = (
+        colorDisolveRed,
+        colorDisolveBlue,
+        colorDisolveGreen,
+        colorDisolveWhite,
+        colorDisolveBlack,
+        colorDisolvePurple,
+        colorDisolveYellow,
+        colorDisolveOrange,
+        colorDisolveAqua,
+        colorSteelDissolve,
+    )
 
-    def __init__(self, spriteBase, size, colorType = 0, foundation = 0, facing = 0):
+    def __init__(self, spriteBase, size, colorType=0, foundation=0, facing=0):
         self.colorType = colorType
         self.spriteBase = spriteBase
         self.frame = self.spriteBase.getParent()
@@ -67,10 +72,7 @@ class GameSprite:
         self.giftId = None
         self.holdType = None
         self.multiColor = 0
-        self.multiColorList = [0,
-         1,
-         2,
-         6]
+        self.multiColorList = [0, 1, 2, 6]
         self.multiColorIndex = 0
         self.multiColorNext = 1
         self.multiColorLevel = 0.0
@@ -81,7 +83,7 @@ class GameSprite:
         self.nodeObj = None
         self.inputSize = size
         myColor = GameSprite.colorWhite
-        myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_white'
+        myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_white"
         self.setBallType(colorType)
         self.size = 0.4 * self.sizeMult
         self.isQue = 0
@@ -91,7 +93,7 @@ class GameSprite:
         self.gridPosZ = None
         return
 
-    def setBallType(self, type, solidOverride = 0):
+    def setBallType(self, type, solidOverride=0):
         if not self.nodeObj or self.nodeObj.isEmpty():
             self.nodeObj = None
         else:
@@ -103,7 +105,7 @@ class GameSprite:
         if solidOverride:
             solid = 1
         myColor = GameSprite.colorWhite
-        myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_white'
+        myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_white"
         if not solid or colorType > 9:
             if colorType == 0:
                 myColor = GameSprite.colorGhostRed
@@ -130,10 +132,7 @@ class GameSprite:
             elif colorType == 8:
                 myColor = GameSprite.colorAqua
                 self.multiColor = 1
-                self.multiColorList = [0,
-                 1,
-                 2,
-                 6]
+                self.multiColorList = [0, 1, 2, 6]
                 self.multiColorIndex = 0
                 self.multiColorNext = 1
                 self.multiColorLevel = 0.0
@@ -142,27 +141,27 @@ class GameSprite:
                 myColor = GameSprite.colorSteel
                 self.breakable = 0
             elif colorType == 10:
-                myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_fire'
+                myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_fire"
                 self.giftId = 7
                 self.colorType = 0
             elif colorType == 11:
-                myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_unknown'
+                myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_unknown"
                 self.giftId = 8
                 self.colorType = 1
         elif colorType == 0:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_red'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_red"
         elif colorType == 1:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_blue'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_blue"
         elif colorType == 2:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_green'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_green"
         elif colorType == 3:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_cog'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_cog"
         elif colorType == 4:
             myColor = GameSprite.colorBlack
         elif colorType == 5:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_purple'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_purple"
         elif colorType == 6:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_yello'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_yello"
         elif colorType == 7:
             myColor = GameSprite.colorOrange
             self.multiColor = 1
@@ -174,26 +173,24 @@ class GameSprite:
         elif colorType == 8:
             myColor = GameSprite.colorAqua
             self.multiColor = 1
-            self.multiColorList = [0,
-             1,
-             2,
-             6]
+            self.multiColorList = [0, 1, 2, 6]
             self.multiColorIndex = 0
             self.multiColorNext = 1
             self.multiColorLevel = 0.0
             self.multiColorStep = 0.1
         elif colorType == 9:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_steel'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_steel"
             if not myModel:
                 import pdb
+
                 pdb.set_trace()
             self.breakable = 0
         elif colorType == 10:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_fire'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_fire"
             self.giftId = 7
             self.colorType = 0
         elif colorType == 11:
-            myModel = 'phase_12/models/bossbotHQ/bust_a_cog_ball_unknown'
+            myModel = "phase_12/models/bossbotHQ/bust_a_cog_ball_unknown"
             self.giftId = 8
             self.colorType = 1
         self.nodeObj = loader.loadModel(myModel)
@@ -268,7 +265,13 @@ class GameSprite:
         num3 = random.random() * 2.0
         curr = self.nodeObj.getPos()
         dest = Point3(0 + curr[0], 0 + curr[1], 1.0 + curr[2])
-        track = Sequence(Wait(num1 * 0.1), LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.5)), LerpPosInterval(self.nodeObj, num3 * 0.1, Point3(0.0, 0.0, 0.0)), LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.5)), LerpPosInterval(self.nodeObj, num1 * 0.1, Point3(0.0, 0.0, 0.0)))
+        track = Sequence(
+            Wait(num1 * 0.1),
+            LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.5)),
+            LerpPosInterval(self.nodeObj, num3 * 0.1, Point3(0.0, 0.0, 0.0)),
+            LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.5)),
+            LerpPosInterval(self.nodeObj, num1 * 0.1, Point3(0.0, 0.0, 0.0)),
+        )
         track.start()
 
     def shake(self):
@@ -276,7 +279,10 @@ class GameSprite:
         num2 = random.random() * 1.0
         curr = self.nodeObj.getPos()
         dest = Point3(0 + curr[0], 0 + curr[1], 1.0 + curr[2])
-        track = Sequence(LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.25)), LerpPosInterval(self.nodeObj, num1 * 0.1, Point3(0.0, 0.0, 0.0)))
+        track = Sequence(
+            LerpPosInterval(self.nodeObj, num2 * 0.1, Point3(0.0, 0.0, 0.25)),
+            LerpPosInterval(self.nodeObj, num1 * 0.1, Point3(0.0, 0.0, 0.0)),
+        )
         track.start()
 
     def deathEffect(self):
@@ -290,7 +296,24 @@ class GameSprite:
         curr = self.spriteBase.getPos()
         self.delayRemove = 1
         self.canCollide = 0
-        track = Sequence(Parallel(ProjectileInterval(self.spriteBase, startVel=Vec3(-20.0 + notNum3 * 40.0, -20.0 + num3 * 40.0, 30), duration=0.5 + num2 * 1.0, gravityMult=2.0), LerpColorScaleInterval(self.spriteBase, duration=0.5 + num2 * 1.0, startColorScale=GameSprite.colorList[self.colorType], colorScale=GameSprite.disolveList[self.colorType])), Func(self.removeDelay), Func(self.delete))
+        track = Sequence(
+            Parallel(
+                ProjectileInterval(
+                    self.spriteBase,
+                    startVel=Vec3(-20.0 + notNum3 * 40.0, -20.0 + num3 * 40.0, 30),
+                    duration=0.5 + num2 * 1.0,
+                    gravityMult=2.0,
+                ),
+                LerpColorScaleInterval(
+                    self.spriteBase,
+                    duration=0.5 + num2 * 1.0,
+                    startColorScale=GameSprite.colorList[self.colorType],
+                    colorScale=GameSprite.disolveList[self.colorType],
+                ),
+            ),
+            Func(self.removeDelay),
+            Func(self.delete),
+        )
         track.start()
 
     def wildEffect(self):
@@ -303,7 +326,19 @@ class GameSprite:
         curr = self.spriteBase.getPos()
         self.delayRemove = 1
         self.canCollide = 0
-        track = Sequence(Parallel(LerpScaleInterval(self.spriteBase, 1.0, 1.5, startScale=1.0), LerpColorScaleInterval(self.spriteBase, duration=1.0, startColorScale=GameSprite.colorList[self.colorType], colorScale=Vec4(0, 0, 0, 0.0))), Func(self.removeDelay), Func(self.delete))
+        track = Sequence(
+            Parallel(
+                LerpScaleInterval(self.spriteBase, 1.0, 1.5, startScale=1.0),
+                LerpColorScaleInterval(
+                    self.spriteBase,
+                    duration=1.0,
+                    startColorScale=GameSprite.colorList[self.colorType],
+                    colorScale=Vec4(0, 0, 0, 0.0),
+                ),
+            ),
+            Func(self.removeDelay),
+            Func(self.delete),
+        )
         track.start()
 
     def setActive(self, active):

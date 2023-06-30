@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.effects.DistributedFireworkShowAI import DistributedFireworkShowAI
 
+
 class DistributedFireworksCannonAI(DistributedFireworkShowAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFireworksCannonAI")
 
@@ -18,4 +19,3 @@ class DistributedFireworksCannonAI(DistributedFireworkShowAI):
 
     def setPosition(self, todo0, todo1, todo2):
         pass
-

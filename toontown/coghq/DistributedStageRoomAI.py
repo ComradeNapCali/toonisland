@@ -8,10 +8,15 @@ from toontown.coghq import StageRoomBase, LevelSuitPlannerAI
 from toontown.coghq import DistributedStageBattleAI
 from toontown.suit import DistributedStageSuitAI
 
-class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBase.StageRoomBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStageRoomAI')
 
-    def __init__(self, air, stageId, stageDoId, zoneId, roomId, roomNum, avIds, battleExpAggreg):
+class DistributedStageRoomAI(
+    DistributedLevelAI.DistributedLevelAI, StageRoomBase.StageRoomBase
+):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStageRoomAI")
+
+    def __init__(
+        self, air, stageId, stageDoId, zoneId, roomId, roomNum, avIds, battleExpAggreg
+    ):
         DistributedLevelAI.DistributedLevelAI.__init__(self, air, zoneId, 0, avIds)
         StageRoomBase.StageRoomBase.__init__(self)
         self.setStageId(stageId)
@@ -29,33 +34,42 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
     def getFloorNum(self):
         stage = self.air.getDo(self.stageDoId)
         if stage is None:
-            self.notify.warning('getFloorNum: could not find stage %s' % self.stageDoId)
+            self.notify.warning("getFloorNum: could not find stage %s" % self.stageDoId)
             return 0
         return stage.floorNum
 
     def generate(self):
-        self.notify.debug('generate %s: room=%s' % (self.doId, self.roomId))
-        self.notify.debug('loading spec')
+        self.notify.debug("generate %s: room=%s" % (self.doId, self.roomId))
+        self.notify.debug("loading spec")
         specModule = StageRoomSpecs.getStageRoomSpecModule(self.roomId)
         roomSpec = LevelSpec.LevelSpec(specModule)
         if __dev__:
-            self.notify.debug('creating entity type registry')
+            self.notify.debug("creating entity type registry")
             typeReg = self.getStageEntityTypeReg()
             roomSpec.setEntityTypeReg(typeReg)
-        self.notify.debug('creating entities')
+        self.notify.debug("creating entities")
         DistributedLevelAI.DistributedLevelAI.generate(self, roomSpec)
-        self.notify.debug('creating cogs')
+        self.notify.debug("creating cogs")
         cogSpecModule = StageRoomSpecs.getCogSpecModule(self.roomId)
-        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedStageSuitAI.DistributedStageSuitAI, DistributedStageBattleAI.DistributedStageBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
+        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(
+            self.air,
+            self,
+            DistributedStageSuitAI.DistributedStageSuitAI,
+            DistributedStageBattleAI.DistributedStageBattleAI,
+            cogSpecModule.CogData,
+            cogSpecModule.ReserveCogData,
+            cogSpecModule.BattleCells,
+            battleExpAggreg=self.battleExpAggreg,
+        )
         suitHandles = self.planner.genSuits()
-        messenger.send('plannerCreated-' + str(self.doId))
-        self.suits = suitHandles['activeSuits']
-        self.reserveSuits = suitHandles['reserveSuits']
+        messenger.send("plannerCreated-" + str(self.doId))
+        self.suits = suitHandles["activeSuits"]
+        self.reserveSuits = suitHandles["reserveSuits"]
         self.d_setSuits()
-        self.notify.debug('finish stage room %s %s creation' % (self.roomId, self.doId))
+        self.notify.debug("finish stage room %s %s creation" % (self.roomId, self.doId))
 
     def delete(self):
-        self.notify.debug('delete: %s' % self.doId)
+        self.notify.debug("delete: %s" % self.doId)
         suits = self.suits
         for reserve in self.reserveSuits:
             suits.append(reserve[0])
@@ -83,7 +97,7 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
         return self.cogLevel
 
     def d_setSuits(self):
-        self.sendUpdate('setSuits', [self.getSuits(), self.getReserveSuits()])
+        self.sendUpdate("setSuits", [self.getSuits(), self.getReserveSuits()])
 
     def getSuits(self):
         suitIds = []
@@ -101,9 +115,11 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
 
     def d_setBossConfronted(self, toonId):
         if toonId not in self.avIdList:
-            self.notify.warning('d_setBossConfronted: %s not in list of participants' % toonId)
+            self.notify.warning(
+                "d_setBossConfronted: %s not in list of participants" % toonId
+            )
             return
-        self.sendUpdate('setBossConfronted', [toonId])
+        self.sendUpdate("setBossConfronted", [toonId])
 
     def setVictors(self, victorIds):
         activeVictors = []
@@ -114,12 +130,14 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
                 activeVictors.append(toon)
                 activeVictorIds.append(victorId)
 
-        description = '%s|%s' % (self.stageId, activeVictorIds)
+        description = "%s|%s" % (self.stageId, activeVictorIds)
         for avId in activeVictorIds:
-            self.air.writeServerEvent('stageDefeated', avId, description)
+            self.air.writeServerEvent("stageDefeated", avId, description)
 
         for toon in activeVictors:
-            simbase.air.questManager.toonDefeatedStage(toon, self.stageId, activeVictors)
+            simbase.air.questManager.toonDefeatedStage(
+                toon, self.stageId, activeVictors
+            )
 
         return
 
@@ -128,7 +146,7 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
         self.setDefeated()
 
     def d_setDefeated(self):
-        self.sendUpdate('setDefeated')
+        self.sendUpdate("setDefeated")
 
     def setDefeated(self):
         pass
@@ -140,5 +158,5 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
             if stage is not None:
                 stage.allToonsGone()
             else:
-                self.notify.warning('no stage %s in allToonsGone' % self.stageDoId)
+                self.notify.warning("no stage %s in allToonsGone" % self.stageDoId)
         return

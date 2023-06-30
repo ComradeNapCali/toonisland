@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
+
 class DistributedPartyActivityAI(DistributedObjectAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyActivityAI")
 
@@ -42,4 +43,3 @@ class DistributedPartyActivityAI(DistributedObjectAI):
 
     def showJellybeanReward(self, todo0, todo1, todo2):
         pass
-

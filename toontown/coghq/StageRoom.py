@@ -5,18 +5,35 @@ from toontown.toonbase import ToontownGlobals
 from toontown.coghq import StageRoomSpecs
 import random
 
-class StageRoom(DirectObject.DirectObject):
-    FloorCollPrefix = 'stageFloorColl'
-    CashbotStageDoorFrame = 'phase_10/models/cashbotHQ/DoorFrame'
 
-    def __init__(self, path = None):
+class StageRoom(DirectObject.DirectObject):
+    FloorCollPrefix = "stageFloorColl"
+    CashbotStageDoorFrame = "phase_10/models/cashbotHQ/DoorFrame"
+
+    def __init__(self, path=None):
         if path is not None:
             if path in StageRoomSpecs.CashbotStageConnectorRooms:
                 loadFunc = loader.loadModelCopy
             else:
                 loadFunc = loader.loadModel
             self.setGeom(loadFunc(path))
-        self.localToonFSM = ClassicFSM.ClassicFSM('StageRoomLocalToonPresent', [State.State('off', self.enterLtOff, self.exitLtOff, ['notPresent']), State.State('notPresent', self.enterLtNotPresent, self.exitLtNotPresent, ['present']), State.State('present', self.enterLtPresent, self.exitLtPresent, ['notPresent'])], 'notPresent', 'notPresent')
+        self.localToonFSM = ClassicFSM.ClassicFSM(
+            "StageRoomLocalToonPresent",
+            [
+                State.State("off", self.enterLtOff, self.exitLtOff, ["notPresent"]),
+                State.State(
+                    "notPresent",
+                    self.enterLtNotPresent,
+                    self.exitLtNotPresent,
+                    ["present"],
+                ),
+                State.State(
+                    "present", self.enterLtPresent, self.exitLtPresent, ["notPresent"]
+                ),
+            ],
+            "notPresent",
+            "notPresent",
+        )
         self.localToonFSM.enterInitialState()
         return
 
@@ -24,7 +41,7 @@ class StageRoom(DirectObject.DirectObject):
         del self.localToonFSM
 
     def enter(self):
-        self.localToonFSM.request('notPresent')
+        self.localToonFSM.request("notPresent")
 
     def exit(self):
         self.localToonFSM.requestFinalState()
@@ -37,18 +54,18 @@ class StageRoom(DirectObject.DirectObject):
 
     def setGeom(self, geom):
         self.__geom = geom
-        ug = self.__geom.find('**/underground')
+        ug = self.__geom.find("**/underground")
         if not ug.isEmpty():
-            ug.setBin('ground', -10)
+            ug.setBin("ground", -10)
 
     def getGeom(self):
         return self.__geom
 
     def _getEntrances(self):
-        return self.__geom.findAllMatches('**/ENTRANCE*')
+        return self.__geom.findAllMatches("**/ENTRANCE*")
 
     def _getExits(self):
-        return self.__geom.findAllMatches('**/EXIT*')
+        return self.__geom.findAllMatches("**/EXIT*")
 
     def attachTo(self, other, rng):
         otherExits = other._getExits()
@@ -57,7 +74,7 @@ class StageRoom(DirectObject.DirectObject):
         thisDoor = rng.choice(entrances)
         geom = self.getGeom()
         otherGeom = other.getGeom()
-        tempNode = otherDoor.attachNewNode('tempRotNode')
+        tempNode = otherDoor.attachNewNode("tempRotNode")
         geom.reparentTo(tempNode)
         geom.clearMat()
         geom.setPos(Vec3(0) - thisDoor.getPos(geom))
@@ -66,10 +83,10 @@ class StageRoom(DirectObject.DirectObject):
         tempNode.removeNode()
 
     def getFloorCollName(self):
-        return '%s%s' % (StageRoom.FloorCollPrefix, self.roomNum)
+        return "%s%s" % (StageRoom.FloorCollPrefix, self.roomNum)
 
     def initFloorCollisions(self):
-        allColls = self.getGeom().findAllMatches('**/+CollisionNode')
+        allColls = self.getGeom().findAllMatches("**/+CollisionNode")
         floorColls = []
         for coll in allColls:
             bitmask = coll.node().getIntoCollideMask()
@@ -78,9 +95,9 @@ class StageRoom(DirectObject.DirectObject):
 
         if len(floorColls) > 0:
             floorCollName = self.getFloorCollName()
-            others = self.getGeom().findAllMatches('**/%s' % floorCollName)
+            others = self.getGeom().findAllMatches("**/%s" % floorCollName)
             for other in others:
-                other.setName('%s_renamed' % floorCollName)
+                other.setName("%s_renamed" % floorCollName)
 
             for floorColl in floorColls:
                 floorColl.setName(floorCollName)

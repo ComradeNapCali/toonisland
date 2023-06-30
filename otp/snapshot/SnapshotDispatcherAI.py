@@ -3,8 +3,7 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class SnapshotDispatcherAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "SnapshotDispatcherAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory("SnapshotDispatcherAI")
 
     def online(self):
         pass

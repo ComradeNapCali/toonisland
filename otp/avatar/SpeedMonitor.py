@@ -3,7 +3,7 @@ from direct.task import Task
 
 
 class SpeedMonitor:
-    notify = directNotify.newCategory('SpeedMonitor')
+    notify = directNotify.newCategory("SpeedMonitor")
     SerialGen = SerialNumGen()
     TrackingPeriod = 30.0
 
@@ -14,13 +14,18 @@ class SpeedMonitor:
         self._prevPosQueue = {}
         self._speedLimits = {}
         self._trackTask = taskMgr.add(
-            self._trackSpeedsTask, 'speedMonitorTask-%s-%s' % (self._name, id(self)))
+            self._trackSpeedsTask, "speedMonitorTask-%s-%s" % (self._name, id(self))
+        )
 
     def destroy(self):
         taskMgr.remove(self._trackTask)
 
     def _allocToken(self):
-        return 'speedMonitorToken-%s-%s-%s' % (self._name, id(self), next(SpeedMonitor.SerialGen))
+        return "speedMonitorToken-%s-%s-%s" % (
+            self._name,
+            id(self),
+            next(SpeedMonitor.SerialGen),
+        )
 
     def addNodepath(self, nodepath):
         token = self._allocToken()
@@ -45,15 +50,19 @@ class SpeedMonitor:
         self._maxSpeeds[token] = 0.0
         nodepath = self._nodepaths[token]
         self._prevPosQueue[token] = [
-            (nodepath.getPos(), globalClock.getFrameTime() - SpeedMonitor.TrackingPeriod, 0.0)]
+            (
+                nodepath.getPos(),
+                globalClock.getFrameTime() - SpeedMonitor.TrackingPeriod,
+                0.0,
+            )
+        ]
 
     def _trackSpeedsTask(self, task=None):
-        for (token, nodepath) in self._nodepaths.items():
+        for token, nodepath in self._nodepaths.items():
             curT = globalClock.getFrameTime()
             curPos = nodepath.getPos()
             while len(self._prevPosQueue[token]) > 1:
-                (oldestPos, oldestT,
-                 oldestDistance) = self._prevPosQueue[token][1]
+                (oldestPos, oldestT, oldestDistance) = self._prevPosQueue[token][1]
                 if curT - oldestT > SpeedMonitor.TrackingPeriod:
                     self._prevPosQueue[token] = self._prevPosQueue[token][1:]
                 else:
@@ -72,27 +81,28 @@ class SpeedMonitor:
                 self._prevPosQueue[token].append((curPos, curT, curDistance))
 
             if len(self._prevPosQueue[token]) > 1:
-                (oldestPos, oldestT,
-                 oldestDistance) = self._prevPosQueue[token][0]
-                (newestPos, newestT,
-                 newestDistance) = self._prevPosQueue[token][-1]
+                (oldestPos, oldestT, oldestDistance) = self._prevPosQueue[token][0]
+                (newestPos, newestT, newestDistance) = self._prevPosQueue[token][-1]
                 tDelta = newestT - oldestT
                 if tDelta >= SpeedMonitor.TrackingPeriod:
                     totalDistance = 0.0
-                    for (pos, t, distance) in self._prevPosQueue[token][1:]:
+                    for pos, t, distance in self._prevPosQueue[token][1:]:
                         totalDistance += distance
 
                     speed = totalDistance / tDelta
                     if speed > self._maxSpeeds[token]:
                         if self.notify.getDebug():
                             self.notify.debug(
-                                'new max speed(%s): %s' % (nodepath, speed))
+                                "new max speed(%s): %s" % (nodepath, speed)
+                            )
 
                         self._maxSpeeds[token] = speed
                         (limit, callback) = self._speedLimits[token]
                         if speed > limit:
                             self.notify.warning(
-                                '%s over speed limit (%s, cur speed=%s)' % (nodepath, limit, speed))
+                                "%s over speed limit (%s, cur speed=%s)"
+                                % (nodepath, limit, speed)
+                            )
                             callback(speed)
 
         return Task.cont

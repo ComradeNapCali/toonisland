@@ -5,8 +5,9 @@ from direct.distributed.DistributedObjectGlobal import DistributedObjectGlobal
 from direct.distributed.DistributedObject import DistributedObject
 from toontown.toonbase import ToontownGlobals
 
+
 class DistributedWhitelistMgr(DistributedObject):
-    notify = directNotify.newCategory('WhitelistMgr')
+    notify = directNotify.newCategory("WhitelistMgr")
     neverDisable = 1
 
     def __init__(self, cr):
@@ -23,9 +24,9 @@ class DistributedWhitelistMgr(DistributedObject):
         DistributedObject.disable(self)
 
     def generate(self):
-        self.notify.debug('BASE: generate')
+        self.notify.debug("BASE: generate")
         DistributedObject.generate(self)
 
     def updateWhitelist(self):
-        messenger.send('updateWhitelist')
-        self.notify.info('Updating white list')
+        messenger.send("updateWhitelist")
+        self.notify.info("Updating white list")

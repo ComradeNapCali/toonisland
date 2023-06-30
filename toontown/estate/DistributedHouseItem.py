@@ -5,8 +5,9 @@ from toontown.toonbase import ToontownGlobals
 from direct.distributed import DistributedObject
 from toontown.toonbase import TTLocalizer
 
+
 class DistributedHouseItem(DistributedObject.DistributedObject):
-    notify = directNotify.newCategory('DistributedHouseItem')
+    notify = directNotify.newCategory("DistributedHouseItem")
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)

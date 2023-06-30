@@ -3,17 +3,19 @@ from toontown.toonbase.ToontownGlobals import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from toontown.minigame import ToonBlitzGlobals
+
 GOING_UP = 1
 GOING_DOWN = 2
 STUCK_DOWN = 3
 
+
 class TwoDStomper(DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TwoDStomper')
+    notify = DirectNotifyGlobal.directNotify.newCategory("TwoDStomper")
 
     def __init__(self, stomperMgr, index, stomperAttribs, model):
         self.game = stomperMgr.section.sectionMgr.game
         self.index = index
-        stomperName = 'stomper-' + str(self.index)
+        stomperName = "stomper-" + str(self.index)
         self.model = NodePath(stomperName)
         self.nodePath = model.copyTo(self.model)
         self.ival = None
@@ -52,7 +54,9 @@ class TwoDStomper(DirectObject):
 
     def setupStomper(self, stomperAttribs):
         stomperType = stomperAttribs[0]
-        self.pos = Point3(stomperAttribs[1][0], stomperAttribs[1][1], stomperAttribs[1][2])
+        self.pos = Point3(
+            stomperAttribs[1][0], stomperAttribs[1][1], stomperAttribs[1][2]
+        )
         self.period = stomperAttribs[2]
         typeAttribs = ToonBlitzGlobals.StomperTypes[stomperType]
         self.motionType = typeAttribs[0]
@@ -60,14 +64,14 @@ class TwoDStomper(DirectObject):
         self.headStartZ, self.headEndZ = typeAttribs[2]
         self.shaftStartScaleZ, self.shaftEndScaleZ = typeAttribs[3]
         self.numCollSolids = typeAttribs[4]
-        self.stompSound = loader.loadSfx('phase_4/audio/sfx/CHQ_FACT_stomper_small.ogg')
+        self.stompSound = loader.loadSfx("phase_4/audio/sfx/CHQ_FACT_stomper_small.ogg")
         self.model.setPos(self.pos)
         self.model.setScale(self.scale)
-        self.model.find('**/block').setScale(1.0 / self.scale)
-        self.head = self.model.find('**/head')
-        self.shaft = self.model.find('**/shaft')
-        self.collisions = self.model.find('**/stomper_collision')
-        originalColl = self.model.find('**/stomper_collision')
+        self.model.find("**/block").setScale(1.0 / self.scale)
+        self.head = self.model.find("**/head")
+        self.shaft = self.model.find("**/shaft")
+        self.collisions = self.model.find("**/stomper_collision")
+        originalColl = self.model.find("**/stomper_collision")
         self.range = self.headEndZ - self.headStartZ
         self.collSolids = []
         self.collSolids.append(originalColl)
@@ -76,7 +80,7 @@ class TwoDStomper(DirectObject):
             self.collSolids.append(newColl)
 
         self.collSolids[-1].reparentTo(self.head)
-        self.smoke = loader.loadModel('phase_4/models/props/test_clouds')
+        self.smoke = loader.loadModel("phase_4/models/props/test_clouds")
         self.smoke.setZ(self.headEndZ - 1)
         self.smoke.setColor(0.8, 0.7, 0.5, 1)
         self.smoke.setBillboardPointEye()
@@ -84,8 +88,7 @@ class TwoDStomper(DirectObject):
         self.smoke.setDepthWrite(False)
 
     def getMotionIval(self):
-
-        def motionFunc(t, self = self):
+        def motionFunc(t, self=self):
             stickTime = 0.2
             turnaround = 0.95
             t = t % 1
@@ -94,11 +97,18 @@ class TwoDStomper(DirectObject):
                 if self.stomperState != STUCK_DOWN:
                     self.stomperState = STUCK_DOWN
             elif t < turnaround:
-                self.head.setFluidZ((t - stickTime) * -self.range / (turnaround - stickTime) + self.headEndZ)
+                self.head.setFluidZ(
+                    (t - stickTime) * -self.range / (turnaround - stickTime)
+                    + self.headEndZ
+                )
                 if self.stomperState != GOING_UP:
                     self.stomperState = GOING_UP
             elif t > turnaround:
-                self.head.setFluidZ(-self.range + (t - turnaround) * self.range / (1 - turnaround) + self.headEndZ)
+                self.head.setFluidZ(
+                    -self.range
+                    + (t - turnaround) * self.range / (1 - turnaround)
+                    + self.headEndZ
+                )
                 if self.stomperState != GOING_DOWN:
                     self.stomperState = GOING_DOWN
                     self.checkSquashedToon()
@@ -107,12 +117,26 @@ class TwoDStomper(DirectObject):
         return motionIval
 
     def getSmokeTrack(self):
-        smokeTrack = Sequence(Parallel(LerpScaleInterval(self.smoke, 0.2, Point3(1, 1, 1.5)), LerpColorScaleInterval(self.smoke, 0.4, VBase4(1, 1, 1, 0), VBase4(1, 1, 1, 0.5))), Func(self.smoke.reparentTo, hidden), Func(self.smoke.clearColorScale))
+        smokeTrack = Sequence(
+            Parallel(
+                LerpScaleInterval(self.smoke, 0.2, Point3(1, 1, 1.5)),
+                LerpColorScaleInterval(
+                    self.smoke, 0.4, VBase4(1, 1, 1, 0), VBase4(1, 1, 1, 0.5)
+                ),
+            ),
+            Func(self.smoke.reparentTo, hidden),
+            Func(self.smoke.clearColorScale),
+        )
         return smokeTrack
 
     def adjustShaftScale(self, t):
         heightDiff = self.head.getZ() - self.headStartZ
-        self.shaft.setScale(1, 1, self.shaftStartScaleZ + heightDiff * (self.shaftEndScaleZ - self.shaftStartScaleZ) / self.range)
+        self.shaft.setScale(
+            1,
+            1,
+            self.shaftStartScaleZ
+            + heightDiff * (self.shaftEndScaleZ - self.shaftStartScaleZ) / self.range,
+        )
 
     def adjustCollSolidHeight(self, t):
         heightDiff = self.head.getZ() - self.headStartZ
@@ -125,9 +149,20 @@ class TwoDStomper(DirectObject):
             del self.ival
             self.ival = None
         self.ival = Parallel()
-        self.ival.append(Sequence(self.getMotionIval(), Func(base.playSfx, self.stompSound, node=self.model, volume=0.3), Func(self.smoke.reparentTo, self.model), self.getSmokeTrack()))
-        self.ival.append(LerpFunctionInterval(self.adjustShaftScale, duration=self.period))
-        self.ival.append(LerpFunctionInterval(self.adjustCollSolidHeight, duration=self.period))
+        self.ival.append(
+            Sequence(
+                self.getMotionIval(),
+                Func(base.playSfx, self.stompSound, node=self.model, volume=0.3),
+                Func(self.smoke.reparentTo, self.model),
+                self.getSmokeTrack(),
+            )
+        )
+        self.ival.append(
+            LerpFunctionInterval(self.adjustShaftScale, duration=self.period)
+        )
+        self.ival.append(
+            LerpFunctionInterval(self.adjustCollSolidHeight, duration=self.period)
+        )
         self.ival.loop()
         self.ival.setT(elapsedTime)
         return
@@ -141,20 +176,29 @@ class TwoDStomper(DirectObject):
             self.ival.loop()
 
     def checkSquashedToon(self):
-        toonXDiff = (base.localAvatar.getX(render) - self.model.getX(render)) / self.scale
+        toonXDiff = (
+            base.localAvatar.getX(render) - self.model.getX(render)
+        ) / self.scale
         toonZ = base.localAvatar.getZ(render)
         headEndZAbs = self.model.getZ(render) + self.headEndZ * self.scale
-        if toonXDiff > -1.0 and toonXDiff < 1.0 and toonZ > headEndZAbs and toonZ < self.head.getZ(render):
+        if (
+            toonXDiff > -1.0
+            and toonXDiff < 1.0
+            and toonZ > headEndZAbs
+            and toonZ < self.head.getZ(render)
+        ):
             if not base.localAvatar.isStunned:
 
-                def stashCollisions(self = self):
+                def stashCollisions(self=self):
                     for collSolid in self.collSolids:
                         collSolid.stash()
 
-                def unstashCollisions(self = self):
+                def unstashCollisions(self=self):
                     for collSolid in self.collSolids:
                         collSolid.unstash()
 
-                self.stashCollisionsIval = Sequence(Func(stashCollisions), Wait(2.5), Func(unstashCollisions))
+                self.stashCollisionsIval = Sequence(
+                    Func(stashCollisions), Wait(2.5), Func(unstashCollisions)
+                )
                 self.stashCollisionsIval.start()
                 self.game.localToonSquished()

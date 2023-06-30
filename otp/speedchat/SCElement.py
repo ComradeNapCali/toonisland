@@ -15,9 +15,9 @@ class SCElement(SCObject, NodePath):
         SCObject.__init__(self)
         self.SerialNum = SCElement.SerialNum
         SCElement.SerialNum += 1
-        node = hidden.attachNewNode('SCElement%s' % self.SerialNum)
+        node = hidden.attachNewNode("SCElement%s" % self.SerialNum)
         NodePath.__init__(self, node)
-        self.FinalizeTaskName = 'SCElement%s_Finalize' % self.SerialNum
+        self.FinalizeTaskName = "SCElement%s_Finalize" % self.SerialNum
         self.parentMenu = parentMenu
         self.__active = 0
         self.__viewable = 1
@@ -31,7 +31,7 @@ class SCElement(SCObject, NodePath):
         if self.isActive():
             self.exitActive()
         SCObject.destroy(self)
-        if hasattr(self, 'button'):
+        if hasattr(self, "button"):
             self.button.destroy()
             del self.button
         self.parentMenu = None
@@ -45,8 +45,7 @@ class SCElement(SCObject, NodePath):
         return self.parentMenu
 
     def getDisplayText(self):
-        self.notify.error(
-            'getDisplayText is pure virtual, derived class must override')
+        self.notify.error("getDisplayText is pure virtual, derived class must override")
 
     def onMouseEnter(self, event):
         if self.parentMenu is not None:
@@ -84,7 +83,7 @@ class SCElement(SCObject, NodePath):
         return self.__viewable
 
     def getMinDimensions(self):
-        text = TextNode('SCTemp')
+        text = TextNode("SCTemp")
         text.setFont(SCElement.font)
         dText = self.getDisplayText()
         text.setText(dText)
@@ -116,7 +115,6 @@ class SCElement(SCObject, NodePath):
         self.privCancelFinalize()
 
     def privScheduleFinalize(self):
-
         def finalizeElement(task, self=self):
             if self.parentMenu is not None:
                 if self.parentMenu.isDirty():
@@ -125,8 +123,9 @@ class SCElement(SCObject, NodePath):
             return Task.done
 
         taskMgr.remove(self.FinalizeTaskName)
-        taskMgr.add(finalizeElement, self.FinalizeTaskName,
-                    priority=SCElementFinalizePriority)
+        taskMgr.add(
+            finalizeElement, self.FinalizeTaskName, priority=SCElementFinalizePriority
+        )
 
     def privCancelFinalize(self):
         taskMgr.remove(self.FinalizeTaskName)
@@ -135,33 +134,34 @@ class SCElement(SCObject, NodePath):
         if not self.isDirty():
             return
         SCObject.finalize(self)
-        if hasattr(self, 'button'):
+        if hasattr(self, "button"):
             self.button.destroy()
             del self.button
         halfHeight = self.height / 2.0
         textX = 0
-        if 'text_align' in dbArgs:
-            if dbArgs['text_align'] == TextNode.ACenter:
+        if "text_align" in dbArgs:
+            if dbArgs["text_align"] == TextNode.ACenter:
                 textX = self.width / 2.0
-        args = {'text': self.getDisplayText(),
-                'frameColor': (0, 0, 0, 0),
-                'rolloverColor': self.getColorScheme().getRolloverColor() + (1,),
-                'pressedColor': self.getColorScheme().getPressedColor() + (1,),
-                'text_font': OTPGlobals.getInterfaceFont(),
-                'text_align': TextNode.ALeft,
-                'text_fg': self.getColorScheme().getTextColor() + (1,),
-                'text_pos': (textX, -.25 - halfHeight, 0),
-                'relief': DGG.FLAT,
-                'pressEffect': 0}
+        args = {
+            "text": self.getDisplayText(),
+            "frameColor": (0, 0, 0, 0),
+            "rolloverColor": self.getColorScheme().getRolloverColor() + (1,),
+            "pressedColor": self.getColorScheme().getPressedColor() + (1,),
+            "text_font": OTPGlobals.getInterfaceFont(),
+            "text_align": TextNode.ALeft,
+            "text_fg": self.getColorScheme().getTextColor() + (1,),
+            "text_pos": (textX, -0.25 - halfHeight, 0),
+            "relief": DGG.FLAT,
+            "pressEffect": 0,
+        }
         args.update(dbArgs)
-        rolloverColor = args['rolloverColor']
-        pressedColor = args['pressedColor']
-        del args['rolloverColor']
-        del args['pressedColor']
-        btn = DirectButton(parent=self, frameSize=(0,
-                                                   self.width,
-                                                   -self.height,
-                                                   0), **args)
+        rolloverColor = args["rolloverColor"]
+        pressedColor = args["pressedColor"]
+        del args["rolloverColor"]
+        del args["pressedColor"]
+        btn = DirectButton(
+            parent=self, frameSize=(0, self.width, -self.height, 0), **args
+        )
         btn.frameStyle[DGG.BUTTON_ROLLOVER_STATE].setColor(*rolloverColor)
         btn.frameStyle[DGG.BUTTON_DEPRESSED_STATE].setColor(*pressedColor)
         btn.updateFrameStyle()
@@ -176,4 +176,4 @@ class SCElement(SCObject, NodePath):
         self.validate()
 
     def __str__(self):
-        return '%s: %s' % (self.__class__.__name__, self.getDisplayText())
+        return "%s: %s" % (self.__class__.__name__, self.getDisplayText())

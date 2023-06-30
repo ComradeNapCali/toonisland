@@ -8,11 +8,11 @@ from .CogdoGameMessageDisplay import CogdoGameMessageDisplay
 from . import CogdoMazeGameGlobals as Globals
 from .CogdoMemoGui import CogdoMemoGui
 
-class CogdoMazeGuiManager:
 
+class CogdoMazeGuiManager:
     def __init__(self, maze, bossCode):
         self.maze = maze
-        self.root = NodePath('CogdoMazeGui')
+        self.root = NodePath("CogdoMazeGui")
         self.root.reparentTo(aspect2d)
         self.mazeMapGui = CogdoMazeMapGui(self.maze.collisionTable)
         if bossCode is not None:
@@ -34,12 +34,14 @@ class CogdoMazeGuiManager:
         self._timer.posInTopRightCorner()
 
     def _initMessageDisplay(self):
-        self.messageDisplay = CogdoGameMessageDisplay('CogdoMazeMessageDisplay', self.root, pos=Globals.MessageLabelPos)
+        self.messageDisplay = CogdoGameMessageDisplay(
+            "CogdoMazeMessageDisplay", self.root, pos=Globals.MessageLabelPos
+        )
 
     def destroy(self):
-        ToontownIntervals.cleanup('present_gui')
-        ToontownIntervals.cleanup('present_timer')
-        ToontownIntervals.cleanup('present_memo')
+        ToontownIntervals.cleanup("present_gui")
+        ToontownIntervals.cleanup("present_timer")
+        ToontownIntervals.cleanup("present_memo")
         self._hud.destroy()
         self._hud = None
         self._memoGui.destroy()
@@ -60,7 +62,7 @@ class CogdoMazeGuiManager:
         return
 
     def destroyMazeMap(self):
-        if hasattr(self, 'mazeMapGui') and self.mazeMapGui is not None:
+        if hasattr(self, "mazeMapGui") and self.mazeMapGui is not None:
             self.mazeMapGui.destroy()
             del self.mazeMapGui
         return
@@ -73,10 +75,24 @@ class CogdoMazeGuiManager:
         return
 
     def showPickupCounter(self):
-        ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._memoGui, 'present_memo'))
+        ToontownIntervals.start(
+            ToontownIntervals.getPresentGuiIval(self._memoGui, "present_memo")
+        )
 
     def startGame(self, firstMessage):
-        self._presentGuiIval = ToontownIntervals.start(Sequence(ToontownIntervals.getPresentGuiIval(self._bossGui, '', startPos=(0, 0, -0.15)), Func(self.mazeMapGui.show), ToontownIntervals.getPulseLargerIval(self.mazeMapGui, '', scale=self.mazeMapGui.getScale()), Func(self.setMessage, firstMessage), name='present_gui'))
+        self._presentGuiIval = ToontownIntervals.start(
+            Sequence(
+                ToontownIntervals.getPresentGuiIval(
+                    self._bossGui, "", startPos=(0, 0, -0.15)
+                ),
+                Func(self.mazeMapGui.show),
+                ToontownIntervals.getPulseLargerIval(
+                    self.mazeMapGui, "", scale=self.mazeMapGui.getScale()
+                ),
+                Func(self.setMessage, firstMessage),
+                name="present_gui",
+            )
+        )
 
     def hideMazeMap(self):
         self.mazeMapGui.hide()
@@ -97,29 +113,33 @@ class CogdoMazeGuiManager:
     def hideLock(self, lockIndex):
         self.mazeMapGui.hideLock(lockIndex)
 
-    def showTimer(self, duration, timerExpiredCallback = None):
+    def showTimer(self, duration, timerExpiredCallback=None):
         if self._timer is None:
             self._initTimer()
         self._timer.setTime(duration)
         self._timer.countdown(duration, timerExpiredCallback)
         self._timer.show()
-        self._presentTimerIval = ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._timer, 'present_timer', startPos=(0, 0, 0.35)))
+        self._presentTimerIval = ToontownIntervals.start(
+            ToontownIntervals.getPresentGuiIval(
+                self._timer, "present_timer", startPos=(0, 0, 0.35)
+            )
+        )
         return
 
     def hideTimer(self):
-        if hasattr(self, 'timer') and self._timer is not None:
+        if hasattr(self, "timer") and self._timer is not None:
             self._timer.hide()
             self._timer.stop()
         return
 
-    def setMessage(self, text, color = None, transition = 'fade'):
+    def setMessage(self, text, color=None, transition="fade"):
         self.messageDisplay.updateMessage(text, color, transition)
 
-    def setMessageTemporary(self, text, time = 3.0):
+    def setMessageTemporary(self, text, time=3.0):
         self.messageDisplay.showMessageTemporarily(text, time)
 
     def clearMessage(self):
-        self.messageDisplay.updateMessage('')
+        self.messageDisplay.updateMessage("")
 
     def setPickupCount(self, count):
         self._memoGui.setCount(count)

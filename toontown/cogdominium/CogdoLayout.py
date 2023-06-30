@@ -1,7 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 
+
 class CogdoLayout:
-    notify = DirectNotifyGlobal.directNotify.newCategory('CogdoLayout')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CogdoLayout")
 
     def __init__(self, numFloors):
         self._numFloors = numFloors
@@ -20,5 +21,5 @@ class CogdoLayout:
 
     def getBossBattleFloor(self):
         if not self.hasBossBattle():
-            self.notify.error('getBossBattleFloor(): cogdo has no boss battle')
+            self.notify.error("getBossBattleFloor(): cogdo has no boss battle")
         return self.getNumFloors() - 1

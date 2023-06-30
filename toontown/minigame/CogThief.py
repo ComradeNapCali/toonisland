@@ -1,18 +1,33 @@
 import math
-from panda3d.core import CollisionSphere, CollisionNode, Point3, CollisionTube, Vec3, rad2Deg
+from panda3d.core import (
+    CollisionSphere,
+    CollisionNode,
+    Point3,
+    CollisionTube,
+    Vec3,
+    rad2Deg,
+)
 from direct.showbase.DirectObject import DirectObject
 from direct.distributed.ClockDelta import globalClockDelta
-from direct.interval.IntervalGlobal import Parallel, SoundInterval, Sequence, Func, LerpScaleInterval
+from direct.interval.IntervalGlobal import (
+    Parallel,
+    SoundInterval,
+    Sequence,
+    Func,
+    LerpScaleInterval,
+)
 from toontown.suit import Suit
 from toontown.suit import SuitDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.minigame import CogThiefGameGlobals
 from toontown.battle.BattleProps import globalPropPool
 from toontown.battle.BattleSounds import globalBattleSoundCache
+
 CTGG = CogThiefGameGlobals
 
+
 class CogThief(DirectObject):
-    notify = directNotify.newCategory('CogThief')
+    notify = directNotify.newCategory("CogThief")
     DefaultSpeedWalkAnim = 4.0
     CollisionRadius = 1.25
     MaxFriendsVisible = 4
@@ -30,7 +45,7 @@ class CogThief(DirectObject):
         d = SuitDNA.SuitDNA()
         d.newSuit(suitType)
         suit.setDNA(d)
-        suit.pose('walk', 0)
+        suit.pose("walk", 0)
         self.suit = suit
         self.goal = CTGG.NoGoal
         self.goalId = CTGG.InvalidGoalId
@@ -50,18 +65,18 @@ class CogThief(DirectObject):
         self.maxVelocity = self.cogSpeed
         self.maxAcceleration = 5.0
         self.perceptionRange = 6
-        self.notify.debug('cogSpeed=%s' % self.cogSpeed)
-        self.kaboomSound = loader.loadSfx('phase_4/audio/sfx/MG_cannon_fire_alt.ogg')
-        self.kaboom = loader.loadModel('phase_4/models/minigames/ice_game_kaboom')
+        self.notify.debug("cogSpeed=%s" % self.cogSpeed)
+        self.kaboomSound = loader.loadSfx("phase_4/audio/sfx/MG_cannon_fire_alt.ogg")
+        self.kaboom = loader.loadModel("phase_4/models/minigames/ice_game_kaboom")
         self.kaboom.setScale(2.0)
         self.kaboom.setBillboardPointEye()
         self.kaboom.hide()
         self.kaboomTrack = None
-        splatName = 'splat-creampie'
+        splatName = "splat-creampie"
         self.splat = globalPropPool.getProp(splatName)
         self.splat.setBillboardPointEye()
         self.splatType = globalPropPool.getPropType(splatName)
-        self.pieHitSound = globalBattleSoundCache.getSound('AA_wholepie_only.ogg')
+        self.pieHitSound = globalBattleSoundCache.getSound("AA_wholepie_only.ogg")
         return
 
     def destroy(self):
@@ -71,11 +86,11 @@ class CogThief(DirectObject):
         return
 
     def uniqueName(self, baseStr):
-        return baseStr + '-' + str(self.game.doId)
+        return baseStr + "-" + str(self.game.doId)
 
     def handleEnterSphere(self, collEntry):
         intoNp = collEntry.getIntoNodePath()
-        self.notify.debug('handleEnterSphere suit %d hit %s' % (self.cogIndex, intoNp))
+        self.notify.debug("handleEnterSphere suit %d hit %s" % (self.cogIndex, intoNp))
         if self.game:
             self.game.handleEnterSphere(collEntry)
 
@@ -88,21 +103,23 @@ class CogThief(DirectObject):
         self.moveIval.pause()
         del self.moveIval
         self.shutdownCollisions()
-        self.suit.loop('neutral')
+        self.suit.loop("neutral")
 
     def initCollisions(self):
         self.collSphere = CollisionSphere(0, 0, 0, 1.25)
         self.collSphere.setTangible(1)
-        name = 'CogThiefSphere-%d' % self.cogIndex
+        name = "CogThiefSphere-%d" % self.cogIndex
         self.collSphereName = self.uniqueName(name)
         self.collNode = CollisionNode(self.collSphereName)
-        self.collNode.setIntoCollideMask(CTGG.BarrelBitmask | ToontownGlobals.WallBitmask)
+        self.collNode.setIntoCollideMask(
+            CTGG.BarrelBitmask | ToontownGlobals.WallBitmask
+        )
         self.collNode.addSolid(self.collSphere)
         self.collNodePath = self.suit.attachNewNode(self.collNode)
-        self.accept('enter' + self.collSphereName, self.handleEnterSphere)
+        self.accept("enter" + self.collSphereName, self.handleEnterSphere)
         self.pieCollSphere = CollisionTube(0, 0, 0, 0, 0, 4, self.CollisionRadius)
         self.pieCollSphere.setTangible(1)
-        name = 'CogThiefPieSphere-%d' % self.cogIndex
+        name = "CogThiefPieSphere-%d" % self.cogIndex
         self.pieCollSphereName = self.uniqueName(name)
         self.pieCollNode = CollisionNode(self.pieCollSphereName)
         self.pieCollNode.setIntoCollideMask(ToontownGlobals.PieBitmask)
@@ -110,24 +127,26 @@ class CogThief(DirectObject):
         self.pieCollNodePath = self.suit.attachNewNode(self.pieCollNode)
 
     def shutdownCollisions(self):
-        self.ignore(self.uniqueName('enter' + self.collSphereName))
+        self.ignore(self.uniqueName("enter" + self.collSphereName))
         del self.collSphere
         self.collNodePath.removeNode()
         del self.collNodePath
         del self.collNode
 
     def updateGoal(self, timestamp, inResponseClientStamp, goalType, goalId, pos):
-        self.notify.debug('self.netTimeSentToStartByHit =%s' % self.netTimeSentToStartByHit)
+        self.notify.debug(
+            "self.netTimeSentToStartByHit =%s" % self.netTimeSentToStartByHit
+        )
         if not self.game:
-            self.notify.debug('updateGoal self.game is None, just returning')
+            self.notify.debug("updateGoal self.game is None, just returning")
             return
         if not self.suit:
-            self.notify.debug('updateGoal self.suit is None, just returning')
+            self.notify.debug("updateGoal self.suit is None, just returning")
             return
         if self.goal == CTGG.NoGoal:
             self.startWalkAnim()
         if goalType == CTGG.NoGoal:
-            self.notify.debug('updateGoal setting position to %s' % pos)
+            self.notify.debug("updateGoal setting position to %s" % pos)
             self.suit.setPos(pos)
         self.lastThinkTime = 0
         self.velocity = Vec3(0, 0, 0)
@@ -135,13 +154,24 @@ class CogThief(DirectObject):
         self.acceleration = Vec3(0, 0, 0)
         if goalType == CTGG.RunAwayGoal:
             pass
-        if inResponseClientStamp < self.netTimeSentToStartByHit and self.goal == CTGG.NoGoal and goalType == CTGG.RunAwayGoal:
-            self.notify.warning('ignoring newGoal %s as cog %d was recently hit responsetime=%s hitTime=%s' % (CTGG.GoalStr[goalType],
-             self.cogIndex,
-             inResponseClientStamp,
-             self.netTimeSentToStartByHit))
+        if (
+            inResponseClientStamp < self.netTimeSentToStartByHit
+            and self.goal == CTGG.NoGoal
+            and goalType == CTGG.RunAwayGoal
+        ):
+            self.notify.warning(
+                "ignoring newGoal %s as cog %d was recently hit responsetime=%s hitTime=%s"
+                % (
+                    CTGG.GoalStr[goalType],
+                    self.cogIndex,
+                    inResponseClientStamp,
+                    self.netTimeSentToStartByHit,
+                )
+            )
         else:
-            self.lastLocalTimeStampFromAI = globalClockDelta.networkToLocalTime(timestamp, bits=32)
+            self.lastLocalTimeStampFromAI = globalClockDelta.networkToLocalTime(
+                timestamp, bits=32
+            )
             self.goal = goalType
             self.goalId = goalId
             self.lastPosFromAI = pos
@@ -150,10 +180,10 @@ class CogThief(DirectObject):
 
     def startWalkAnim(self):
         if self.suit:
-            self.suit.loop('walk')
+            self.suit.loop("walk")
             speed = self.cogSpeed
             self.defaultPlayRate = float(self.cogSpeed / self.DefaultSpeedWalkAnim)
-            self.suit.setPlayRate(self.defaultPlayRate, 'walk')
+            self.suit.setPlayRate(self.defaultPlayRate, "walk")
 
     def think(self):
         if self.goal == CTGG.ToonGoal:
@@ -175,7 +205,9 @@ class CogThief(DirectObject):
             myPos = self.suit.getPos()
             if not self.doneAdjust:
                 myPos = self.lastPosFromAI
-                self.notify.debug('thinkAboutCatchingToon not doneAdjust setting pos %s' % myPos)
+                self.notify.debug(
+                    "thinkAboutCatchingToon not doneAdjust setting pos %s" % myPos
+                )
                 self.doneAdjust = True
             self.suit.setPos(myPos)
             if self.game.isToonPlayingHitTrack(self.goalId):
@@ -205,8 +237,14 @@ class CogThief(DirectObject):
             if self.netTimeSentToStartByHit < timestamp:
                 self.netTimeSentToStartByHit = timestamp
         else:
-            self.notify.debug('localStamp = %s, lastLocalTimeStampFromAI=%s, ignoring respondToToonHit' % (localStamp, self.lastLocalTimeStampFromAI))
-        self.notify.debug('respondToToonHit self.netTimeSentToStartByHit = %s' % self.netTimeSentToStartByHit)
+            self.notify.debug(
+                "localStamp = %s, lastLocalTimeStampFromAI=%s, ignoring respondToToonHit"
+                % (localStamp, self.lastLocalTimeStampFromAI)
+            )
+        self.notify.debug(
+            "respondToToonHit self.netTimeSentToStartByHit = %s"
+            % self.netTimeSentToStartByHit
+        )
 
     def clearGoal(self):
         self.goal = CTGG.NoGoal
@@ -215,7 +253,7 @@ class CogThief(DirectObject):
     def thinkAboutGettingBarrel(self):
         if not self.game:
             return
-        if not hasattr(self.game, 'barrels'):
+        if not hasattr(self.game, "barrels"):
             return
         if self.goalId not in range(len(self.game.barrels)):
             return
@@ -227,7 +265,9 @@ class CogThief(DirectObject):
         myPos = self.suit.getPos()
         if not self.doneAdjust:
             myPos = self.lastPosFromAI
-            self.notify.debug('thinkAboutGettingBarrel not doneAdjust setting position to %s' % myPos)
+            self.notify.debug(
+                "thinkAboutGettingBarrel not doneAdjust setting position to %s" % myPos
+            )
             self.suit.setPos(myPos)
             self.doneAdjust = True
         displacement = barrelPos - myPos
@@ -248,7 +288,7 @@ class CogThief(DirectObject):
     def stopWalking(self, timestamp):
         localStamp = globalClockDelta.networkToLocalTime(timestamp, bits=32)
         if localStamp > self.lastLocalTimeStampFromAI:
-            self.suit.loop('neutral')
+            self.suit.loop("neutral")
             self.clearGoal()
 
     def thinkAboutRunAway(self):
@@ -265,7 +305,7 @@ class CogThief(DirectObject):
             self.doneAdjust = True
         displacement = returnPos - myPos
         distanceToToon = displacement.length()
-        tempNp = render.attachNewNode('tempRet')
+        tempNp = render.attachNewNode("tempRet")
         tempNp.setPos(returnPos)
         self.suit.headsUp(tempNp)
         tempNp.removeNode()
@@ -285,22 +325,32 @@ class CogThief(DirectObject):
                 self.signalledAtReturnPos = True
         self.lastThinkTime = globalClock.getFrameTime()
 
-    def makeCogCarryBarrel(self, timestamp, inResponseClientStamp, barrelModel, barrelIndex, cogPos):
+    def makeCogCarryBarrel(
+        self, timestamp, inResponseClientStamp, barrelModel, barrelIndex, cogPos
+    ):
         if not self.game:
             return
         localTimeStamp = globalClockDelta.networkToLocalTime(timestamp, bits=32)
         self.lastLocalTimeStampFromAI = localTimeStamp
         inResponseGameTime = self.convertNetworkStampToGameTime(inResponseClientStamp)
-        self.notify.debug('inResponseGameTime =%s timeSentToStart=%s' % (inResponseGameTime, self.netTimeSentToStartByHit))
-        if inResponseClientStamp < self.netTimeSentToStartByHit and self.goal == CTGG.NoGoal:
-            self.notify.warning('ignoring makeCogCarrybarrel')
+        self.notify.debug(
+            "inResponseGameTime =%s timeSentToStart=%s"
+            % (inResponseGameTime, self.netTimeSentToStartByHit)
+        )
+        if (
+            inResponseClientStamp < self.netTimeSentToStartByHit
+            and self.goal == CTGG.NoGoal
+        ):
+            self.notify.warning("ignoring makeCogCarrybarrel")
         else:
             barrelModel.setPos(0, -1.0, 1.5)
             barrelModel.reparentTo(self.suit)
             self.suit.setPos(cogPos)
             self.barrel = barrelIndex
 
-    def makeCogDropBarrel(self, timestamp, inResponseClientStamp, barrelModel, barrelIndex, barrelPos):
+    def makeCogDropBarrel(
+        self, timestamp, inResponseClientStamp, barrelModel, barrelIndex, barrelPos
+    ):
         localTimeStamp = globalClockDelta.networkToLocalTime(timestamp, bits=32)
         self.lastLocalTimeStampFromAI = localTimeStamp
         barrelModel.reparentTo(render)
@@ -318,8 +368,14 @@ class CogThief(DirectObject):
             if self.netTimeSentToStartByHit < timestamp:
                 self.netTimeSentToStartByHit = timestamp
         else:
-            self.notify.debug('localStamp = %s, lastLocalTimeStampFromAI=%s, ignoring respondToPieHit' % (localStamp, self.lastLocalTimeStampFromAI))
-            self.notify.debug('respondToPieHit self.netTimeSentToStartByHit = %s' % self.netTimeSentToStartByHit)
+            self.notify.debug(
+                "localStamp = %s, lastLocalTimeStampFromAI=%s, ignoring respondToPieHit"
+                % (localStamp, self.lastLocalTimeStampFromAI)
+            )
+            self.notify.debug(
+                "respondToPieHit self.netTimeSentToStartByHit = %s"
+                % self.netTimeSentToStartByHit
+            )
 
     def cleanup(self):
         self.clearGoal()
@@ -339,7 +395,7 @@ class CogThief(DirectObject):
             speed = self.cogSpeed
         rateMult = speed / self.cogSpeed
         newRate = rateMult * self.defaultPlayRate
-        self.suit.setPlayRate(newRate, 'walk')
+        self.suit.setPlayRate(newRate, "walk")
 
     def commonMove(self):
         if not self.lastThinkTime:
@@ -461,7 +517,20 @@ class CogThief(DirectObject):
         self.kaboom.reparentTo(render)
         self.kaboom.setPos(self.suit.getPos())
         self.kaboom.setZ(3)
-        self.kaboomTrack = Parallel(SoundInterval(self.kaboomSound, volume=0.5), Sequence(Func(self.kaboom.showThrough), LerpScaleInterval(self.kaboom, duration=0.5, scale=Point3(10, 10, 10), startScale=Point3(1, 1, 1), blendType='easeOut'), Func(self.kaboom.hide)))
+        self.kaboomTrack = Parallel(
+            SoundInterval(self.kaboomSound, volume=0.5),
+            Sequence(
+                Func(self.kaboom.showThrough),
+                LerpScaleInterval(
+                    self.kaboom,
+                    duration=0.5,
+                    scale=Point3(10, 10, 10),
+                    startScale=Point3(1, 1, 1),
+                    blendType="easeOut",
+                ),
+                Func(self.kaboom.hide),
+            ),
+        )
         self.kaboomTrack.start()
 
     def showSplat(self):
@@ -470,5 +539,18 @@ class CogThief(DirectObject):
         self.splat.reparentTo(render)
         self.splat.setPos(self.suit.getPos())
         self.splat.setZ(3)
-        self.kaboomTrack = Parallel(SoundInterval(self.pieHitSound, volume=1.0), Sequence(Func(self.splat.showThrough), LerpScaleInterval(self.splat, duration=0.5, scale=1.75, startScale=Point3(0.1, 0.1, 0.1), blendType='easeOut'), Func(self.splat.hide)))
+        self.kaboomTrack = Parallel(
+            SoundInterval(self.pieHitSound, volume=1.0),
+            Sequence(
+                Func(self.splat.showThrough),
+                LerpScaleInterval(
+                    self.splat,
+                    duration=0.5,
+                    scale=1.75,
+                    startScale=Point3(0.1, 0.1, 0.1),
+                    blendType="easeOut",
+                ),
+                Func(self.splat.hide),
+            ),
+        )
         self.kaboomTrack.start()

@@ -22,12 +22,10 @@ from direct.gui.DirectGui import DGG
 from toontown.battle import FireCogPanel
 from toontown.toonbase import ToontownBattleGlobals
 
+
 class TownBattle(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TownBattle')
-    evenPos = (0.75,
-     0.25,
-     -0.25,
-     -0.75)
+    notify = DirectNotifyGlobal.directNotify.newCategory("TownBattle")
+    evenPos = (0.75, 0.25, -0.25, -0.75)
     oddPos = (0.5, 0, -0.5)
 
     def __init__(self, doneEvent):
@@ -45,84 +43,97 @@ class TownBattle(StateData.StateData):
         self.track = -1
         self.level = -1
         self.target = 0
-        self.toonAttacks = [(-1, 0, 0),
-         (-1, 0, 0),
-         (-1, 0, 0),
-         (-1, 0, 0)]
-        self.fsm = ClassicFSM.ClassicFSM('TownBattle', [
-            State.State('Off',
-                self.enterOff,
-                self.exitOff,
-                ['Attack']),
-            State.State('Attack',
-                self.enterAttack,
-                self.exitAttack,
-                ['ChooseCog',
-                 'ChooseToon',
-                 'AttackWait',
-                 'Run',
-                 'Fire',
-                 'SOS']),
-            State.State('ChooseCog',
-                self.enterChooseCog,
-                self.exitChooseCog,
-                ['AttackWait',
-                 'Attack']),
-            State.State('AttackWait',
-                self.enterAttackWait,
-                self.exitAttackWait,
-                ['ChooseCog',
-                 'ChooseToon',
-                 'Attack']),
-            State.State('ChooseToon',
-                self.enterChooseToon,
-                self.exitChooseToon,
-                ['AttackWait',
-                 'Attack']),
-            State.State('Run',
-                self.enterRun,
-                self.exitRun,
-                ['Attack']),
-            State.State('SOS',
-                self.enterSOS,
-                self.exitSOS,
-                ['Attack',
-                 'AttackWait',
-                 'SOSPetSearch',
-                 'SOSPetInfo']),
-            State.State('SOSPetSearch',
-                self.enterSOSPetSearch,
-                self.exitSOSPetSearch,
-                ['SOS',
-                 'SOSPetInfo']),
-            State.State('SOSPetInfo',
-                self.enterSOSPetInfo,
-                self.exitSOSPetInfo,
-                ['SOS',
-                 'AttackWait']),
-            State.State('Fire',
-                self.enterFire,
-                self.exitFire,
-                ['Attack',
-                 'AttackWait'])],
-            'Off', 'Off')
-        self.runPanel = TTDialog.TTDialog(dialogName='TownBattleRunPanel', text=TTLocalizer.TownBattleRun, style=TTDialog.TwoChoice, command=self.__handleRunPanelDone)
+        self.toonAttacks = [(-1, 0, 0), (-1, 0, 0), (-1, 0, 0), (-1, 0, 0)]
+        self.fsm = ClassicFSM.ClassicFSM(
+            "TownBattle",
+            [
+                State.State("Off", self.enterOff, self.exitOff, ["Attack"]),
+                State.State(
+                    "Attack",
+                    self.enterAttack,
+                    self.exitAttack,
+                    ["ChooseCog", "ChooseToon", "AttackWait", "Run", "Fire", "SOS"],
+                ),
+                State.State(
+                    "ChooseCog",
+                    self.enterChooseCog,
+                    self.exitChooseCog,
+                    ["AttackWait", "Attack"],
+                ),
+                State.State(
+                    "AttackWait",
+                    self.enterAttackWait,
+                    self.exitAttackWait,
+                    ["ChooseCog", "ChooseToon", "Attack"],
+                ),
+                State.State(
+                    "ChooseToon",
+                    self.enterChooseToon,
+                    self.exitChooseToon,
+                    ["AttackWait", "Attack"],
+                ),
+                State.State("Run", self.enterRun, self.exitRun, ["Attack"]),
+                State.State(
+                    "SOS",
+                    self.enterSOS,
+                    self.exitSOS,
+                    ["Attack", "AttackWait", "SOSPetSearch", "SOSPetInfo"],
+                ),
+                State.State(
+                    "SOSPetSearch",
+                    self.enterSOSPetSearch,
+                    self.exitSOSPetSearch,
+                    ["SOS", "SOSPetInfo"],
+                ),
+                State.State(
+                    "SOSPetInfo",
+                    self.enterSOSPetInfo,
+                    self.exitSOSPetInfo,
+                    ["SOS", "AttackWait"],
+                ),
+                State.State(
+                    "Fire", self.enterFire, self.exitFire, ["Attack", "AttackWait"]
+                ),
+            ],
+            "Off",
+            "Off",
+        )
+        self.runPanel = TTDialog.TTDialog(
+            dialogName="TownBattleRunPanel",
+            text=TTLocalizer.TownBattleRun,
+            style=TTDialog.TwoChoice,
+            command=self.__handleRunPanelDone,
+        )
         self.runPanel.hide()
-        self.attackPanelDoneEvent = 'attack-panel-done'
-        self.attackPanel = TownBattleAttackPanel.TownBattleAttackPanel(self.attackPanelDoneEvent)
-        self.waitPanelDoneEvent = 'wait-panel-done'
-        self.waitPanel = TownBattleWaitPanel.TownBattleWaitPanel(self.waitPanelDoneEvent)
-        self.chooseCogPanelDoneEvent = 'choose-cog-panel-done'
-        self.chooseCogPanel = TownBattleChooseAvatarPanel.TownBattleChooseAvatarPanel(self.chooseCogPanelDoneEvent, 0)
-        self.chooseToonPanelDoneEvent = 'choose-toon-panel-done'
-        self.chooseToonPanel = TownBattleChooseAvatarPanel.TownBattleChooseAvatarPanel(self.chooseToonPanelDoneEvent, 1)
-        self.SOSPanelDoneEvent = 'SOS-panel-done'
+        self.attackPanelDoneEvent = "attack-panel-done"
+        self.attackPanel = TownBattleAttackPanel.TownBattleAttackPanel(
+            self.attackPanelDoneEvent
+        )
+        self.waitPanelDoneEvent = "wait-panel-done"
+        self.waitPanel = TownBattleWaitPanel.TownBattleWaitPanel(
+            self.waitPanelDoneEvent
+        )
+        self.chooseCogPanelDoneEvent = "choose-cog-panel-done"
+        self.chooseCogPanel = TownBattleChooseAvatarPanel.TownBattleChooseAvatarPanel(
+            self.chooseCogPanelDoneEvent, 0
+        )
+        self.chooseToonPanelDoneEvent = "choose-toon-panel-done"
+        self.chooseToonPanel = TownBattleChooseAvatarPanel.TownBattleChooseAvatarPanel(
+            self.chooseToonPanelDoneEvent, 1
+        )
+        self.SOSPanelDoneEvent = "SOS-panel-done"
         self.SOSPanel = TownBattleSOSPanel.TownBattleSOSPanel(self.SOSPanelDoneEvent)
-        self.SOSPetSearchPanelDoneEvent = 'SOSPetSearch-panel-done'
-        self.SOSPetSearchPanel = TownBattleSOSPetSearchPanel.TownBattleSOSPetSearchPanel(self.SOSPetSearchPanelDoneEvent)
-        self.SOSPetInfoPanelDoneEvent = 'SOSPetInfo-panel-done'
-        self.SOSPetInfoPanel = TownBattleSOSPetInfoPanel.TownBattleSOSPetInfoPanel(self.SOSPetInfoPanelDoneEvent)
-        self.fireCogPanelDoneEvent = 'fire-cog-panel-done'
+        self.SOSPetSearchPanelDoneEvent = "SOSPetSearch-panel-done"
+        self.SOSPetSearchPanel = (
+            TownBattleSOSPetSearchPanel.TownBattleSOSPetSearchPanel(
+                self.SOSPetSearchPanelDoneEvent
+            )
+        )
+        self.SOSPetInfoPanelDoneEvent = "SOSPetInfo-panel-done"
+        self.SOSPetInfoPanel = TownBattleSOSPetInfoPanel.TownBattleSOSPetInfoPanel(
+            self.SOSPetInfoPanelDoneEvent
+        )
+        self.fireCogPanelDoneEvent = "fire-cog-panel-done"
         self.FireCogPanel = FireCogPanel.FireCogPanel(self.fireCogPanelDoneEvent)
         self.cogFireCosts = [None] * ToontownBattleGlobals.MAX_SUIT_CAPACITY
         self.toonPanels = []
@@ -163,12 +174,12 @@ class TownBattle(StateData.StateData):
         del self.toons
         del self.cogs
 
-    def enter(self, event, parentFSMState, bldg = 0, creditMultiplier = 1, tutorialFlag = 0):
+    def enter(self, event, parentFSMState, bldg=0, creditMultiplier=1, tutorialFlag=0):
         self.parentFSMState = parentFSMState
         self.parentFSMState.addChild(self.fsm)
         if not self.isLoaded:
             self.load()
-        print('Battle Event %s' % event)
+        print("Battle Event %s" % event)
         self.battleEvent = event
         self.fsm.enterInitialState()
         base.localAvatar.laffMeter.start()
@@ -181,7 +192,9 @@ class TownBattle(StateData.StateData):
         self.creditMultiplier = creditMultiplier
         self.tutorialFlag = tutorialFlag
         base.localAvatar.inventory.setBattleCreditMultiplier(self.creditMultiplier)
-        base.localAvatar.inventory.setActivateMode('battle', heal=0, bldg=bldg, tutorialFlag=tutorialFlag)
+        base.localAvatar.inventory.setActivateMode(
+            "battle", heal=0, bldg=bldg, tutorialFlag=tutorialFlag
+        )
         self.SOSPanel.bldg = bldg
         return
 
@@ -217,7 +230,7 @@ class TownBattle(StateData.StateData):
         self.isLoaded = 0
 
     def setState(self, state):
-        if hasattr(self, 'fsm'):
+        if hasattr(self, "fsm"):
             self.fsm.request(state)
 
     def updateTimer(self, time):
@@ -235,7 +248,7 @@ class TownBattle(StateData.StateData):
             self.suitPanels[i].show()
 
     def __enterPanels(self, num, localNum):
-        self.notify.debug('enterPanels() num: %d localNum: %d' % (num, localNum))
+        self.notify.debug("enterPanels() num: %d localNum: %d" % (num, localNum))
         for toonPanel in self.toonPanels:
             toonPanel.hide()
             toonPanel.setPos(0, 0, -0.9)
@@ -265,14 +278,14 @@ class TownBattle(StateData.StateData):
             self.toonPanels[3].setX(self.evenPos[3])
             self.toonPanels[3].show()
         else:
-            self.notify.error('Bad number of toons: %s' % num)
+            self.notify.error("Bad number of toons: %s" % num)
         return None
 
-    def updateChosenAttacks(self, battleIndices, tracks, levels, targets, toonCount = 4):
-        self.notify.debug('updateChosenAttacks bi=%s tracks=%s levels=%s targets=%s' % (battleIndices,
-         tracks,
-         levels,
-         targets))
+    def updateChosenAttacks(self, battleIndices, tracks, levels, targets, toonCount=4):
+        self.notify.debug(
+            "updateChosenAttacks bi=%s tracks=%s levels=%s targets=%s"
+            % (battleIndices, tracks, levels, targets)
+        )
         for i in range(toonCount):
             if battleIndices[i] == -1:
                 pass
@@ -283,7 +296,11 @@ class TownBattle(StateData.StateData):
                 elif tracks[i] == BattleBase.PASS_ATTACK:
                     numTargets = 0
                     target = -2
-                elif tracks[i] == BattleBase.SOS or tracks[i] == BattleBase.NPCSOS or tracks[i] == BattleBase.PETSOS:
+                elif (
+                    tracks[i] == BattleBase.SOS
+                    or tracks[i] == BattleBase.NPCSOS
+                    or tracks[i] == BattleBase.PETSOS
+                ):
                     numTargets = 0
                     target = -2
                 elif tracks[i] == HEAL_TRACK:
@@ -300,13 +317,25 @@ class TownBattle(StateData.StateData):
                         target = targets[i]
                         if target == -1:
                             numTargets = None
-                self.toonPanels[battleIndices[i]].setValues(battleIndices[i], tracks[i], levels[i], numTargets, target, self.localNum)
+                self.toonPanels[battleIndices[i]].setValues(
+                    battleIndices[i],
+                    tracks[i],
+                    levels[i],
+                    numTargets,
+                    target,
+                    self.localNum,
+                )
 
         return
 
     def chooseDefaultTarget(self):
         if self.track > -1:
-            response = {'mode': 'Attack', 'track': self.track, 'level': self.level, 'target': self.target}
+            response = {
+                "mode": "Attack",
+                "track": self.track,
+                "level": self.level,
+                "target": self.target,
+            }
             messenger.send(self.battleEvent, [response])
             return 1
         return 0
@@ -321,12 +350,9 @@ class TownBattle(StateData.StateData):
             for suitPanel in self.suitPanels:
                 suitPanel.hide()
 
-        self.toonAttacks = [(-1, 0, 0),
-         (-1, 0, 0),
-         (-1, 0, 0),
-         (-1, 0, 0)]
+        self.toonAttacks = [(-1, 0, 0), (-1, 0, 0), (-1, 0, 0), (-1, 0, 0)]
         self.target = 0
-        if hasattr(self, 'timer'):
+        if hasattr(self, "timer"):
             self.timer.hide()
         return None
 
@@ -354,77 +380,84 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleAttackPanelDone(self, doneStatus):
-        self.notify.debug('doneStatus: %s' % doneStatus)
-        mode = doneStatus['mode']
-        if mode == 'Inventory':
-            self.track = doneStatus['track']
-            self.level = doneStatus['level']
-            self.toonPanels[self.localNum].setValues(self.localNum, self.track, self.level)
+        self.notify.debug("doneStatus: %s" % doneStatus)
+        mode = doneStatus["mode"]
+        if mode == "Inventory":
+            self.track = doneStatus["track"]
+            self.level = doneStatus["level"]
+            self.toonPanels[self.localNum].setValues(
+                self.localNum, self.track, self.level
+            )
             if self.track == HEAL_TRACK:
                 if self.__isGroupHeal(self.level):
                     response = {}
-                    response['mode'] = 'Attack'
-                    response['track'] = self.track
-                    response['level'] = self.level
-                    response['target'] = self.target
+                    response["mode"] = "Attack"
+                    response["track"] = self.track
+                    response["level"] = self.level
+                    response["target"] = self.target
                     messenger.send(self.battleEvent, [response])
-                    self.fsm.request('AttackWait')
+                    self.fsm.request("AttackWait")
                 elif self.numToons == 3 or self.numToons == 4:
-                    self.fsm.request('ChooseToon')
+                    self.fsm.request("ChooseToon")
                 elif self.numToons == 2:
                     response = {}
-                    response['mode'] = 'Attack'
-                    response['track'] = self.track
-                    response['level'] = self.level
+                    response["mode"] = "Attack"
+                    response["track"] = self.track
+                    response["level"] = self.level
                     if self.localNum == 0:
-                        response['target'] = 1
+                        response["target"] = 1
                     elif self.localNum == 1:
-                        response['target'] = 0
+                        response["target"] = 0
                     else:
-                        self.notify.error('Bad localNum value: %s' % self.localNum)
+                        self.notify.error("Bad localNum value: %s" % self.localNum)
                     messenger.send(self.battleEvent, [response])
-                    self.fsm.request('AttackWait')
+                    self.fsm.request("AttackWait")
                 else:
-                    self.notify.error('Heal was chosen when number of toons is %s' % self.numToons)
+                    self.notify.error(
+                        "Heal was chosen when number of toons is %s" % self.numToons
+                    )
             elif self.__isCogChoiceNecessary():
-                self.notify.debug('choice needed')
-                self.fsm.request('ChooseCog')
+                self.notify.debug("choice needed")
+                self.fsm.request("ChooseCog")
                 response = {}
-                response['mode'] = 'Attack'
-                response['track'] = self.track
-                response['level'] = self.level
-                response['target'] = -1
+                response["mode"] = "Attack"
+                response["track"] = self.track
+                response["level"] = self.level
+                response["target"] = -1
                 messenger.send(self.battleEvent, [response])
             else:
-                self.notify.debug('no choice needed')
-                self.fsm.request('AttackWait')
+                self.notify.debug("no choice needed")
+                self.fsm.request("AttackWait")
                 response = {}
-                response['mode'] = 'Attack'
-                response['track'] = self.track
-                response['level'] = self.level
-                response['target'] = 0
+                response["mode"] = "Attack"
+                response["track"] = self.track
+                response["level"] = self.level
+                response["target"] = 0
                 messenger.send(self.battleEvent, [response])
-        elif mode == 'Run':
-            self.fsm.request('Run')
-        elif mode == 'SOS':
-            self.fsm.request('SOS')
-        elif mode == 'Fire':
-            self.fsm.request('Fire')
-        elif mode == 'Pass':
+        elif mode == "Run":
+            self.fsm.request("Run")
+        elif mode == "SOS":
+            self.fsm.request("SOS")
+        elif mode == "Fire":
+            self.fsm.request("Fire")
+        elif mode == "Pass":
             response = {}
-            response['mode'] = 'Pass'
-            response['id'] = -1
+            response["mode"] = "Pass"
+            response["id"] = -1
             messenger.send(self.battleEvent, [response])
-            self.fsm.request('AttackWait')
+            self.fsm.request("AttackWait")
         else:
-            self.notify.warning('unknown mode: %s' % mode)
+            self.notify.warning("unknown mode: %s" % mode)
 
     def checkHealTrapLure(self):
-        self.notify.debug('numToons: %s, numCogs: %s, lured: %s, trapped: %s' % (self.numToons,
-         self.numCogs,
-         self.luredIndices,
-         self.trappedIndices))
-        if len(PythonUtil.union(self.trappedIndices, self.luredIndices)) == self.numCogs:
+        self.notify.debug(
+            "numToons: %s, numCogs: %s, lured: %s, trapped: %s"
+            % (self.numToons, self.numCogs, self.luredIndices, self.trappedIndices)
+        )
+        if (
+            len(PythonUtil.union(self.trappedIndices, self.luredIndices))
+            == self.numCogs
+        ):
             canTrap = 0
         else:
             canTrap = 1
@@ -441,11 +474,21 @@ class TownBattle(StateData.StateData):
 
     def adjustCogsAndToons(self, cogs, luredIndices, trappedIndices, toons):
         cogIds = map(lambda cog: cog.doId, cogs)
-        self.notify.debug('adjustCogsAndToons() cogIds: %s self.cogs: %s' % (cogIds, self.cogs))
-        self.notify.debug('adjustCogsAndToons() luredIndices: %s self.luredIndices: %s' % (luredIndices, self.luredIndices))
-        self.notify.debug('adjustCogsAndToons() trappedIndices: %s self.trappedIndices: %s' % (trappedIndices, self.trappedIndices))
+        self.notify.debug(
+            "adjustCogsAndToons() cogIds: %s self.cogs: %s" % (cogIds, self.cogs)
+        )
+        self.notify.debug(
+            "adjustCogsAndToons() luredIndices: %s self.luredIndices: %s"
+            % (luredIndices, self.luredIndices)
+        )
+        self.notify.debug(
+            "adjustCogsAndToons() trappedIndices: %s self.trappedIndices: %s"
+            % (trappedIndices, self.trappedIndices)
+        )
         toonIds = [toon.doId for toon in toons]
-        self.notify.debug('adjustCogsAndToons() toonIds: %s self.toons: %s' % (toonIds, self.toons))
+        self.notify.debug(
+            "adjustCogsAndToons() toonIds: %s self.toons: %s" % (toonIds, self.toons)
+        )
         maxSuitLevel = 0
         cogFireCostIndex = 0
         for cog in cogs:
@@ -454,11 +497,19 @@ class TownBattle(StateData.StateData):
             cogFireCostIndex += 1
 
         creditLevel = maxSuitLevel
-        if cogIds == self.cogs and creditLevel == self.creditLevel and luredIndices == self.luredIndices and trappedIndices == self.trappedIndices and toonIds == self.toons:
+        if (
+            cogIds == self.cogs
+            and creditLevel == self.creditLevel
+            and luredIndices == self.luredIndices
+            and trappedIndices == self.trappedIndices
+            and toonIds == self.toons
+        ):
             resetActivateMode = 0
         else:
             resetActivateMode = 1
-        self.notify.debug('adjustCogsAndToons() resetActivateMode: %s' % resetActivateMode)
+        self.notify.debug(
+            "adjustCogsAndToons() resetActivateMode: %s" % resetActivateMode
+        )
         self.numCogs = len(cogs)
         self.creditLevel = creditLevel
         self.luredIndices = luredIndices
@@ -474,17 +525,32 @@ class TownBattle(StateData.StateData):
                 self.toonPanels[i].setLaffMeter(toons[i])
             for i in range(self.numCogs):
                 self.suitPanels[i].setCogInformation(cogs[i])
-            if currStateName == 'ChooseCog':
-                self.chooseCogPanel.adjustCogs(self.numCogs, self.luredIndices, self.trappedIndices, self.track)
-            elif currStateName == 'ChooseToon':
+            if currStateName == "ChooseCog":
+                self.chooseCogPanel.adjustCogs(
+                    self.numCogs, self.luredIndices, self.trappedIndices, self.track
+                )
+            elif currStateName == "ChooseToon":
                 self.chooseToonPanel.adjustToons(self.numToons, self.localNum)
             canHeal, canTrap, canLure = self.checkHealTrapLure()
             base.localAvatar.inventory.setBattleCreditMultiplier(self.creditMultiplier)
-            base.localAvatar.inventory.setActivateMode('battle', heal=canHeal, trap=canTrap, lure=canLure, bldg=self.bldg, creditLevel=self.creditLevel, tutorialFlag=self.tutorialFlag)
+            base.localAvatar.inventory.setActivateMode(
+                "battle",
+                heal=canHeal,
+                trap=canTrap,
+                lure=canLure,
+                bldg=self.bldg,
+                creditLevel=self.creditLevel,
+                tutorialFlag=self.tutorialFlag,
+            )
 
     def enterChooseCog(self):
         self.cog = 0
-        self.chooseCogPanel.enter(self.numCogs, luredIndices=self.luredIndices, trappedIndices=self.trappedIndices, track=self.track)
+        self.chooseCogPanel.enter(
+            self.numCogs,
+            luredIndices=self.luredIndices,
+            trappedIndices=self.trappedIndices,
+            track=self.track,
+        )
         self.accept(self.chooseCogPanelDoneEvent, self.__handleChooseCogPanelDone)
         return None
 
@@ -494,23 +560,23 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleChooseCogPanelDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Back':
-            self.fsm.request('Attack')
-        elif mode == 'Avatar':
-            self.cog = doneStatus['avatar']
+        mode = doneStatus["mode"]
+        if mode == "Back":
+            self.fsm.request("Attack")
+        elif mode == "Avatar":
+            self.cog = doneStatus["avatar"]
             self.target = self.cog
-            self.fsm.request('AttackWait')
+            self.fsm.request("AttackWait")
             response = {}
-            response['mode'] = 'Attack'
-            response['track'] = self.track
-            response['level'] = self.level
-            response['target'] = self.cog
+            response["mode"] = "Attack"
+            response["track"] = self.track
+            response["level"] = self.level
+            response["target"] = self.cog
             messenger.send(self.battleEvent, [response])
         else:
-            self.notify.warning('unknown mode: %s' % mode)
+            self.notify.warning("unknown mode: %s" % mode)
 
-    def enterAttackWait(self, chosenToon = -1):
+    def enterAttackWait(self, chosenToon=-1):
         self.accept(self.waitPanelDoneEvent, self.__handleAttackWaitBack)
         self.waitPanel.enter(self.numToons)
 
@@ -519,21 +585,21 @@ class TownBattle(StateData.StateData):
         self.ignore(self.waitPanelDoneEvent)
 
     def __handleAttackWaitBack(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Back':
+        mode = doneStatus["mode"]
+        if mode == "Back":
             if self.track == HEAL_TRACK:
-                self.fsm.request('Attack')
+                self.fsm.request("Attack")
             elif self.track == BattleBase.NO_ATTACK:
-                self.fsm.request('Attack')
+                self.fsm.request("Attack")
             elif self.__isCogChoiceNecessary():
-                self.fsm.request('ChooseCog')
+                self.fsm.request("ChooseCog")
             else:
-                self.fsm.request('Attack')
+                self.fsm.request("Attack")
             response = {}
-            response['mode'] = 'UnAttack'
+            response["mode"] = "UnAttack"
             messenger.send(self.battleEvent, [response])
         else:
-            self.notify.error('unknown mode: %s' % mode)
+            self.notify.error("unknown mode: %s" % mode)
 
     def enterChooseToon(self):
         self.toon = 0
@@ -547,21 +613,21 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleChooseToonPanelDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Back':
-            self.fsm.request('Attack')
-        elif mode == 'Avatar':
-            self.toon = doneStatus['avatar']
+        mode = doneStatus["mode"]
+        if mode == "Back":
+            self.fsm.request("Attack")
+        elif mode == "Avatar":
+            self.toon = doneStatus["avatar"]
             self.target = self.toon
-            self.fsm.request('AttackWait', [self.toon])
+            self.fsm.request("AttackWait", [self.toon])
             response = {}
-            response['mode'] = 'Attack'
-            response['track'] = self.track
-            response['level'] = self.level
-            response['target'] = self.toon
+            response["mode"] = "Attack"
+            response["track"] = self.track
+            response["level"] = self.level
+            response["target"] = self.toon
             messenger.send(self.battleEvent, [response])
         else:
-            self.notify.warning('unknown mode: %s' % mode)
+            self.notify.warning("unknown mode: %s" % mode)
 
     def enterRun(self):
         self.runPanel.show()
@@ -572,14 +638,20 @@ class TownBattle(StateData.StateData):
     def __handleRunPanelDone(self, doneStatus):
         if doneStatus == DGG.DIALOG_OK:
             response = {}
-            response['mode'] = 'Run'
+            response["mode"] = "Run"
             messenger.send(self.battleEvent, [response])
         else:
-            self.fsm.request('Attack')
+            self.fsm.request("Attack")
 
     def enterFire(self):
         canHeal, canTrap, canLure = self.checkHealTrapLure()
-        self.FireCogPanel.enter(self.numCogs, luredIndices=self.luredIndices, trappedIndices=self.trappedIndices, track=self.track, fireCosts=self.cogFireCosts)
+        self.FireCogPanel.enter(
+            self.numCogs,
+            luredIndices=self.luredIndices,
+            trappedIndices=self.trappedIndices,
+            track=self.track,
+            fireCosts=self.cogFireCosts,
+        )
         self.accept(self.fireCogPanelDoneEvent, self.__handleCogFireDone)
         return None
 
@@ -589,19 +661,19 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleCogFireDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Back':
-            self.fsm.request('Attack')
-        elif mode == 'Avatar':
-            self.cog = doneStatus['avatar']
+        mode = doneStatus["mode"]
+        if mode == "Back":
+            self.fsm.request("Attack")
+        elif mode == "Avatar":
+            self.cog = doneStatus["avatar"]
             self.target = self.cog
-            self.fsm.request('AttackWait')
+            self.fsm.request("AttackWait")
             response = {}
-            response['mode'] = 'Fire'
-            response['target'] = self.cog
+            response["mode"] = "Fire"
+            response["target"] = self.cog
             messenger.send(self.battleEvent, [response])
         else:
-            self.notify.warning('unknown mode: %s' % mode)
+            self.notify.warning("unknown mode: %s" % mode)
 
     def enterSOS(self):
         canHeal, canTrap, canLure = self.checkHealTrapLure()
@@ -615,34 +687,34 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleSOSPanelDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Friend':
-            doId = doneStatus['friend']
+        mode = doneStatus["mode"]
+        if mode == "Friend":
+            doId = doneStatus["friend"]
             response = {}
-            response['mode'] = 'SOS'
-            response['id'] = doId
+            response["mode"] = "SOS"
+            response["id"] = doId
             messenger.send(self.battleEvent, [response])
-            self.fsm.request('AttackWait')
-        elif mode == 'Pet':
-            self.petId = doneStatus['petId']
-            self.petName = doneStatus['petName']
-            self.fsm.request('SOSPetSearch')
-        elif mode == 'NPCFriend':
-            doId = doneStatus['friend']
+            self.fsm.request("AttackWait")
+        elif mode == "Pet":
+            self.petId = doneStatus["petId"]
+            self.petName = doneStatus["petName"]
+            self.fsm.request("SOSPetSearch")
+        elif mode == "NPCFriend":
+            doId = doneStatus["friend"]
             response = {}
-            response['mode'] = 'NPCSOS'
-            response['id'] = doId
+            response["mode"] = "NPCSOS"
+            response["id"] = doId
             messenger.send(self.battleEvent, [response])
-            self.fsm.request('AttackWait')
-        elif mode == 'Back':
-            self.fsm.request('Attack')
+            self.fsm.request("AttackWait")
+        elif mode == "Back":
+            self.fsm.request("Attack")
 
     def enterSOSPetSearch(self):
         response = {}
-        response['mode'] = 'PETSOSINFO'
-        response['id'] = self.petId
+        response["mode"] = "PETSOSINFO"
+        response["id"] = self.petId
         self.SOSPetSearchPanel.enter(self.petId, self.petName)
-        self.proxyGenerateMessage = 'petProxy-%d-generated' % self.petId
+        self.proxyGenerateMessage = "petProxy-%d-generated" % self.petId
         self.accept(self.proxyGenerateMessage, self.__handleProxyGenerated)
         self.accept(self.SOSPetSearchPanelDoneEvent, self.__handleSOSPetSearchPanelDone)
         messenger.send(self.battleEvent, [response])
@@ -655,14 +727,14 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleSOSPetSearchPanelDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'Back':
-            self.fsm.request('SOS')
+        mode = doneStatus["mode"]
+        if mode == "Back":
+            self.fsm.request("SOS")
         else:
-            self.notify.error('invalid mode in handleSOSPetSearchPanelDone')
+            self.notify.error("invalid mode in handleSOSPetSearchPanelDone")
 
     def __handleProxyGenerated(self):
-        self.fsm.request('SOSPetInfo')
+        self.fsm.request("SOSPetInfo")
 
     def enterSOSPetInfo(self):
         self.SOSPetInfoPanel.enter(self.petId)
@@ -675,17 +747,17 @@ class TownBattle(StateData.StateData):
         return None
 
     def __handleSOSPetInfoPanelDone(self, doneStatus):
-        mode = doneStatus['mode']
-        if mode == 'OK':
+        mode = doneStatus["mode"]
+        if mode == "OK":
             response = {}
-            response['mode'] = 'PETSOS'
-            response['id'] = self.petId
-            response['trickId'] = doneStatus['trickId']
+            response["mode"] = "PETSOS"
+            response["id"] = self.petId
+            response["trickId"] = doneStatus["trickId"]
             messenger.send(self.battleEvent, [response])
-            self.fsm.request('AttackWait')
+            self.fsm.request("AttackWait")
             bboard.post(PetConstants.OurPetsMoodChangedKey, True)
-        elif mode == 'Back':
-            self.fsm.request('SOS')
+        elif mode == "Back":
+            self.fsm.request("SOS")
 
     def __isCogChoiceNecessary(self):
         if self.numCogs > 1 and not self.__isGroupAttack(self.track, self.level):

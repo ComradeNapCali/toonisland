@@ -8,8 +8,8 @@ from direct.fsm import ClassicFSM
 from . import DistributedSwitch
 from toontown.toonbase import TTLocalizer
 
-class DistributedTrigger(DistributedSwitch.DistributedSwitch):
 
+class DistributedTrigger(DistributedSwitch.DistributedSwitch):
     def setupSwitch(self):
         radius = 1.0
         cSphere = CollisionSphere(0.0, 0.0, 0.0, radius)
@@ -25,16 +25,16 @@ class DistributedTrigger(DistributedSwitch.DistributedSwitch):
         del self.cSphereNodePath
         DistributedSwitch.DistributedSwitch.delete(self)
 
-    def enterTrigger(self, args = None):
+    def enterTrigger(self, args=None):
         DistributedSwitch.DistributedSwitch.enterTrigger(self, args)
         self.setIsOn(1)
 
-    def exitTrigger(self, args = None):
+    def exitTrigger(self, args=None):
         DistributedSwitch.DistributedSwitch.exitTrigger(self, args)
         self.setIsOn(0)
 
     def getName(self):
-        if self.triggerName != '':
+        if self.triggerName != "":
             return self.triggerName
         else:
             return DistributedSwitch.DistributedSwitch.getName(self)

@@ -4,8 +4,9 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
 from direct.showbase import PythonUtil
 
+
 class WelcomeValleyManager(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('WelcomeValleyManager')
+    notify = DirectNotifyGlobal.directNotify.newCategory("WelcomeValleyManager")
     neverDisable = 1
 
     def __init__(self, cr):
@@ -32,7 +33,7 @@ class WelcomeValleyManager(DistributedObject.DistributedObject):
 
     def requestZoneId(self, origZoneId, callback):
         context = self.getCallbackContext(callback)
-        self.sendUpdate('requestZoneIdMessage', [origZoneId, context])
+        self.sendUpdate("requestZoneIdMessage", [origZoneId, context])
 
     def requestZoneIdResponse(self, zoneId, context):
         self.doCallbackContext(context, [zoneId])

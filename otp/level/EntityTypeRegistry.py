@@ -10,28 +10,28 @@ import importlib
 
 
 class EntityTypeRegistry:
-    notify = DirectNotifyGlobal.directNotify.newCategory('EntityTypeRegistry')
+    notify = DirectNotifyGlobal.directNotify.newCategory("EntityTypeRegistry")
 
     def __init__(self, entityTypeModule):
         self.entTypeModule = entityTypeModule
         hv = HashVal()
         from . import EntityTypes
+
         importlib.reload(EntityTypes)
         importlib.reload(self.entTypeModule)
 
         def getPyExtVersion(filename):
             base, ext = os.path.splitext(filename)
-            if ext == '.pyc' or ext == '.pyo':
-                filename = base + '.py'
+            if ext == ".pyc" or ext == ".pyo":
+                filename = base + ".py"
             return filename
 
         fileLines = file(getPyExtVersion(EntityTypes.__file__)).readlines()
-        hv.hashString(string.join(fileLines, ''))
+        hv.hashString(string.join(fileLines, ""))
         s = str(hv.asHex())
-        s += '.'
-        fileLines = file(getPyExtVersion(
-            self.entTypeModule.__file__)).readlines()
-        hv.hashString(string.join(fileLines, ''))
+        s += "."
+        fileLines = file(getPyExtVersion(self.entTypeModule.__file__)).readlines()
+        hv.hashString(string.join(fileLines, ""))
         s += str(hv.asHex())
         self.hashStr = s
         getPyExtVersion = None
@@ -44,16 +44,18 @@ class EntityTypeRegistry:
         self.entTypeName2typeDesc = {}
         mostDerivedLast(classes)
         for c in classes:
-            if 'type' in c.__dict__:
+            if "type" in c.__dict__:
                 if c.type in self.entTypeName2typeDesc:
-                    EntityTypeRegistry.notify.debug("replacing %s with %s for entity type '%s'" % (
-                        self.entTypeName2typeDesc[c.type].__class__, c, c.type))
+                    EntityTypeRegistry.notify.debug(
+                        "replacing %s with %s for entity type '%s'"
+                        % (self.entTypeName2typeDesc[c.type].__class__, c, c.type)
+                    )
                 self.entTypeName2typeDesc[c.type] = c()
 
         self.output2typeNames = {}
         for typename, typeDesc in list(self.entTypeName2typeDesc.items()):
             if typeDesc.isConcrete():
-                if hasattr(typeDesc, 'output'):
+                if hasattr(typeDesc, "output"):
                     outputType = typeDesc.output
                     self.output2typeNames.setdefault(outputType, [])
                     self.output2typeNames[outputType].append(typename)

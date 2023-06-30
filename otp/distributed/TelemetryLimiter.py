@@ -4,13 +4,12 @@ from direct.task.Task import Task
 
 
 class TelemetryLimiter(DirectObject):
-    TaskName = 'TelemetryLimiterEnforce'
-    LeakDetectEventName = 'telemetryLimiter'
+    TaskName = "TelemetryLimiterEnforce"
+    LeakDetectEventName = "telemetryLimiter"
 
     def __init__(self):
         self._objs = {}
-        self._task = taskMgr.add(
-            self._enforceLimits, self.TaskName, priority=40)
+        self._task = taskMgr.add(self._enforceLimits, self.TaskName, priority=40)
 
     def destroy(self):
         taskMgr.remove(self._task)
@@ -29,10 +28,12 @@ class TelemetryLimiter(DirectObject):
         return id in self._objs
 
     def _getDummyEventName(self, obj):
-        return '%s-%s-%s-%s' % (self.LeakDetectEventName,
-                                obj.getTelemetryLimiterId(),
-                                id(obj),
-                                obj.__class__.__name__)
+        return "%s-%s-%s-%s" % (
+            self.LeakDetectEventName,
+            obj.getTelemetryLimiterId(),
+            id(obj),
+            obj.__class__.__name__,
+        )
 
     def _dummyEventHandler(self, *args, **kargs):
         pass
@@ -50,13 +51,11 @@ class TelemetryLimiter(DirectObject):
 
 
 class TelemetryLimit:
-
     def __call__(self, obj):
         pass
 
 
 class RotationLimitToH(TelemetryLimit):
-
     def __init__(self, pConst=0.0, rConst=0.0):
         self._pConst = pConst
         self._rConst = rConst
@@ -66,7 +65,6 @@ class RotationLimitToH(TelemetryLimit):
 
 
 class TLNull:
-
     def __init__(self, *limits):
         pass
 
@@ -75,7 +73,6 @@ class TLNull:
 
 
 class TLGatherAllAvs(DirectObject):
-
     def __init__(self, name, *limits):
         self._name = name
         self._avs = {}
@@ -85,10 +82,10 @@ class TLGatherAllAvs(DirectObject):
         for av in avs:
             self._handlePlayerArrive(av)
 
-        self.accept(DistributedPlayer.GetPlayerGenerateEvent(),
-                    self._handlePlayerArrive)
-        self.accept(DistributedPlayer.GetPlayerDeleteEvent(),
-                    self._handlePlayerLeave)
+        self.accept(
+            DistributedPlayer.GetPlayerGenerateEvent(), self._handlePlayerArrive
+        )
+        self.accept(DistributedPlayer.GetPlayerDeleteEvent(), self._handlePlayerLeave)
 
     def _handlePlayerArrive(self, av):
         if av is not localAvatar:
@@ -103,7 +100,11 @@ class TLGatherAllAvs(DirectObject):
             base.cr.telemetryLimiter.addObj(av)
 
     def _handlePlayerLeave(self, av):
-        if av is not localAvatar and base.cr.telemetryLimiter.hasObj(av) and av.doId in self._avId2limits:
+        if (
+            av is not localAvatar
+            and base.cr.telemetryLimiter.hasObj(av)
+            and av.doId in self._avId2limits
+        ):
             base.cr.telemetryLimiter.removeObj(av)
             for limit in self._avId2limits[av.doId]:
                 av.removeTelemetryLimit(limit)

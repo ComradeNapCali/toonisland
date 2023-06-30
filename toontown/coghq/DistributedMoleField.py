@@ -14,9 +14,10 @@ from toontown.minigame import Trajectory
 from direct.interval.IntervalGlobal import *
 from toontown.battle import MovieUtil
 
+
 class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedMoleField')
-    ScheduleTaskName = 'moleFieldScheduler'
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedMoleField")
+    ScheduleTaskName = "moleFieldScheduler"
 
     def __init__(self, cr):
         DistributedNodePathEntity.__init__(self, cr)
@@ -70,10 +71,10 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         DistributedNodePathEntity.announceGenerate(self)
         self.loadModel()
         self.loadGui()
-        self.detectName = 'moleField %s' % self.doId
+        self.detectName = "moleField %s" % self.doId
         taskMgr.doMethodLater(0.1, self.__detect, self.detectName)
         self.calcDimensions()
-        self.notify.debug('announceGenerate doId=%d entId=%d' % (self.doId, self.entId))
+        self.notify.debug("announceGenerate doId=%d entId=%d" % (self.doId, self.entId))
 
     def setNumSquaresX(self, num):
         self.numSquaresX = num
@@ -109,13 +110,13 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 moleIndex += 1
 
         self.numMoles = len(self.moleHills)
-        self.centerNode = self.attachNewNode('center')
+        self.centerNode = self.attachNewNode("center")
         self.centerCenterNode()
-        self.soundBomb = base.loader.loadSfx('phase_12/audio/sfx/Mole_Surprise.ogg')
-        self.soundBomb2 = base.loader.loadSfx('phase_3.5/audio/dial/AV_pig_howl.ogg')
-        self.soundCog = base.loader.loadSfx('phase_12/audio/sfx/Mole_Stomp.ogg')
-        self.soundUp = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
-        self.soundDown = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
+        self.soundBomb = base.loader.loadSfx("phase_12/audio/sfx/Mole_Surprise.ogg")
+        self.soundBomb2 = base.loader.loadSfx("phase_3.5/audio/dial/AV_pig_howl.ogg")
+        self.soundCog = base.loader.loadSfx("phase_12/audio/sfx/Mole_Stomp.ogg")
+        self.soundUp = base.loader.loadSfx("phase_4/audio/sfx/MG_Tag_C.ogg")
+        self.soundDown = base.loader.loadSfx("phase_4/audio/sfx/MG_cannon_whizz.ogg")
         upInterval = SoundInterval(self.soundUp, loop=0)
         downInterval = SoundInterval(self.soundDown, loop=0)
         self.soundIUpDown = Sequence(upInterval, downInterval)
@@ -124,11 +125,25 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         self.centerNode.setPos(self.dimensionX * 0.5, self.dimensionY * 0.5, 0.0)
 
     def loadGui(self):
-        self.frame2D = DirectFrame(scale=1.0, pos=(0.0, 0, 0.9), relief=DGG.FLAT, parent=aspect2d, frameSize=(-0.3,
-         0.3,
-         -0.05,
-         0.05), frameColor=(0.737, 0.573, 0.345, 0.3))
-        self.scoreLabel = DirectLabel(parent=self.frame2D, relief=None, pos=(0, 0, 0), scale=1.0, text='', text_font=ToontownGlobals.getSignFont(), text0_fg=(1, 1, 1, 1), text_scale=0.075, text_pos=(0, -0.02))
+        self.frame2D = DirectFrame(
+            scale=1.0,
+            pos=(0.0, 0, 0.9),
+            relief=DGG.FLAT,
+            parent=aspect2d,
+            frameSize=(-0.3, 0.3, -0.05, 0.05),
+            frameColor=(0.737, 0.573, 0.345, 0.3),
+        )
+        self.scoreLabel = DirectLabel(
+            parent=self.frame2D,
+            relief=None,
+            pos=(0, 0, 0),
+            scale=1.0,
+            text="",
+            text_font=ToontownGlobals.getSignFont(),
+            text0_fg=(1, 1, 1, 1),
+            text_scale=0.075,
+            text_pos=(0, -0.02),
+        )
         self.updateGuiScore()
         self.frame2D.hide()
         return
@@ -144,7 +159,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         self.activeField = 1
         self.isToonInRange = 0
         self.scheduleMoles()
-        self.notify.debug('%d setGameStart: Starting game' % self.doId)
+        self.notify.debug("%d setGameStart: Starting game" % self.doId)
         self.gameStartTime = globalClockDelta.networkToLocalTime(timestamp)
         self.gameStarted = True
         for hill in self.moleHills:
@@ -161,7 +176,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         self.frame2D.show()
         if self.hasRestarted:
             self.level.countryClub.showInfoText(self.restartedText)
-            self.sendUpdate('damageMe', [])
+            self.sendUpdate("damageMe", [])
         else:
             self.hasRestarted = 1
         self.updateGuiScore()
@@ -186,9 +201,18 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         while self.schedule and self.schedule[0][0] <= curTime and self.activeField:
             popupInfo = self.schedule[0]
             self.schedule = self.schedule[1:]
-            startTime, moleIndex, curMoveUpTime, curStayUpTime, curMoveDownTime, moleType = popupInfo
+            (
+                startTime,
+                moleIndex,
+                curMoveUpTime,
+                curStayUpTime,
+                curMoveDownTime,
+                moleType,
+            ) = popupInfo
             hill = self.moleHills[moleIndex]
-            hill.doMolePop(startTime, curMoveUpTime, curStayUpTime, curMoveDownTime, moleType)
+            hill.doMolePop(
+                startTime, curMoveUpTime, curStayUpTime, curMoveDownTime, moleType
+            )
 
         if self.schedule:
             return task.cont
@@ -197,30 +221,30 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
 
     def handleEnterHill(self, colEntry):
         if not self.gameStarted:
-            self.notify.debug('sending clientTriggered for %d' % self.doId)
-            self.sendUpdate('setClientTriggered', [])
+            self.notify.debug("sending clientTriggered for %d" % self.doId)
+            self.sendUpdate("setClientTriggered", [])
 
     def handleEnterMole(self, colEntry):
         if not self.gameStarted:
-            self.notify.debug('sending clientTriggered for %d' % self.doId)
-            self.sendUpdate('setClientTriggered', [])
+            self.notify.debug("sending clientTriggered for %d" % self.doId)
+            self.sendUpdate("setClientTriggered", [])
         surfaceNormal = colEntry.getSurfaceNormal(render)
-        self.notify.debug('surfaceNormal=%s' % surfaceNormal)
+        self.notify.debug("surfaceNormal=%s" % surfaceNormal)
         into = colEntry.getIntoNodePath()
-        moleIndex = int(into.getName().split('-')[-1])
-        self.notify.debug('hit mole %d' % moleIndex)
+        moleIndex = int(into.getName().split("-")[-1])
+        self.notify.debug("hit mole %d" % moleIndex)
         moleHill = self.moleHills[moleIndex]
         moleHill.stashMoleCollision()
         popupNum = moleHill.getPopupNum()
         if moleHill.hillType == MoleFieldBase.HILL_MOLE:
             timestamp = globalClockDelta.getFrameNetworkTime()
             moleHill.setHillType(MoleFieldBase.HILL_WHACKED)
-            self.sendUpdate('whackedBomb', [moleIndex, popupNum, timestamp])
+            self.sendUpdate("whackedBomb", [moleIndex, popupNum, timestamp])
             self.__showToonHitByBomb(localAvatar.doId, moleIndex, timestamp)
         elif moleHill.hillType == MoleFieldBase.HILL_BOMB:
             moleHill.setHillType(MoleFieldBase.HILL_COGWHACKED)
             self.soundCog.play()
-            self.sendUpdate('whackedMole', [moleIndex, popupNum])
+            self.sendUpdate("whackedMole", [moleIndex, popupNum])
 
     def updateMole(self, moleIndex, status):
         if status == self.WHACKED:
@@ -232,12 +256,12 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
 
     def updateGuiScore(self):
         molesLeft = self.MolesWhackedTarget - self.numMolesWhacked
-        if self.frame2D and hasattr(self, 'scoreLabel') and molesLeft >= 0:
+        if self.frame2D and hasattr(self, "scoreLabel") and molesLeft >= 0:
             newText = TTLocalizer.MolesLeft % molesLeft
-            self.scoreLabel['text'] = newText
+            self.scoreLabel["text"] = newText
 
     def setScore(self, score):
-        self.notify.debug('score=%d' % score)
+        self.notify.debug("score=%d" % score)
         self.numMolesWhacked = score
         self.updateGuiScore()
         molesLeft = self.MolesWhackedTarget - self.numMolesWhacked
@@ -295,8 +319,8 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
 
     def doToonInRange(self):
         if not self.gameStarted:
-            self.notify.debug('sending clientTriggered for %d' % self.doId)
-            self.sendUpdate('setClientTriggered', [])
+            self.notify.debug("sending clientTriggered for %d" % self.doId)
+            self.sendUpdate("setClientTriggered", [])
         self.isToonInRange = 1
         if self.activeField:
             self.setUpCamera()
@@ -326,7 +350,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 self.soundCog.play()
             moleHill.doMoleDown()
 
-    def __showToonHitByBomb(self, avId, moleIndex, timestamp = 0):
+    def __showToonHitByBomb(self, avId, moleIndex, timestamp=0):
         toon = base.cr.doId2do.get(avId)
         moleHill = self.moleHills[moleIndex]
         if toon == None:
@@ -339,20 +363,36 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 oldTrack.finish()
         toon.setPos(curPos)
         toon.setZ(self.getZ())
-        parentNode = render.attachNewNode('mazeFlyToonParent-' + repr(avId))
+        parentNode = render.attachNewNode("mazeFlyToonParent-" + repr(avId))
         parentNode.setPos(toon.getPos(render))
         toon.reparentTo(parentNode)
         toon.setPos(0, 0, 0)
         startPos = parentNode.getPos()
         dropShadow = toon.dropShadow.copyTo(parentNode)
         dropShadow.setScale(toon.dropShadow.getScale(render))
-        trajectory = Trajectory.Trajectory(0, Point3(0, 0, 0), Point3(0, 0, 50), gravMult=1.0)
+        trajectory = Trajectory.Trajectory(
+            0, Point3(0, 0, 0), Point3(0, 0, 50), gravMult=1.0
+        )
         flyDur = trajectory.calcTimeOfImpactOnPlane(0.0)
-        endTile = [rng.randint(0, self.numSquaresX - 1), rng.randint(0, self.numSquaresY - 1)]
-        endWorldCoords = (self.getX(render) + endTile[0] * self.spacingX, self.getY(render) + endTile[1] * self.spacingY)
+        endTile = [
+            rng.randint(0, self.numSquaresX - 1),
+            rng.randint(0, self.numSquaresY - 1),
+        ]
+        endWorldCoords = (
+            self.getX(render) + endTile[0] * self.spacingX,
+            self.getY(render) + endTile[1] * self.spacingY,
+        )
         endPos = Point3(endWorldCoords[0], endWorldCoords[1], startPos[2])
 
-        def flyFunc(t, trajectory, startPos = startPos, endPos = endPos, dur = flyDur, moveNode = parentNode, flyNode = toon):
+        def flyFunc(
+            t,
+            trajectory,
+            startPos=startPos,
+            endPos=endPos,
+            dur=flyDur,
+            moveNode=parentNode,
+            flyNode=toon,
+        ):
             u = t / dur
             moveNode.setX(startPos[0] + u * (endPos[0] - startPos[0]))
             moveNode.setY(startPos[1] + u * (endPos[1] - startPos[1]))
@@ -363,13 +403,22 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
             if node and not node.isEmpty():
                 node.setHpr(hpr)
 
-        flyTrack = Sequence(LerpFunctionInterval(flyFunc, fromData=0.0, toData=flyDur, duration=flyDur, extraArgs=[trajectory]), name=toon.uniqueName('hitBySuit-fly'))
+        flyTrack = Sequence(
+            LerpFunctionInterval(
+                flyFunc,
+                fromData=0.0,
+                toData=flyDur,
+                duration=flyDur,
+                extraArgs=[trajectory],
+            ),
+            name=toon.uniqueName("hitBySuit-fly"),
+        )
         if avId != localAvatar.doId:
             cameraTrack = Sequence()
         else:
             base.localAvatar.stopUpdateSmartCamera()
             self.camParentHold = camera.getParent()
-            self.camParent = base.localAvatar.attachNewNode('iCamParent')
+            self.camParent = base.localAvatar.attachNewNode("iCamParent")
             self.camParent.setPos(self.camParentHold.getPos())
             self.camParent.setHpr(self.camParentHold.getHpr())
             camera.reparentTo(self.camParent)
@@ -380,15 +429,23 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
             destCamPos.setZ(zenith * 1.3)
             destCamPos.setY(destCamPos[1] * 0.3)
 
-            def camTask(task, zenith = zenith, flyNode = toon, startCamPos = startCamPos, camOffset = destCamPos - startCamPos):
+            def camTask(
+                task,
+                zenith=zenith,
+                flyNode=toon,
+                startCamPos=startCamPos,
+                camOffset=destCamPos - startCamPos,
+            ):
                 u = flyNode.getZ() / zenith
                 camera.lookAt(toon)
                 return Task.cont
 
-            camTaskName = 'mazeToonFlyCam-' + repr(avId)
+            camTaskName = "mazeToonFlyCam-" + repr(avId)
             taskMgr.add(camTask, camTaskName, priority=20)
 
-            def cleanupCamTask(self = self, toon = toon, camTaskName = camTaskName, startCamPos = startCamPos):
+            def cleanupCamTask(
+                self=self, toon=toon, camTaskName=camTaskName, startCamPos=startCamPos
+            ):
                 taskMgr.remove(camTaskName)
                 self.camParent.reparentTo(toon)
                 camera.setPos(startCamPos)
@@ -397,7 +454,9 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 base.localAvatar.startUpdateSmartCamera()
                 self.setUpCamera()
 
-            cameraTrack = Sequence(Wait(flyDur), Func(cleanupCamTask), name='hitBySuit-cameraLerp')
+            cameraTrack = Sequence(
+                Wait(flyDur), Func(cleanupCamTask), name="hitBySuit-cameraLerp"
+            )
         geomNode = toon.getGeomNode()
         startHpr = geomNode.getHpr()
         destHpr = Point3(startHpr)
@@ -405,9 +464,13 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         if rng.choice([0, 1]):
             hRot = -hRot
         destHpr.setX(destHpr[0] + hRot * 360)
-        spinHTrack = Sequence(LerpHprInterval(geomNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, geomNode, startHpr), name=toon.uniqueName('hitBySuit-spinH'))
+        spinHTrack = Sequence(
+            LerpHprInterval(geomNode, flyDur, destHpr, startHpr=startHpr),
+            Func(safeSetHpr, geomNode, startHpr),
+            name=toon.uniqueName("hitBySuit-spinH"),
+        )
         parent = geomNode.getParent()
-        rotNode = parent.attachNewNode('rotNode')
+        rotNode = parent.attachNewNode("rotNode")
         geomNode.reparentTo(rotNode)
         rotNode.setZ(toon.getHeight() / 2.0)
         oldGeomNodeZ = geomNode.getZ()
@@ -418,25 +481,35 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         if rng.choice([0, 1]):
             pRot = -pRot
         destHpr.setY(destHpr[1] + pRot * 360)
-        spinPTrack = Sequence(LerpHprInterval(rotNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, rotNode, startHpr), name=toon.uniqueName('hitBySuit-spinP'))
+        spinPTrack = Sequence(
+            LerpHprInterval(rotNode, flyDur, destHpr, startHpr=startHpr),
+            Func(safeSetHpr, rotNode, startHpr),
+            name=toon.uniqueName("hitBySuit-spinP"),
+        )
         soundTrack = Sequence()
 
-        def preFunc(self = self, avId = avId, toon = toon, dropShadow = dropShadow):
+        def preFunc(self=self, avId=avId, toon=toon, dropShadow=dropShadow):
             forwardSpeed = toon.forwardSpeed
             rotateSpeed = toon.rotateSpeed
             if avId == localAvatar.doId:
                 toon.stopSmooth()
-                base.cr.playGame.getPlace().fsm.request('stopped')
+                base.cr.playGame.getPlace().fsm.request("stopped")
             else:
                 toon.stopSmooth()
             if forwardSpeed or rotateSpeed:
                 toon.setSpeed(forwardSpeed, rotateSpeed)
             toon.dropShadow.hide()
 
-        def postFunc(self = self, avId = avId, oldGeomNodeZ = oldGeomNodeZ, dropShadow = dropShadow, parentNode = parentNode):
+        def postFunc(
+            self=self,
+            avId=avId,
+            oldGeomNodeZ=oldGeomNodeZ,
+            dropShadow=dropShadow,
+            parentNode=parentNode,
+        ):
             if avId == localAvatar.doId:
                 base.localAvatar.setPos(endPos)
-                if hasattr(self, 'orthoWalk'):
+                if hasattr(self, "orthoWalk"):
                     self.orthoWalk.start()
             dropShadow.removeNode()
             del dropShadow
@@ -456,13 +529,26 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
             if avId == localAvatar.doId:
                 toon.startSmooth()
                 place = base.cr.playGame.getPlace()
-                if place and hasattr(place, 'fsm'):
-                    place.fsm.request('walk')
+                if place and hasattr(place, "fsm"):
+                    place.fsm.request("walk")
             else:
                 toon.startSmooth()
 
         preFunc()
-        hitTrack = Sequence(Func(toon.setPos, Point3(0.0, 0.0, 0.0)), Wait(0.25), Parallel(flyTrack, cameraTrack, self.soundIUpDown, spinHTrack, spinPTrack, soundTrack), Func(postFunc), name=toon.uniqueName('hitBySuit'))
+        hitTrack = Sequence(
+            Func(toon.setPos, Point3(0.0, 0.0, 0.0)),
+            Wait(0.25),
+            Parallel(
+                flyTrack,
+                cameraTrack,
+                self.soundIUpDown,
+                spinHTrack,
+                spinPTrack,
+                soundTrack,
+            ),
+            Func(postFunc),
+            name=toon.uniqueName("hitBySuit"),
+        )
         self.toonHitTracks[avId] = hitTrack
         hitTrack.start()
         posM = moleHill.getPos(render)

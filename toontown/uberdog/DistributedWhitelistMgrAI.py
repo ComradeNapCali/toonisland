@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectGlobalAI import DistributedObjectGlobalAI
 
+
 class DistributedWhitelistMgrAI(DistributedObjectGlobalAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedWhitelistMgrAI")
 
@@ -12,4 +13,3 @@ class DistributedWhitelistMgrAI(DistributedObjectGlobalAI):
 
     def newListUDtoAI(self):
         pass
-

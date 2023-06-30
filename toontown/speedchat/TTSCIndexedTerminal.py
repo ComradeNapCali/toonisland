@@ -1,13 +1,14 @@
 from otp.speedchat.SCTerminal import *
 from otp.otpbase.OTPLocalizer import SpeedChatStaticText
-TTSCIndexedMsgEvent = 'SCIndexedMsg'
+
+TTSCIndexedMsgEvent = "SCIndexedMsg"
+
 
 def decodeTTSCIndexedMsg(msgIndex):
     return SpeedChatStaticText.get(msgIndex, None)
 
 
 class TTSCIndexedTerminal(SCTerminal):
-
     def __init__(self, msg, msgIndex):
         SCTerminal.__init__(self)
         self.text = msg

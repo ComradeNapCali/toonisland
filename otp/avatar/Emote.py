@@ -4,7 +4,7 @@ import types
 
 class Emote:
     EmoteClear = -1
-    EmoteEnableStateChanged = 'EmoteEnableStateChanged'
+    EmoteEnableStateChanged = "EmoteEnableStateChanged"
 
     def __init__(self):
         self.emoteFunc = None

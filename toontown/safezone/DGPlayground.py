@@ -3,8 +3,8 @@ from . import Playground
 import random
 from direct.task import Task
 
-class DGPlayground(Playground.Playground):
 
+class DGPlayground(Playground.Playground):
     def __init__(self, loader, parentFSM, doneEvent):
         Playground.Playground.__init__(self, loader, parentFSM, doneEvent)
 
@@ -17,11 +17,11 @@ class DGPlayground(Playground.Playground):
     def enter(self, requestStatus):
         Playground.Playground.enter(self, requestStatus)
         self.nextBirdTime = 0
-        taskMgr.add(self.__birds, 'DG-birds')
+        taskMgr.add(self.__birds, "DG-birds")
 
     def exit(self):
         Playground.Playground.exit(self)
-        taskMgr.remove('DG-birds')
+        taskMgr.remove("DG-birds")
 
     def __birds(self, task):
         if task.time < self.nextBirdTime:
@@ -42,4 +42,5 @@ class DGPlayground(Playground.Playground):
     def showPaths(self):
         from toontown.classicchars import CCharPaths
         from toontown.toonbase import TTLocalizer
+
         self.showPathPoints(CCharPaths.getPaths(TTLocalizer.Goofy))

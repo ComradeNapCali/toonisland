@@ -8,9 +8,8 @@ from direct.task.Task import Task
 
 
 class DummyLauncherBase:
-
     def __init__(self):
-        self.logPrefix = ''
+        self.logPrefix = ""
         self._downloadComplete = False
         self.phaseComplete = {}
         for phase in self.LauncherPhases:
@@ -21,15 +20,14 @@ class DummyLauncherBase:
         self.launcherFileDbHash = HashVal()
         self.serverDbFileHash = HashVal()
         self.setPandaErrorCode(0)
-        self.setServerVersion('dev')
+        self.setServerVersion("dev")
 
     def isDummy(self):
         return 1
 
     def startFakeDownload(self):
-        if ConfigVariableBool('fake-downloads', 0).getValue():
-            duration = ConfigVariableDouble(
-                'fake-download-duration', 60).getValue()
+        if ConfigVariableBool("fake-downloads", 0).getValue():
+            duration = ConfigVariableDouble("fake-download-duration", 60).getValue()
             self.fakeDownload(duration)
         else:
             for phase in self.LauncherPhases:
@@ -39,7 +37,7 @@ class DummyLauncherBase:
         return
 
     def isTestServer(self):
-        return base.config.GetBool('is-test-server', 0)
+        return base.config.GetBool("is-test-server", 0)
 
     def setPhaseCompleteArray(self, newPhaseComplete):
         self.phaseComplete = newPhaseComplete
@@ -61,7 +59,7 @@ class DummyLauncherBase:
 
     def setDisconnectDetailsNormal(self):
         self.disconnectCode = 0
-        self.disconnectMsg = 'normal'
+        self.disconnectMsg = "normal"
 
     def setDisconnectDetails(self, newCode, newMsg):
         self.disconnectCode = newCode
@@ -74,15 +72,15 @@ class DummyLauncherBase:
         return self.ServerVersion
 
     def getIsNewInstallation(self):
-        return base.config.GetBool('new-installation', 0)
+        return base.config.GetBool("new-installation", 0)
 
     def setIsNotNewInstallation(self):
         pass
 
     def getLastLogin(self):
-        if hasattr(self, 'lastLogin'):
+        if hasattr(self, "lastLogin"):
             return self.lastLogin
-        return ''
+        return ""
 
     def setLastLogin(self, login):
         self.lastLogin = login
@@ -94,13 +92,13 @@ class DummyLauncherBase:
         self.paidUserLoggedIn = 1
 
     def getGameServer(self):
-        return '206.16.11.19'
+        return "206.16.11.19"
 
     def getAccountServer(self):
-        return ''
+        return ""
 
     def getDeployment(self):
-        return 'US'
+        return "US"
 
     def getBlue(self):
         return None
@@ -113,49 +111,50 @@ class DummyLauncherBase:
 
     def fakeDownloadPhaseTask(self, task):
         percentComplete = min(
-            100, int(round(task.time / float(task.timePerPhase) * 100)))
+            100, int(round(task.time / float(task.timePerPhase) * 100))
+        )
         self.setPhaseComplete(task.phase, percentComplete)
-        messenger.send('launcherPercentPhaseComplete', [task.phase,
-                                                        percentComplete,
-                                                        0,
-                                                        0])
+        messenger.send(
+            "launcherPercentPhaseComplete", [task.phase, percentComplete, 0, 0]
+        )
         if percentComplete >= 100.0:
-            messenger.send('phaseComplete-' + repr((task.phase)))
+            messenger.send("phaseComplete-" + repr((task.phase)))
             return Task.done
         else:
             return Task.cont
 
     def downloadDoneTask(self, task):
         self._downloadComplete = True
-        messenger.send('launcherAllPhasesComplete')
+        messenger.send("launcherAllPhasesComplete")
         return Task.done
 
     def fakeDownload(self, timePerPhase):
-        self.phaseComplete = {1: 100,
-                              2: 100,
-                              3: 0,
-                              3.5: 0,
-                              4: 0,
-                              5: 0,
-                              5.5: 0,
-                              6: 0,
-                              7: 0,
-                              8: 0,
-                              9: 0,
-                              10: 0,
-                              11: 0,
-                              12: 0,
-                              13: 0}
+        self.phaseComplete = {
+            1: 100,
+            2: 100,
+            3: 0,
+            3.5: 0,
+            4: 0,
+            5: 0,
+            5.5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0,
+            10: 0,
+            11: 0,
+            12: 0,
+            13: 0,
+        }
         phaseTaskList = []
         firstPhaseIndex = self.LauncherPhases.index(self.firstPhase)
         for phase in self.LauncherPhases[firstPhaseIndex:]:
-            phaseTask = Task(self.fakeDownloadPhaseTask,
-                             'phaseDownload' + str(phase))
+            phaseTask = Task(self.fakeDownloadPhaseTask, "phaseDownload" + str(phase))
             phaseTask.timePerPhase = timePerPhase
             phaseTask.phase = phase
             phaseTaskList.append(phaseTask)
 
         phaseTaskList.append(Task(self.downloadDoneTask))
         downloadSequence = Task.sequence(*phaseTaskList)
-        taskMgr.remove('downloadSequence')
-        taskMgr.add(downloadSequence, 'downloadSequence')
+        taskMgr.remove("downloadSequence")
+        taskMgr.add(downloadSequence, "downloadSequence")

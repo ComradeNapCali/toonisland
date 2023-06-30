@@ -4,8 +4,8 @@ from direct.interval.IntervalGlobal import *
 from toontown.battle.BattleProps import *
 from toontown.battle import MovieUtil
 
-class EffectManager(DirectObject):
 
+class EffectManager(DirectObject):
     def __init__(self):
         self.effectList = []
 
@@ -13,7 +13,9 @@ class EffectManager(DirectObject):
         for effect in effectList:
             self.__removeEffect(effect)
 
-    def addSplatEffect(self, spawner, splatName = 'splat-creampie', time = 1, size = 6, parent = render):
+    def addSplatEffect(
+        self, spawner, splatName="splat-creampie", time=1, size=6, parent=render
+    ):
         splat = globalPropPool.getProp(splatName)
         splatSeq = Sequence()
         splatType = globalPropPool.getPropType(splatName)

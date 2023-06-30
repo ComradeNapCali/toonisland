@@ -1,6 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
+
 class TTCodeRedemptionMgrAI(DistributedObjectAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("TTCodeRedemptionMgrAI")
 
@@ -18,4 +19,3 @@ class TTCodeRedemptionMgrAI(DistributedObjectAI):
 
     def redeemCodeResult(self, todo0, todo1, todo2):
         pass
-

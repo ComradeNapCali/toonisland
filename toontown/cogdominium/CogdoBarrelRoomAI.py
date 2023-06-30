@@ -1,5 +1,6 @@
 import random
-#from sets import Set
+
+# from sets import Set
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed import DistributedObjectAI
 from direct.showbase import PythonUtil
@@ -9,17 +10,18 @@ from toontown.toonbase import ToontownGlobals
 from toontown.cogdominium import CogdoBarrelRoomConsts
 from toontown.cogdominium import DistributedCogdoBarrelAI
 
+
 class CogdoBarrelRoomAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCogdoBarrelRoomAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedCogdoBarrelRoomAI")
 
     def __init__(self, cogdoInteriorAI):
         self.cogdoInteriorAI = cogdoInteriorAI
-        self.allBarrelsCollectedTask = self.cogdoInteriorAI.taskName('allBarrelsCollectedTask')
-        self.collectionDoneEvent = self.cogdoInteriorAI.taskName('barrelCollectionDone')
+        self.allBarrelsCollectedTask = self.cogdoInteriorAI.taskName(
+            "allBarrelsCollectedTask"
+        )
+        self.collectionDoneEvent = self.cogdoInteriorAI.taskName("barrelCollectionDone")
         self.collectTimer = None
-        self.results = [
-            [],
-            []]
+        self.results = [[], []]
         for i in range(CogdoBarrelRoomConsts.MaxToons):
             if i < len(self.cogdoInteriorAI.toons):
                 self.results[0].append(self.cogdoInteriorAI.toons[i])
@@ -45,7 +47,9 @@ class CogdoBarrelRoomAI:
         self.spawnedBarrels = []
 
         def spawnBarrel(index):
-            barrel = DistributedCogdoBarrelAI.DistributedCogdoBarrelAI(self.cogdoInteriorAI.air, index, self.barrelCollected)
+            barrel = DistributedCogdoBarrelAI.DistributedCogdoBarrelAI(
+                self.cogdoInteriorAI.air, index, self.barrelCollected
+            )
             barrel.generateWithRequired(self.cogdoInteriorAI.zoneId)
             self.spawnedBarrels.append(barrel)
 
@@ -61,12 +65,18 @@ class CogdoBarrelRoomAI:
 
     def activate(self):
         self.collectTimer = Timer.Timer()
-        self.collectTimer.startCallback(CogdoBarrelRoomConsts.CollectionTime, self.__endCollectionPhase)
+        self.collectTimer.startCallback(
+            CogdoBarrelRoomConsts.CollectionTime, self.__endCollectionPhase
+        )
         for barrel in self.spawnedBarrels:
             barrel.interactive = True
 
         taskMgr.remove(self.allBarrelsCollectedTask)
-        taskMgr.doMethodLater(CogdoBarrelRoomConsts.AllBarrelsCollectedTime, self.__checkAllBarrelsCollected, self.allBarrelsCollectedTask)
+        taskMgr.doMethodLater(
+            CogdoBarrelRoomConsts.AllBarrelsCollectedTime,
+            self.__checkAllBarrelsCollected,
+            self.allBarrelsCollectedTask,
+        )
 
     def __endCollectionPhase(self):
         messenger.send(self.collectionDoneEvent)
@@ -94,7 +104,7 @@ class CogdoBarrelRoomAI:
             playerIndex = self.results[0].index(avId)
             self.results[1][playerIndex] += barrel.laff
         except ValueError:
-            self.notify.warning('barrelCollected: Unrecognized avId %s' % avId)
+            self.notify.warning("barrelCollected: Unrecognized avId %s" % avId)
 
     def __checkAllBarrelsCollected(self, task):
         if not CogdoBarrelRoomConsts.EndWithAllBarrelsCollected:
@@ -111,7 +121,13 @@ class CogdoBarrelRoomAI:
             return not toon.isToonedUp()
 
     def __allBarrelsCollected(self):
-        toonsNeedingLaff = Set([toon for toon in self.cogdoInteriorAI.toons if self.__toonIdNeedsLaff(toon)])
+        toonsNeedingLaff = Set(
+            [
+                toon
+                for toon in self.cogdoInteriorAI.toons
+                if self.__toonIdNeedsLaff(toon)
+            ]
+        )
         for barrel in self.spawnedBarrels:
             if not toonsNeedingLaff.issubset(Set(barrel.grabbedBy)):
                 return False
@@ -119,4 +135,4 @@ class CogdoBarrelRoomAI:
         return True
 
     def __str__(self):
-        return str(self.cogdoInteriorAI) + '.CogdoBarrelRoomAI'
+        return str(self.cogdoInteriorAI) + ".CogdoBarrelRoomAI"

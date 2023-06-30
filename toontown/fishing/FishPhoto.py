@@ -3,12 +3,13 @@ from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from . import FishGlobals
 
-class DirectRegion(NodePath):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DirectRegion')
 
-    def __init__(self, parent = aspect2d):
+class DirectRegion(NodePath):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DirectRegion")
+
+    def __init__(self, parent=aspect2d):
         NodePath.__init__(self)
-        self.assign(parent.attachNewNode('DirectRegion'))
+        self.assign(parent.attachNewNode("DirectRegion"))
 
     def destroy(self):
         self.unload()
@@ -26,10 +27,10 @@ class DirectRegion(NodePath):
         pass
 
     def load(self):
-        if not hasattr(self, 'cRender'):
-            self.cRender = NodePath('fishSwimRender')
-            self.fishSwimCamera = self.cRender.attachNewNode('fishSwimCamera')
-            self.cCamNode = Camera('fishSwimCam')
+        if not hasattr(self, "cRender"):
+            self.cRender = NodePath("fishSwimRender")
+            self.fishSwimCamera = self.cRender.attachNewNode("fishSwimCamera")
+            self.cCamNode = Camera("fishSwimCam")
             self.cLens = PerspectiveLens()
             self.cLens.setFov(40, 40)
             self.cLens.setNear(0.1)
@@ -37,17 +38,14 @@ class DirectRegion(NodePath):
             self.cCamNode.setLens(self.cLens)
             self.cCamNode.setScene(self.cRender)
             self.fishSwimCam = self.fishSwimCamera.attachNewNode(self.cCamNode)
-            cm = CardMaker('displayRegionCard')
+            cm = CardMaker("displayRegionCard")
             cm.setFrame(*self.bounds)
             self.card = card = self.attachNewNode(cm.generate())
             card.setColor(*self.color)
             newBounds = card.getTightBounds()
             ll = render2d.getRelativePoint(card, newBounds[0])
             ur = render2d.getRelativePoint(card, newBounds[1])
-            newBounds = [ll.getX(),
-             ur.getX(),
-             ll.getZ(),
-             ur.getZ()]
+            newBounds = [ll.getX(), ur.getX(), ll.getZ(), ur.getZ()]
             newBounds = [max(0.0, min(1.0, (x + 1.0) / 2.0)) for x in newBounds]
             self.cDr = base.win.makeDisplayRegion(*newBounds)
             self.cDr.setSort(10)
@@ -58,7 +56,7 @@ class DirectRegion(NodePath):
         return self.cRender
 
     def unload(self):
-        if hasattr(self, 'cRender'):
+        if hasattr(self, "cRender"):
             base.win.removeDisplayRegion(self.cDr)
             del self.cRender
             del self.fishSwimCamera
@@ -69,11 +67,11 @@ class DirectRegion(NodePath):
 
 
 class FishPhoto(NodePath):
-    notify = DirectNotifyGlobal.directNotify.newCategory('FishPhoto')
+    notify = DirectNotifyGlobal.directNotify.newCategory("FishPhoto")
 
-    def __init__(self, fish = None, parent = aspect2d):
+    def __init__(self, fish=None, parent=aspect2d):
         NodePath.__init__(self)
-        self.assign(parent.attachNewNode('FishPhoto'))
+        self.assign(parent.attachNewNode("FishPhoto"))
         self.fish = fish
         self.actor = None
         self.sound = None
@@ -84,7 +82,7 @@ class FishPhoto(NodePath):
 
     def destroy(self):
         self.hide()
-        if hasattr(self, 'background'):
+        if hasattr(self, "background"):
             del self.background
         self.fish = None
         del self.soundTrack
@@ -106,14 +104,14 @@ class FishPhoto(NodePath):
     def makeFishFrame(self, actor):
         actor.setDepthTest(1)
         actor.setDepthWrite(1)
-        if not hasattr(self, 'fishDisplayRegion'):
+        if not hasattr(self, "fishDisplayRegion"):
             self.fishDisplayRegion = DirectRegion(parent=self)
             self.fishDisplayRegion.setBounds(*self.swimBounds)
             self.fishDisplayRegion.setColor(*self.swimColor)
         frame = self.fishDisplayRegion.load()
-        pitch = frame.attachNewNode('pitch')
-        rotate = pitch.attachNewNode('rotate')
-        scale = rotate.attachNewNode('scale')
+        pitch = frame.attachNewNode("pitch")
+        rotate = pitch.attachNewNode("rotate")
+        scale = rotate.attachNewNode("scale")
         actor.reparentTo(scale)
         bMin, bMax = actor.getTightBounds()
         center = (bMin + bMax) / 2.0
@@ -129,30 +127,36 @@ class FishPhoto(NodePath):
         pitch.setY(2)
         return frame
 
-    def show(self, showBackground = 0):
-        messenger.send('wakeup')
+    def show(self, showBackground=0):
+        messenger.send("wakeup")
         if self.fishFrame:
             self.actor.cleanup()
-            if hasattr(self, 'fishDisplayRegion'):
+            if hasattr(self, "fishDisplayRegion"):
                 self.fishDisplayRegion.unload()
             self.hide()
         self.actor = self.fish.getActor()
         self.actor.setTwoSided(1)
         self.fishFrame = self.makeFishFrame(self.actor)
         if showBackground:
-            if not hasattr(self, 'background'):
-                background = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')
-                background = background.find('**/Fish_BG')
+            if not hasattr(self, "background"):
+                background = loader.loadModel("phase_3.5/models/gui/stickerbook_gui")
+                background = background.find("**/Fish_BG")
                 self.background = background
             self.background.setPos(0, 15, 0)
             self.background.setScale(11)
             self.background.reparentTo(self.fishFrame)
         self.sound, loop, delay, playRate = self.fish.getSound()
         if playRate is not None:
-            self.actor.setPlayRate(playRate, 'intro')
-            self.actor.setPlayRate(playRate, 'swim')
-        introDuration = self.actor.getDuration('intro')
-        track = Parallel(Sequence(Func(self.actor.play, 'intro'), Wait(introDuration), Func(self.actor.loop, 'swim')))
+            self.actor.setPlayRate(playRate, "intro")
+            self.actor.setPlayRate(playRate, "swim")
+        introDuration = self.actor.getDuration("intro")
+        track = Parallel(
+            Sequence(
+                Func(self.actor.play, "intro"),
+                Wait(introDuration),
+                Func(self.actor.loop, "swim"),
+            )
+        )
         if self.sound:
             soundTrack = Sequence(Wait(delay), Func(self.sound.play))
             if loop:
@@ -167,7 +171,7 @@ class FishPhoto(NodePath):
         return
 
     def hide(self):
-        if hasattr(self, 'fishDisplayRegion'):
+        if hasattr(self, "fishDisplayRegion"):
             self.fishDisplayRegion.unload()
         if self.actor:
             self.actor.stop()

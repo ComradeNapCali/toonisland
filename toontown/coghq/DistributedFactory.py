@@ -13,11 +13,13 @@ from otp.level import LevelConstants
 from toontown.toonbase import TTLocalizer
 from toontown.coghq import FactoryCameraViews
 from direct.controls.ControlManager import CollisionHandlerRayStart
+
 if __dev__:
     from otp.level import EditorGlobals
 
+
 class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFactory')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFactory")
 
     def __init__(self, cr):
         DistributedLevel.DistributedLevel.__init__(self, cr)
@@ -34,20 +36,20 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
         return FactoryEntityCreator.FactoryEntityCreator(level=self)
 
     def generate(self):
-        self.notify.debug('generate')
+        self.notify.debug("generate")
         DistributedLevel.DistributedLevel.generate(self)
         self.factoryViews = FactoryCameraViews.FactoryCameraViews(self)
         base.localAvatar.chatMgr.chatInputSpeedChat.addFactoryMenu()
         if __dev__:
             bboard.post(EditorGlobals.EditTargetPostName, self)
-        self.accept('SOSPanelEnter', self.handleSOSPanel)
+        self.accept("SOSPanelEnter", self.handleSOSPanel)
 
     def delete(self):
         DistributedLevel.DistributedLevel.delete(self)
         base.localAvatar.chatMgr.chatInputSpeedChat.removeFactoryMenu()
         self.factoryViews.delete()
         del self.factoryViews
-        self.ignore('SOSPanelEnter')
+        self.ignore("SOSPanelEnter")
         if __dev__:
             bboard.removeIfEqual(EditorGlobals.EditTargetPostName, self)
         base.localAvatar.physControls.setCollisionRayHeight(CollisionHandlerRayStart)
@@ -61,15 +63,17 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
         av = base.cr.identifyFriend(avId)
         if av is None:
             return
-        base.localAvatar.setSystemMessage(avId, TTLocalizer.ForemanConfrontedMsg % av.getName())
+        base.localAvatar.setSystemMessage(
+            avId, TTLocalizer.ForemanConfrontedMsg % av.getName()
+        )
         return
 
     def setDefeated(self):
-        self.notify.info('setDefeated')
-        messenger.send('FactoryWinEvent')
+        self.notify.info("setDefeated")
+        messenger.send("FactoryWinEvent")
 
     def levelAnnounceGenerate(self):
-        self.notify.debug('levelAnnounceGenerate')
+        self.notify.debug("levelAnnounceGenerate")
         DistributedLevel.DistributedLevel.levelAnnounceGenerate(self)
         specModule = FactorySpecs.getFactorySpecModule(self.factoryId)
         factorySpec = LevelSpec.LevelSpec(specModule)
@@ -87,24 +91,38 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
 
         def handleFirstSetZoneDone():
             base.factoryReady = 1
-            messenger.send('FactoryReady')
+            messenger.send("FactoryReady")
 
         self.acceptOnce(firstSetZoneDoneEvent, handleFirstSetZoneDone)
         modelCount = len(levelSpec.getAllEntIds())
-        loader.beginBulkLoad('factory', TTLocalizer.HeadingToFactoryTitle % TTLocalizer.FactoryNames[self.factoryId], modelCount, 1, TTLocalizer.TIP_COGHQ, 0)
+        loader.beginBulkLoad(
+            "factory",
+            TTLocalizer.HeadingToFactoryTitle
+            % TTLocalizer.FactoryNames[self.factoryId],
+            modelCount,
+            1,
+            TTLocalizer.TIP_COGHQ,
+            0,
+        )
         DistributedLevel.DistributedLevel.privGotSpec(self, levelSpec)
-        loader.endBulkLoad('factory')
+        loader.endBulkLoad("factory")
 
-        def printPos(self = self):
+        def printPos(self=self):
             pos = base.localAvatar.getPos(self.getZoneNode(self.lastToonZone))
             h = base.localAvatar.getH(self.getZoneNode(self.lastToonZone))
-            print('factory pos: %s, h: %s, zone %s' % (repr(pos), h, self.lastToonZone))
-            posStr = 'X: %.3f' % pos[0] + '\nY: %.3f' % pos[1] + '\nZ: %.3f' % pos[2] + '\nH: %.3f' % h + '\nZone: %s' % str(self.lastToonZone)
+            print("factory pos: %s, h: %s, zone %s" % (repr(pos), h, self.lastToonZone))
+            posStr = (
+                "X: %.3f" % pos[0]
+                + "\nY: %.3f" % pos[1]
+                + "\nZ: %.3f" % pos[2]
+                + "\nH: %.3f" % h
+                + "\nZone: %s" % str(self.lastToonZone)
+            )
             base.localAvatar.setChatAbsolute(posStr, CFThought | CFTimeout)
 
-        self.accept('f2', printPos)
+        self.accept("f2", printPos)
         base.localAvatar.setCameraCollisionsCanMove(1)
-        self.acceptOnce('leavingFactory', self.announceLeaving)
+        self.acceptOnce("leavingFactory", self.announceLeaving)
 
     def handleSOSPanel(self, panel):
         avIds = []
@@ -115,11 +133,11 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
         panel.setFactoryToonIdList(avIds)
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         base.localAvatar.setCameraCollisionsCanMove(0)
-        if hasattr(self, 'suits'):
+        if hasattr(self, "suits"):
             del self.suits
-        if hasattr(self, 'relatedObjectMgrRequest') and self.relatedObjectMgrRequest:
+        if hasattr(self, "relatedObjectMgrRequest") and self.relatedObjectMgrRequest:
             self.cr.relatedObjectMgr.abortRequest(self.relatedObjectMgrRequest)
             del self.relatedObjectMgrRequest
         DistributedLevel.DistributedLevel.disable(self)
@@ -140,7 +158,9 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
                     if suit:
                         suit.comeOutOfReserve()
 
-            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newSuitIds, bringOutOfReserve)
+            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(
+                newSuitIds, bringOutOfReserve
+            )
 
     def reservesJoining(self):
         pass
@@ -161,7 +181,7 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
         return 2
 
     def getGoonPathId(self):
-        return 'sellbotFactory'
+        return "sellbotFactory"
 
     def getTaskZoneId(self):
         return self.factoryId

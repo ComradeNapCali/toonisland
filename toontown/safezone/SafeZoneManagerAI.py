@@ -5,7 +5,7 @@ HealFrequency = 30.0
 
 
 class SafeZoneManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('SafeZoneManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("SafeZoneManagerAI")
 
     def enterSafeZone(self):
         avId = self.air.getAvatarIdFromSender()

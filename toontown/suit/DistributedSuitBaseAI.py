@@ -4,8 +4,9 @@ from . import SuitPlannerBase, SuitBase, SuitDNA
 from direct.directnotify import DirectNotifyGlobal
 from toontown.battle import SuitBattleGlobals
 
+
 class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.SuitBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedSuitBaseAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedSuitBaseAI")
 
     def __init__(self, air, suitPlanner):
         DistributedAvatarAI.DistributedAvatarAI.__init__(self, air)
@@ -41,16 +42,16 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
     def setLevel(self, lvl=None):
         attributes = SuitBattleGlobals.SuitAttributes[self.dna.name]
         if lvl:
-            self.level = lvl - attributes['level'] - 1
+            self.level = lvl - attributes["level"] - 1
         else:
-            self.level = SuitBattleGlobals.pickFromFreqList(attributes['freq'])
-        self.notify.debug('Assigning level ' + str(lvl))
-        if hasattr(self, 'doId'):
+            self.level = SuitBattleGlobals.pickFromFreqList(attributes["freq"])
+        self.notify.debug("Assigning level " + str(lvl))
+        if hasattr(self, "doId"):
             self.d_setLevelDist(self.level)
         try:
-            hp = attributes['hp'][self.level]
+            hp = attributes["hp"][self.level]
         except:
-            hp = attributes['hp'][-1]
+            hp = attributes["hp"][-1]
         self.maxHP = hp
         self.currHP = hp
 
@@ -58,7 +59,7 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         return self.getLevel()
 
     def d_setLevelDist(self, level):
-        self.sendUpdate('setLevelDist', [level])
+        self.sendUpdate("setLevelDist", [level])
 
     def setupSuitDNA(self, level, type, track):
         dna = SuitDNA.SuitDNA()
@@ -72,8 +73,8 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         if self.dna:
             return self.dna.makeNetString()
         else:
-            self.notify.debug('No dna has been created for suit %d!' % self.getDoId())
-            return ''
+            self.notify.debug("No dna has been created for suit %d!" % self.getDoId())
+            return ""
 
     def b_setBrushOff(self, index):
         self.setBrushOff(index)
@@ -81,13 +82,13 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         return None
 
     def d_setBrushOff(self, index):
-        self.sendUpdate('setBrushOff', [index])
+        self.sendUpdate("setBrushOff", [index])
 
     def setBrushOff(self, index):
         pass
 
     def d_denyBattle(self, toonId):
-        self.sendUpdateToAvatarId(toonId, 'denyBattle', [])
+        self.sendUpdateToAvatarId(toonId, "denyBattle", [])
 
     def b_setSkeleRevives(self, num):
         if num == None:
@@ -97,7 +98,7 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         return
 
     def d_setSkeleRevives(self, num):
-        self.sendUpdate('setSkeleRevives', [num])
+        self.sendUpdate("setSkeleRevives", [num])
 
     def getSkeleRevives(self):
         return self.skeleRevives
@@ -140,16 +141,16 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         self.d_setHP(hp)
 
     def d_setHP(self, hp):
-        self.sendUpdate('setHP', [hp])
+        self.sendUpdate("setHP", [hp])
 
     def releaseControl(self):
         return None
 
     def getDeathEvent(self):
-        return 'cogDead-%s' % self.doId
+        return "cogDead-%s" % self.doId
 
     def resume(self):
-        self.notify.debug('resume, hp=%s' % self.currHP)
+        self.notify.debug("resume, hp=%s" % self.currHP)
         if self.currHP <= 0:
             messenger.send(self.getDeathEvent())
             self.requestRemoval()
@@ -166,7 +167,7 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         SuitBase.SuitBase.setSkelecog(self, flag)
 
     def d_setSkelecog(self, flag):
-        self.sendUpdate('setSkelecog', [flag])
+        self.sendUpdate("setSkelecog", [flag])
 
     def isForeman(self):
         return 0

@@ -4,4 +4,4 @@ from toontown.estate.DistributedStatuaryAI import DistributedStatuaryAI
 
 
 class DistributedToonStatuaryAI(DistributedStatuaryAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedToonStatuaryAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedToonStatuaryAI")

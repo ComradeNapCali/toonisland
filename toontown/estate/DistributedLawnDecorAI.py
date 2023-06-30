@@ -3,7 +3,7 @@ from direct.distributed.DistributedNodeAI import DistributedNodeAI
 
 
 class DistributedLawnDecorAI(DistributedNodeAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLawnDecorAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedLawnDecorAI")
 
     def __init__(self, mgr):
         DistributedNodeAI.__init__(self, mgr.air)
@@ -37,11 +37,11 @@ class DistributedLawnDecorAI(DistributedNodeAI):
         if avId is None:
             avId = self.air.getAvatarIdFromSender()
 
-        self.sendUpdate('setMovie', [mode, avId])
+        self.sendUpdate("setMovie", [mode, avId])
 
     def d_interactionDenied(self):
         avId = self.air.getAvatarIdFromSender()
         if not avId:
             return
 
-        self.sendUpdate('interactionDenied', [avId])
+        self.sendUpdate("interactionDenied", [avId])

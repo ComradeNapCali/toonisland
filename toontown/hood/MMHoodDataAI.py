@@ -6,8 +6,9 @@ from toontown.safezone import MMTreasurePlannerAI
 from toontown.classicchars import DistributedMinnieAI
 from toontown.safezone import DistributedMMPianoAI
 
+
 class MMHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('MMHoodDataAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("MMHoodDataAI")
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.OliveOasis

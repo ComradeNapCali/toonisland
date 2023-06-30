@@ -5,8 +5,9 @@ from direct.showbase.ShowBase import *
 from . import GardenGlobals
 from toontown.toonbase import TTLocalizer
 
+
 class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPlantBase')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPlantBase")
 
     def __init__(self, cr):
         DistributedLawnDecor.DistributedLawnDecor.__init__(self, cr)
@@ -16,7 +17,7 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
         return
 
     def delete(self):
-        self.notify.debug('delete')
+        self.notify.debug("delete")
         for waterTrack in list(self.waterTrackDict.values()):
             if waterTrack:
                 waterTrack.finish()
@@ -26,13 +27,13 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
         return
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         DistributedLawnDecor.DistributedLawnDecor.disable(self)
 
     def loadModel(self):
-        if hasattr(self, 'rotateNode') and self.rotateNode:
+        if hasattr(self, "rotateNode") and self.rotateNode:
             self.rotateNode.removeNode()
-        self.rotateNode = self.plantPath.attachNewNode('rotate')
+        self.rotateNode = self.plantPath.attachNewNode("rotate")
         self.model = None
         modelName = self.getModelName()
         self.model = loader.loadModel(modelName)
@@ -47,14 +48,14 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
     def setTypeIndex(self, typeIndex):
         self.typeIndex = typeIndex
         self.attributes = GardenGlobals.PlantAttributes[typeIndex]
-        self.name = self.attributes['name']
-        self.plantType = self.attributes['plantType']
-        self.growthThresholds = self.attributes['growthThresholds']
-        self.maxWaterLevel = self.attributes['maxWaterLevel']
-        self.minWaterLevel = self.attributes['minWaterLevel']
-        self.seedlingModel = self.attributes['seedlingModel']
-        self.establishedModel = self.attributes['establishedModel']
-        self.fullGrownModel = self.attributes['fullGrownModel']
+        self.name = self.attributes["name"]
+        self.plantType = self.attributes["plantType"]
+        self.growthThresholds = self.attributes["growthThresholds"]
+        self.maxWaterLevel = self.attributes["maxWaterLevel"]
+        self.minWaterLevel = self.attributes["minWaterLevel"]
+        self.seedlingModel = self.attributes["seedlingModel"]
+        self.establishedModel = self.attributes["establishedModel"]
+        self.fullGrownModel = self.attributes["fullGrownModel"]
 
     def getTypeIndex(self):
         return self.typeIndex
@@ -85,25 +86,25 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
     def canBeHarvested(self):
         return True
 
-    def handleEnterPlot(self, colEntry = None):
+    def handleEnterPlot(self, colEntry=None):
         dist = self.getDistance(localAvatar)
-        self.accept('water-plant', self.__handleWatering)
+        self.accept("water-plant", self.__handleWatering)
         base.localAvatar.addShovelRelatedDoId(self.doId)
 
-    def handleExitPlot(self, entry = None):
+    def handleExitPlot(self, entry=None):
         DistributedLawnDecor.DistributedLawnDecor.handleExitPlot(self, entry)
         base.localAvatar.removeShovelRelatedDoId(self.doId)
-        self.ignore('water-plant')
+        self.ignore("water-plant")
 
     def handleWatering(self):
         self.startInteraction()
-        self.sendUpdate('waterPlant')
+        self.sendUpdate("waterPlant")
 
     def __handleWatering(self, plantToWaterId):
         if plantToWaterId == self.doId:
-            self.sendUpdate('waterPlant')
+            self.sendUpdate("waterPlant")
         else:
-            self.notify.debug('not sending water plant')
+            self.notify.debug("not sending water plant")
 
     def isFruiting(self):
         retval = self.growthLevel >= self.growthThresholds[2]
@@ -189,17 +190,25 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
         track.append(Func(can.removeNode))
         track.append(self.stopCamIval(avId))
         if avId == localAvatar.doId:
-            track.append(Func(self.sendUpdate, 'waterPlantDone'))
+            track.append(Func(self.sendUpdate, "waterPlantDone"))
             track.append(Func(self.finishInteraction))
         track.start()
         self.waterTrackDict[avId] = track
 
     def generateWaterTrack(self, toon):
-        sound = loader.loadSfx('phase_5/audio/sfx/firehose_spray.ogg')
+        sound = loader.loadSfx("phase_5/audio/sfx/firehose_spray.ogg")
         sound.setPlayRate(0.75)
         waterTrack = Parallel()
-        waterTrack.append(Sequence(Parallel(ActorInterval(toon, 'water'), SoundInterval(sound, node=toon, volume=0.5)), Func(toon.loop, 'neutral')))
-        if hasattr(self, 'dropShadow') and self.dropShadow:
+        waterTrack.append(
+            Sequence(
+                Parallel(
+                    ActorInterval(toon, "water"),
+                    SoundInterval(sound, node=toon, volume=0.5),
+                ),
+                Func(toon.loop, "neutral"),
+            )
+        )
+        if hasattr(self, "dropShadow") and self.dropShadow:
             newColor = self.dropShadow.getColor()
             alpha = min(1.0, newColor.getW() + 1 / 5.0)
             newColor.setW(alpha)
@@ -209,10 +218,10 @@ class DistributedPlantBase(DistributedLawnDecor.DistributedLawnDecor):
     def adjustWaterIndicator(self):
         if self.model:
             color = self.waterLevel / 5.0 + 1 / 5.0
-            self.notify.debug('%s %s' % (self.waterLevel, color))
+            self.notify.debug("%s %s" % (self.waterLevel, color))
             if color < 0.2:
                 color = 0.2
-            if hasattr(self, 'dropShadow') and self.dropShadow:
+            if hasattr(self, "dropShadow") and self.dropShadow:
                 self.dropShadow.setColor(0.0, 0.0, 0.0, color)
 
     def canBeWatered(self):

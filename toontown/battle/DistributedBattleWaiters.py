@@ -6,8 +6,9 @@ from toontown.battle import DistributedBattleFinal
 from toontown.suit import SuitTimings
 from toontown.toonbase import ToontownGlobals
 
+
 class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleWaiters')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedBattleWaiters")
 
     def __init__(self, cr):
         DistributedBattleFinal.DistributedBattleFinal.__init__(self, cr)
@@ -31,7 +32,7 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
     def doInitialSuitsJoining(self, ts, name, callback):
         done = Func(callback)
         if self.hasLocalToon():
-            self.notify.debug('parenting camera to distributed battle waiters')
+            self.notify.debug("parenting camera to distributed battle waiters")
             camera.reparentTo(self)
             if random.choice([0, 1]):
                 camera.setPosHpr(20, -4, 7, 60, 0, 0)
@@ -57,8 +58,8 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
         delay = 0
         for suit in suits:
             suit.makeWaiter()
-            suit.setState('Battle')
-            if suit.dna.dept == 'l':
+            suit.setState("Battle")
+            if suit.dna.dept == "l":
                 suit.reparentTo(self.bossCog)
                 suit.setPos(0, 0, 0)
             if suit in self.joiningSuits:
@@ -67,13 +68,17 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
                 destHpr = VBase3(h, 0, 0)
             else:
                 destPos, destHpr = self.getActorPosHpr(suit, self.suits)
-            startPos = destPos + Point3(0, 0, SuitTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
-            self.notify.debug('startPos for %s = %s' % (suit, startPos))
+            startPos = destPos + Point3(
+                0, 0, SuitTimings.fromSky * ToontownGlobals.SuitWalkSpeed
+            )
+            self.notify.debug("startPos for %s = %s" % (suit, startPos))
             suit.reparentTo(self)
             suit.setPos(startPos)
             suit.headsUp(self)
-            flyIval = suit.beginSupaFlyMove(destPos, True, 'flyIn')
-            suitTrack.append(Track((delay, Sequence(flyIval, Func(suit.loop, 'neutral')))))
+            flyIval = suit.beginSupaFlyMove(destPos, True, "flyIn")
+            suitTrack.append(
+                Track((delay, Sequence(flyIval, Func(suit.loop, "neutral"))))
+            )
             delay += 1
 
         if self.hasLocalToon():
@@ -88,7 +93,7 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
         self.storeInterval(track, name)
         return
 
-    def enterWaitForInput(self, ts = 0):
+    def enterWaitForInput(self, ts=0):
         DistributedBattleFinal.DistributedBattleFinal.enterWaitForInput(self, ts)
         if self.hasLocalToon():
             camera.reparentTo(self)

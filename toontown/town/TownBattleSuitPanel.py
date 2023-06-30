@@ -8,33 +8,42 @@ from toontown.suit.Suit import Suit
 from toontown.suit.SuitAvatarPanel import SuitAvatarPanel
 from toontown.toonbase.ToontownBattleGlobals import *
 
+
 class TownBattleSuitPanel(DirectFrame):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TownBattleSuitPanel')
+    notify = DirectNotifyGlobal.directNotify.newCategory("TownBattleSuitPanel")
     healthColors = Suit.healthColors
     healthGlowColors = Suit.healthGlowColors
 
     def __init__(self, id):
-        gui = loader.loadModel('phase_3.5/models/gui/battle_gui')
-        DirectFrame.__init__(self, relief=None, image=gui.find('**/ToonBtl_Status_BG'),
-                             image_color=Vec4(0.7, 0.7, 0.7, 0.8))
-        self.hpText = DirectLabel(parent=self, text='', pos=(-0.06, 0, -0.0325), text_scale=0.045)
+        gui = loader.loadModel("phase_3.5/models/gui/battle_gui")
+        DirectFrame.__init__(
+            self,
+            relief=None,
+            image=gui.find("**/ToonBtl_Status_BG"),
+            image_color=Vec4(0.7, 0.7, 0.7, 0.8),
+        )
+        self.hpText = DirectLabel(
+            parent=self, text="", pos=(-0.06, 0, -0.0325), text_scale=0.045
+        )
         self.setScale(0.8)
         self.initialiseoptions(TownBattleSuitPanel)
         self.hidden = False
         self.cog = None
         self.isLoaded = 0
         self.notify.info("Loading Suit Battle Panel!")
-        self.healthText = DirectLabel(parent=self, text='', pos=(0, 0, -0.075), text_scale=0.05)
-        healthGui = loader.loadModel('phase_3.5/models/gui/matching_game_gui')
-        button = healthGui.find('**/minnieCircle')
+        self.healthText = DirectLabel(
+            parent=self, text="", pos=(0, 0, -0.075), text_scale=0.05
+        )
+        healthGui = loader.loadModel("phase_3.5/models/gui/matching_game_gui")
+        button = healthGui.find("**/minnieCircle")
         button.setScale(0.5)
         button.setH(180)
         button.setColor(Vec4(0, 1, 0, 1))
-        self.accept('inventory-levels', self.__handleToggle)
-        self.healthNode = self.attachNewNode('health')
+        self.accept("inventory-levels", self.__handleToggle)
+        self.healthNode = self.attachNewNode("health")
         self.healthNode.setPos(-0.06, 0, 0.05)
         button.reparentTo(self.healthNode)
-        glow = BattleProps.globalPropPool.getProp('glow')
+        glow = BattleProps.globalPropPool.getProp("glow")
         glow.reparentTo(button)
         glow.setScale(0.28)
         glow.setPos(-0.005, 0.01, 0.015)
@@ -53,7 +62,7 @@ class TownBattleSuitPanel(DirectFrame):
         if self.head:
             self.head.removeNode()
 
-        self.head = self.attachNewNode('head')
+        self.head = self.attachNewNode("head")
         for part in cog.headParts:
             copyPart = part.copyTo(self.head)
             copyPart.setDepthTest(1)
@@ -68,22 +77,29 @@ class TownBattleSuitPanel(DirectFrame):
         self.setLevelText()
 
     def setLevelText(self):
-        t = 'Level ' + str(self.cog.getActualLevel())
+        t = "Level " + str(self.cog.getActualLevel())
         if self.cog.getSkeleRevives() > 0:
             t += TTLocalizer.SkeleRevivePostFix
-        self.healthText['text'] = t
+        self.healthText["text"] = t
 
     def updateHealthBar(self):
         condition = self.cog.healthCondition
         if condition == 9:
-            self.blinkTask = Task.loop(Task(self.__blinkRed), Task.pause(0.75), Task.pause(0.1))
-            taskMgr.add(self.blinkTask, self.uniqueName('blink-task'))
+            self.blinkTask = Task.loop(
+                Task(self.__blinkRed), Task.pause(0.75), Task.pause(0.1)
+            )
+            taskMgr.add(self.blinkTask, self.uniqueName("blink-task"))
         elif condition == 10:
-            taskMgr.remove(self.uniqueName('blink-task'))
-            blinkTask = Task.loop(Task(self.__blinkRed), Task.pause(0.25), Task(self.__blinkGray), Task.pause(0.1))
-            taskMgr.add(blinkTask, self.uniqueName('blink-task'))
+            taskMgr.remove(self.uniqueName("blink-task"))
+            blinkTask = Task.loop(
+                Task(self.__blinkRed),
+                Task.pause(0.25),
+                Task(self.__blinkGray),
+                Task.pause(0.1),
+            )
+            taskMgr.add(blinkTask, self.uniqueName("blink-task"))
         else:
-            taskMgr.remove(self.uniqueName('blink-task'))
+            taskMgr.remove(self.uniqueName("blink-task"))
             if not self.button.isEmpty():
                 self.button.setColor(self.healthColors[condition], 1)
 
@@ -91,10 +107,10 @@ class TownBattleSuitPanel(DirectFrame):
                 self.glow.setColor(self.healthGlowColors[condition], 1)
         self.hp = self.cog.getCurrentHealth()
         self.maxHp = self.cog.getMaxHealth()
-        self.hpText['text'] = str(self.hp) + '/' + str(self.maxHp)
+        self.hpText["text"] = str(self.hp) + "/" + str(self.maxHp)
 
     def show(self):
-        if config.GetBool('show-cog-levels', True):
+        if config.GetBool("show-cog-levels", True):
             if self.cog:
                 self.updateHealthBar()
             self.hidden = False
@@ -103,7 +119,9 @@ class TownBattleSuitPanel(DirectFrame):
             self.glow.show()
             DirectFrame.show(self)
         else:
-            self.notify.debug('Tried to unhide Cog levels when settings have not been updated!')
+            self.notify.debug(
+                "Tried to unhide Cog levels when settings have not been updated!"
+            )
 
     def __handleToggle(self):
         if self.cog:
@@ -167,4 +185,4 @@ class TownBattleSuitPanel(DirectFrame):
         self.healthNode.removeNode()
         self.button.removeNode()
         self.glow.removeNode()
-        DirectFrame.destroy(self) 
+        DirectFrame.destroy(self)

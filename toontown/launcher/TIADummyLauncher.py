@@ -2,8 +2,9 @@ from direct.directnotify import DirectNotifyGlobal
 from otp.launcher.DummyLauncherBase import DummyLauncherBase
 from toontown.launcher.TIALauncher import TIALauncher
 
+
 class TIADummyLauncher(DummyLauncherBase, TIALauncher):
-    notify = DirectNotifyGlobal.directNotify.newCategory('TIADummyLauncher')
+    notify = DirectNotifyGlobal.directNotify.newCategory("TIADummyLauncher")
 
     def __init__(self):
         DummyLauncherBase.__init__(self)
@@ -14,11 +15,11 @@ class TIADummyLauncher(DummyLauncherBase, TIALauncher):
         self.frequency = 0.0
         self.windowOpen = 0
         self.firstPhase = 3.5
-        self.pandaErrorCodeKey = 'PANDA_ERROR_CODE'
-        self.goUserName = ''
-        self.periodTimeRemainingKey = 'PERIOD_TIME_REMAINING'
-        self.periodNameKey = 'PERIOD_NAME'
-        self.swidKey = 'SWID'
+        self.pandaErrorCodeKey = "PANDA_ERROR_CODE"
+        self.goUserName = ""
+        self.periodTimeRemainingKey = "PERIOD_TIME_REMAINING"
+        self.periodNameKey = "PERIOD_NAME"
+        self.swidKey = "SWID"
         self.reg = {}
         self.startFakeDownload()
 
@@ -35,21 +36,21 @@ class TIADummyLauncher(DummyLauncherBase, TIALauncher):
         return self.frequency
 
     def getUserName(self):
-        return 'dummy'
+        return "dummy"
 
     def getReferrerCode(self):
         return None
 
     def setRegistry(self, name, value):
-        print('setRegistry[%s] = %s' % (name, value))
+        print("setRegistry[%s] = %s" % (name, value))
         self.reg[name] = value
 
-    def getRegistry(self, name, defaultValue = None):
+    def getRegistry(self, name, defaultValue=None):
         if name in self.reg:
             value = self.reg[name]
         else:
             value = defaultValue
-        print('getRegistry[%s] = %s' % (name, value))
+        print("getRegistry[%s] = %s" % (name, value))
         return value
 
     def getGame2Done(self):

@@ -1,59 +1,70 @@
 import math
 from panda3d.core import Point3
 from toontown.toonbase import ToontownGlobals
+
 InputTimeout = 15
 TireMovieTimeout = 120
 MinWall = (-20.0, -15.0)
 MaxWall = (20.0, 15.0)
 TireRadius = 1.5
 WallMargin = 1 + TireRadius
-StartingPositions = (Point3(MinWall[0] + WallMargin, MinWall[1] + WallMargin, TireRadius),
- Point3(MaxWall[0] - WallMargin, MaxWall[1] - WallMargin, TireRadius),
- Point3(MinWall[0] + WallMargin, MaxWall[1] - WallMargin, TireRadius),
- Point3(MaxWall[0] - WallMargin, MinWall[1] + WallMargin, TireRadius))
+StartingPositions = (
+    Point3(MinWall[0] + WallMargin, MinWall[1] + WallMargin, TireRadius),
+    Point3(MaxWall[0] - WallMargin, MaxWall[1] - WallMargin, TireRadius),
+    Point3(MinWall[0] + WallMargin, MaxWall[1] - WallMargin, TireRadius),
+    Point3(MaxWall[0] - WallMargin, MinWall[1] + WallMargin, TireRadius),
+)
 NumMatches = 3
 NumRounds = 2
-PointsDeadCenter = {0: 5,
- 1: 5,
- 2: 5,
- 3: 4,
- 4: 3}
+PointsDeadCenter = {0: 5, 1: 5, 2: 5, 3: 4, 4: 3}
 PointsInCorner = 1
-FarthestLength = math.sqrt((MaxWall[0] - TireRadius) * (MaxWall[0] - TireRadius) + (MaxWall[1] - TireRadius) * (MaxWall[1] - TireRadius))
-BonusPointsForPlace = (3,
- 2,
- 1,
- 0)
+FarthestLength = math.sqrt(
+    (MaxWall[0] - TireRadius) * (MaxWall[0] - TireRadius)
+    + (MaxWall[1] - TireRadius) * (MaxWall[1] - TireRadius)
+)
+BonusPointsForPlace = (3, 2, 1, 0)
 ExpandFeetPerSec = 5
 ScoreCountUpRate = 0.15
 ShowScoresDuration = 4.0
-NumTreasures = {ToontownGlobals.ToonIslandCentral: 2,
- ToontownGlobals.RainbowRise: 2,
- ToontownGlobals.WitheringWoods: 2,
- ToontownGlobals.OliveOasis: 2,
- ToontownGlobals.CirrusCircus: 1,
- ToontownGlobals.MintyMines: 1}
-NumPenalties = {ToontownGlobals.ToonIslandCentral: 0,
- ToontownGlobals.RainbowRise: 1,
- ToontownGlobals.WitheringWoods: 1,
- ToontownGlobals.OliveOasis: 1,
- ToontownGlobals.CirrusCircus: 2,
- ToontownGlobals.MintyMines: 2}
-Obstacles = {ToontownGlobals.ToonIslandCentral: (),
- ToontownGlobals.RainbowRise: ((0, 0),),
- ToontownGlobals.WitheringWoods: ((MinWall[0] / 2, 0), (MaxWall[0] / 2, 0)),
- ToontownGlobals.OliveOasis: ((0, MinWall[1] / 2), (0, MaxWall[1] / 2)),
- ToontownGlobals.CirrusCircus: ((MinWall[0] / 2, 0),
-                             (MaxWall[0] / 2, 0),
-                             (0, MinWall[1] / 2),
-                             (0, MaxWall[1] / 2)),
- ToontownGlobals.MintyMines: ((MinWall[0] / 2, MinWall[1] / 2),
-                                    (MinWall[0] / 2, MaxWall[1] / 2),
-                                    (MaxWall[0] / 2, MinWall[1] / 2),
-                                    (MaxWall[0] / 2, MaxWall[1] / 2))}
-ObstacleShapes = {ToontownGlobals.ToonIslandCentral: True,
- ToontownGlobals.RainbowRise: True,
- ToontownGlobals.WitheringWoods: True,
- ToontownGlobals.OliveOasis: True,
- ToontownGlobals.CirrusCircus: False,
- ToontownGlobals.MintyMines: False}
+NumTreasures = {
+    ToontownGlobals.ToonIslandCentral: 2,
+    ToontownGlobals.RainbowRise: 2,
+    ToontownGlobals.WitheringWoods: 2,
+    ToontownGlobals.OliveOasis: 2,
+    ToontownGlobals.CirrusCircus: 1,
+    ToontownGlobals.MintyMines: 1,
+}
+NumPenalties = {
+    ToontownGlobals.ToonIslandCentral: 0,
+    ToontownGlobals.RainbowRise: 1,
+    ToontownGlobals.WitheringWoods: 1,
+    ToontownGlobals.OliveOasis: 1,
+    ToontownGlobals.CirrusCircus: 2,
+    ToontownGlobals.MintyMines: 2,
+}
+Obstacles = {
+    ToontownGlobals.ToonIslandCentral: (),
+    ToontownGlobals.RainbowRise: ((0, 0),),
+    ToontownGlobals.WitheringWoods: ((MinWall[0] / 2, 0), (MaxWall[0] / 2, 0)),
+    ToontownGlobals.OliveOasis: ((0, MinWall[1] / 2), (0, MaxWall[1] / 2)),
+    ToontownGlobals.CirrusCircus: (
+        (MinWall[0] / 2, 0),
+        (MaxWall[0] / 2, 0),
+        (0, MinWall[1] / 2),
+        (0, MaxWall[1] / 2),
+    ),
+    ToontownGlobals.MintyMines: (
+        (MinWall[0] / 2, MinWall[1] / 2),
+        (MinWall[0] / 2, MaxWall[1] / 2),
+        (MaxWall[0] / 2, MinWall[1] / 2),
+        (MaxWall[0] / 2, MaxWall[1] / 2),
+    ),
+}
+ObstacleShapes = {
+    ToontownGlobals.ToonIslandCentral: True,
+    ToontownGlobals.RainbowRise: True,
+    ToontownGlobals.WitheringWoods: True,
+    ToontownGlobals.OliveOasis: True,
+    ToontownGlobals.CirrusCircus: False,
+    ToontownGlobals.MintyMines: False,
+}

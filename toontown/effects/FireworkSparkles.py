@@ -5,13 +5,13 @@ from .EffectController import EffectController
 from .PooledEffect import PooledEffect
 import random
 
-class FireworkSparkles(PooledEffect, EffectController):
 
+class FireworkSparkles(PooledEffect, EffectController):
     def __init__(self):
         PooledEffect.__init__(self)
         EffectController.__init__(self)
-        model = loader.loadModel('phase_4/models/props/tt_m_efx_ext_fireworkCards')
-        self.card = model.find('**/tt_t_efx_ext_particleSpark_sharp')
+        model = loader.loadModel("phase_4/models/props/tt_m_efx_ext_fireworkCards")
+        self.card = model.find("**/tt_t_efx_ext_particleSpark_sharp")
         self.cardScale = 16.0
         self.setDepthWrite(0)
         self.setColorScaleOff()
@@ -19,14 +19,14 @@ class FireworkSparkles(PooledEffect, EffectController):
         self.startDelay = 0.0
         self.effectScale = 1.0
         self.effectColor = Vec4(1, 1, 1, 1)
-        self.f = ParticleEffect.ParticleEffect('Sparkles')
+        self.f = ParticleEffect.ParticleEffect("Sparkles")
         self.f.reparentTo(self)
-        self.p0 = Particles.Particles('particles-2')
-        self.p0.setFactory('PointParticleFactory')
-        self.p0.setRenderer('SpriteParticleRenderer')
-        self.p0.setEmitter('SphereVolumeEmitter')
+        self.p0 = Particles.Particles("particles-2")
+        self.p0.setFactory("PointParticleFactory")
+        self.p0.setRenderer("SpriteParticleRenderer")
+        self.p0.setEmitter("SphereVolumeEmitter")
         self.f.addParticles(self.p0)
-        f0 = ForceGroup.ForceGroup('Gravity')
+        f0 = ForceGroup.ForceGroup("Gravity")
         force0 = LinearVectorForce(Vec3(0.0, 0.0, -15.0), 1.0, 0)
         force0.setVectorMasks(1, 1, 1)
         force0.setActive(1)
@@ -47,7 +47,11 @@ class FireworkSparkles(PooledEffect, EffectController):
         self.p0.factory.setTerminalVelocitySpread(0.0)
         self.p0.renderer.setAlphaMode(BaseParticleRenderer.PRALPHAOUT)
         self.p0.renderer.setUserAlpha(1.0)
-        self.p0.renderer.setColorBlendMode(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne)
+        self.p0.renderer.setColorBlendMode(
+            ColorBlendAttrib.MAdd,
+            ColorBlendAttrib.OIncomingAlpha,
+            ColorBlendAttrib.OOne,
+        )
         self.p0.renderer.setFromNode(self.card)
         self.p0.renderer.setColor(Vec4(1.0, 1.0, 1.0, 1.0))
         self.p0.renderer.setXScaleFlag(1)
@@ -56,7 +60,9 @@ class FireworkSparkles(PooledEffect, EffectController):
         self.p0.renderer.setNonanimatedTheta(0.0)
         self.p0.renderer.setAlphaBlendMethod(BaseParticleRenderer.PPBLENDLINEAR)
         self.p0.renderer.setAlphaDisable(0)
-        self.p0.renderer.getColorInterpolationManager().addLinear(0.0, 0.1, Vec4(0, 0, 0, 0), self.effectColor, 1)
+        self.p0.renderer.getColorInterpolationManager().addLinear(
+            0.0, 0.1, Vec4(0, 0, 0, 0), self.effectColor, 1
+        )
         self.p0.emitter.setEmissionType(BaseParticleEmitter.ETRADIATE)
         self.p0.emitter.setAmplitudeSpread(0.0)
         self.p0.emitter.setOffsetForce(Vec3(0.0, 0.0, 0.0))
@@ -66,7 +72,16 @@ class FireworkSparkles(PooledEffect, EffectController):
         self.setEffectColor(self.effectColor)
 
     def createTrack(self):
-        self.track = Sequence(Wait(self.startDelay), Func(self.p0.setBirthRate, 0.03), Func(self.p0.clearToInitial), Func(self.f.start, self, self), Wait(0.3), Func(self.p0.setBirthRate, 100.0), Wait(2.5), Func(self.cleanUpEffect))
+        self.track = Sequence(
+            Wait(self.startDelay),
+            Func(self.p0.setBirthRate, 0.03),
+            Func(self.p0.clearToInitial),
+            Func(self.f.start, self, self),
+            Wait(0.3),
+            Func(self.p0.setBirthRate, 100.0),
+            Wait(2.5),
+            Func(self.cleanUpEffect),
+        )
 
     def setEffectScale(self, scale):
         self.effectScale = scale

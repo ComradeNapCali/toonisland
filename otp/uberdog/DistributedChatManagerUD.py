@@ -3,8 +3,7 @@ from direct.distributed.DistributedObjectUD import DistributedObjectUD
 
 
 class DistributedChatManagerUD(DistributedObjectUD):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedChatManagerUD")
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedChatManagerUD")
 
     def online(self):
         pass

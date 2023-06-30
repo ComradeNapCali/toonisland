@@ -13,8 +13,9 @@ import random
 import math
 from toontown.effects import Bubbles
 
+
 class DistributedFishingTarget(DistributedNode.DistributedNode):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFishingTarget')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFishingTarget")
     radius = 2.5
 
     def __init__(self, cr):
@@ -27,8 +28,8 @@ class DistributedFishingTarget(DistributedNode.DistributedNode):
         return
 
     def generate(self):
-        self.assign(render.attachNewNode('DistributedFishingTarget'))
-        shadow = loader.loadModel('phase_3/models/props/drop_shadow')
+        self.assign(render.attachNewNode("DistributedFishingTarget"))
+        shadow = loader.loadModel("phase_3/models/props/drop_shadow")
         shadow.setPos(0, 0, -0.1)
         shadow.setScale(0.33)
         shadow.setColorScale(1, 1, 1, 0.75)
@@ -70,7 +71,9 @@ class DistributedFishingTarget(DistributedNode.DistributedNode):
         pos = self.getDestPos(angle, radius)
         if self.track and self.track.isPlaying():
             self.track.finish()
-        self.track = Sequence(LerpPosInterval(self, time - ts, Point3(*pos), blendType='easeInOut'))
+        self.track = Sequence(
+            LerpPosInterval(self, time - ts, Point3(*pos), blendType="easeInOut")
+        )
         self.track.start()
 
     def getRadius(self):

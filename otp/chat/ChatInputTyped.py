@@ -17,10 +17,9 @@ class ChatInputTyped(DirectObject.DirectObject):
         wantHistory = 0
         if __dev__:
             wantHistory = 1
-        self.wantHistory = base.config.GetBool(
-            'want-chat-history', wantHistory)
-        self.history = ['']
-        self.historySize = base.config.GetInt('chat-history-size', 10)
+        self.wantHistory = base.config.GetBool("want-chat-history", wantHistory)
+        self.history = [""]
+        self.historySize = base.config.GetInt("chat-history-size", 10)
         self.historyIndex = 0
         return
 
@@ -28,8 +27,8 @@ class ChatInputTyped(DirectObject.DirectObject):
         self.activate()
 
     def delete(self):
-        self.ignore('arrow_up-up')
-        self.ignore('arrow_down-up')
+        self.ignore("arrow_up-up")
+        self.ignore("arrow_down-up")
         self.chatFrame.destroy()
         del self.chatFrame
         del self.chatButton
@@ -44,61 +43,63 @@ class ChatInputTyped(DirectObject.DirectObject):
         self.whisperName = None
         if self.whisperId:
             self.whisperName = base.talkAssistant.findName(whisperId, toPlayer)
-            if hasattr(self, 'whisperPos'):
+            if hasattr(self, "whisperPos"):
                 self.chatFrame.setPos(self.whisperPos)
-            self.whisperLabel['text'] = OTPLocalizer.ChatInputWhisperLabel % self.whisperName
+            self.whisperLabel["text"] = (
+                OTPLocalizer.ChatInputWhisperLabel % self.whisperName
+            )
             self.whisperLabel.show()
         else:
-            if hasattr(self, 'normalPos'):
+            if hasattr(self, "normalPos"):
                 self.chatFrame.setPos(self.normalPos)
             self.whisperLabel.hide()
-        self.chatEntry['focus'] = 1
-        self.chatEntry.set('')
+        self.chatEntry["focus"] = 1
+        self.chatEntry.set("")
         self.chatFrame.show()
         self.chatEntry.show()
         self.cancelButton.show()
         self.typedChatButton.hide()
         self.typedChatBar.hide()
         if self.wantHistory:
-            self.accept('arrow_up-up', self.getPrevHistory)
-            self.accept('arrow_down-up', self.getNextHistory)
+            self.accept("arrow_up-up", self.getPrevHistory)
+            self.accept("arrow_down-up", self.getNextHistory)
         return
 
     def hide(self):
-        self.chatEntry.set('')
-        self.chatEntry['focus'] = 0
+        self.chatEntry.set("")
+        self.chatEntry["focus"] = 0
         self.chatFrame.hide()
         self.chatEntry.hide()
         self.cancelButton.hide()
         self.typedChatButton.show()
         self.typedChatBar.show()
-        self.ignore('arrow_up-up')
-        self.ignore('arrow_down-up')
+        self.ignore("arrow_up-up")
+        self.ignore("arrow_down-up")
 
     def activate(self):
-        self.chatEntry.set('')
-        self.chatEntry['focus'] = 1
+        self.chatEntry.set("")
+        self.chatEntry["focus"] = 1
         self.chatFrame.show()
         self.chatEntry.show()
         self.cancelButton.show()
         self.typedChatButton.hide()
         self.typedChatBar.hide()
         if self.whisperId:
-            print('have id')
+            print("have id")
             if self.toPlayer:
                 if not base.talkAssistant.checkWhisperTypedChatPlayer(self.whisperId):
-                    messenger.send('Chat-Failed player typed chat test')
+                    messenger.send("Chat-Failed player typed chat test")
                     self.deactivate()
             elif not base.talkAssistant.checkWhisperTypedChatAvatar(self.whisperId):
-                messenger.send('Chat-Failed avatar typed chat test')
+                messenger.send("Chat-Failed avatar typed chat test")
                 self.deactivate()
         elif not base.talkAssistant.checkOpenTypedChat():
-            messenger.send('Chat-Failed open typed chat test')
+            messenger.send("Chat-Failed open typed chat test")
             self.deactivate()
 
     def deactivate(self):
-        self.chatEntry.set('')
-        self.chatEntry['focus'] = 0
+        self.chatEntry.set("")
+        self.chatEntry["focus"] = 0
         self.chatFrame.show()
         self.chatEntry.hide()
         self.cancelButton.hide()
@@ -113,7 +114,7 @@ class ChatInputTyped(DirectObject.DirectObject):
                     pass
             elif self.whisperId:
                 pass
-            elif base.config.GetBool('exec-chat', 0) and text[0] == '>':
+            elif base.config.GetBool("exec-chat", 0) and text[0] == ">":
                 text = self.__execMessage(text[1:])
                 base.localAvatar.setChatAbsolute(text, CFSpeech | CFTimeout)
                 return
@@ -121,7 +122,7 @@ class ChatInputTyped(DirectObject.DirectObject):
                 base.talkAssistant.sendOpenTalk(text)
             if self.wantHistory:
                 self.addToHistory(text)
-        self.chatEntry.set('')
+        self.chatEntry.set("")
 
     def chatOverflow(self, overflowText):
         self.sendChat(self.chatEntry.get())
@@ -129,19 +130,18 @@ class ChatInputTyped(DirectObject.DirectObject):
     def __execMessage(self, message):
         if not ChatInputTyped.ExecNamespace:
             ChatInputTyped.ExecNamespace = {}
-            exec('from panda3d.core import *', globals(), self.ExecNamespace)
+            exec("from panda3d.core import *", globals(), self.ExecNamespace)
             self.importExecNamespace()
         try:
-
             return str(eval(message, globals(), ChatInputTyped.ExecNamespace))
         except SyntaxError:
             try:
-                if config.GetBool('isclient-check', False):
+                if config.GetBool("isclient-check", False):
                     if not isClient():
-                        print('EXECWARNING ChatInputNormal exec: %s' % message)
+                        print("EXECWARNING ChatInputNormal exec: %s" % message)
 
                 exec(message, globals(), ChatInputTyped.ExecNamespace)
-                return 'ok'
+                return "ok"
             except:
                 exception = sys.exc_info()[0]
                 extraInfo = sys.exc_info()[1]
@@ -159,7 +159,7 @@ class ChatInputTyped(DirectObject.DirectObject):
                 return str(exception)
 
     def cancelButtonPressed(self):
-        self.chatEntry.set('')
+        self.chatEntry.set("")
         self.deactivate()
 
     def chatButtonPressed(self):
@@ -169,7 +169,7 @@ class ChatInputTyped(DirectObject.DirectObject):
         pass
 
     def addToHistory(self, text):
-        self.history = [text] + self.history[:self.historySize - 1]
+        self.history = [text] + self.history[: self.historySize - 1]
         self.historyIndex = 0
 
     def getPrevHistory(self):

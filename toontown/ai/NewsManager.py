@@ -12,17 +12,21 @@ from direct.interval.IntervalGlobal import *
 import calendar
 from copy import deepcopy
 from toontown.speedchat import TTSCJellybeanJamMenu
-decorationHolidays = [ToontownGlobals.WINTER_DECORATIONS,
- ToontownGlobals.WACKY_WINTER_DECORATIONS,
- ToontownGlobals.HALLOWEEN_PROPS,
- ToontownGlobals.SPOOKY_PROPS,
- ToontownGlobals.HALLOWEEN_COSTUMES,
- ToontownGlobals.SPOOKY_COSTUMES,
- ToontownGlobals.CRASHED_LEADERBOARD]
+
+decorationHolidays = [
+    ToontownGlobals.WINTER_DECORATIONS,
+    ToontownGlobals.WACKY_WINTER_DECORATIONS,
+    ToontownGlobals.HALLOWEEN_PROPS,
+    ToontownGlobals.SPOOKY_PROPS,
+    ToontownGlobals.HALLOWEEN_COSTUMES,
+    ToontownGlobals.SPOOKY_COSTUMES,
+    ToontownGlobals.CRASHED_LEADERBOARD,
+]
 promotionalSpeedChatHolidays = [ToontownGlobals.ELECTION_PROMOTION]
 
+
 class NewsManager(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('NewsManager')
+    notify = DirectNotifyGlobal.directNotify.newCategory("NewsManager")
     neverDisable = 1
     YearlyHolidayType = 1
     OncelyHolidayType = 2
@@ -50,7 +54,7 @@ class NewsManager(DistributedObject.DistributedObject):
 
     def setPopulation(self, population):
         self.population = population
-        messenger.send('newPopulation', [population])
+        messenger.send("newPopulation", [population])
 
     def getPopulation(self):
         return population
@@ -59,12 +63,12 @@ class NewsManager(DistributedObject.DistributedObject):
         base.localAvatar.setSystemMessage(style, message)
 
     def setInvasionStatus(self, msgType, cogType, numRemaining, skeleton):
-        self.notify.info('setInvasionStatus: msgType: %s cogType: %s, numRemaining: %s, skeleton: %s' % (msgType,
-         cogType,
-         numRemaining,
-         skeleton))
-        cogName = SuitBattleGlobals.SuitAttributes[cogType]['name']
-        cogNameP = SuitBattleGlobals.SuitAttributes[cogType]['pluralname']
+        self.notify.info(
+            "setInvasionStatus: msgType: %s cogType: %s, numRemaining: %s, skeleton: %s"
+            % (msgType, cogType, numRemaining, skeleton)
+        )
+        cogName = SuitBattleGlobals.SuitAttributes[cogType]["name"]
+        cogNameP = SuitBattleGlobals.SuitAttributes[cogType]["pluralname"]
         if skeleton:
             cogName = TTLocalizer.Skeleton
             cogNameP = TTLocalizer.SkeletonP
@@ -85,51 +89,89 @@ class NewsManager(DistributedObject.DistributedObject):
             msg2 = TTLocalizer.SuitInvasionBulletin2 % cogNameP
             self.invading = 1
         else:
-            self.notify.warning('setInvasionStatus: invalid msgType: %s' % msgType)
+            self.notify.warning("setInvasionStatus: invalid msgType: %s" % msgType)
             return
         if self.invading:
             mult = ToontownBattleGlobals.getInvasionMultiplier()
         else:
             mult = 1
         base.localAvatar.inventory.setInvasionCreditMultiplier(mult)
-        Sequence(Wait(1.0), Func(base.localAvatar.setSystemMessage, 0, msg1), Wait(5.0), Func(base.localAvatar.setSystemMessage, 0, msg2), name='newsManagerWait', autoPause=1).start()
+        Sequence(
+            Wait(1.0),
+            Func(base.localAvatar.setSystemMessage, 0, msg1),
+            Wait(5.0),
+            Func(base.localAvatar.setSystemMessage, 0, msg2),
+            name="newsManagerWait",
+            autoPause=1,
+        ).start()
 
     def getInvading(self):
         return self.invading
 
     def startHoliday(self, holidayId):
         if holidayId not in self.holidayIdList:
-            self.notify.info('setHolidayId: Starting Holiday %s' % holidayId)
+            self.notify.info("setHolidayId: Starting Holiday %s" % holidayId)
             self.holidayIdList.append(holidayId)
             if holidayId in decorationHolidays:
                 self.decorationHolidayIds.append(holidayId)
                 if holidayId == ToontownGlobals.HALLOWEEN_PROPS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.addHalloweenMenu()
                         self.setHalloweenPropsHolidayStart()
                 elif holidayId == ToontownGlobals.SPOOKY_PROPS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.addHalloweenMenu()
                         self.setSpookyPropsHolidayStart()
                 elif holidayId == ToontownGlobals.WINTER_DECORATIONS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.addWinterMenu()
                         self.setWinterDecorationsStart()
                 elif holidayId == ToontownGlobals.WACKY_WINTER_DECORATIONS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.addWinterMenu()
                         self.setWackyWinterDecorationsStart()
-                if hasattr(base.cr.playGame, 'dnaStore') and hasattr(base.cr.playGame, 'hood') and hasattr(base.cr.playGame.hood, 'loader'):
-                    if holidayId == ToontownGlobals.HALLOWEEN_COSTUMES or holidayId == ToontownGlobals.SPOOKY_COSTUMES:
-                        self.holidayDecorator = HalloweenHolidayDecorator.HalloweenHolidayDecorator()
+                if (
+                    hasattr(base.cr.playGame, "dnaStore")
+                    and hasattr(base.cr.playGame, "hood")
+                    and hasattr(base.cr.playGame.hood, "loader")
+                ):
+                    if (
+                        holidayId == ToontownGlobals.HALLOWEEN_COSTUMES
+                        or holidayId == ToontownGlobals.SPOOKY_COSTUMES
+                    ):
+                        self.holidayDecorator = (
+                            HalloweenHolidayDecorator.HalloweenHolidayDecorator()
+                        )
                     elif holidayId == ToontownGlobals.CRASHED_LEADERBOARD:
-                        self.holidayDecorator = CrashedLeaderBoardDecorator.CrashedLeaderBoardDecorator()
+                        self.holidayDecorator = (
+                            CrashedLeaderBoardDecorator.CrashedLeaderBoardDecorator()
+                        )
                     else:
                         self.holidayDecorator = HolidayDecorator.HolidayDecorator()
                     self.holidayDecorator.decorate()
-                    messenger.send('decorator-holiday-%d-starting' % holidayId)
+                    messenger.send("decorator-holiday-%d-starting" % holidayId)
             elif holidayId in promotionalSpeedChatHolidays:
-                if hasattr(base, 'TTSCPromotionalMenu'):
+                if hasattr(base, "TTSCPromotionalMenu"):
                     base.TTSCPromotionalMenu.startHoliday(holidayId)
             elif holidayId == ToontownGlobals.MORE_XP_HOLIDAY:
                 self.setMoreXpHolidayStart()
@@ -140,72 +182,187 @@ class NewsManager(DistributedObject.DistributedObject):
             elif holidayId == ToontownGlobals.HYDRANT_ZERO_HOLIDAY:
                 self.setHydrantZeroHolidayStart()
             elif holidayId == ToontownGlobals.APRIL_FOOLS_COSTUMES:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addAprilToonsMenu()
             elif holidayId == ToontownGlobals.WINTER_CAROLING:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addCarolMenu()
                     self.setWinterCarolingStart()
             elif holidayId == ToontownGlobals.WACKY_WINTER_CAROLING:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addCarolMenu()
             elif holidayId == ToontownGlobals.VALENTINES_DAY:
-                messenger.send('ValentinesDayStart')
+                messenger.send("ValentinesDayStart")
                 base.localAvatar.setSystemMessage(0, TTLocalizer.ValentinesDayStart)
             elif holidayId == ToontownGlobals.SILLY_CHATTER_ONE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSillyPhaseOneMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_TWO:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSillyPhaseTwoMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_THREE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSillyPhaseThreeMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_FOUR:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSillyPhaseFourMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_FIVE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSillyPhaseFiveMenu()
             elif holidayId == ToontownGlobals.VICTORY_PARTY_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addVictoryPartiesMenu()
             elif holidayId == ToontownGlobals.SELLBOT_NERF_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setSellbotNerfHolidayStart()
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSellbotNerfMenu()
-            elif holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY or holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
-                    base.localAvatar.chatMgr.chatInputSpeedChat.addJellybeanJamMenu(TTSCJellybeanJamMenu.JellybeanJamPhases.TROLLEY)
-            elif holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY or holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
-                    base.localAvatar.chatMgr.chatInputSpeedChat.addJellybeanJamMenu(TTSCJellybeanJamMenu.JellybeanJamPhases.FISHING)
+            elif (
+                holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY
+                or holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY_MONTH
+            ):
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
+                    base.localAvatar.chatMgr.chatInputSpeedChat.addJellybeanJamMenu(
+                        TTSCJellybeanJamMenu.JellybeanJamPhases.TROLLEY
+                    )
+            elif (
+                holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY
+                or holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY_MONTH
+            ):
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
+                    base.localAvatar.chatMgr.chatInputSpeedChat.addJellybeanJamMenu(
+                        TTSCJellybeanJamMenu.JellybeanJamPhases.FISHING
+                    )
             elif holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setJellybeanPartiesHolidayStart()
             elif holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setJellybeanMonthHolidayStart()
             elif holidayId == ToontownGlobals.BANK_UPGRADE_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setBankUpgradeHolidayStart()
             elif holidayId == ToontownGlobals.BLACK_CAT_DAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setBlackCatHolidayStart()
             elif holidayId == ToontownGlobals.SPOOKY_BLACK_CAT:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setSpookyBlackCatHolidayStart()
             elif holidayId == ToontownGlobals.TOP_TOONS_MARATHON:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setTopToonsMarathonStart()
             elif holidayId == ToontownGlobals.SELLBOT_INVASION:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSellbotInvasionMenu()
             elif holidayId == ToontownGlobals.SELLBOT_FIELD_OFFICE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.addSellbotFieldOfficeMenu()
             elif holidayId == ToontownGlobals.IDES_OF_MARCH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setIdesOfMarchStart()
                     base.localAvatar.chatMgr.chatInputSpeedChat.addIdesOfMarchMenu()
             elif holidayId == ToontownGlobals.EXPANDED_CLOSETS:
@@ -215,36 +372,67 @@ class NewsManager(DistributedObject.DistributedObject):
 
     def endHoliday(self, holidayId):
         if holidayId in self.holidayIdList:
-            self.notify.info('setHolidayId: Ending Holiday %s' % holidayId)
+            self.notify.info("setHolidayId: Ending Holiday %s" % holidayId)
             self.holidayIdList.remove(holidayId)
             if holidayId in self.decorationHolidayIds:
                 self.decorationHolidayIds.remove(holidayId)
                 if holidayId == ToontownGlobals.HALLOWEEN_PROPS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.removeHalloweenMenu()
                         self.setHalloweenPropsHolidayEnd()
                 elif holidayId == ToontownGlobals.SPOOKY_PROPS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.removeHalloweenMenu()
                         self.setSpookyPropsHolidayEnd()
                 elif holidayId == ToontownGlobals.WINTER_DECORATIONS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.removeWinterMenu()
                         self.setWinterDecorationsEnd()
                 elif holidayId == ToontownGlobals.WACKY_WINTER_DECORATIONS:
-                    if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                    if (
+                        hasattr(base, "localAvatar")
+                        and base.localAvatar
+                        and hasattr(base.localAvatar, "chatMgr")
+                        and base.localAvatar.chatMgr
+                    ):
                         base.localAvatar.chatMgr.chatInputSpeedChat.removeWinterMenu()
-                if hasattr(base.cr.playGame, 'dnaStore') and hasattr(base.cr.playGame, 'hood') and hasattr(base.cr.playGame.hood, 'loader'):
-                    if holidayId == ToontownGlobals.HALLOWEEN_COSTUMES or holidayId == ToontownGlobals.SPOOKY_COSTUMES:
-                        self.holidayDecorator = HalloweenHolidayDecorator.HalloweenHolidayDecorator()
+                if (
+                    hasattr(base.cr.playGame, "dnaStore")
+                    and hasattr(base.cr.playGame, "hood")
+                    and hasattr(base.cr.playGame.hood, "loader")
+                ):
+                    if (
+                        holidayId == ToontownGlobals.HALLOWEEN_COSTUMES
+                        or holidayId == ToontownGlobals.SPOOKY_COSTUMES
+                    ):
+                        self.holidayDecorator = (
+                            HalloweenHolidayDecorator.HalloweenHolidayDecorator()
+                        )
                     elif holidayId == ToontownGlobals.CRASHED_LEADERBOARD:
-                        self.holidayDecorator = CrashedLeaderBoardDecorator.CrashedLeaderBoardDecorator()
+                        self.holidayDecorator = (
+                            CrashedLeaderBoardDecorator.CrashedLeaderBoardDecorator()
+                        )
                     else:
                         self.holidayDecorator = HolidayDecorator.HolidayDecorator()
                     self.holidayDecorator.undecorate()
-                    messenger.send('decorator-holiday-%d-ending' % holidayId)
+                    messenger.send("decorator-holiday-%d-ending" % holidayId)
             elif holidayId in promotionalSpeedChatHolidays:
-                if hasattr(base, 'TTSCPromotionalMenu'):
+                if hasattr(base, "TTSCPromotionalMenu"):
                     base.TTSCPromotionalMenu.endHoliday(holidayId)
             elif holidayId == ToontownGlobals.MORE_XP_HOLIDAY:
                 self.setMoreXpHolidayEnd()
@@ -253,70 +441,173 @@ class NewsManager(DistributedObject.DistributedObject):
             elif holidayId == ToontownGlobals.CIRCUIT_RACING_EVENT:
                 self.setGrandPrixWeekendEnd()
             elif holidayId == ToontownGlobals.APRIL_FOOLS_COSTUMES:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeAprilToonsMenu()
             elif holidayId == ToontownGlobals.VALENTINES_DAY:
-                messenger.send('ValentinesDayStop')
+                messenger.send("ValentinesDayStop")
                 base.localAvatar.setSystemMessage(0, TTLocalizer.ValentinesDayEnd)
             elif holidayId == ToontownGlobals.SILLY_CHATTER_ONE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSillyPhaseOneMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_TWO:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSillyPhaseTwoMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_THREE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSillyPhaseThreeMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_FOUR:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSillyPhaseFourMenu()
             elif holidayId == ToontownGlobals.SILLY_CHATTER_FIVE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSillyPhaseFiveMenu()
             elif holidayId == ToontownGlobals.VICTORY_PARTY_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeVictoryPartiesMenu()
             elif holidayId == ToontownGlobals.WINTER_CAROLING:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeCarolMenu()
             elif holidayId == ToontownGlobals.WACKY_WINTER_CAROLING:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeCarolMenu()
             elif holidayId == ToontownGlobals.SELLBOT_NERF_HOLIDAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setSellbotNerfHolidayEnd()
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSellbotNerfMenu()
-            elif holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY or holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+            elif (
+                holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY
+                or holidayId == ToontownGlobals.JELLYBEAN_TROLLEY_HOLIDAY_MONTH
+            ):
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeJellybeanJamMenu()
-            elif holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY or holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+            elif (
+                holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY
+                or holidayId == ToontownGlobals.JELLYBEAN_FISHING_HOLIDAY_MONTH
+            ):
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeJellybeanJamMenu()
-            elif holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY or holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY_MONTH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+            elif (
+                holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY
+                or holidayId == ToontownGlobals.JELLYBEAN_PARTIES_HOLIDAY_MONTH
+            ):
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setJellybeanPartiesHolidayEnd()
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeJellybeanJamMenu()
             elif holidayId == ToontownGlobals.BLACK_CAT_DAY:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setBlackCatHolidayEnd()
             elif holidayId == ToontownGlobals.SPOOKY_BLACK_CAT:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setSpookyBlackCatHolidayEnd()
             elif holidayId == ToontownGlobals.TOP_TOONS_MARATHON:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     self.setTopToonsMarathonEnd()
             elif holidayId == ToontownGlobals.SELLBOT_INVASION:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSellbotInvasionMenu()
             elif holidayId == ToontownGlobals.SELLBOT_FIELD_OFFICE:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeSellbotFieldOfficeMenu()
             elif holidayId == ToontownGlobals.IDES_OF_MARCH:
-                if hasattr(base, 'localAvatar') and base.localAvatar and hasattr(base.localAvatar, 'chatMgr') and base.localAvatar.chatMgr:
+                if (
+                    hasattr(base, "localAvatar")
+                    and base.localAvatar
+                    and hasattr(base.localAvatar, "chatMgr")
+                    and base.localAvatar.chatMgr
+                ):
                     base.localAvatar.chatMgr.chatInputSpeedChat.removeIdesOfMarchMenu()
 
     def setHolidayIdList(self, holidayIdList):
-
         def isEnding(id):
             return id not in holidayIdList
 
@@ -331,7 +622,7 @@ class NewsManager(DistributedObject.DistributedObject):
         for startingHolidayId in toStart:
             self.startHoliday(startingHolidayId)
 
-        messenger.send('setHolidayIdList', [holidayIdList])
+        messenger.send("setHolidayIdList", [holidayIdList])
 
     def getDecorationHolidayId(self):
         return self.decorationHolidayIds
@@ -340,7 +631,7 @@ class NewsManager(DistributedObject.DistributedObject):
         return self.holidayIdList
 
     def setBingoWin(self, zoneId):
-        base.localAvatar.setSystemMessage(0, 'Bingo congrats!')
+        base.localAvatar.setSystemMessage(0, "Bingo congrats!")
 
     def setBingoStart(self):
         base.localAvatar.setSystemMessage(0, TTLocalizer.FishBingoStart)
@@ -409,7 +700,7 @@ class NewsManager(DistributedObject.DistributedObject):
         base.localAvatar.setSystemMessage(0, TTLocalizer.GrandPrixWeekendHolidayEnd)
 
     def setHydrantZeroHolidayStart(self):
-        messenger.send('HydrantZeroIsRunning', [True])
+        messenger.send("HydrantZeroIsRunning", [True])
 
     def setSellbotNerfHolidayStart(self):
         base.localAvatar.setSystemMessage(0, TTLocalizer.SellbotNerfHolidayStart)
@@ -544,12 +835,20 @@ class NewsManager(DistributedObject.DistributedObject):
             for startAndStopTimes in tempTimes:
                 startTime = startAndStopTimes[0]
                 endTime = startAndStopTimes[1]
-                if startTime[0] == theDate.year and startTime[1] == theDate.month and startTime[2] == theDate.day:
+                if (
+                    startTime[0] == theDate.year
+                    and startTime[1] == theDate.month
+                    and startTime[2] == theDate.day
+                ):
                     fakeOncelyHoliday = [theHoliday[0], startTime, endTime]
                     newItem = [self.OncelyMultipleStartHolidayType] + fakeOncelyHoliday
                     result.append(tuple(newItem))
                     continue
-                if endTime[0] == theDate.year and endTime[1] == theDate.month and endTime[2] == theDate.day:
+                if (
+                    endTime[0] == theDate.year
+                    and endTime[1] == theDate.month
+                    and endTime[2] == theDate.day
+                ):
                     fakeOncelyHoliday = [theHoliday[0], startTime, endTime]
                     newItem = [self.OncelyMultipleStartHolidayType] + fakeOncelyHoliday
                     result.append(tuple(newItem))
@@ -562,11 +861,19 @@ class NewsManager(DistributedObject.DistributedObject):
     def getOncelyHolidaysForDate(self, theDate):
         result = []
         for item in self.oncelyCalendarHolidays:
-            if item[1][0] == theDate.year and item[1][1] == theDate.month and item[1][2] == theDate.day:
+            if (
+                item[1][0] == theDate.year
+                and item[1][1] == theDate.month
+                and item[1][2] == theDate.day
+            ):
                 newItem = [self.OncelyHolidayType] + list(item)
                 result.append(tuple(newItem))
                 continue
-            if item[2][0] == theDate.year and item[2][1] == theDate.month and item[2][2] == theDate.day:
+            if (
+                item[2][0] == theDate.year
+                and item[2][1] == theDate.month
+                and item[2][2] == theDate.day
+            ):
                 newItem = [self.OncelyHolidayType] + list(item)
                 result.append(tuple(newItem))
 
@@ -593,38 +900,52 @@ class NewsManager(DistributedObject.DistributedObject):
             while i < len(item):
                 sRepNum = item[i][1]
                 sWeekday = item[i][2]
-                eWeekday = item[i+1][2]
+                eWeekday = item[i + 1][2]
 
                 while 1:
-                    eRepNum = item[i+1][1]
+                    eRepNum = item[i + 1][1]
 
                     self.initRepMatrix(theDate.year, item[i][0])
                     while self.weekDaysInMonth[sWeekday][1] < sRepNum:
                         sRepNum -= 1
 
-                    sDay = self.dayForWeekday(theDate.year, item[i][0], sWeekday, sRepNum)
+                    sDay = self.dayForWeekday(
+                        theDate.year, item[i][0], sWeekday, sRepNum
+                    )
 
-                    self.initRepMatrix(theDate.year, item[i+1][0])
+                    self.initRepMatrix(theDate.year, item[i + 1][0])
                     while self.weekDaysInMonth[eWeekday][1] < eRepNum:
                         eRepNum -= 1
 
-                    nDay = self.dayForWeekday(theDate.year, item[i+1][0], eWeekday, eRepNum)
+                    nDay = self.dayForWeekday(
+                        theDate.year, item[i + 1][0], eWeekday, eRepNum
+                    )
 
-                    if ((nDay > sDay and
-                        item[i+1][0] == item[i][0] and
-                        (item[i+1][1] - item[i][1]) <= (nDay - sDay + abs(eWeekday - sWeekday))/7) or
-                        item[i+1][0] != item[i][0]):
+                    if (
+                        nDay > sDay
+                        and item[i + 1][0] == item[i][0]
+                        and (item[i + 1][1] - item[i][1])
+                        <= (nDay - sDay + abs(eWeekday - sWeekday)) / 7
+                    ) or item[i + 1][0] != item[i][0]:
                         break
 
                     if self.weekDaysInMonth[eWeekday][1] > eRepNum:
                         eRepNum += 1
                     else:
-                        item[i+1][0] += 1
-                        item[i+1][1] = 1
+                        item[i + 1][0] += 1
+                        item[i + 1][1] = 1
 
                 newItem.append([item[i][0], sDay, item[i][3], item[i][4], item[i][5]])
 
-                newItem.append([item[i+1][0], nDay, item[i+1][3], item[i+1][4], item[i+1][5]])
+                newItem.append(
+                    [
+                        item[i + 1][0],
+                        nDay,
+                        item[i + 1][3],
+                        item[i + 1][4],
+                        item[i + 1][5],
+                    ]
+                )
 
                 i += 2
 
@@ -652,13 +973,17 @@ class NewsManager(DistributedObject.DistributedObject):
         startingWeekDay, numDays = calendar.monthrange(year, month)
         if startingWeekDay > 6:
             import pdb
+
             pdb.set_trace()
         for i in range(4):
             if numDays == self.numDaysCorMatrix[i][0]:
                 break
 
         for j in range(self.numDaysCorMatrix[i][1]):
-            self.weekDaysInMonth[startingWeekDay] = (self.weekDaysInMonth[startingWeekDay][0], self.weekDaysInMonth[startingWeekDay][1] + 1)
+            self.weekDaysInMonth[startingWeekDay] = (
+                self.weekDaysInMonth[startingWeekDay][0],
+                self.weekDaysInMonth[startingWeekDay][1] + 1,
+            )
             startingWeekDay = (startingWeekDay + 1) % 7
 
     def isHolidayRunning(self, holidayId):

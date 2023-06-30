@@ -8,7 +8,7 @@ from toontown.toonbase import ToontownGlobals
 
 
 class CatalogManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('CatalogManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CatalogManagerAI")
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -35,9 +35,15 @@ class CatalogManagerAI(DistributedObjectAI):
 
         nextWeek = currentTime + 604800
         currentWeek = previousWeek + 1
-        monthlyCatalog = self.catalogGenerator.generateMonthlyCatalog(av, currentTime / 60)
-        weeklyCatalog = self.catalogGenerator.generateWeeklyCatalog(av, currentWeek, monthlyCatalog)
-        backlogCatalog = self.catalogGenerator.generateBackCatalog(av, currentWeek, previousWeek, weeklyCatalog)
+        monthlyCatalog = self.catalogGenerator.generateMonthlyCatalog(
+            av, currentTime / 60
+        )
+        weeklyCatalog = self.catalogGenerator.generateWeeklyCatalog(
+            av, currentWeek, monthlyCatalog
+        )
+        backlogCatalog = self.catalogGenerator.generateBackCatalog(
+            av, currentWeek, previousWeek, weeklyCatalog
+        )
         av.b_setCatalogSchedule(currentWeek, nextWeek / 60)
         av.b_setCatalog(monthlyCatalog, weeklyCatalog, backlogCatalog)
         av.b_setCatalogNotify(ToontownGlobals.NewItems, mailboxContents)

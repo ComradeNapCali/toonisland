@@ -2,8 +2,11 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.distributed import DistributedObject
 from otp.speedchat import SpeedChatGlobals
 
+
 class DistributedScavengerHuntTarget(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedScavengerHuntTarget')
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        "DistributedScavengerHuntTarget"
+    )
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
@@ -16,7 +19,7 @@ class DistributedScavengerHuntTarget(DistributedObject.DistributedObject):
     def phraseSaid(self, phraseId, displayType):
         if displayType != 0:
             return
-        self.notify.debug('Checking if phrase was said')
+        self.notify.debug("Checking if phrase was said")
         helpPhrase = 10003
 
         def reset():
@@ -25,18 +28,20 @@ class DistributedScavengerHuntTarget(DistributedObject.DistributedObject):
         if phraseId == helpPhrase and not self.triggered:
             self.triggered = True
             self.attemptScavengerHunt()
-            taskMgr.doMethodLater(self.triggerDelay, reset, 'ScavengerHunt-phrase-reset', extraArgs=[])
+            taskMgr.doMethodLater(
+                self.triggerDelay, reset, "ScavengerHunt-phrase-reset", extraArgs=[]
+            )
 
     def announceGenerate(self):
         DistributedObject.DistributedObject.announceGenerate(self)
-        DistributedScavengerHuntTarget.notify.debug('announceGenerate')
+        DistributedScavengerHuntTarget.notify.debug("announceGenerate")
         self.setupListenerDetails()
 
     def delete(self):
         self.ignoreAll()
-        taskMgr.remove('ScavengerHunt-phrase-reset')
+        taskMgr.remove("ScavengerHunt-phrase-reset")
         DistributedObject.DistributedObject.delete(self)
 
     def attemptScavengerHunt(self):
-        DistributedScavengerHuntTarget.notify.debug('attempScavengerHunt')
-        self.sendUpdate('attemptScavengerHunt', [])
+        DistributedScavengerHuntTarget.notify.debug("attempScavengerHunt")
+        self.sendUpdate("attemptScavengerHunt", [])

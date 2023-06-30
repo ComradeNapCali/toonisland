@@ -7,28 +7,25 @@ from direct.task import Task
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm.FSM import FSM
 
+
 class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedElevatorFSMAI')
-    defaultTransitions = {'Off': ['Opening', 'Closed'],
-     'Opening': ['WaitEmpty',
-                 'WaitCountdown',
-                 'Opening',
-                 'Closing'],
-     'WaitEmpty': ['WaitCountdown', 'Closing'],
-     'WaitCountdown': ['WaitEmpty', 'AllAboard', 'Closing'],
-     'AllAboard': ['WaitEmpty', 'Closing'],
-     'Closing': ['Closed',
-                 'WaitEmpty',
-                 'Closing',
-                 'Opening'],
-     'Closed': ['Opening']}
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedElevatorFSMAI")
+    defaultTransitions = {
+        "Off": ["Opening", "Closed"],
+        "Opening": ["WaitEmpty", "WaitCountdown", "Opening", "Closing"],
+        "WaitEmpty": ["WaitCountdown", "Closing"],
+        "WaitCountdown": ["WaitEmpty", "AllAboard", "Closing"],
+        "AllAboard": ["WaitEmpty", "Closing"],
+        "Closing": ["Closed", "WaitEmpty", "Closing", "Opening"],
+        "Closed": ["Opening"],
+    }
     id = 0
 
-    def __init__(self, air, bldg, numSeats = 4, antiShuffle = 0, minLaff = 0):
+    def __init__(self, air, bldg, numSeats=4, antiShuffle=0, minLaff=0):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
-        FSM.__init__(self, 'Elevator_%s_FSM' % self.id)
+        FSM.__init__(self, "Elevator_%s_FSM" % self.id)
         self.type = ELEVATOR_NORMAL
-        self.countdownTime = ElevatorData[self.type]['countdown']
+        self.countdownTime = ElevatorData[self.type]["countdown"]
         self.bldg = bldg
         self.bldgDoId = bldg.getDoId()
         self.seats = []
@@ -39,7 +36,7 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
         self.setAntiShuffle(antiShuffle)
         self.setMinLaff(minLaff)
         if self.antiShuffle:
-            if not hasattr(simbase.air, 'elevatorTripId'):
+            if not hasattr(simbase.air, "elevatorTripId"):
                 simbase.air.elevatorTripId = 1
             self.elevatorTripId = simbase.air.elevatorTripId
             simbase.air.elevatorTripId += 1
@@ -89,14 +86,14 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
 
         return openSeats
 
-    def rejectingBoardersHandler(self, avId, reason = 0):
+    def rejectingBoardersHandler(self, avId, reason=0):
         self.rejectBoarder(avId, reason)
 
-    def rejectBoarder(self, avId, reason = 0):
-        self.sendUpdateToAvatarId(avId, 'rejectBoard', [avId, reason])
+    def rejectBoarder(self, avId, reason=0):
+        self.sendUpdateToAvatarId(avId, "rejectBoard", [avId, reason])
 
-    def acceptingBoardersHandler(self, avId, reason = 0):
-        self.notify.debug('acceptingBoardersHandler')
+    def acceptingBoardersHandler(self, avId, reason=0):
+        self.notify.debug("acceptingBoardersHandler")
         seatIndex = self.findAvailableSeat()
         if seatIndex == None:
             self.rejectBoarder(avId, REJECT_NOSEAT)
@@ -105,12 +102,12 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
         return
 
     def acceptBoarder(self, avId, seatIndex):
-        self.notify.debug('acceptBoarder')
+        self.notify.debug("acceptBoarder")
         if self.findAvatar(avId) != None:
             return
         self.seats[seatIndex] = avId
         self.timeOfBoarding = globalClock.getRealTime()
-        self.sendUpdate('fillSlot' + str(seatIndex), [avId])
+        self.sendUpdate("fillSlot" + str(seatIndex), [avId])
         return
 
     def rejectingExitersHandler(self, avId):
@@ -123,20 +120,24 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
         self.acceptExiter(avId)
 
     def clearEmptyNow(self, seatIndex):
-        self.sendUpdate('emptySlot' + str(seatIndex), [0, 0, globalClockDelta.getRealNetworkTime()])
+        self.sendUpdate(
+            "emptySlot" + str(seatIndex), [0, 0, globalClockDelta.getRealNetworkTime()]
+        )
 
     def clearFullNow(self, seatIndex):
         avId = self.seats[seatIndex]
         if avId == None:
-            self.notify.warning('Clearing an empty seat index: ' + str(seatIndex) + ' ... Strange...')
+            self.notify.warning(
+                "Clearing an empty seat index: " + str(seatIndex) + " ... Strange..."
+            )
         else:
             self.seats[seatIndex] = None
-            self.sendUpdate('fillSlot' + str(seatIndex), [0])
+            self.sendUpdate("fillSlot" + str(seatIndex), [0])
             self.ignore(self.air.getAvatarExitEvent(avId))
         return
 
     def d_setState(self, state):
-        self.sendUpdate('setState', [state, globalClockDelta.getRealNetworkTime()])
+        self.sendUpdate("setState", [state, globalClockDelta.getRealNetworkTime()])
 
     def getState(self):
         return self.state
@@ -150,10 +151,10 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
         return 0
 
     def requestBoard(self, *args):
-        self.notify.debug('requestBoard')
+        self.notify.debug("requestBoard")
         avId = self.air.getAvatarIdFromSender()
         if self.findAvatar(avId) != None:
-            self.notify.warning('Ignoring multiple requests from %s to board.' % avId)
+            self.notify.warning("Ignoring multiple requests from %s to board." % avId)
             return
         av = self.air.doId2do.get(avId)
         if av:
@@ -165,12 +166,14 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
             else:
                 self.rejectingBoardersHandler(*newArgs)
         else:
-            self.notify.warning('avid: %s does not exist, but tried to board an elevator' % avId)
+            self.notify.warning(
+                "avid: %s does not exist, but tried to board an elevator" % avId
+            )
         return
 
     def requestExit(self, *args):
-        if hasattr(self, 'air'):
-            self.notify.debug('requestExit')
+        if hasattr(self, "air"):
+            self.notify.debug("requestExit")
             avId = self.air.getAvatarIdFromSender()
             av = self.air.doId2do.get(avId)
             if av:
@@ -180,7 +183,9 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
                 else:
                     self.rejectingExitersHandler(*newArgs)
             else:
-                self.notify.warning('avId: %s does not exist, but tried to exit an elevator' % avId)
+                self.notify.warning(
+                    "avId: %s does not exist, but tried to exit an elevator" % avId
+                )
 
     def start(self):
         self.open()
@@ -188,9 +193,9 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
     def enterOff(self):
         self.accepting = 0
         self.timeOfBoarding = None
-        if hasattr(self, 'doId'):
+        if hasattr(self, "doId"):
             for seatIndex in range(len(self.seats)):
-                taskMgr.remove(self.uniqueName('clearEmpty-' + str(seatIndex)))
+                taskMgr.remove(self.uniqueName("clearEmpty-" + str(seatIndex)))
 
         return
 
@@ -198,10 +203,10 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
         self.accepting = 0
 
     def open(self):
-        self.request('Opening')
+        self.request("Opening")
 
     def enterOpening(self):
-        self.d_setState('Opening')
+        self.d_setState("Opening")
         self.accepting = 0
         for seat in self.seats:
             seat = None
@@ -210,16 +215,16 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
 
     def exitOpening(self):
         self.accepting = 0
-        taskMgr.remove(self.uniqueName('opening-timer'))
+        taskMgr.remove(self.uniqueName("opening-timer"))
 
     def enterWaitCountdown(self):
-        self.d_setState('WaitCountdown')
+        self.d_setState("WaitCountdown")
         self.accepting = 1
 
     def exitWaitCountdown(self):
-        print('exit wait countdown')
+        print("exit wait countdown")
         self.accepting = 0
-        taskMgr.remove(self.uniqueName('countdown-timer'))
+        taskMgr.remove(self.uniqueName("countdown-timer"))
         self.newTrip()
 
     def enterAllAboard(self):
@@ -227,20 +232,20 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
 
     def exitAllAboard(self):
         self.accepting = 0
-        taskMgr.remove(self.uniqueName('waitForAllAboard'))
+        taskMgr.remove(self.uniqueName("waitForAllAboard"))
 
     def enterClosing(self):
-        self.d_setState('Closing')
+        self.d_setState("Closing")
         self.accepting = 0
 
     def exitClosing(self):
         self.accepting = 0
-        taskMgr.remove(self.uniqueName('closing-timer'))
+        taskMgr.remove(self.uniqueName("closing-timer"))
 
     def enterClosed(self):
-        if hasattr(self, 'doId'):
+        if hasattr(self, "doId"):
             print(self.doId)
-        self.d_setState('Closed')
+        self.d_setState("Closed")
 
     def exitClosed(self):
         pass
@@ -250,7 +255,7 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
             self.seats[i] = None
 
         print(self.seats)
-        self.d_setState('WaitEmpty')
+        self.d_setState("WaitEmpty")
         self.accepting = 1
         return
 
@@ -269,7 +274,7 @@ class DistributedElevatorFSMAI(DistributedObjectAI.DistributedObjectAI, FSM):
             if simbase.air.elevatorTripId > 2100000000:
                 simbase.air.elevatorTripId = 1
             simbase.air.elevatorTripId += 1
-            self.sendUpdate('setElevatorTripId', [self.elevatorTripId])
+            self.sendUpdate("setElevatorTripId", [self.elevatorTripId])
 
     def setAntiShuffle(self, antiShuffle):
         self.antiShuffle = antiShuffle

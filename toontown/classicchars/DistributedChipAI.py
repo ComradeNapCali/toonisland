@@ -9,15 +9,31 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from . import CharStateDatasAI
 
+
 class DistributedChipAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedChipAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedChipAI")
 
     def __init__(self, air):
-        DistributedCCharBaseAI.DistributedCCharBaseAI.__init__(self, air, TTLocalizer.Chip)
-        self.fsm = ClassicFSM.ClassicFSM('DistributedChipAI', [State.State('Off', self.enterOff, self.exitOff, ['Lonely']),
-         State.State('Lonely', self.enterLonely, self.exitLonely, ['Chatty', 'Walk']),
-         State.State('Chatty', self.enterChatty, self.exitChatty, ['Lonely', 'Walk']),
-         State.State('Walk', self.enterWalk, self.exitWalk, ['Lonely', 'Chatty'])], 'Off', 'Off')
+        DistributedCCharBaseAI.DistributedCCharBaseAI.__init__(
+            self, air, TTLocalizer.Chip
+        )
+        self.fsm = ClassicFSM.ClassicFSM(
+            "DistributedChipAI",
+            [
+                State.State("Off", self.enterOff, self.exitOff, ["Lonely"]),
+                State.State(
+                    "Lonely", self.enterLonely, self.exitLonely, ["Chatty", "Walk"]
+                ),
+                State.State(
+                    "Chatty", self.enterChatty, self.exitChatty, ["Lonely", "Walk"]
+                ),
+                State.State(
+                    "Walk", self.enterWalk, self.exitWalk, ["Lonely", "Chatty"]
+                ),
+            ],
+            "Off",
+            "Off",
+        )
         self.fsm.enterInitialState()
         self.dale = None
         self.handleHolidays()
@@ -37,29 +53,29 @@ class DistributedChipAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
     def generate(self):
         DistributedCCharBaseAI.DistributedCCharBaseAI.generate(self)
         name = self.getName()
-        self.lonelyDoneEvent = self.taskName(name + '-lonely-done')
+        self.lonelyDoneEvent = self.taskName(name + "-lonely-done")
         self.lonely = CharStateDatasAI.CharLonelyStateAI(self.lonelyDoneEvent, self)
-        self.chattyDoneEvent = self.taskName(name + '-chatty-done')
+        self.chattyDoneEvent = self.taskName(name + "-chatty-done")
         self.chatty = CharStateDatasAI.ChipChattyStateAI(self.chattyDoneEvent, self)
-        self.walkDoneEvent = self.taskName(name + '-walk-done')
+        self.walkDoneEvent = self.taskName(name + "-walk-done")
         self.walk = CharStateDatasAI.CharWalkStateAI(self.walkDoneEvent, self)
 
     def walkSpeed(self):
         return ToontownGlobals.ChipSpeed
 
     def start(self):
-        self.fsm.request('Lonely')
+        self.fsm.request("Lonely")
 
     def __decideNextState(self, doneStatus):
-        if doneStatus['state'] == 'lonely' and doneStatus['status'] == 'done':
-            self.fsm.request('Walk')
-        elif doneStatus['state'] == 'chatty' and doneStatus['status'] == 'done':
-            self.fsm.request('Walk')
-        elif doneStatus['state'] == 'walk' and doneStatus['status'] == 'done':
+        if doneStatus["state"] == "lonely" and doneStatus["status"] == "done":
+            self.fsm.request("Walk")
+        elif doneStatus["state"] == "chatty" and doneStatus["status"] == "done":
+            self.fsm.request("Walk")
+        elif doneStatus["state"] == "walk" and doneStatus["status"] == "done":
             if len(self.nearbyAvatars) > 0:
-                self.fsm.request('Chatty')
+                self.fsm.request("Chatty")
             else:
-                self.fsm.request('Lonely')
+                self.fsm.request("Lonely")
 
     def enterOff(self):
         pass
@@ -80,8 +96,8 @@ class DistributedChipAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
             self.dale.chipLeavingState(self.fsm.getCurrentState().getName())
 
     def __goForAWalk(self, task):
-        self.notify.debug('going for a walk')
-        self.fsm.request('Walk')
+        self.notify.debug("going for a walk")
+        self.fsm.request("Walk")
         return Task.done
 
     def enterChatty(self):
@@ -97,7 +113,7 @@ class DistributedChipAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
             self.dale.chipLeavingState(self.fsm.getCurrentState().getName())
 
     def enterWalk(self):
-        self.notify.debug('going for a walk')
+        self.notify.debug("going for a walk")
         self.walk.enter()
         self.acceptOnce(self.walkDoneEvent, self.__decideNextState)
         if self.dale:
@@ -111,17 +127,19 @@ class DistributedChipAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
 
     def avatarEnterNextState(self):
         if len(self.nearbyAvatars) == 1:
-            if self.fsm.getCurrentState().getName() != 'Walk':
-                self.fsm.request('Chatty')
+            if self.fsm.getCurrentState().getName() != "Walk":
+                self.fsm.request("Chatty")
             else:
-                self.notify.debug('avatarEnterNextState: in walk state')
+                self.notify.debug("avatarEnterNextState: in walk state")
         else:
-            self.notify.debug('avatarEnterNextState: num avatars: ' + str(len(self.nearbyAvatars)))
+            self.notify.debug(
+                "avatarEnterNextState: num avatars: " + str(len(self.nearbyAvatars))
+            )
 
     def avatarExitNextState(self):
         if len(self.nearbyAvatars) == 0:
-            if self.fsm.getCurrentState().getName() != 'Walk':
-                self.fsm.request('Lonely')
+            if self.fsm.getCurrentState().getName() != "Walk":
+                self.fsm.request("Lonely")
 
     def setDaleId(self, daleId):
         self.daleId = daleId

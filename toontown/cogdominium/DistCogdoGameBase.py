@@ -1,7 +1,4 @@
-
-
 class DistCogdoGameBase:
-
     def local2GameTime(self, timestamp):
         return timestamp - self._startTime
 

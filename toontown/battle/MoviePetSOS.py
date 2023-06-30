@@ -11,9 +11,18 @@ from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.pets import Pet, PetTricks
 from dependencies.libotp import *
-notify = DirectNotifyGlobal.directNotify.newCategory('MoviePetSOS')
-soundFiles = ('AA_heal_tickle.ogg', 'AA_heal_telljoke.ogg', 'AA_heal_smooch.ogg', 'AA_heal_happydance.ogg', 'AA_heal_pixiedust.ogg', 'AA_heal_juggle.ogg')
+
+notify = DirectNotifyGlobal.directNotify.newCategory("MoviePetSOS")
+soundFiles = (
+    "AA_heal_tickle.ogg",
+    "AA_heal_telljoke.ogg",
+    "AA_heal_smooch.ogg",
+    "AA_heal_happydance.ogg",
+    "AA_heal_pixiedust.ogg",
+    "AA_heal_juggle.ogg",
+)
 offset = Point3(0, 4.0, 0)
+
 
 def doPetSOSs(PetSOSs):
     if len(PetSOSs) == 0:
@@ -34,8 +43,10 @@ def __doPetSOS(sos):
     return __healJuggle(sos)
 
 
-def __healToon(toon, hp, gender, callerToonId, ineffective = 0):
-    notify.debug('healToon() - toon: %d hp: %d ineffective: %d' % (toon.doId, hp, ineffective))
+def __healToon(toon, hp, gender, callerToonId, ineffective=0):
+    notify.debug(
+        "healToon() - toon: %d hp: %d ineffective: %d" % (toon.doId, hp, ineffective)
+    )
     nolaughter = 0
     if ineffective == 1:
         if callerToonId == toon.doId:
@@ -58,17 +69,17 @@ def __healToon(toon, hp, gender, callerToonId, ineffective = 0):
     if hp > 0 and toon.hp != None:
         toon.toonUp(hp)
     else:
-        notify.debug('__healToon() - toon: %d hp: %d' % (toon.doId, hp))
+        notify.debug("__healToon() - toon: %d hp: %d" % (toon.doId, hp))
     return
 
 
-def __teleportIn(attack, pet, pos = Point3(0, 0, 0), hpr = Vec3(180.0, 0.0, 0.0)):
-    a = Func(pet.reparentTo, attack['battle'])
+def __teleportIn(attack, pet, pos=Point3(0, 0, 0), hpr=Vec3(180.0, 0.0, 0.0)):
+    a = Func(pet.reparentTo, attack["battle"])
     b = Func(pet.setPos, pos)
     c = Func(pet.setHpr, hpr)
-    d = Func(pet.pose, 'reappear', 0)
+    d = Func(pet.pose, "reappear", 0)
     e = pet.getTeleportInTrack()
-    g = Func(pet.loop, 'neutral')
+    g = Func(pet.loop, "neutral")
     return Sequence(a, b, c, d, e, g)
 
 
@@ -80,14 +91,16 @@ def __teleportOut(attack, pet):
 
 
 def __doPet(attack, level, hp):
-    track = __doSprinkle(attack, 'suits', hp)
-    pbpText = attack['playByPlayText']
-    pbpTrack = pbpText.getShowInterval(TTLocalizer.MovieNPCSOSCogsMiss, track.getDuration())
+    track = __doSprinkle(attack, "suits", hp)
+    pbpText = attack["playByPlayText"]
+    pbpTrack = pbpText.getShowInterval(
+        TTLocalizer.MovieNPCSOSCogsMiss, track.getDuration()
+    )
     return (track, pbpTrack)
 
 
 def __healJuggle(heal):
-    petProxyId = heal['petId']
+    petProxyId = heal["petId"]
     pet = Pet.Pet()
     gender = 0
     if petProxyId in base.cr.doId2do:
@@ -98,22 +111,16 @@ def __healJuggle(heal):
         pet.setName(petProxy.petName)
         gender = petProxy.gender
     else:
-        pet.setDNA([-1,
-         0,
-         0,
-         -1,
-         2,
-         0,
-         4,
-         0,
-         1])
-        pet.setName('Smiley')
-    targets = heal['target']
-    ineffective = heal['sidestep']
-    level = heal['level']
+        pet.setDNA([-1, 0, 0, -1, 2, 0, 4, 0, 1])
+        pet.setName("Smiley")
+    targets = heal["target"]
+    ineffective = heal["sidestep"]
+    level = heal["level"]
     track = Sequence(__teleportIn(heal, pet))
     if ineffective:
-        trickTrack = Parallel(Wait(1.0), Func(pet.loop, 'neutralSad'), Func(pet.showMood, 'confusion'))
+        trickTrack = Parallel(
+            Wait(1.0), Func(pet.loop, "neutralSad"), Func(pet.showMood, "confusion")
+        )
     else:
         trickTrack = PetTricks.getTrickIval(pet, level)
     track.append(trickTrack)
@@ -121,9 +128,9 @@ def __healJuggle(heal):
     first = 1
     targetTrack = Sequence()
     for target in targets:
-        targetToon = target['toon']
-        hp = target['hp']
-        callerToonId = heal['toonId']
+        targetToon = target["toon"]
+        hp = target["hp"]
+        callerToonId = heal["toonId"]
         reactIval = Func(__healToon, targetToon, hp, gender, callerToonId, ineffective)
         if first == 1:
             first = 0
@@ -134,7 +141,7 @@ def __healJuggle(heal):
     track.append(Sequence(Func(pet.clearMood)))
     track.append(__teleportOut(heal, pet))
     for target in targets:
-        targetToon = target['toon']
+        targetToon = target["toon"]
         track.append(Func(targetToon.clearChat))
 
     track.append(Func(pet.delete))

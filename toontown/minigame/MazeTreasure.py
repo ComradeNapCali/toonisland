@@ -2,6 +2,7 @@ from direct.showbase.DirectObject import DirectObject
 from toontown.toonbase.ToontownGlobals import *
 from direct.directnotify import DirectNotifyGlobal
 
+
 class MazeTreasure(DirectObject):
     RADIUS = 0.7
 
@@ -9,7 +10,7 @@ class MazeTreasure(DirectObject):
         self.serialNum = serialNum
         self.nodePath = model.copyTo(render)
         self.nodePath.setPos(pos[0], pos[1], 1.0)
-        self.sphereName = 'treasureSphere%s-%s' % (gameId, self.serialNum)
+        self.sphereName = "treasureSphere%s-%s" % (gameId, self.serialNum)
         self.collSphere = CollisionSphere(0, 0, 0, self.RADIUS)
         self.collSphere.setTangible(0)
         self.collNode = CollisionNode(self.sphereName)
@@ -17,7 +18,7 @@ class MazeTreasure(DirectObject):
         self.collNode.addSolid(self.collSphere)
         self.collNodePath = self.nodePath.attachNewNode(self.collNode)
         self.collNodePath.hide()
-        self.accept('enter' + self.sphereName, self.__handleEnterSphere)
+        self.accept("enter" + self.sphereName, self.__handleEnterSphere)
         self.nodePath.flattenLight()
 
     def destroy(self):
@@ -31,7 +32,7 @@ class MazeTreasure(DirectObject):
 
     def __handleEnterSphere(self, collEntry):
         self.ignoreAll()
-        messenger.send('MazeTreasureGrabbed', [self.serialNum])
+        messenger.send("MazeTreasureGrabbed", [self.serialNum])
 
     def showGrab(self):
         self.nodePath.reparentTo(hidden)

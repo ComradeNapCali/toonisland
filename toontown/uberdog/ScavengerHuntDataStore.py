@@ -1,20 +1,21 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.uberdog.DataStore import *
 
+
 class ScavengerHuntDataStore(DataStore):
-    QueryTypes = DataStore.addQueryTypes(['GetGoals', 'AddGoal'])
-    notify = DirectNotifyGlobal.directNotify.newCategory('ScavengerHuntDataStore')
+    QueryTypes = DataStore.addQueryTypes(["GetGoals", "AddGoal"])
+    notify = DirectNotifyGlobal.directNotify.newCategory("ScavengerHuntDataStore")
 
     def __init__(self, filepath):
         DataStore.__init__(self, filepath)
 
     def handleQuery(self, query):
         qId, qData = query
-        if qId == self.QueryTypes['GetGoals']:
+        if qId == self.QueryTypes["GetGoals"]:
             avId, goal = qData
             goals = self.__getGoalsForAvatarId(avId)
             return (qId, (avId, goal, goals))
-        elif qId == self.QueryTypes['AddGoal']:
+        elif qId == self.QueryTypes["AddGoal"]:
             avId, goal = qData
             self.__addGoalToAvatarId(avId, goal)
             return (qId, (avId,))

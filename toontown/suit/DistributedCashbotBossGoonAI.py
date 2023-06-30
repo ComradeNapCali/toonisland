@@ -12,49 +12,64 @@ from . import DistributedGoonAI
 import math
 import random
 
-class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI):
+
+class DistributedCashbotBossGoonAI(
+    DistributedGoonAI.DistributedGoonAI,
+    DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI,
+):
     legLength = 10
-    directionTable = [(0, 15),
-     (10, 10),
-     (-10, 10),
-     (20, 8),
-     (-20, 8),
-     (40, 5),
-     (-40, 5),
-     (60, 4),
-     (-60, 4),
-     (80, 3),
-     (-80, 3),
-     (120, 2),
-     (-120, 2),
-     (180, 1)]
+    directionTable = [
+        (0, 15),
+        (10, 10),
+        (-10, 10),
+        (20, 8),
+        (-20, 8),
+        (40, 5),
+        (-40, 5),
+        (60, 4),
+        (-60, 4),
+        (80, 3),
+        (-80, 3),
+        (120, 2),
+        (-120, 2),
+        (180, 1),
+    ]
     offMask = BitMask32(0)
     onMask = CollisionNode.getDefaultCollideMask()
 
     def __init__(self, air, boss):
         DistributedGoonAI.DistributedGoonAI.__init__(self, air, 0)
-        DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI.__init__(self, air, boss)
-        cn = CollisionNode('tubeNode')
+        DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI.__init__(
+            self, air, boss
+        )
+        cn = CollisionNode("tubeNode")
         self.tube = CollisionTube(0, 0, 0, 0, 0, 0, 2)
         cn.addSolid(self.tube)
         self.tubeNode = cn
         self.tubeNodePath = self.attachNewNode(self.tubeNode)
         self.feelers = []
-        cn = CollisionNode('feelerNode')
+        cn = CollisionNode("feelerNode")
         self.feelerLength = self.legLength * 1.5
         feelerStart = 1
         for heading, weight in self.directionTable:
             rad = deg2Rad(heading)
             x = -math.sin(rad)
             y = math.cos(rad)
-            seg = CollisionSegment(x * feelerStart, y * feelerStart, 0, x * self.feelerLength, y * self.feelerLength, 0)
+            seg = CollisionSegment(
+                x * feelerStart,
+                y * feelerStart,
+                0,
+                x * self.feelerLength,
+                y * self.feelerLength,
+                0,
+            )
             cn.addSolid(seg)
             self.feelers.append(seg)
 
         cn.setIntoCollideMask(self.offMask)
         self.feelerNodePath = self.attachNewNode(cn)
         self.isWalking = 0
-        self.cTrav = CollisionTraverser('goon')
+        self.cTrav = CollisionTraverser("goon")
         self.cQueue = CollisionHandlerQueue()
         self.cTrav.addCollider(self.feelerNodePath, self.cQueue)
 
@@ -65,19 +80,19 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
             self.boss.damageToon(avatar, self.strength)
         DistributedGoonAI.DistributedGoonAI.requestBattle(self, pauseTime)
 
-    def sendMovie(self, type, avId = 0, pauseTime = 0):
+    def sendMovie(self, type, avId=0, pauseTime=0):
         if type == GoonGlobals.GOON_MOVIE_WALK:
-            self.demand('Walk')
+            self.demand("Walk")
         elif type == GoonGlobals.GOON_MOVIE_BATTLE:
-            self.demand('Battle')
+            self.demand("Battle")
         elif type == GoonGlobals.GOON_MOVIE_STUNNED:
-            self.demand('Stunned')
+            self.demand("Stunned")
         elif type == GoonGlobals.GOON_MOVIE_RECOVERY:
-            self.demand('Recovery')
+            self.demand("Recovery")
         else:
-            self.notify.warning('Ignoring movie type %s' % type)
+            self.notify.warning("Ignoring movie type %s" % type)
 
-    def __chooseTarget(self, extraDelay = 0):
+    def __chooseTarget(self, extraDelay=0):
         direction = self.__chooseDirection()
         if direction == None:
             self.target = None
@@ -96,7 +111,12 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
         self.target = self.boss.scene.getRelativePoint(self, Point3(0, dist, 0))
         self.departureTime = globalClock.getFrameTime()
         self.arrivalTime = self.departureTime + turnTime + walkTime + extraDelay
-        self.d_setTarget(self.target[0], self.target[1], h, globalClockDelta.localToNetworkTime(self.arrivalTime))
+        self.d_setTarget(
+            self.target[0],
+            self.target[1],
+            h,
+            globalClockDelta.localToNetworkTime(self.arrivalTime),
+        )
         return
 
     def __chooseDirection(self):
@@ -123,7 +143,7 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
             scoreTable.append(score)
 
         if netScore == 0:
-            self.notify.info('Could not find a path for %s' % self.doId)
+            self.notify.info("Could not find a path for %s" % self.doId)
             return None
         s = random.uniform(0, netScore)
         for i in range(len(self.directionTable)):
@@ -134,7 +154,7 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
                 dist = entries.get(seg, self.feelerLength)
                 return (heading, dist)
 
-        self.notify.warning('Fell off end of weighted table.')
+        self.notify.warning("Fell off end of weighted table.")
         return (0, self.legLength)
 
     def __startWalk(self):
@@ -146,15 +166,17 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
             point = self.getRelativePoint(self.boss.scene, self.target)
             self.tube.setPointB(point)
             self.node().resetPrevTransform()
-            taskMgr.doMethodLater(availableTime, self.__reachedTarget, self.uniqueName('reachedTarget'))
+            taskMgr.doMethodLater(
+                availableTime, self.__reachedTarget, self.uniqueName("reachedTarget")
+            )
             self.isWalking = 1
         else:
             self.__reachedTarget(None)
         return
 
-    def __stopWalk(self, pauseTime = None):
+    def __stopWalk(self, pauseTime=None):
         if self.isWalking:
-            taskMgr.remove(self.uniqueName('reachedTarget'))
+            taskMgr.remove(self.uniqueName("reachedTarget"))
             if pauseTime == None:
                 now = globalClock.getFrameTime()
                 t = (now - self.departureTime) / (self.arrivalTime - self.departureTime)
@@ -173,19 +195,19 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
         self.__startWalk()
 
     def __recoverWalk(self, task):
-        self.demand('Walk')
+        self.demand("Walk")
         return Task.done
 
     def doFree(self, task):
         DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI.doFree(self, task)
-        self.demand('Walk')
+        self.demand("Walk")
         return Task.done
 
     def requestStunned(self, pauseTime):
         avId = self.air.getAvatarIdFromSender()
         if avId not in self.boss.involvedToons:
             return
-        if self.state == 'Stunned' or self.state == 'Grabbed':
+        if self.state == "Stunned" or self.state == "Grabbed":
             return
         self.__stopWalk(pauseTime)
         self.boss.makeTreasure(self)
@@ -193,30 +215,27 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
 
     def hitBoss(self, impact):
         avId = self.air.getAvatarIdFromSender()
-        self.validate(avId, impact <= 1.0, 'invalid hitBoss impact %s' % impact)
+        self.validate(avId, impact <= 1.0, "invalid hitBoss impact %s" % impact)
         if avId not in self.boss.involvedToons:
             return
-        if self.state == 'Dropped' or self.state == 'Grabbed':
+        if self.state == "Dropped" or self.state == "Grabbed":
             if not self.boss.heldObject:
                 damage = int(impact * 25 * self.scale)
                 self.boss.recordHit(max(damage, 2))
         self.b_destroyGoon()
 
     def d_setTarget(self, x, y, h, arrivalTime):
-        self.sendUpdate('setTarget', [x,
-         y,
-         h,
-         arrivalTime])
+        self.sendUpdate("setTarget", [x, y, h, arrivalTime])
 
     def d_destroyGoon(self):
-        self.sendUpdate('destroyGoon')
+        self.sendUpdate("destroyGoon")
 
     def b_destroyGoon(self):
         self.d_destroyGoon()
         self.destroyGoon()
 
     def destroyGoon(self):
-        self.demand('Off')
+        self.demand("Off")
 
     def enterOff(self):
         self.tubeNodePath.stash()
@@ -227,16 +246,18 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
         self.feelerNodePath.unstash()
 
     def enterGrabbed(self, avId, craneId):
-        DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI.enterGrabbed(self, avId, craneId)
-        taskMgr.remove(self.taskName('recovery'))
-        taskMgr.remove(self.taskName('resumeWalk'))
+        DistributedCashbotBossObjectAI.DistributedCashbotBossObjectAI.enterGrabbed(
+            self, avId, craneId
+        )
+        taskMgr.remove(self.taskName("recovery"))
+        taskMgr.remove(self.taskName("resumeWalk"))
 
     def enterWalk(self):
         self.avId = 0
         self.craneId = 0
         self.__chooseTarget()
         self.__startWalk()
-        self.d_setObjectState('W', 0, 0)
+        self.d_setObjectState("W", 0, 0)
 
     def exitWalk(self):
         self.__stopWalk()
@@ -253,14 +274,21 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
         self.target = self.boss.scene.getRelativePoint(self, Point3(0, dist, 0))
         self.departureTime = globalClock.getFrameTime()
         self.arrivalTime = self.departureTime + walkTime
-        self.d_setTarget(self.target[0], self.target[1], h, globalClockDelta.localToNetworkTime(self.arrivalTime))
+        self.d_setTarget(
+            self.target[0],
+            self.target[1],
+            h,
+            globalClockDelta.localToNetworkTime(self.arrivalTime),
+        )
         self.__startWalk()
-        self.d_setObjectState('a', 0, 0)
-        taskMgr.doMethodLater(walkTime, self.__recoverWalk, self.uniqueName('recoverWalk'))
+        self.d_setObjectState("a", 0, 0)
+        taskMgr.doMethodLater(
+            walkTime, self.__recoverWalk, self.uniqueName("recoverWalk")
+        )
 
     def exitEmergeA(self):
         self.__stopWalk()
-        taskMgr.remove(self.uniqueName('recoverWalk'))
+        taskMgr.remove(self.uniqueName("recoverWalk"))
 
     def enterEmergeB(self):
         self.avId = 0
@@ -274,31 +302,38 @@ class DistributedCashbotBossGoonAI(DistributedGoonAI.DistributedGoonAI, Distribu
         self.target = self.boss.scene.getRelativePoint(self, Point3(0, dist, 0))
         self.departureTime = globalClock.getFrameTime()
         self.arrivalTime = self.departureTime + walkTime
-        self.d_setTarget(self.target[0], self.target[1], h, globalClockDelta.localToNetworkTime(self.arrivalTime))
+        self.d_setTarget(
+            self.target[0],
+            self.target[1],
+            h,
+            globalClockDelta.localToNetworkTime(self.arrivalTime),
+        )
         self.__startWalk()
-        self.d_setObjectState('b', 0, 0)
-        taskMgr.doMethodLater(walkTime, self.__recoverWalk, self.uniqueName('recoverWalk'))
+        self.d_setObjectState("b", 0, 0)
+        taskMgr.doMethodLater(
+            walkTime, self.__recoverWalk, self.uniqueName("recoverWalk")
+        )
 
     def exitEmergeB(self):
         self.__stopWalk()
-        taskMgr.remove(self.uniqueName('recoverWalk'))
+        taskMgr.remove(self.uniqueName("recoverWalk"))
 
     def enterBattle(self):
-        self.d_setObjectState('B', 0, 0)
+        self.d_setObjectState("B", 0, 0)
 
     def exitBattle(self):
-        taskMgr.remove(self.taskName('resumeWalk'))
+        taskMgr.remove(self.taskName("resumeWalk"))
 
     def enterStunned(self):
-        self.d_setObjectState('S', 0, 0)
+        self.d_setObjectState("S", 0, 0)
 
     def exitStunned(self):
-        taskMgr.remove(self.taskName('recovery'))
+        taskMgr.remove(self.taskName("recovery"))
 
     def enterRecovery(self):
-        self.d_setObjectState('R', 0, 0)
-        taskMgr.doMethodLater(2.0, self.__recoverWalk, self.uniqueName('recoverWalk'))
+        self.d_setObjectState("R", 0, 0)
+        taskMgr.doMethodLater(2.0, self.__recoverWalk, self.uniqueName("recoverWalk"))
 
     def exitRecovery(self):
         self.__stopWalk()
-        taskMgr.remove(self.uniqueName('recoverWalk'))
+        taskMgr.remove(self.uniqueName("recoverWalk"))

@@ -3,7 +3,7 @@ from direct.showbase.DirectObject import DirectObject
 
 
 class SCObject(DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('SpeedChat')
+    notify = DirectNotifyGlobal.directNotify.newCategory("SpeedChat")
 
     def __init__(self):
         self.settingsRef = None
@@ -38,7 +38,7 @@ class SCObject(DirectObject):
         pass
 
     def getEventName(self, name):
-        return '%s%s' % (self.settingsRef.eventPrefix, name)
+        return "%s%s" % (self.settingsRef.eventPrefix, name)
 
     def getColorScheme(self):
         return self.settingsRef.colorScheme

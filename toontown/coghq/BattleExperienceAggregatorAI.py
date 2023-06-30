@@ -1,7 +1,4 @@
-
-
 class BattleExperienceAggregatorAI:
-
     def __init__(self):
         self.suitsKilled = []
         self.suitsKilledPerFloor = []

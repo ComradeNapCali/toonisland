@@ -13,8 +13,9 @@ from direct.fsm import State
 from direct.fsm import ClassicFSM
 from toontown.toonbase import ToontownGlobals
 
+
 class DistributedLevelBattle(DistributedBattle.DistributedBattle):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLevelBattle')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedLevelBattle")
 
     def __init__(self, cr):
         DistributedBattle.DistributedBattle.__init__(self, cr)
@@ -28,21 +29,27 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
     def setBattleCellId(self, battleCellId):
         self.battleCellId = battleCellId
 
-        def doPlacement(levelList, self = self):
+        def doPlacement(levelList, self=self):
             self.levelRequest = None
             self.level = levelList[0]
             spec = self.level.getBattleCellSpec(self.battleCellId)
-            self.level.requestReparent(self, spec['parentEntId'])
-            self.setPos(spec['pos'])
-            print('spec = %s' % spec)
-            print('h = %s' % spec.get('h'))
+            self.level.requestReparent(self, spec["parentEntId"])
+            self.setPos(spec["pos"])
+            print("spec = %s" % spec)
+            print("h = %s" % spec.get("h"))
             self.wrtReparentTo(render)
             return
 
         level = base.cr.doId2do.get(self.levelDoId)
         if level is None:
-            self.notify.warning('level %s not in doId2do yet, battle %s will be mispositioned.' % self.levelDoId, self.doId)
-            self.levelRequest = self.cr.relatedObjectMgr.requestObjects([self.levelDoId], doPlacement)
+            self.notify.warning(
+                "level %s not in doId2do yet, battle %s will be mispositioned."
+                % self.levelDoId,
+                self.doId,
+            )
+            self.levelRequest = self.cr.relatedObjectMgr.requestObjects(
+                [self.levelDoId], doPlacement
+            )
         else:
             doPlacement([level])
         return
@@ -82,17 +89,19 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         if level:
             level.unlockVisibility()
         else:
-            self.notify.warning("unlockLevelViz: couldn't find level %s" % self.levelDoId)
+            self.notify.warning(
+                "unlockLevelViz: couldn't find level %s" % self.levelDoId
+            )
 
     def onWaitingForJoin(self):
         self.lockLevelViz()
 
     def __faceOff(self, ts, name, callback):
         if len(self.suits) == 0:
-            self.notify.warning('__faceOff(): no suits.')
+            self.notify.warning("__faceOff(): no suits.")
             return
         if len(self.toons) == 0:
-            self.notify.warning('__faceOff(): no toons.')
+            self.notify.warning("__faceOff(): no toons.")
             return
         toon = self.toons[0]
         point = self.toonPoints[0][0]
@@ -121,10 +130,10 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         suitTrack = Parallel()
         suitLeader = None
         for suit in self.suits:
-            suit.setState('Battle')
+            suit.setState("Battle")
             suitIsLeader = 0
             oneSuitTrack = Sequence()
-            oneSuitTrack.append(Func(suit.loop, 'neutral'))
+            oneSuitTrack.append(Func(suit.loop, "neutral"))
             oneSuitTrack.append(Func(suit.headsUp, toonPos))
             if self.suits.index(suit) == leaderIndex:
                 suitLeader = suit
@@ -136,8 +145,12 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
                     else:
                         taunt = level.getBossBattleTaunt()
                 else:
-                    taunt = SuitBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
-                oneSuitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+                    taunt = SuitBattleGlobals.getFaceoffTaunt(
+                        suit.getStyleName(), suit.doId
+                    )
+                oneSuitTrack.append(
+                    Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout)
+                )
             destPos, destHpr = self.getActorPosHpr(suit, self.suits)
             oneSuitTrack.append(Wait(delay))
             if suitIsLeader == 1:
@@ -152,7 +165,9 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
             oneToonTrack = Sequence()
             destPos, destHpr = self.getActorPosHpr(toon, self.toons)
             oneToonTrack.append(Wait(delay))
-            oneToonTrack.append(self.createAdjustInterval(toon, destPos, destHpr, toon=1, run=1))
+            oneToonTrack.append(
+                self.createAdjustInterval(toon, destPos, destHpr, toon=1, run=1)
+            )
             toonTrack.append(oneToonTrack)
 
         if self.hasLocalToon():
@@ -165,11 +180,11 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
             TauntCamHeight = random.choice((MidTauntCamHeight, 1, 11))
             camTrack = Sequence()
             camTrack.append(Func(camera.reparentTo, suitLeader))
-            camTrack.append(Func(base.camLens.setMinFov, self.camFOFov / (4. / 3.)))
+            camTrack.append(Func(base.camLens.setMinFov, self.camFOFov / (4.0 / 3.0)))
             camTrack.append(Func(camera.setPos, TauntCamX, TauntCamY, TauntCamHeight))
             camTrack.append(Func(camera.lookAt, suitLeader, suitOffsetPnt))
             camTrack.append(Wait(delay))
-            camTrack.append(Func(base.camLens.setMinFov, self.camFov / (4. / 3.)))
+            camTrack.append(Func(base.camLens.setMinFov, self.camFov / (4.0 / 3.0)))
             camTrack.append(Func(camera.wrtReparentTo, self))
             camTrack.append(Func(camera.setPos, self.camFOPos))
             camTrack.append(Func(camera.lookAt, suit))
@@ -185,27 +200,33 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
 
     def enterFaceOff(self, ts):
         if len(self.toons) > 0 and base.localAvatar == self.toons[0]:
-            Emote.globalEmote.disableAll(self.toons[0], 'dbattlebldg, enterFaceOff')
+            Emote.globalEmote.disableAll(self.toons[0], "dbattlebldg, enterFaceOff")
         self.delayDeleteMembers()
         self.__faceOff(ts, self.faceOffName, self.__handleFaceOffDone)
 
     def __handleFaceOffDone(self):
-        self.notify.debug('FaceOff done')
+        self.notify.debug("FaceOff done")
         self.d_faceOffDone(base.localAvatar.doId)
 
     def exitFaceOff(self):
-        self.notify.debug('exitFaceOff()')
+        self.notify.debug("exitFaceOff()")
         if len(self.toons) > 0 and base.localAvatar == self.toons[0]:
-            Emote.globalEmote.releaseAll(self.toons[0], 'dbattlebldg exitFaceOff')
+            Emote.globalEmote.releaseAll(self.toons[0], "dbattlebldg exitFaceOff")
         self.clearInterval(self.faceOffName)
         self._removeMembersKeep()
 
     def __playReward(self, ts, callback):
         toonTracks = Parallel()
         for toon in self.toons:
-            toonTracks.append(Sequence(Func(toon.loop, 'victory'), Wait(FLOOR_REWARD_TIMEOUT), Func(toon.loop, 'neutral')))
+            toonTracks.append(
+                Sequence(
+                    Func(toon.loop, "victory"),
+                    Wait(FLOOR_REWARD_TIMEOUT),
+                    Func(toon.loop, "neutral"),
+                )
+            )
 
-        name = self.uniqueName('floorReward')
+        name = self.uniqueName("floorReward")
         track = Sequence(toonTracks, Func(callback), name=name)
         camera.setPos(0, 0, 1)
         camera.setHpr(180, 10, 0)
@@ -213,7 +234,7 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         track.start(ts)
 
     def enterReward(self, ts):
-        self.notify.info('enterReward()')
+        self.notify.info("enterReward()")
         self.disableCollision()
         self.delayDeleteMembers()
         self.__playReward(ts, self.__handleFloorRewardDone)
@@ -222,8 +243,8 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         pass
 
     def exitReward(self):
-        self.notify.info('exitReward()')
-        self.clearInterval(self.uniqueName('floorReward'))
+        self.notify.info("exitReward()")
+        self.clearInterval(self.uniqueName("floorReward"))
         self._removeMembersKeep()
         NametagGlobals.setMasterArrowsOn(1)
         for toon in self.toons:

@@ -4,7 +4,7 @@ from toontown.estate.DistributedLawnDecorAI import DistributedLawnDecorAI
 
 
 class DistributedGardenBoxAI(DistributedLawnDecorAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedGardenBoxAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedGardenBoxAI")
 
     def __init__(self, mgr):
         DistributedLawnDecorAI.__init__(self, mgr)

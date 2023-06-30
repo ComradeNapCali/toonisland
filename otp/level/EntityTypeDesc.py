@@ -4,7 +4,7 @@ from direct.showbase.PythonUtil import mostDerivedLast
 
 
 class EntityTypeDesc:
-    notify = DirectNotifyGlobal.directNotify.newCategory('EntityTypeDesc')
+    notify = DirectNotifyGlobal.directNotify.newCategory("EntityTypeDesc")
     output = None
 
     def __init__(self):
@@ -18,10 +18,10 @@ class EntityTypeDesc:
             self.attribDescDict[attribName] = desc
 
     def isConcrete(self):
-        return 'abstract' not in self.__class__.__dict__
+        return "abstract" not in self.__class__.__dict__
 
     def isPermanent(self):
-        return 'permanent' in self.__class__.__dict__
+        return "permanent" in self.__class__.__dict__
 
     def getOutputType(self):
         return self.output
@@ -42,15 +42,14 @@ class EntityTypeDesc:
 
     @staticmethod
     def privCompileAttribDescs(entTypeClass):
-        if '_attribDescs' in entTypeClass.__dict__:
+        if "_attribDescs" in entTypeClass.__dict__:
             return
         c = entTypeClass
-        EntityTypeDesc.notify.debug(
-            'compiling attrib descriptors for %s' % c.__name__)
+        EntityTypeDesc.notify.debug("compiling attrib descriptors for %s" % c.__name__)
         for base in c.__bases__:
             EntityTypeDesc.privCompileAttribDescs(base)
 
-        blockAttribs = c.__dict__.get('blockAttribs', [])
+        blockAttribs = c.__dict__.get("blockAttribs", [])
         baseADs = []
         bases = list(c.__bases__)
         mostDerivedLast(bases)
@@ -61,18 +60,22 @@ class EntityTypeDesc:
                 for d in baseADs:
                     if desc.getName() == d.getName():
                         EntityTypeDesc.notify.warning(
-                            '%s inherits attrib %s from multiple bases' % (c.__name__, desc.getName()))
+                            "%s inherits attrib %s from multiple bases"
+                            % (c.__name__, desc.getName())
+                        )
                         break
                 else:
                     baseADs.append(desc)
 
         attribDescs = []
-        if 'attribs' in c.__dict__:
+        if "attribs" in c.__dict__:
             for attrib in c.attribs:
                 desc = AttribDesc.AttribDesc(*attrib)
-                if desc.getName() == 'type' and entTypeClass.__name__ != 'Entity':
-                    EntityTypeDesc.notify.error("(%s): '%s' is a reserved attribute name" % (
-                        entTypeClass.__name__, desc.getName()))
+                if desc.getName() == "type" and entTypeClass.__name__ != "Entity":
+                    EntityTypeDesc.notify.error(
+                        "(%s): '%s' is a reserved attribute name"
+                        % (entTypeClass.__name__, desc.getName())
+                    )
                 for ad in baseADs:
                     if ad.getName() == desc.getName():
                         baseADs.remove(ad)
@@ -86,4 +89,8 @@ class EntityTypeDesc:
         return str(self.__class__)
 
     def __repr__(self):
-        return str(self.__class__.__dict__.get('type', None)) + str(self.output) + str(self.attribDescDict)
+        return (
+            str(self.__class__.__dict__.get("type", None))
+            + str(self.output)
+            + str(self.attribDescDict)
+        )

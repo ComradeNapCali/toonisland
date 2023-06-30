@@ -3,10 +3,9 @@ from .SCEmoteTerminal import SCEmoteTerminal
 
 
 class SCEmoteMenu(SCMenu):
-
     def __init__(self):
         SCMenu.__init__(self)
-        self.accept('emotesChanged', self.__emoteAccessChanged)
+        self.accept("emotesChanged", self.__emoteAccessChanged)
         self.__emoteAccessChanged()
 
     def destroy(self):

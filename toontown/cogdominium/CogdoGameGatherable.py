@@ -6,11 +6,22 @@ from direct.interval.IntervalGlobal import LerpFunc
 from toontown.toonbase import ToontownGlobals
 from . import CogdoUtil
 
-class CogdoGameGatherable(NodePath, DirectObject):
-    EnterEventName = 'CogdoGameGatherable_Enter'
 
-    def __init__(self, serialNum, model, triggerRadius, triggerOffset = (0, 0, 0), animate = True, animDuration = 0.2, instanceModel = True, name = 'CogdoGameGatherable'):
-        NodePath.__init__(self, '%s-%d' % (name, serialNum))
+class CogdoGameGatherable(NodePath, DirectObject):
+    EnterEventName = "CogdoGameGatherable_Enter"
+
+    def __init__(
+        self,
+        serialNum,
+        model,
+        triggerRadius,
+        triggerOffset=(0, 0, 0),
+        animate=True,
+        animDuration=0.2,
+        instanceModel=True,
+        name="CogdoGameGatherable",
+    ):
+        NodePath.__init__(self, "%s-%d" % (name, serialNum))
         self.serialNum = serialNum
         self._animate = animate
         if instanceModel:
@@ -28,7 +39,9 @@ class CogdoGameGatherable(NodePath, DirectObject):
         return
 
     def _initCollisions(self, triggerRadius, triggerOffset):
-        self.collSphere = CollisionSphere(triggerOffset[0], triggerOffset[1], triggerOffset[2], triggerRadius)
+        self.collSphere = CollisionSphere(
+            triggerOffset[0], triggerOffset[1], triggerOffset[2], triggerRadius
+        )
         self.collSphere.setTangible(0)
         self.collNode = CollisionNode(self.getName())
         self.collNode.addSolid(self.collSphere)
@@ -45,7 +58,7 @@ class CogdoGameGatherable(NodePath, DirectObject):
         return
 
     def enable(self):
-        self.accept('enter' + self.getName(), self._handleEnterCollision)
+        self.accept("enter" + self.getName(), self._handleEnterCollision)
         self.collNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
 
     def disable(self):
@@ -76,7 +89,7 @@ class CogdoGameGatherable(NodePath, DirectObject):
     def getModel(self):
         return self._model
 
-    def pickUp(self, toon, elapsedSeconds = 0.0):
+    def pickUp(self, toon, elapsedSeconds=0.0):
         self._wasPickedUp = True
         if self._animSeq is not None:
             self._animSeq.finish()
@@ -89,7 +102,13 @@ class CogdoGameGatherable(NodePath, DirectObject):
                 self.setPos(self.getPos() + vec * t)
                 self.setScale(1.0 - t * 0.8)
 
-            self._animSeq = Sequence(LerpFunc(lerpFlyToToon, fromData=0.0, toData=1.0, duration=self._animDuration), Wait(0.1), Func(self.hide))
+            self._animSeq = Sequence(
+                LerpFunc(
+                    lerpFlyToToon, fromData=0.0, toData=1.0, duration=self._animDuration
+                ),
+                Wait(0.1),
+                Func(self.hide),
+            )
             self._animSeq.start(elapsedSeconds)
         else:
             self.hide()
@@ -97,14 +116,16 @@ class CogdoGameGatherable(NodePath, DirectObject):
 
 
 class CogdoMemo(CogdoGameGatherable):
-    EnterEventName = 'CogdoMemo_Enter'
+    EnterEventName = "CogdoMemo_Enter"
 
-    def __init__(self, serialNum, model = None, pitch = 0, triggerRadius = 1.0, spinRate = 60):
+    def __init__(self, serialNum, model=None, pitch=0, triggerRadius=1.0, spinRate=60):
         if model is None:
-            model = CogdoUtil.loadModel('joke', 'shared')
+            model = CogdoUtil.loadModel("joke", "shared")
         model.setP(pitch)
         self._spinRate = spinRate
-        CogdoGameGatherable.__init__(self, serialNum, model, triggerRadius, name='CogdoMemo')
+        CogdoGameGatherable.__init__(
+            self, serialNum, model, triggerRadius, name="CogdoMemo"
+        )
         return
 
     def destroy(self):

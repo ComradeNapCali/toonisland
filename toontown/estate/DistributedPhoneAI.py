@@ -15,7 +15,6 @@ from toontown.toonbase import ToontownGlobals
 
 
 class LoadGiftAvatar:
-
     def __init__(self, phone, avId, targetId, optional, callback):
         self.air = phone.air
         self.phone = phone
@@ -31,26 +30,48 @@ class LoadGiftAvatar:
         return {key: aDict[key] for key in keys}
 
     def __gotAvatar(self, dclass, fields):
-        if dclass != self.air.dclassesByName['DistributedToonAI']:
+        if dclass != self.air.dclassesByName["DistributedToonAI"]:
             return
 
         for key in (
-                'setDNAString', 'setMailboxContents', 'setAwardMailboxContents', 'setGiftSchedule',
-                'setDeliverySchedule', 'setAwardSchedule'):
+            "setDNAString",
+            "setMailboxContents",
+            "setAwardMailboxContents",
+            "setGiftSchedule",
+            "setDeliverySchedule",
+            "setAwardSchedule",
+        ):
             fields[key] = base64.b64encode(fields[key][0])
 
-        newDict = self.copyDict(fields, 'setDNAString', 'setMailboxContents', 'setAwardMailboxContents',
-                                'setGiftSchedule', 'setDeliverySchedule', 'setAwardSchedule', 'setHat', 'setGlasses',
-                                'setBackpack', 'setShoes', 'setHatList', 'setGlassesList', 'setBackpackList',
-                                'setShoesList', 'setCustomMessages', 'setEmoteAccess', 'setClothesTopsList',
-                                'setClothesBottomsList', 'setPetTrickPhrases')
+        newDict = self.copyDict(
+            fields,
+            "setDNAString",
+            "setMailboxContents",
+            "setAwardMailboxContents",
+            "setGiftSchedule",
+            "setDeliverySchedule",
+            "setAwardSchedule",
+            "setHat",
+            "setGlasses",
+            "setBackpack",
+            "setShoes",
+            "setHatList",
+            "setGlassesList",
+            "setBackpackList",
+            "setShoesList",
+            "setCustomMessages",
+            "setEmoteAccess",
+            "setClothesTopsList",
+            "setClothesBottomsList",
+            "setPetTrickPhrases",
+        )
 
         self.callback(self.avId, self.targetId, newDict, self.optional)
         del self.phone.giftingOperations[self.avId]
 
 
 class DistributedPhoneAI(DistributedFurnitureItemAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPhoneAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPhoneAI")
 
     def __init__(self, air, house, furnitureMgr, catalogItem):
         DistributedFurnitureItemAI.__init__(self, air, house, furnitureMgr, catalogItem)
@@ -77,7 +98,7 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
     def avatarEnter(self):
         avId = self.air.getAvatarIdFromSender()
         if self.avId:
-            self.sendUpdateToAvatarId(avId, 'freeAvatar', [])
+            self.sendUpdateToAvatarId(avId, "freeAvatar", [])
             return
 
         av = self.air.doId2do.get(avId)
@@ -91,7 +112,7 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
 
         houseId = av.getHouseId()
         if not houseId:
-            self.sendUpdateToAvatarId(avId, 'freeAvatar', [])
+            self.sendUpdateToAvatarId(avId, "freeAvatar", [])
             return
 
         self.air.questManager.toonCalledClarabelle(av)
@@ -100,31 +121,53 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
         self.d_setMovie(PhoneGlobals.PHONE_MOVIE_PICKUP, avId)
         if house:
             numItems = self.furnitureMgr.getNumItems()
-            self.sendUpdateToAvatarId(avId, 'setLimits', [numItems])
+            self.sendUpdateToAvatarId(avId, "setLimits", [numItems])
         else:
             self.air.dbInterface.queryObject(self.air.dbId, houseId, self.__handleHouse)
 
         # Remove the "new catalog" icon:
         av.b_setCatalogNotify(ToontownGlobals.NoItems, av.mailboxNotify)
-        self.acceptOnce(self.air.getAvatarExitEvent(avId), self.__handleUnexpectedExit, extraArgs=[avId])
+        self.acceptOnce(
+            self.air.getAvatarExitEvent(avId),
+            self.__handleUnexpectedExit,
+            extraArgs=[avId],
+        )
 
     def __handleHouse(self, dclass, fields):
-        if dclass != self.air.dclassesByName['DistributedHouseAI']:
+        if dclass != self.air.dclassesByName["DistributedHouseAI"]:
             return
 
-        interiorItems = CatalogItemList(fields['setInteriorItems'][0], store=CatalogItem.Customization)
-        atticItems = CatalogItemList(fields['setAtticItems'][0], store=CatalogItem.Customization)
-        atticWallpaper = CatalogItemList(fields['setAtticWallpaper'][0], store=CatalogItem.Customization)
-        atticWindows = CatalogItemList(fields['setAtticWindows'][0], store=CatalogItem.Customization)
-        interiorWallpaper = CatalogItemList(fields['setInteriorWallpaper'][0], store=CatalogItem.Customization)
-        interiorWindows = CatalogItemList(fields['setInteriorWindows'][0], store=CatalogItem.Customization)
-        numItems = len(interiorItems) + len(atticItems) + len(atticWallpaper) + len(atticWindows) + len(
-            interiorWallpaper) + len(interiorWindows)
-        self.sendUpdateToAvatarId(fields['setAvatarId'][0], 'setLimits', [numItems])
+        interiorItems = CatalogItemList(
+            fields["setInteriorItems"][0], store=CatalogItem.Customization
+        )
+        atticItems = CatalogItemList(
+            fields["setAtticItems"][0], store=CatalogItem.Customization
+        )
+        atticWallpaper = CatalogItemList(
+            fields["setAtticWallpaper"][0], store=CatalogItem.Customization
+        )
+        atticWindows = CatalogItemList(
+            fields["setAtticWindows"][0], store=CatalogItem.Customization
+        )
+        interiorWallpaper = CatalogItemList(
+            fields["setInteriorWallpaper"][0], store=CatalogItem.Customization
+        )
+        interiorWindows = CatalogItemList(
+            fields["setInteriorWindows"][0], store=CatalogItem.Customization
+        )
+        numItems = (
+            len(interiorItems)
+            + len(atticItems)
+            + len(atticWallpaper)
+            + len(atticWindows)
+            + len(interiorWallpaper)
+            + len(interiorWindows)
+        )
+        self.sendUpdateToAvatarId(fields["setAvatarId"][0], "setLimits", [numItems])
 
     def __handleUnexpectedExit(self, avId):
         if avId != self.avId:
-            self.notify.warning('accepted exit event for av %s not using phone' % avId)
+            self.notify.warning("accepted exit event for av %s not using phone" % avId)
             return
 
         self.avId = 0
@@ -133,7 +176,7 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
     def avatarExit(self):
         avId = self.air.getAvatarIdFromSender()
         if avId != self.avId:
-            self.notify.warning('av %s tried to exit phone they were not using' % avId)
+            self.notify.warning("av %s tried to exit phone they were not using" % avId)
             return
 
         self.d_setMovie(PhoneGlobals.PHONE_MOVIE_HANGUP, avId)
@@ -142,43 +185,73 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
         self.ignore(self.air.getAvatarExitEvent(avId))
 
     def d_setMovie(self, mode, avId):
-        self.sendUpdate('setMovie', [mode, avId, globalClockDelta.getRealNetworkTime(bits=32)])
+        self.sendUpdate(
+            "setMovie", [mode, avId, globalClockDelta.getRealNetworkTime(bits=32)]
+        )
 
     def requestPurchaseMessage(self, context, blob, optional):
         avId = self.air.getAvatarIdFromSender()
         accId = self.air.getAccountIdFromSender()
         av = self.air.doId2do.get(avId)
         if not av:
-            self.air.writeServerEvent('suspicious', avId,
-                                      'av tried to purchase something but they are not on the district!')
+            self.air.writeServerEvent(
+                "suspicious",
+                avId,
+                "av tried to purchase something but they are not on the district!",
+            )
             return
 
         if avId != self.avId:
-            self.air.writeServerEvent('suspicious', avId, 'av tried to purchase item while not at phone')
-            self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_NotShopping])
+            self.air.writeServerEvent(
+                "suspicious", avId, "av tried to purchase item while not at phone"
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestPurchaseResponse",
+                [context, ToontownGlobals.P_NotShopping],
+            )
             return
 
         item = CatalogItem.getItem(blob, store=CatalogItem.Customization)
         if isinstance(item, CatalogInvalidItem):
-            self.air.writeServerEvent('suspicious', avId, 'av tried to purchase something but item is invalid!')
-            self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_ItemAvailable])
+            self.air.writeServerEvent(
+                "suspicious",
+                avId,
+                "av tried to purchase something but item is invalid!",
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestPurchaseResponse",
+                [context, ToontownGlobals.P_ItemAvailable],
+            )
             return
 
-        if not any(item in catalog for catalog in (av.weeklyCatalog, av.backCatalog, av.monthlyCatalog)):
-            self.air.writeServerEvent('suspicious', avId, 'av tried to purchase item not in catalog')
-            self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_NotInCatalog])
+        if not any(
+            item in catalog
+            for catalog in (av.weeklyCatalog, av.backCatalog, av.monthlyCatalog)
+        ):
+            self.air.writeServerEvent(
+                "suspicious", avId, "av tried to purchase item not in catalog"
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestPurchaseResponse",
+                [context, ToontownGlobals.P_NotInCatalog],
+            )
             return
 
         def handleAccount(dclass, fields):
-            if dclass != self.air.dclassesByName['AccountAI']:
+            if dclass != self.air.dclassesByName["AccountAI"]:
                 return
 
             # Based on game creation date:
-            creationDate = fields['CREATED']
+            creationDate = fields["CREATED"]
             try:
-                creationDate = datetime.fromtimestamp(time.mktime(time.strptime(creationDate)))
+                creationDate = datetime.fromtimestamp(
+                    time.mktime(time.strptime(creationDate))
+                )
             except ValueError:
-                creationDate = ''
+                creationDate = ""
 
             accountDays = -1
             if creationDate:
@@ -192,9 +265,12 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
             if daysToGo < 0:
                 daysToGo = 0
 
-            if daysToGo and config.GetBool('want-loyalty-requirement', False):
-                self.air.writeServerEvent('suspicious', avId,
-                                          'av tried to purchase a loyalty item before it is available!')
+            if daysToGo and config.GetBool("want-loyalty-requirement", False):
+                self.air.writeServerEvent(
+                    "suspicious",
+                    avId,
+                    "av tried to purchase a loyalty item before it is available!",
+                )
                 return
 
             if item in av.backCatalog:
@@ -203,30 +279,51 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
                 price = item.getPrice(0)
 
             if price == 0:
-                self.air.writeServerEvent('suspicious', avId,
-                                          'av tried to purchase something but the price is invalid!')
+                self.air.writeServerEvent(
+                    "suspicious",
+                    avId,
+                    "av tried to purchase something but the price is invalid!",
+                )
                 return
 
             # Take the jellybeans away:
             if price > av.getTotalMoney():
-                self.air.writeServerEvent('suspicious', avId, 'Failed to take away the jellybeans from the avatar')
-                self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_NotEnoughMoney])
+                self.air.writeServerEvent(
+                    "suspicious",
+                    avId,
+                    "Failed to take away the jellybeans from the avatar",
+                )
+                self.sendUpdateToAvatarId(
+                    avId,
+                    "requestPurchaseResponse",
+                    [context, ToontownGlobals.P_NotEnoughMoney],
+                )
                 return
 
             if len(av.mailboxContents) >= ToontownGlobals.MaxMailboxContents:
-                self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_MailboxFull])
+                self.sendUpdateToAvatarId(
+                    avId,
+                    "requestPurchaseResponse",
+                    [context, ToontownGlobals.P_MailboxFull],
+                )
                 return
 
-            if len(av.onOrder) + len(av.mailboxContents) + len(
-                    av.onGiftOrder) + 1 >= ToontownGlobals.MaxMailboxContents:
-                self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, ToontownGlobals.P_OnOrderListFull])
+            if (
+                len(av.onOrder) + len(av.mailboxContents) + len(av.onGiftOrder) + 1
+                >= ToontownGlobals.MaxMailboxContents
+            ):
+                self.sendUpdateToAvatarId(
+                    avId,
+                    "requestPurchaseResponse",
+                    [context, ToontownGlobals.P_OnOrderListFull],
+                )
                 return
 
             retCode = ToontownGlobals.P_ItemOnOrder
             if not item.getDeliveryTime():
                 retCode = item.recordPurchase(av, optional)
                 deliveryTime = 0
-            elif config.GetBool('want-instant-delivery', False):
+            elif config.GetBool("want-instant-delivery", False):
                 # Do we want instant delivery?
                 deliveryTime = int(time.time() / 60) + 1
             else:
@@ -238,8 +335,13 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
                 av.onOrder.append(item)
                 av.b_setDeliverySchedule(av.onOrder)
 
-            self.sendUpdateToAvatarId(avId, 'requestPurchaseResponse', [context, retCode])
-            if retCode in (ToontownGlobals.P_ItemOnOrder, ToontownGlobals.P_ItemAvailable):
+            self.sendUpdateToAvatarId(
+                avId, "requestPurchaseResponse", [context, retCode]
+            )
+            if retCode in (
+                ToontownGlobals.P_ItemOnOrder,
+                ToontownGlobals.P_ItemAvailable,
+            ):
                 av.takeMoney(price)
 
         self.air.dbInterface.queryObject(self.air.dbId, accId, handleAccount)
@@ -249,36 +351,62 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
         accId = self.air.getAccountIdFromSender()
         av = self.air.doId2do.get(avId)
         if not av:
-            self.air.writeServerEvent('suspicious', avId,
-                                      'av tried to gift something but they are not on the district!')
+            self.air.writeServerEvent(
+                "suspicious",
+                avId,
+                "av tried to gift something but they are not on the district!",
+            )
             return
 
         if avId != self.avId:
-            self.air.writeServerEvent('suspicious', avId, 'av tried to gift item while not at phone')
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_NotShopping])
+            self.air.writeServerEvent(
+                "suspicious", avId, "av tried to gift item while not at phone"
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_NotShopping],
+            )
             return
 
         item = CatalogItem.getItem(blob, store=CatalogItem.Customization)
         if isinstance(item, CatalogInvalidItem):
-            self.air.writeServerEvent('suspicious', avId, 'av tried to gift something but item is invalid!')
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_ItemAvailable])
+            self.air.writeServerEvent(
+                "suspicious", avId, "av tried to gift something but item is invalid!"
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_ItemAvailable],
+            )
             return
 
-        if not any(item in catalog for catalog in (av.weeklyCatalog, av.backCatalog, av.monthlyCatalog)):
-            self.air.writeServerEvent('suspicious', avId, 'av tried to gift item not in catalog')
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_NotInCatalog])
+        if not any(
+            item in catalog
+            for catalog in (av.weeklyCatalog, av.backCatalog, av.monthlyCatalog)
+        ):
+            self.air.writeServerEvent(
+                "suspicious", avId, "av tried to gift item not in catalog"
+            )
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_NotInCatalog],
+            )
             return
 
         def handleAccount(dclass, fields):
-            if dclass != self.air.dclassesByName['AccountAI']:
+            if dclass != self.air.dclassesByName["AccountAI"]:
                 return
 
             # Based on game creation date:
-            creationDate = fields['CREATED']
+            creationDate = fields["CREATED"]
             try:
-                creationDate = datetime.fromtimestamp(time.mktime(time.strptime(creationDate)))
+                creationDate = datetime.fromtimestamp(
+                    time.mktime(time.strptime(creationDate))
+                )
             except ValueError:
-                creationDate = ''
+                creationDate = ""
 
             accountDays = -1
             if creationDate:
@@ -292,14 +420,23 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
             if daysToGo < 0:
                 daysToGo = 0
 
-            if daysToGo and config.GetBool('want-loyalty-requirement', False):
-                self.air.writeServerEvent('suspicious', avId,
-                                          'av tried to gift a loyalty item before it is available!')
+            if daysToGo and config.GetBool("want-loyalty-requirement", False):
+                self.air.writeServerEvent(
+                    "suspicious",
+                    avId,
+                    "av tried to gift a loyalty item before it is available!",
+                )
                 return
 
             if not item.isGift():
-                self.air.writeServerEvent('suspicious', avId, 'av tried to gift an item that isn\'t a gift!')
-                self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_NotAGift])
+                self.air.writeServerEvent(
+                    "suspicious", avId, "av tried to gift an item that isn't a gift!"
+                )
+                self.sendUpdateToAvatarId(
+                    avId,
+                    "requestGiftPurchaseResponse",
+                    [context, ToontownGlobals.P_NotAGift],
+                )
                 return
 
             if item in av.backCatalog:
@@ -309,12 +446,21 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
 
             # Take the jellybeans away:
             if price > av.getTotalMoney():
-                self.air.writeServerEvent('suspicious', avId, 'Failed to take away the jellybeans from the avatar')
-                self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse',
-                                          [context, ToontownGlobals.P_NotEnoughMoney])
+                self.air.writeServerEvent(
+                    "suspicious",
+                    avId,
+                    "Failed to take away the jellybeans from the avatar",
+                )
+                self.sendUpdateToAvatarId(
+                    avId,
+                    "requestGiftPurchaseResponse",
+                    [context, ToontownGlobals.P_NotEnoughMoney],
+                )
                 return
 
-            self.requestGiftAvatarOperation(avId, targetId, [context, item, price], self.attemptGiftPurchase)
+            self.requestGiftAvatarOperation(
+                avId, targetId, [context, item, price], self.attemptGiftPurchase
+            )
 
         self.air.dbInterface.queryObject(self.air.dbId, accId, handleAccount)
 
@@ -335,20 +481,38 @@ class DistributedPhoneAI(DistributedFurnitureItemAI):
         context = optional[0]
         item = optional[1]
         if len(recipient.mailboxContents) >= ToontownGlobals.MaxMailboxContents:
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_MailboxFull])
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_MailboxFull],
+            )
             return
 
-        if len(recipient.onOrder) + len(recipient.mailboxContents) + len(
-                recipient.onGiftOrder) + 1 >= ToontownGlobals.MaxMailboxContents:
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, ToontownGlobals.P_OnOrderListFull])
+        if (
+            len(recipient.onOrder)
+            + len(recipient.mailboxContents)
+            + len(recipient.onGiftOrder)
+            + 1
+            >= ToontownGlobals.MaxMailboxContents
+        ):
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_OnOrderListFull],
+            )
             return
 
         if item.reachedPurchaseLimit(recipient):
-            self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse',
-                                      [context, ToontownGlobals.P_ReachedPurchaseLimit])
+            self.sendUpdateToAvatarId(
+                avId,
+                "requestGiftPurchaseResponse",
+                [context, ToontownGlobals.P_ReachedPurchaseLimit],
+            )
             return
 
         retCode = ToontownGlobals.P_ItemOnOrder
         av.takeMoney(optional[2])
         recipient.addToGiftSchedule(avId, targetId, item, item.getDeliveryTime())
-        self.sendUpdateToAvatarId(avId, 'requestGiftPurchaseResponse', [context, retCode])
+        self.sendUpdateToAvatarId(
+            avId, "requestGiftPurchaseResponse", [context, retCode]
+        )

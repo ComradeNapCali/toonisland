@@ -1,7 +1,8 @@
 from .TTSCToontaskMenu import TTSCToontaskMenu
 from .TTSCFactoryMenu import TTSCFactoryMenu
 from .TTSCCogMenu import TTSCCogMenu
-if hasattr(base, 'wantPets') and base.wantPets:
+
+if hasattr(base, "wantPets") and base.wantPets:
     from .TTSCPetTrickMenu import TTSCPetTrickMenu
 from .TTSCPromotionalMenu import TTSCPromotionalMenu
 from .TTSCToontaskTerminal import TTSCToontaskTerminal

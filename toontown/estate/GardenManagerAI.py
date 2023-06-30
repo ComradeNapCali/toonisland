@@ -22,14 +22,14 @@ NULL_STATUARY = 0
 
 # NULL_DATA is just a dictionary containing all the null values that are
 # defined above; this makes up a default garden with nothing in it.
-NULL_DATA = {'flowers': NULL_FLOWERS, 'trees': NULL_TREES, 'statuary': NULL_STATUARY}
+NULL_DATA = {"flowers": NULL_FLOWERS, "trees": NULL_TREES, "statuary": NULL_STATUARY}
 
 # X position offsets for flowers & flower plots:
 FLOWER_X_OFFSETS = (None, (0,), (-1.5, 1.5), (-3.4, 0, 3.5))
 
 
 class GardenAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('GardenAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("GardenAI")
     WANT_FLOWERS = True
     WANT_TREES = True
     WANT_STATUARY = True
@@ -43,10 +43,10 @@ class GardenAI:
         self.trees = set()
         self.flowers = set()
         self.objects = set()
-        self.fileName = 'garden_%s.json' % avId
-        self.filePath = 'backups/gardens/'
+        self.fileName = "garden_%s.json" % avId
+        self.filePath = "backups/gardens/"
         try:
-            with open(self.filePath + self.fileName, 'r') as f:
+            with open(self.filePath + self.fileName, "r") as f:
                 self.data = json.load(f)
 
             self.dbExists = True
@@ -58,10 +58,10 @@ class GardenAI:
             # Use self.update() to setup initial db:
             self.update()
 
-        self.data.pop('_id', None)
+        self.data.pop("_id", None)
 
     def destroy(self):
-        messenger.send('garden-%d-%d-going-down' % (id(self.gardenMgr), self.avId))
+        messenger.send("garden-%d-%d-going-down" % (id(self.gardenMgr), self.avId))
         for tree in self.trees:
             tree.requestDelete()
 
@@ -77,7 +77,9 @@ class GardenAI:
     def load(self, estate):
         self.estate = estate
         if self.avId not in estate.activeToons:
-            self.notify.warning('Garden associated with unknown avatar %d, deleting...' % self.avId)
+            self.notify.warning(
+                "Garden associated with unknown avatar %d, deleting..." % self.avId
+            )
             return False
 
         houseIndex = estate.activeToons.index(self.avId)
@@ -103,11 +105,18 @@ class GardenAI:
         flowerIndex = 0
         for estatePlot, (x, y, h, estatePlotType) in enumerate(estatePlots):
             if estatePlotType == GardenGlobals.GAG_TREE_TYPE and self.WANT_TREES:
-                data = self.data['trees'][treeIndex]
+                data = self.data["trees"][treeIndex]
                 planted, waterLevel, lastCheck, growthLevel, lastHarvested = data
                 if planted != -1:
-                    obj = self.plantTree(treeIndex, planted, waterLevel=waterLevel, lastCheck=lastCheck,
-                                         growthLevel=growthLevel, lastHarvested=lastHarvested, generate=False)
+                    obj = self.plantTree(
+                        treeIndex,
+                        planted,
+                        waterLevel=waterLevel,
+                        lastCheck=lastCheck,
+                        growthLevel=growthLevel,
+                        lastHarvested=lastHarvested,
+                        generate=False,
+                    )
                     self.trees.add(obj)
                 else:
                     obj = self.placePlot(treeIndex)
@@ -119,11 +128,18 @@ class GardenAI:
                 obj.generateWithRequired(estate.zoneId)
                 treeIndex += 1
             elif estatePlotType == GardenGlobals.FLOWER_TYPE and self.WANT_FLOWERS:
-                data = self.data['flowers'][flowerIndex]
+                data = self.data["flowers"][flowerIndex]
                 planted, waterLevel, lastCheck, growthLevel, variety = data
                 if planted != -1:
-                    obj = self.plantFlower(flowerIndex, planted, variety, waterLevel=waterLevel, lastCheck=lastCheck,
-                                           growthLevel=growthLevel, generate=False)
+                    obj = self.plantFlower(
+                        flowerIndex,
+                        planted,
+                        variety,
+                        waterLevel=waterLevel,
+                        lastCheck=lastCheck,
+                        growthLevel=growthLevel,
+                        generate=False,
+                    )
                     zOffset = 1.5
                 else:
                     obj = self.placePlot(flowerIndex)
@@ -147,7 +163,7 @@ class GardenAI:
                 obj.generateWithRequired(estate.zoneId)
                 flowerIndex += 1
             elif estatePlotType == GardenGlobals.STATUARY_TYPE and self.WANT_STATUARY:
-                data = self.data['statuary']
+                data = self.data["statuary"]
                 if data == 0:
                     obj = self.placePlot(-1)
                 else:
@@ -195,7 +211,7 @@ class GardenAI:
 
     def hasTree(self, track, index):
         treeTypeIndex = GardenGlobals.getTreeTypeIndex(track, index)
-        for tree in self.data['trees']:
+        for tree in self.data["trees"]:
             if tree[0] == treeTypeIndex:
                 return True
 
@@ -206,8 +222,20 @@ class GardenAI:
             if tree.getTypeIndex() == GardenGlobals.getTreeTypeIndex(track, index):
                 return tree
 
-    def plantTree(self, treeIndex, value, plot=None, waterLevel=-1, lastCheck=0, growthLevel=0, lastHarvested=0,
-                  ownerIndex=-1, plotId=-1, pos=None, generate=True):
+    def plantTree(
+        self,
+        treeIndex,
+        value,
+        plot=None,
+        waterLevel=-1,
+        lastCheck=0,
+        growthLevel=0,
+        lastHarvested=0,
+        ownerIndex=-1,
+        plotId=-1,
+        pos=None,
+        generate=True,
+    ):
         if not self.air:
             return
 
@@ -241,7 +269,9 @@ class GardenAI:
 
         return tree
 
-    def placeStatuary(self, data, plot=None, plotId=-1, ownerIndex=-1, pos=None, generate=True):
+    def placeStatuary(
+        self, data, plot=None, plotId=-1, ownerIndex=-1, pos=None, generate=True
+    ):
         if not self.air:
             return
 
@@ -283,8 +313,19 @@ class GardenAI:
 
         return obj
 
-    def plantFlower(self, flowerIndex, species, variety, plot=None, waterLevel=-1, lastCheck=0, growthLevel=0,
-                    ownerIndex=-1, plotId=-1, generate=True):
+    def plantFlower(
+        self,
+        flowerIndex,
+        species,
+        variety,
+        plot=None,
+        waterLevel=-1,
+        lastCheck=0,
+        growthLevel=0,
+        ownerIndex=-1,
+        plotId=-1,
+        generate=True,
+    ):
         if not self.air:
             return
 
@@ -342,12 +383,12 @@ class GardenAI:
         if not os.path.exists(self.filePath):
             os.makedirs(self.filePath)
 
-        with open(self.filePath + self.fileName, 'w+') as f:
+        with open(self.filePath + self.fileName, "w+") as f:
             json.dump(self.data, f)
 
 
 class GardenManagerAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('GardenManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("GardenManagerAI")
 
     def __init__(self, air, estate):
         self.air = air

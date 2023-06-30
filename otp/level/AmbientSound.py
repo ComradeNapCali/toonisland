@@ -4,7 +4,6 @@ import random
 
 
 class AmbientSound(BasicEntities.NodePathEntity):
-
     def __init__(self, level, entId):
         BasicEntities.NodePathEntity.__init__(self, level, entId)
         self.initSound()
@@ -16,22 +15,21 @@ class AmbientSound(BasicEntities.NodePathEntity):
     def initSound(self):
         if not self.enabled:
             return
-        if self.soundPath == '':
+        if self.soundPath == "":
             return
         self.sound = base.loader.loadSfx(self.soundPath)
         if self.sound is None:
             return
-        self.soundIval = SoundInterval(
-            self.sound, node=self, volume=self.volume)
+        self.soundIval = SoundInterval(self.sound, node=self, volume=self.volume)
         self.soundIval.loop()
         self.soundIval.setT(random.random() * self.sound.length())
         return
 
     def destroySound(self):
-        if hasattr(self, 'soundIval'):
+        if hasattr(self, "soundIval"):
             self.soundIval.pause()
             del self.soundIval
-        if hasattr(self, 'sound'):
+        if hasattr(self, "sound"):
             del self.sound
 
     if __dev__:

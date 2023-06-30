@@ -5,8 +5,7 @@ from . import BasicEntities
 
 
 class CollisionSolidEntity(BasicEntities.NodePathEntity):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        'CollisionSolidEntity')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CollisionSolidEntity")
 
     def __init__(self, level, entId):
         self.collNodePath = None
@@ -20,7 +19,7 @@ class CollisionSolidEntity(BasicEntities.NodePathEntity):
 
     def initSolid(self):
         self.destroySolid()
-        if self.solidType == 'sphere':
+        if self.solidType == "sphere":
             solid = CollisionSphere(0, 0, 0, self.radius)
         else:
             solid = CollisionTube(0, 0, 0, 0, 0, self.length, self.radius)
@@ -43,5 +42,5 @@ class CollisionSolidEntity(BasicEntities.NodePathEntity):
     if __dev__:
 
         def attribChanged(self, attrib, value):
-            print('attribChanged')
+            print("attribChanged")
             self.initSolid()

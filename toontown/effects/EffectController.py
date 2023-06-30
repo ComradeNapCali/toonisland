@@ -1,5 +1,6 @@
 from panda3d.core import *
 
+
 class EffectController:
     particleDummy = None
 
@@ -33,12 +34,12 @@ class EffectController:
         self.cleanUpEffect()
         self.finish()
 
-    def play(self, lod = None):
+    def play(self, lod=None):
         if lod != None:
             try:
                 self.createTrack(lod)
             except TypeError as e:
-                raise TypeError('Error loading %s effect.' % self.__class__.__name__)
+                raise TypeError("Error loading %s effect." % self.__class__.__name__)
 
         else:
             self.createTrack()
@@ -70,12 +71,12 @@ class EffectController:
             self.endEffect = None
         return
 
-    def startLoop(self, lod = None):
+    def startLoop(self, lod=None):
         if lod != None:
             try:
                 self.createTrack(lod)
             except TypeError as e:
-                raise TypeError('Error loading %s effect.' % self.__class__.__name__)
+                raise TypeError("Error loading %s effect." % self.__class__.__name__)
 
         else:
             self.createTrack()

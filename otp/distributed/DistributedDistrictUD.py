@@ -3,8 +3,7 @@ from direct.distributed.DistributedObjectUD import DistributedObjectUD
 
 
 class DistributedDistrictUD(DistributedObjectUD):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedDistrictUD")
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDistrictUD")
 
     def setName(self, todo0):
         pass

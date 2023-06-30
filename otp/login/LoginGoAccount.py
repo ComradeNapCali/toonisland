@@ -6,12 +6,11 @@ from direct.distributed.PyDatagram import PyDatagram
 
 
 class LoginGoAccount(LoginBase.LoginBase):
-
     def __init__(self, cr):
         LoginBase.LoginBase.__init__(self, cr)
 
     def createAccount(self, loginName, password, data):
-        return 'Unsupported'
+        return "Unsupported"
 
     def authorize(self, loginName, password):
         self.loginName = loginName
@@ -40,7 +39,7 @@ class LoginGoAccount(LoginBase.LoginBase):
         return 0
 
     def getAccountData(self, loginName, password):
-        return 'Unsupported'
+        return "Unsupported"
 
     def supportsParentPassword(self):
         return 0

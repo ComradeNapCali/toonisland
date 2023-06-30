@@ -1,8 +1,8 @@
 from . import FishBase
 from . import FishGlobals
 
-class FishTank:
 
+class FishTank:
     def __init__(self):
         self.fishList = []
 
@@ -37,7 +37,11 @@ class FishTank:
 
     def hasBiggerFish(self, genus, species, weight):
         for fish in self.fishList:
-            if fish.getGenus() == genus and fish.getSpecies() == species and fish.getWeight() >= weight:
+            if (
+                fish.getGenus() == genus
+                and fish.getSpecies() == species
+                and fish.getWeight() >= weight
+            ):
                 return 1
 
         return 0
@@ -55,6 +59,7 @@ class FishTank:
 
     def generateRandomTank(self):
         import random
+
         numFish = random.randint(1, 20)
         self.fishList = []
         for i in range(numFish):
@@ -73,10 +78,10 @@ class FishTank:
     def __str__(self):
         numFish = len(self.fishList)
         value = 0
-        txt = 'Fish Tank (%s fish):' % numFish
+        txt = "Fish Tank (%s fish):" % numFish
         for fish in self.fishList:
-            txt += '\n' + str(fish)
+            txt += "\n" + str(fish)
             value += fish.getValue()
 
-        txt += '\nTotal value: %s' % value
+        txt += "\nTotal value: %s" % value
         return txt

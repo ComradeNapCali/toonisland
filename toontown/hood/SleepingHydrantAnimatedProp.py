@@ -3,8 +3,8 @@ from direct.interval.IntervalGlobal import *
 from direct.task import Task
 import math
 
-class SleepingHydrantAnimatedProp(AnimatedProp.AnimatedProp):
 
+class SleepingHydrantAnimatedProp(AnimatedProp.AnimatedProp):
     def __init__(self, node):
         AnimatedProp.AnimatedProp.__init__(self, node)
         self.task = None
@@ -16,7 +16,7 @@ class SleepingHydrantAnimatedProp(AnimatedProp.AnimatedProp):
 
     def enter(self):
         AnimatedProp.AnimatedProp.enter(self)
-        self.task = taskMgr.add(self.bobTask, self.uniqueName('bobTask'))
+        self.task = taskMgr.add(self.bobTask, self.uniqueName("bobTask"))
 
     def exit(self):
         AnimatedProp.AnimatedProp.exit(self)

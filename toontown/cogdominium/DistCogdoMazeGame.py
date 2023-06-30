@@ -7,15 +7,16 @@ from .CogdoMaze import CogdoMazeFactory
 from . import CogdoMazeGameGlobals
 from . import CogdoMazeGameGlobals as Globals
 
+
 class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
-    notify = directNotify.newCategory('DistCogdoMazeGame')
+    notify = directNotify.newCategory("DistCogdoMazeGame")
 
     def __init__(self, cr):
         DistCogdoGame.__init__(self, cr)
         self.game = CogdoMazeGame(self)
         self._numSuits = (0, 0, 0)
-        if __debug__ and base.config.GetBool('schellgames-dev', True):
-            self.accept('onCodeReload', self.__sgOnCodeReload)
+        if __debug__ and base.config.GetBool("schellgames-dev", True):
+            self.accept("onCodeReload", self.__sgOnCodeReload)
 
     def delete(self):
         del self.randomNumGen
@@ -37,16 +38,16 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.game.placeEntranceElevator(elev)
 
     def _gameInProgress(self):
-        return self.fsm.getCurrentState().getName() == 'Game'
+        return self.fsm.getCurrentState().getName() == "Game"
 
     def enterLoaded(self):
         DistCogdoGame.enterLoaded(self)
         mazeFactory = self.createMazeFactory(self.createRandomNumGen())
         bossCode = None
         if self._numSuits[0] > 0:
-            bossCode = ''
+            bossCode = ""
             for u in range(self._numSuits[0]):
-                bossCode += '%X' % self.randomNumGen.randint(0, 15)
+                bossCode += "%X" % self.randomNumGen.randint(0, 15)
 
         self.game.load(mazeFactory, self._numSuits, bossCode)
         return
@@ -94,7 +95,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self._numSuits = numSuits
 
     def d_sendRequestAction(self, action, data):
-        self.sendUpdate('requestAction', [action, data])
+        self.sendUpdate("requestAction", [action, data])
 
     def toonUsedGag(self, toonId, x, y, h, networkTime):
         if not self._gameInProgress():
@@ -108,10 +109,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
 
     def d_requestUseGag(self, x, y, h):
         networkTime = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
-        self.sendUpdate('requestUseGag', [x,
-         y,
-         h,
-         networkTime])
+        self.sendUpdate("requestUseGag", [x, y, h, networkTime])
 
     def b_toonUsedGag(self, x, y, h):
         self.d_requestUseGag(x, y, h)
@@ -127,7 +125,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.game.suitHitByGag(toonId, suitType, suitNum)
 
     def d_requestSuitHitByGag(self, suitType, suitNum):
-        self.sendUpdate('requestSuitHitByGag', [suitType, suitNum])
+        self.sendUpdate("requestSuitHitByGag", [suitType, suitNum])
 
     def b_suitHitByGag(self, suitType, suitNum):
         self.d_requestSuitHitByGag(suitType, suitNum)
@@ -162,7 +160,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
 
     def d_requestHitBySuit(self, suitType, suitNum):
         networkTime = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
-        self.sendUpdate('requestHitBySuit', [suitType, suitNum, networkTime])
+        self.sendUpdate("requestHitBySuit", [suitType, suitNum, networkTime])
 
     def b_toonHitBySuit(self, suitType, suitNum):
         self.d_requestHitBySuit(suitType, suitNum)
@@ -178,14 +176,14 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.game.toonHitByDrop(toonId)
 
     def d_requestHitByDrop(self):
-        self.sendUpdate('requestHitByDrop', [])
+        self.sendUpdate("requestHitByDrop", [])
 
     def b_toonHitByDrop(self):
         self.d_requestHitByDrop()
         self.game.toonHitByDrop(base.localAvatar.doId)
 
     def d_sendRequestPickUp(self, pickupNum):
-        self.sendUpdate('requestPickUp', [pickupNum])
+        self.sendUpdate("requestPickUp", [pickupNum])
 
     def pickUp(self, toonId, pickupNum, networkTime):
         if not self._gameInProgress():
@@ -197,7 +195,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
 
     def d_sendRequestGag(self, waterCoolerIndex):
         self.game.localPlayer.orthoWalk.sendCurrentPosition()
-        self.sendUpdate('requestGag', [waterCoolerIndex])
+        self.sendUpdate("requestGag", [waterCoolerIndex])
 
     def hasGag(self, toonId, networkTime):
         if not self._gameInProgress():
@@ -215,7 +213,9 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         elif action == Globals.GameActions.EnterDoor:
             self.game.toonEntersDoor(data)
         elif action == Globals.GameActions.OpenDoor:
-            timeLeft = Globals.SecondsUntilGameEnds - globalClockDelta.localElapsedTime(networkTime)
+            timeLeft = Globals.SecondsUntilGameEnds - globalClockDelta.localElapsedTime(
+                networkTime
+            )
             self.game.openDoor(timeLeft)
         elif action == Globals.GameActions.Countdown:
             countdownTimeLeft = Globals.SecondsUntilTimeout

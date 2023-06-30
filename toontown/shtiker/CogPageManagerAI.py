@@ -5,7 +5,7 @@ from toontown.suit import SuitDNA
 
 
 class CogPageManagerAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('CogPageManagerAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CogPageManagerAI")
 
     def __init__(self, air):
         self.air = air
@@ -14,8 +14,8 @@ class CogPageManagerAI:
         # zoneId is unused, SAD
         cogStatus = toon.getCogStatus()
         for suit in suitsEncountered:
-            if toon.getDoId() in suit['activeToons']:
-                suitIndex = SuitDNA.suitHeadTypes.index(suit['type'])
+            if toon.getDoId() in suit["activeToons"]:
+                suitIndex = SuitDNA.suitHeadTypes.index(suit["type"])
                 if cogStatus[suitIndex] == COG_UNSEEN:
                     cogStatus[suitIndex] = COG_BATTLED
 
@@ -26,14 +26,14 @@ class CogPageManagerAI:
         cogStatus = toon.getCogStatus()
         cogCount = toon.getCogCount()
         for suit in suitsKilled:
-            if suit['isSkelecog'] or suit['isVP'] or suit['isCFO']:
+            if suit["isSkelecog"] or suit["isVP"] or suit["isCFO"]:
                 continue
 
-            if toon.getDoId() in suit['activeToons']:
-                suitIndex = SuitDNA.suitHeadTypes.index(suit['type'])
-                suitDept = SuitDNA.suitDepts.index(suit['track'])
-                cogQuota = COG_QUOTAS[0][SuitDNA.getSuitType(suit['type']) - 1]
-                buildingQuota = COG_QUOTAS[1][SuitDNA.getSuitType(suit['type']) - 1]
+            if toon.getDoId() in suit["activeToons"]:
+                suitIndex = SuitDNA.suitHeadTypes.index(suit["type"])
+                suitDept = SuitDNA.suitDepts.index(suit["track"])
+                cogQuota = COG_QUOTAS[0][SuitDNA.getSuitType(suit["type"]) - 1]
+                buildingQuota = COG_QUOTAS[1][SuitDNA.getSuitType(suit["type"]) - 1]
                 cogRadar = toon.getCogRadar()
                 if cogRadar[suitDept] == 1:
                     continue

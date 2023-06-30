@@ -3,36 +3,56 @@ from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 from . import Hood
 
+
 class CogHood(Hood.Hood):
-    notify = DirectNotifyGlobal.directNotify.newCategory('CogHood')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CogHood")
 
     def __init__(self, parentFSM, doneEvent, dnaStore, hoodId):
         Hood.Hood.__init__(self, parentFSM, doneEvent, dnaStore, hoodId)
-        self.fsm = ClassicFSM.ClassicFSM('Hood', [State.State('start', self.enterStart, self.exitStart, ['cogHQLoader']),
-         State.State('cogHQLoader', self.enterCogHQLoader, self.exitCogHQLoader, ['quietZone']),
-         State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['cogHQLoader']),
-         State.State('final', self.enterFinal, self.exitFinal, [])], 'start', 'final')
+        self.fsm = ClassicFSM.ClassicFSM(
+            "Hood",
+            [
+                State.State("start", self.enterStart, self.exitStart, ["cogHQLoader"]),
+                State.State(
+                    "cogHQLoader",
+                    self.enterCogHQLoader,
+                    self.exitCogHQLoader,
+                    ["quietZone"],
+                ),
+                State.State(
+                    "quietZone",
+                    self.enterQuietZone,
+                    self.exitQuietZone,
+                    ["cogHQLoader"],
+                ),
+                State.State("final", self.enterFinal, self.exitFinal, []),
+            ],
+            "start",
+            "final",
+        )
         self.fsm.enterInitialState()
 
     def load(self):
         Hood.Hood.load(self)
-        skyInner = self.sky.find('**/InnerGroup')
-        skyMiddle = self.sky.find('**/MiddleGroup')
-        skyOuter = self.sky.find('**/OutterSky')
+        skyInner = self.sky.find("**/InnerGroup")
+        skyMiddle = self.sky.find("**/MiddleGroup")
+        skyOuter = self.sky.find("**/OutterSky")
         if not skyOuter.isEmpty():
-            skyOuter.setBin('background', 0)
+            skyOuter.setBin("background", 0)
         if not skyMiddle.isEmpty():
             skyMiddle.setDepthWrite(0)
-            skyMiddle.setBin('background', 10)
+            skyMiddle.setBin("background", 10)
         if not skyInner.isEmpty():
             skyInner.setDepthWrite(0)
-            skyInner.setBin('background', 20)
+            skyInner.setBin("background", 20)
 
     def loadLoader(self, requestStatus):
-        loaderName = requestStatus['loader']
-        if loaderName == 'cogHQLoader':
-            self.loader = self.cogHQLoaderClass(self, self.fsm.getStateNamed('cogHQLoader'), self.loaderDoneEvent)
-            self.loader.load(requestStatus['zoneId'])
+        loaderName = requestStatus["loader"]
+        if loaderName == "cogHQLoader":
+            self.loader = self.cogHQLoaderClass(
+                self, self.fsm.getStateNamed("cogHQLoader"), self.loaderDoneEvent
+            )
+            self.loader.load(requestStatus["zoneId"])
 
     def enterCogHQLoader(self, requestStatus):
         self.accept(self.loaderDoneEvent, self.handleCogHQLoaderDone)
@@ -47,7 +67,7 @@ class CogHood(Hood.Hood):
     def handleCogHQLoaderDone(self):
         doneStatus = self.loader.getDoneStatus()
         if self.isSameHood(doneStatus):
-            self.fsm.request('quietZone', [doneStatus])
+            self.fsm.request("quietZone", [doneStatus])
         else:
             self.doneStatus = doneStatus
             messenger.send(self.doneEvent)

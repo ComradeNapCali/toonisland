@@ -6,7 +6,8 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
 from toontown.shtiker import ShtikerPage
 from toontown.toonbase import TTLocalizer
-UseDirectNewsFrame = config.GetBool('use-direct-news-frame', True)
+
+UseDirectNewsFrame = config.GetBool("use-direct-news-frame", True)
 HaveNewsFrame = True
 if UseDirectNewsFrame:
     from toontown.shtiker import DirectNewsFrame
@@ -16,21 +17,28 @@ else:
     except:
         HaveNewsFrame = False
 
+
 class NewsPage(ShtikerPage.ShtikerPage):
-    notify = DirectNotifyGlobal.directNotify.newCategory('NewsPage')
+    notify = DirectNotifyGlobal.directNotify.newCategory("NewsPage")
 
     def __init__(self):
         ShtikerPage.ShtikerPage.__init__(self)
 
     def load(self):
-        self.noNewsLabel = DirectLabel(parent=self, relief=None, text=TTLocalizer.NewsPageImportError, text_scale=0.12)
+        self.noNewsLabel = DirectLabel(
+            parent=self,
+            relief=None,
+            text=TTLocalizer.NewsPageImportError,
+            text_scale=0.12,
+        )
         if HaveNewsFrame:
             if UseDirectNewsFrame:
                 import datetime
+
                 start = datetime.datetime.now()
                 self.newsFrame = DirectNewsFrame.DirectNewsFrame(parent=self)
                 ending = datetime.datetime.now()
-                self.notify.info('time to load news = %s' % str(ending - start))
+                self.notify.info("time to load news = %s" % str(ending - start))
             else:
                 self.newsFrame = InGameNewsFrame.InGameNewsFrame(parent=self)
                 self.newsFrame.activate()
@@ -58,7 +66,9 @@ class NewsPage(ShtikerPage.ShtikerPage):
             base.setCellsAvailable(base.leftCells, 0)
             base.setCellsAvailable([base.rightCells[1]], 0)
             localAvatar.book.bookCloseButton.hide()
-            localAvatar.setLastTimeReadNews(base.cr.toontownTimeManager.getCurServerDateTime())
+            localAvatar.setLastTimeReadNews(
+                base.cr.toontownTimeManager.getCurServerDateTime()
+            )
 
     def exit(self):
         self.clearPage()
@@ -79,4 +89,4 @@ class NewsPage(ShtikerPage.ShtikerPage):
         if HaveNewsFrame:
             return self.newsFrame.doSnapshot()
         else:
-            return 'No News Frame'
+            return "No News Frame"

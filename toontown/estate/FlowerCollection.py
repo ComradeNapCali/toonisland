@@ -2,8 +2,9 @@ from . import GardenGlobals
 from direct.directnotify import DirectNotifyGlobal
 from . import FlowerBase
 
+
 class FlowerCollection:
-    notify = DirectNotifyGlobal.directNotify.newCategory('FlowerCollection')
+    notify = DirectNotifyGlobal.directNotify.newCategory("FlowerCollection")
 
     def __init__(self):
         self.flowerlist = []
@@ -55,7 +56,10 @@ class FlowerCollection:
 
     def __collect(self, newFlower, updateCollection):
         for flower in self.flowerlist:
-            if flower.getVariety() == newFlower.getVariety() and flower.getSpecies() == newFlower.getSpecies():
+            if (
+                flower.getVariety() == newFlower.getVariety()
+                and flower.getSpecies() == newFlower.getSpecies()
+            ):
                 return GardenGlobals.COLLECT_NO_UPDATE
 
         if updateCollection:
@@ -67,8 +71,8 @@ class FlowerCollection:
 
     def __str__(self):
         numFlower = len(self.flowerlist)
-        txt = 'Flower Collection (%s flowers):' % numFlower
+        txt = "Flower Collection (%s flowers):" % numFlower
         for flower in self.flowerlist:
-            txt += '\n' + str(flower)
+            txt += "\n" + str(flower)
 
         return txt

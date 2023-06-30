@@ -4,24 +4,27 @@ from toontown.toonbase import ToontownGlobals
 from toontown.estate import DistributedStatuary
 from toontown.estate import GardenGlobals
 
+
 class DistributedChangingStatuary(DistributedStatuary.DistributedStatuary):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedChangingStatuary')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedChangingStatuary")
 
     def __init__(self, cr):
-        self.notify.debug('constructing DistributedChangingStatuary')
+        self.notify.debug("constructing DistributedChangingStatuary")
         DistributedStatuary.DistributedStatuary.__init__(self, cr)
 
     def loadModel(self):
-        self.rotateNode = self.plantPath.attachNewNode('rotate')
+        self.rotateNode = self.plantPath.attachNewNode("rotate")
         self.model = loader.loadModel(self.modelPath)
-        colNode = self.model.find('**/+CollisionNode')
+        colNode = self.model.find("**/+CollisionNode")
         if not colNode.isEmpty():
-            score, multiplier = ToontownGlobals.PinballScoring[ToontownGlobals.PinballStatuary]
+            score, multiplier = ToontownGlobals.PinballScoring[
+                ToontownGlobals.PinballStatuary
+            ]
             if self.pinballScore:
                 score = self.pinballScore[0]
                 multiplier = self.pinballScore[1]
-            scoreNodePath = NodePath('statuary-%d-%d' % (score, multiplier))
-            colNode.setName('statuaryCol')
+            scoreNodePath = NodePath("statuary-%d-%d" % (score, multiplier))
+            colNode.setName("statuaryCol")
             scoreNodePath.reparentTo(colNode.getParent())
             colNode.reparentTo(scoreNodePath)
         self.model.setScale(self.worldScale)
@@ -32,7 +35,7 @@ class DistributedChangingStatuary(DistributedStatuary.DistributedStatuary):
     def hideParts(self):
         stage = -1
         attrib = GardenGlobals.PlantAttributes[self.typeIndex]
-        growthThresholds = attrib['growthThresholds']
+        growthThresholds = attrib["growthThresholds"]
         for index, threshold in enumerate(growthThresholds):
             if self.growthLevel < threshold:
                 stage = index
@@ -40,11 +43,11 @@ class DistributedChangingStatuary(DistributedStatuary.DistributedStatuary):
 
         if stage == -1:
             stage = len(growthThresholds)
-        self.notify.debug('growth Stage=%d' % stage)
+        self.notify.debug("growth Stage=%d" % stage)
         for index in range(len(growthThresholds) + 1):
             if index != stage:
-                partName = '**/growthStage_%d' % index
-                self.notify.debug('trying to remove %s' % partName)
+                partName = "**/growthStage_%d" % index
+                self.notify.debug("trying to remove %s" % partName)
                 hideThis = self.model.find(partName)
                 if not hideThis.isEmpty():
                     hideThis.removeNode()

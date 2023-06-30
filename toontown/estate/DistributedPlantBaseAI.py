@@ -18,10 +18,10 @@ class DistributedPlantBaseAI(DistributedLawnDecorAI):
     def setTypeIndex(self, typeIndex):
         self.typeIndex = typeIndex
         self.attributes = GardenGlobals.PlantAttributes[typeIndex]
-        self.growthThresholds = self.attributes['growthThresholds']
+        self.growthThresholds = self.attributes["growthThresholds"]
 
     def d_setTypeIndex(self, typeIndex):
-        self.sendUpdate('setTypeIndex', [typeIndex])
+        self.sendUpdate("setTypeIndex", [typeIndex])
 
     def b_setTypeIndex(self, typeIndex):
         self.setTypeIndex(typeIndex)
@@ -34,7 +34,7 @@ class DistributedPlantBaseAI(DistributedLawnDecorAI):
         self.waterLevel = waterLevel
 
     def d_setWaterLevel(self, waterLevel):
-        self.sendUpdate('setWaterLevel', [waterLevel])
+        self.sendUpdate("setWaterLevel", [waterLevel])
 
     def b_setWaterLevel(self, waterLevel):
         self.setWaterLevel(waterLevel)
@@ -47,7 +47,7 @@ class DistributedPlantBaseAI(DistributedLawnDecorAI):
         self.growthLevel = growthLevel
 
     def d_setGrowthLevel(self, growthLevel):
-        self.sendUpdate('setGrowthLevel', [growthLevel])
+        self.sendUpdate("setGrowthLevel", [growthLevel])
 
     def b_setGrowthLevel(self, growthLevel):
         self.setGrowthLevel(growthLevel)

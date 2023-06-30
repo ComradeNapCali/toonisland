@@ -16,6 +16,7 @@ from toontown.golf import PhysicsWorldBase
 import random, time
 from direct.interval.SoundInterval import SoundInterval
 
+
 def scalp(vec, scal):
     vec0 = vec[0] * scal
     vec1 = vec[1] * scal
@@ -27,13 +28,15 @@ def length(vec):
     return sqrt(vec[0] ** 2 + vec[1] ** 2 + vec[2] ** 2)
 
 
-class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldBase.PhysicsWorldBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPhysicsWorld')
+class DistributedPhysicsWorld(
+    DistributedObject.DistributedObject, PhysicsWorldBase.PhysicsWorldBase
+):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPhysicsWorld")
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         PhysicsWorldBase.PhysicsWorldBase.__init__(self, 1)
-        self.accept('ode toggle contacts', self.__handleToggleContacts)
+        self.accept("ode toggle contacts", self.__handleToggleContacts)
         self.physicsSfxDict = {}
 
     def generate(self):
@@ -44,7 +47,7 @@ class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldB
     def delete(self):
         DistributedObject.DistributedObject.delete(self)
         PhysicsWorldBase.PhysicsWorldBase.delete(self)
-        taskMgr.remove('simulation task')
+        taskMgr.remove("simulation task")
         self.ignoreAll()
         for index in self.physicsSfxDict:
             sfxPair = self.physicsSfxDict[index]
@@ -55,7 +58,9 @@ class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldB
         return
 
     def clientCommonObject(self, type, commonId, pos, hpr, sizeX, sizeY, moveDistance):
-        data = self.createCommonObject(type, commonId, pos, hpr, sizeX, sizeY, moveDistance)
+        data = self.createCommonObject(
+            type, commonId, pos, hpr, sizeX, sizeY, moveDistance
+        )
         index = data[1]
         if type == 3:
             cross = self.commonObjectDict[commonId][2]
@@ -64,9 +69,17 @@ class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldB
                 odeBody = pair[1]
                 if odeBody == cross:
                     base.sfxPlayer.setCutoffDistance(240)
-                    self.notify.debug('nodePath = %s' % pandaNodePathGeom)
-                    windmillSfx = loader.loadSfx('phase_6/audio/sfx/Golf_Windmill_Loop.ogg')
-                    windMillSoundInterval = SoundInterval(windmillSfx, node=pandaNodePathGeom, listenerNode=base.camera, seamlessLoop=True, volume=0.5)
+                    self.notify.debug("nodePath = %s" % pandaNodePathGeom)
+                    windmillSfx = loader.loadSfx(
+                        "phase_6/audio/sfx/Golf_Windmill_Loop.ogg"
+                    )
+                    windMillSoundInterval = SoundInterval(
+                        windmillSfx,
+                        node=pandaNodePathGeom,
+                        listenerNode=base.camera,
+                        seamlessLoop=True,
+                        volume=0.5,
+                    )
                     windMillSoundInterval.loop()
                     self.physicsSfxDict[index] = (windmillSfx, windMillSoundInterval)
                     break
@@ -77,19 +90,26 @@ class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldB
                 pandaNodePathGeom = pair[0]
                 odeBody = pair[1]
                 if odeBody == box:
-                    self.notify.debug('nodePath = %s' % pandaNodePathGeom)
-                    moverSfx = loader.loadSfx('phase_6/audio/sfx/Golf_Moving_Barrier.ogg')
-                    moverSoundInterval = SoundInterval(moverSfx, node=pandaNodePathGeom, listenerNode=base.camera, seamlessLoop=True, volume=0.5)
+                    self.notify.debug("nodePath = %s" % pandaNodePathGeom)
+                    moverSfx = loader.loadSfx(
+                        "phase_6/audio/sfx/Golf_Moving_Barrier.ogg"
+                    )
+                    moverSoundInterval = SoundInterval(
+                        moverSfx,
+                        node=pandaNodePathGeom,
+                        listenerNode=base.camera,
+                        seamlessLoop=True,
+                        volume=0.5,
+                    )
                     moverSoundInterval.start()
                     self.physicsSfxDict[index] = (moverSfx, moverSoundInterval, index)
                     break
 
     def commonObjectEvent(self, key, model, type, force, event):
-        self.notify.debug('commonObjectForceEvent key %s model %s type %s force %s event %s' % (key,
-         model,
-         type,
-         force,
-         event))
+        self.notify.debug(
+            "commonObjectForceEvent key %s model %s type %s force %s event %s"
+            % (key, model, type, force, event)
+        )
         if type == 4:
             if event > 0:
                 self.physicsSfxDict[key][1].start()
@@ -98,9 +118,9 @@ class DistributedPhysicsWorld(DistributedObject.DistributedObject, PhysicsWorldB
         self.useCommonObjectData(objectData)
 
     def upSendCommonObjects(self):
-        self.sendUpdate('upSetCommonObjects', [self.getCommonObjectData()])
+        self.sendUpdate("upSetCommonObjects", [self.getCommonObjectData()])
 
-    def __handleToggleContacts(self, message = None):
+    def __handleToggleContacts(self, message=None):
         if self.showContacts:
             self.showContacts = 0
         else:

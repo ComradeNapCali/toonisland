@@ -9,6 +9,7 @@ from direct.distributed.PyDatagramIterator import PyDatagramIterator
 import types
 import sys
 from functools import total_ordering
+
 CatalogReverseType = None
 CatalogItemVersion = 8
 CatalogBackorderMarkup = 1.2
@@ -24,9 +25,10 @@ CatalogTypeBackorder = 2
 CatalogTypeMonthly = 3
 CatalogTypeLoyalty = 4
 
+
 @total_ordering
 class CatalogItem:
-    notify = DirectNotifyGlobal.directNotify.newCategory('CatalogItem')
+    notify = DirectNotifyGlobal.directNotify.newCategory("CatalogItem")
 
     def __init__(self, *args, **kw):
         self.saleItem = 0
@@ -101,16 +103,16 @@ class CatalogItem:
         return 0
 
     def getTypeName(self):
-        return 'Unknown Type Item'
+        return "Unknown Type Item"
 
     def getName(self):
-        return 'Unnamed Item'
+        return "Unnamed Item"
 
     def getDisplayName(self):
         return self.getName()
 
     def recordPurchase(self, avatar, optional):
-        self.notify.warning('%s has no purchase method.' % self)
+        self.notify.warning("%s has no purchase method." % self)
         return ToontownGlobals.P_NoPurchaseMethod
 
     def isSaleItem(self):
@@ -134,7 +136,7 @@ class CatalogItem:
         self.loyaltyDays = days
 
     def loyaltyRequirement(self):
-        if not hasattr(self, 'loyaltyDays'):
+        if not hasattr(self, "loyaltyDays"):
             return 0
         else:
             return self.loyaltyDays
@@ -166,10 +168,10 @@ class CatalogItem:
     def cleanupPicture(self):
         self.hasPicture = False
 
-    def requestPurchase(self, phone, callback, optional = -1):
+    def requestPurchase(self, phone, callback, optional=-1):
         phone.requestPurchase(self, callback, optional)
 
-    def requestGiftPurchase(self, phone, targetDoID, callback, optional = -1):
+    def requestGiftPurchase(self, phone, targetDoID, callback, optional=-1):
         phone.requestGiftPurchase(self, targetDoID, callback, optional)
 
     def requestPurchaseCleanup(self):
@@ -205,14 +207,16 @@ class CatalogItem:
         elif retcode == ToontownGlobals.P_NotEnoughMoney:
             return TTLocalizer.CatalogPurchaseGiftNotEnoughMoney
         else:
-            return TTLocalizer.CatalogPurchaseGiftGeneralError % {'friend': '%s',
-             'error': retcode}
+            return TTLocalizer.CatalogPurchaseGiftGeneralError % {
+                "friend": "%s",
+                "error": retcode,
+            }
 
     def acceptItem(self, mailbox, index, callback):
         mailbox.acceptItem(self, index, callback)
 
     def discardItem(self, mailbox, index, callback):
-        print('Item discardItem')
+        print("Item discardItem")
         mailbox.discardItem(self, index, callback)
 
     def acceptItemCleanup(self):
@@ -230,19 +234,19 @@ class CatalogItem:
         else:
             return TTLocalizer.CatalogAcceptGeneralError % retcode
 
-    def output(self, store = -1):
-        return 'CatalogItem'
+    def output(self, store=-1):
+        return "CatalogItem"
 
     def getFilename(self):
-        return ''
+        return ""
 
     def getColor(self):
         return None
 
-    def formatOptionalData(self, store = -1):
-        result = ''
+    def formatOptionalData(self, store=-1):
+        result = ""
         if store & Location and self.posHpr != None:
-            result += ', posHpr = (%s, %s, %s, %s, %s, %s)' % self.posHpr
+            result += ", posHpr = (%s, %s, %s, %s, %s, %s)" % self.posHpr
         return result
 
     def __str__(self):
@@ -258,10 +262,10 @@ class CatalogItem:
         return None
 
     def __eq__(self, other):
-        return (self.__class__ == other.__class__)
+        return self.__class__ == other.__class__
 
     def __lt__(self, other):
-        return (self.__class__ < other.__class__)
+        return self.__class__ < other.__class__
 
     def __hash__(self):
         return hash((self.__class__, self.getHashContents()))
@@ -298,12 +302,7 @@ class CatalogItem:
                 h = di.getArg(STInt16, 256.0 / 360.0)
                 p = di.getArg(STInt16, 256.0 / 360.0)
                 r = di.getArg(STInt16, 256.0 / 360.0)
-            self.posHpr = (x,
-             y,
-             z,
-             h,
-             p,
-             r)
+            self.posHpr = (x, y, z, h, p, r)
         if store & GiftTag:
             self.giftTag = di.getString()
         if versionNumber >= 8:
@@ -327,6 +326,7 @@ class CatalogItem:
 
     def getTypeCode(self):
         from . import CatalogItemTypes
+
         return CatalogItemTypes.CatalogItemTypes[self.__class__]
 
     def applyColor(self, model, colorDesc):
@@ -355,19 +355,22 @@ class CatalogItem:
 
     def makeFrame(self):
         from direct.gui.DirectGui import DirectFrame
-        frame = DirectFrame(parent=hidden, frameSize=(-1.0, 1.0, -1.0, 1.0), relief=None)
+
+        frame = DirectFrame(
+            parent=hidden, frameSize=(-1.0, 1.0, -1.0, 1.0), relief=None
+        )
         return frame
 
-    def makeFrameModel(self, model, spin = 1):
+    def makeFrameModel(self, model, spin=1):
         frame = self.makeFrame()
         ival = None
         if model:
             model.setDepthTest(1)
             model.setDepthWrite(1)
             if spin:
-                pitch = frame.attachNewNode('pitch')
-                rotate = pitch.attachNewNode('rotate')
-                scale = rotate.attachNewNode('scale')
+                pitch = frame.attachNewNode("pitch")
+                rotate = pitch.attachNewNode("rotate")
+                scale = rotate.attachNewNode("scale")
                 model.reparentTo(scale)
                 bMin, bMax = model.getTightBounds()
                 center = (bMin + bMax) / 2.0
@@ -378,9 +381,11 @@ class CatalogItem:
                 corner = Vec3(bMax - center)
                 scale.setScale(1.0 / max(corner[0], corner[1], corner[2]))
                 pitch.setY(2)
-                ival = LerpHprInterval(rotate, 10, VBase3(-270, 0, 0), startHpr=VBase3(90, 0, 0))
+                ival = LerpHprInterval(
+                    rotate, 10, VBase3(-270, 0, 0), startHpr=VBase3(90, 0, 0)
+                )
             else:
-                scale = frame.attachNewNode('scale')
+                scale = frame.attachNewNode("scale")
                 model.reparentTo(scale)
                 bMin, bMax = model.getTightBounds()
                 center = (bMin + bMax) / 2.0
@@ -389,7 +394,7 @@ class CatalogItem:
                 scale.setScale(1.0 / max(corner[0], corner[1], corner[2]))
         return (frame, ival)
 
-    def getBlob(self, store = 0):
+    def getBlob(self, store=0):
         dg = PyDatagram()
         dg.addUint8(CatalogItemVersion)
         encodeCatalogItem(dg, self, store)
@@ -399,7 +404,7 @@ class CatalogItem:
         return 6
 
     def getDaysToGo(self, avatar):
-        if not config.GetBool('want-loyalty-requirement', False):
+        if not config.GetBool("want-loyalty-requirement", False):
             return 0
 
         accountDays = avatar.getAccountDays()
@@ -411,6 +416,7 @@ class CatalogItem:
 
 def encodeCatalogItem(dg, item, store):
     from . import CatalogItemTypes
+
     flags = item.getTypeCode()
     if item.isSaleItem():
         flags |= CatalogItemTypes.CatalogItemSaleFlag
@@ -429,6 +435,7 @@ def encodeCatalogItem(dg, item, store):
 def decodeCatalogItem(di, versionNumber, store):
     global CatalogReverseType
     from . import CatalogItemTypes
+
     if CatalogReverseType == None:
         CatalogReverseType = {}
         for itemClass, index in list(CatalogItemTypes.CatalogItemTypes.items()):
@@ -446,10 +453,13 @@ def decodeCatalogItem(di, versionNumber, store):
         itemClass = CatalogReverseType[typeIndex]
         item = itemClass(di, versionNumber, store=store)
     except Exception as e:
-        CatalogItem.notify.warning('Invalid catalog item in stream: %s, %s' % (sys.exc_info()[0], e))
+        CatalogItem.notify.warning(
+            "Invalid catalog item in stream: %s, %s" % (sys.exc_info()[0], e)
+        )
         d = Datagram(di.getDatagram().getMessage()[startIndex:])
         d.dumpHex(Notify.out())
         from . import CatalogInvalidItem
+
         return CatalogInvalidItem.CatalogInvalidItem()
 
     if flags & CatalogItemTypes.CatalogItemSaleFlag:
@@ -459,14 +469,17 @@ def decodeCatalogItem(di, versionNumber, store):
     return item
 
 
-def getItem(blob, store = 0):
+def getItem(blob, store=0):
     dg = PyDatagram(blob)
     di = PyDatagramIterator(dg)
     try:
         versionNumber = di.getUint8()
         return decodeCatalogItem(di, versionNumber, store)
     except Exception as e:
-        CatalogItem.notify.warning('Invalid catalog item: %s, %s' % (sys.exc_info()[0], e))
+        CatalogItem.notify.warning(
+            "Invalid catalog item: %s, %s" % (sys.exc_info()[0], e)
+        )
         dg.dumpHex(Notify.out())
         from . import CatalogInvalidItem
+
         return CatalogInvalidItem.CatalogInvalidItem()

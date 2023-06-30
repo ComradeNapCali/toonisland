@@ -2,6 +2,7 @@ from panda3d.core import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.showbase.ShadowPlacer import ShadowPlacer
 from otp.otpbase import OTPGlobals
+
 globalDropShadowFlag = 1
 
 
@@ -9,7 +10,7 @@ def setGlobalDropShadowFlag(flag):
     global globalDropShadowFlag
     if flag != globalDropShadowFlag:
         globalDropShadowFlag = flag
-        messenger.send('globalDropShadowFlagChanged')
+        messenger.send("globalDropShadowFlagChanged")
 
 
 globalDropShadowGrayLevel = 0.5
@@ -19,33 +20,37 @@ def setGlobalDropShadowGrayLevel(grayLevel):
     global globalDropShadowGrayLevel
     if grayLevel != globalDropShadowGrayLevel:
         globalDropShadowGrayLevel = grayLevel
-        messenger.send('globalDropShadowGrayLevelChanged')
+        messenger.send("globalDropShadowGrayLevelChanged")
 
 
 class ShadowCaster:
-    notify = DirectNotifyGlobal.directNotify.newCategory('ShadowCaster')
+    notify = DirectNotifyGlobal.directNotify.newCategory("ShadowCaster")
 
     def __init__(self, squareShadow=False):
         if squareShadow:
-            self.shadowFileName = 'phase_3/models/props/square_drop_shadow'
+            self.shadowFileName = "phase_3/models/props/square_drop_shadow"
         else:
-            self.shadowFileName = 'phase_3/models/props/drop_shadow'
+            self.shadowFileName = "phase_3/models/props/drop_shadow"
         self.dropShadow = None
         self.shadowPlacer = None
         self.activeShadow = 0
         self.wantsActive = 1
         self.storedActiveState = 0
-        if hasattr(base, 'wantDynamicShadows') and base.wantDynamicShadows:
-            messenger.accept('globalDropShadowFlagChanged',
-                             self, self.__globalDropShadowFlagChanged)
-            messenger.accept('globalDropShadowGrayLevelChanged',
-                             self, self.__globalDropShadowGrayLevelChanged)
+        if hasattr(base, "wantDynamicShadows") and base.wantDynamicShadows:
+            messenger.accept(
+                "globalDropShadowFlagChanged", self, self.__globalDropShadowFlagChanged
+            )
+            messenger.accept(
+                "globalDropShadowGrayLevelChanged",
+                self,
+                self.__globalDropShadowGrayLevelChanged,
+            )
         return
 
     def delete(self):
-        if hasattr(base, 'wantDynamicShadows') and base.wantDynamicShadows:
-            messenger.ignore('globalDropShadowFlagChanged', self)
-            messenger.ignore('globalDropShadowGrayLevelChanged', self)
+        if hasattr(base, "wantDynamicShadows") and base.wantDynamicShadows:
+            messenger.ignore("globalDropShadowFlagChanged", self)
+            messenger.ignore("globalDropShadowGrayLevelChanged", self)
         self.deleteDropShadow()
         self.shadowJoint = None
         return
@@ -53,14 +58,15 @@ class ShadowCaster:
     def initializeDropShadow(self, hasGeomNode=True):
         self.deleteDropShadow()
         if hasGeomNode:
-            self.getGeomNode().setTag('cam', 'caster')
+            self.getGeomNode().setTag("cam", "caster")
         dropShadow = loader.loadModel(self.shadowFileName)
         dropShadow.setScale(0.4)
         dropShadow.flattenMedium()
         dropShadow.setBillboardAxis(2)
         dropShadow.setColor(0.0, 0.0, 0.0, globalDropShadowGrayLevel, 1)
         self.shadowPlacer = ShadowPlacer(
-            base.shadowTrav, dropShadow, OTPGlobals.WallBitmask, OTPGlobals.FloorBitmask)
+            base.shadowTrav, dropShadow, OTPGlobals.WallBitmask, OTPGlobals.FloorBitmask
+        )
         self.dropShadow = dropShadow
         if not globalDropShadowFlag:
             self.dropShadow.hide()
@@ -103,9 +109,9 @@ class ShadowCaster:
             self.dropShadow.setZ(-shadowHeight)
 
     def getShadowJoint(self):
-        if hasattr(self, 'shadowJoint'):
+        if hasattr(self, "shadowJoint"):
             return self.shadowJoint
-        shadowJoint = self.find('**/attachShadow')
+        shadowJoint = self.find("**/attachShadow")
         if shadowJoint.isEmpty():
             self.shadowJoint = NodePath(self)
         else:
@@ -134,6 +140,5 @@ class ShadowCaster:
 
     def __globalDropShadowGrayLevelChanged(self):
         if self.dropShadow != None:
-            self.dropShadow.setColor(
-                0.0, 0.0, 0.0, globalDropShadowGrayLevel, 1)
+            self.dropShadow.setColor(0.0, 0.0, 0.0, globalDropShadowGrayLevel, 1)
         return

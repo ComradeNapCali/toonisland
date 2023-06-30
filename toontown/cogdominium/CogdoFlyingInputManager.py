@@ -1,19 +1,29 @@
-from panda3d.core import CollisionSphere, CollisionNode, BitMask32, CollisionHandlerEvent, CollisionRay
+from panda3d.core import (
+    CollisionSphere,
+    CollisionNode,
+    BitMask32,
+    CollisionHandlerEvent,
+    CollisionRay,
+)
 from toontown.minigame import ArrowKeys
 
-class CogdoFlyingInputManager:
 
+class CogdoFlyingInputManager:
     def __init__(self):
         self.arrowKeys = ArrowKeys.ArrowKeys()
         self.arrowKeys.disable()
 
     def enable(self):
-        self.arrowKeys.setPressHandlers([self.__upArrowPressed,
-         self.__downArrowPressed,
-         self.__leftArrowPressed,
-         self.__rightArrowPressed,
-         self.__controlPressed,
-         self.__shiftPressed])
+        self.arrowKeys.setPressHandlers(
+            [
+                self.__upArrowPressed,
+                self.__downArrowPressed,
+                self.__leftArrowPressed,
+                self.__rightArrowPressed,
+                self.__controlPressed,
+                self.__shiftPressed,
+            ]
+        )
         self.arrowKeys.enable()
 
     def disable(self):

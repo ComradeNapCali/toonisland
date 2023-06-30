@@ -11,15 +11,19 @@ from . import FactoryEntityCreator
 from . import StageRoomSpecs
 from otp.level import LevelSpec, LevelConstants
 from toontown.toonbase import TTLocalizer
+
 if __dev__:
     from otp.level import EditorGlobals
 
+
 def getStageRoomReadyPostName(doId):
-    return 'stageRoomReady-%s' % doId
+    return "stageRoomReady-%s" % doId
 
 
-class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.StageRoomBase, StageRoom.StageRoom):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStageRoom')
+class DistributedStageRoom(
+    DistributedLevel.DistributedLevel, StageRoomBase.StageRoomBase, StageRoom.StageRoom
+):
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStageRoom")
     EmulateEntrancePoint = False
 
     def __init__(self, cr):
@@ -39,7 +43,7 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         return FactoryEntityCreator.FactoryEntityCreator(level=self)
 
     def generate(self):
-        self.notify.debug('generate')
+        self.notify.debug("generate")
         DistributedLevel.DistributedLevel.generate(self)
 
     def delete(self):
@@ -49,19 +53,19 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         self.ignoreAll()
 
     def setStageId(self, stageId):
-        self.notify.debug('stageId: %s' % stageId)
+        self.notify.debug("stageId: %s" % stageId)
         StageRoomBase.StageRoomBase.setStageId(self, stageId)
 
     def setRoomId(self, roomId):
-        self.notify.debug('roomId: %s' % roomId)
+        self.notify.debug("roomId: %s" % roomId)
         StageRoomBase.StageRoomBase.setRoomId(self, roomId)
 
     def setRoomNum(self, num):
-        self.notify.debug('roomNum: %s' % num)
+        self.notify.debug("roomNum: %s" % num)
         StageRoom.StageRoom.setRoomNum(self, num)
 
     def levelAnnounceGenerate(self):
-        self.notify.debug('levelAnnounceGenerate')
+        self.notify.debug("levelAnnounceGenerate")
         DistributedLevel.DistributedLevel.levelAnnounceGenerate(self)
         specModule = StageRoomSpecs.getStageRoomSpecModule(self.roomId)
         roomSpec = LevelSpec.LevelSpec(specModule)
@@ -80,7 +84,7 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
                 levelSpec.setEntityTypeReg(typeReg)
         DistributedLevel.DistributedLevel.privGotSpec(self, levelSpec)
         StageRoom.StageRoom.enter(self)
-        self.acceptOnce('leavingStage', self.announceLeaving)
+        self.acceptOnce("leavingStage", self.announceLeaving)
         bboard.post(self.getReadyPostName())
 
     def fixupLevelModel(self):
@@ -94,8 +98,9 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         self.stage.setBossConfronted(avId)
 
     def setDefeated(self):
-        self.notify.info('setDefeated')
+        self.notify.info("setDefeated")
         from toontown.coghq import DistributedStage
+
         messenger.send(DistributedStage.DistributedStage.WinEvent)
 
     def initVisibility(self, *args, **kw):
@@ -137,30 +142,41 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         StageRoom.StageRoom.enterLtNotPresent(self)
         if __dev__:
             bboard.removeIfEqual(EditorGlobals.EditTargetPostName, self)
-        self.ignore('f2')
+        self.ignore("f2")
 
     def enterLtPresent(self):
         StageRoom.StageRoom.enterLtPresent(self)
         if __dev__:
             bboard.post(EditorGlobals.EditTargetPostName, self)
         if self.stage is not None:
-            self.stage.currentRoomName = StageRoomSpecs.CashbotStageRoomId2RoomName[self.roomId]
+            self.stage.currentRoomName = StageRoomSpecs.CashbotStageRoomId2RoomName[
+                self.roomId
+            ]
 
-        def printPos(self = self):
+        def printPos(self=self):
             thisZone = self.getZoneNode(LevelConstants.UberZoneEntId)
             pos = base.localAvatar.getPos(thisZone)
             h = base.localAvatar.getH(thisZone)
             roomName = StageRoomSpecs.CashbotStageRoomId2RoomName[self.roomId]
-            print('stage pos: %s, h: %s, room: %s' % (repr(pos), h, roomName))
+            print("stage pos: %s, h: %s, room: %s" % (repr(pos), h, roomName))
             if self.stage is not None:
                 floorNum = self.stage.floorNum
             else:
-                floorNum = '???'
-            posStr = 'X: %.3f' % pos[0] + '\nY: %.3f' % pos[1] + '\nZ: %.3f' % pos[2] + '\nH: %.3f' % h + '\nstageId: %s' % self.stageId + '\nfloor: %s' % floorNum + '\nroomId: %s' % self.roomId + '\nroomName: %s' % roomName
+                floorNum = "???"
+            posStr = (
+                "X: %.3f" % pos[0]
+                + "\nY: %.3f" % pos[1]
+                + "\nZ: %.3f" % pos[2]
+                + "\nH: %.3f" % h
+                + "\nstageId: %s" % self.stageId
+                + "\nfloor: %s" % floorNum
+                + "\nroomId: %s" % self.roomId
+                + "\nroomName: %s" % roomName
+            )
             base.localAvatar.setChatAbsolute(posStr, CFThought | CFTimeout)
             return
 
-        self.accept('f2', printPos)
+        self.accept("f2", printPos)
         return
 
     def handleSOSPanel(self, panel):
@@ -172,11 +188,11 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         panel.setFactoryToonIdList(avIds)
 
     def disable(self):
-        self.notify.debug('disable')
+        self.notify.debug("disable")
         StageRoom.StageRoom.exit(self)
-        if hasattr(self, 'suits'):
+        if hasattr(self, "suits"):
             del self.suits
-        if hasattr(self, 'relatedObjectMgrRequest') and self.relatedObjectMgrRequest:
+        if hasattr(self, "relatedObjectMgrRequest") and self.relatedObjectMgrRequest:
             self.cr.relatedObjectMgr.abortRequest(self.relatedObjectMgrRequest)
             del self.relatedObjectMgrRequest
         bboard.remove(self.getReadyPostName())
@@ -197,7 +213,9 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
                 for suit in suits:
                     suit.comeOutOfReserve()
 
-            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newSuitIds, bringOutOfReserve)
+            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(
+                newSuitIds, bringOutOfReserve
+            )
 
     def reservesJoining(self):
         pass
@@ -227,10 +245,14 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         return TTLocalizer.StageBossBattleTaunt
 
     def __str__(self):
-        if hasattr(self, 'roomId'):
-            return '%s %s: %s' % (self.__class__.__name__, self.roomId, StageRoomSpecs.CashbotStageRoomId2RoomName[self.roomId])
+        if hasattr(self, "roomId"):
+            return "%s %s: %s" % (
+                self.__class__.__name__,
+                self.roomId,
+                StageRoomSpecs.CashbotStageRoomId2RoomName[self.roomId],
+            )
         else:
-            return 'DistributedStageRoom'
+            return "DistributedStageRoom"
 
     def __repr__(self):
         return str(self)

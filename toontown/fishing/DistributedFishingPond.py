@@ -7,13 +7,14 @@ from toontown.fishing import DistributedPondBingoManager
 from panda3d.core import Vec3
 from direct.task import Task
 
+
 class DistributedFishingPond(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFishingPond')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFishingPond")
     pollInterval = 0.5
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
-        self.notify.debug('init')
+        self.notify.debug("init")
         self.targets = {}
         self.area = None
         self.localToonBobPos = None
@@ -34,49 +35,53 @@ class DistributedFishingPond(DistributedObject.DistributedObject):
         return self.area
 
     def addTarget(self, target):
-        self.notify.debug('addTarget: %s' % target)
+        self.notify.debug("addTarget: %s" % target)
         self.targets[target.getDoId()] = target
 
     def removeTarget(self, target):
-        self.notify.debug('removeTarget: %s' % target)
+        self.notify.debug("removeTarget: %s" % target)
         del self.targets[target.getDoId()]
 
     def startCheckingTargets(self, spot, bobPos):
-        self.notify.debug('startCheckingTargets')
+        self.notify.debug("startCheckingTargets")
         if base.wantBingo:
             pass
         self.localToonSpot = spot
         self.localToonBobPos = bobPos
-        taskMgr.doMethodLater(self.pollInterval * 2, self.checkTargets, self.taskName('checkTargets'))
+        taskMgr.doMethodLater(
+            self.pollInterval * 2, self.checkTargets, self.taskName("checkTargets")
+        )
 
     def stopCheckingTargets(self):
-        self.notify.debug('stopCheckingTargets')
-        taskMgr.remove(self.taskName('checkTargets'))
+        self.notify.debug("stopCheckingTargets")
+        taskMgr.remove(self.taskName("checkTargets"))
         if not base.wantBingo:
             self.localToonSpot = None
         self.localToonBobPos = None
         return
 
-    def checkTargets(self, task = None):
-        self.notify.debug('checkTargets')
+    def checkTargets(self, task=None):
+        self.notify.debug("checkTargets")
         if self.localToonSpot != None:
             for target in list(self.targets.values()):
                 targetPos = target.getPos(render)
                 distVec = Vec3(targetPos - self.localToonBobPos)
                 dist = distVec.length()
                 if dist < target.getRadius():
-                    self.notify.debug('checkTargets: hit target: %s' % target.getDoId())
+                    self.notify.debug("checkTargets: hit target: %s" % target.getDoId())
                     self.d_hitTarget(target)
                     return Task.done
 
-            taskMgr.doMethodLater(self.pollInterval, self.checkTargets, self.taskName('checkTargets'))
+            taskMgr.doMethodLater(
+                self.pollInterval, self.checkTargets, self.taskName("checkTargets")
+            )
         else:
-            self.notify.warning('localToonSpot became None while checking targets')
+            self.notify.warning("localToonSpot became None while checking targets")
         return Task.done
 
     def d_hitTarget(self, target):
         self.localToonSpot.hitTarget()
-        self.sendUpdate('hitTarget', [target.getDoId()])
+        self.sendUpdate("hitTarget", [target.getDoId()])
 
     def setPondBingoManager(self, pondBingoMgr):
         self.pondBingoMgr = pondBingoMgr
@@ -104,7 +109,7 @@ class DistributedFishingPond(DistributedObject.DistributedObject):
         if self.pondBingoMgr:
             self.pondBingoMgr.cleanup()
 
-    def setLocalToonSpot(self, spot = None):
+    def setLocalToonSpot(self, spot=None):
         self.localToonSpot = spot
         if spot is not None and spot.getDoId() not in self.visitedSpots:
             self.visitedSpots[spot.getDoId()] = spot

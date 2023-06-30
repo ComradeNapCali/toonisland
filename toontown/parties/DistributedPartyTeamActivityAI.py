@@ -1,8 +1,11 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.parties.DistributedPartyActivityAI import DistributedPartyActivityAI
 
+
 class DistributedPartyTeamActivityAI(DistributedPartyActivityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyTeamActivityAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        "DistributedPartyTeamActivityAI"
+    )
 
     def toonJoinRequest(self, todo0):
         pass
@@ -33,4 +36,3 @@ class DistributedPartyTeamActivityAI(DistributedPartyActivityAI):
 
     def switchTeamRequestDenied(self, todo0):
         pass
-

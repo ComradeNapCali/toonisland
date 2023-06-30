@@ -6,7 +6,7 @@ from toontown.toonbase import ToontownGlobals
 
 
 class DistributedMailboxAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedMailboxAI')
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedMailboxAI")
 
     def __init__(self, air, house):
         DistributedObjectAI.__init__(self, air)
@@ -35,7 +35,7 @@ class DistributedMailboxAI(DistributedObjectAI):
         self.fullIndicator = fullIndicator
 
     def d_setFullIndicator(self, fullIndicator):
-        self.sendUpdate('setFullIndicator', [fullIndicator])
+        self.sendUpdate("setFullIndicator", [fullIndicator])
 
     def b_setFullIndicator(self, fullIndicator):
         self.setFullIndicator(fullIndicator)
@@ -82,10 +82,10 @@ class DistributedMailboxAI(DistributedObjectAI):
         self.resetMovie()
 
     def d_freeAvatar(self, avId):
-        self.sendUpdateToAvatarId(avId, 'freeAvatar', [])
+        self.sendUpdateToAvatarId(avId, "freeAvatar", [])
 
     def d_setMovie(self, movie, avId):
-        self.sendUpdate('setMovie', [movie, avId])
+        self.sendUpdate("setMovie", [movie, avId])
 
     def acceptItemMessage(self, context, item, index, optional):
         avId = self.air.getAvatarIdFromSender()
@@ -97,13 +97,17 @@ class DistributedMailboxAI(DistributedObjectAI):
             return
 
         if index >= len(av.mailboxContents):
-            self.sendUpdateToAvatarId(avId, 'acceptItemResponse', [context, ToontownGlobals.P_InvalidIndex])
+            self.sendUpdateToAvatarId(
+                avId, "acceptItemResponse", [context, ToontownGlobals.P_InvalidIndex]
+            )
             return
 
         item = av.mailboxContents[index]
         del av.mailboxContents[index]
         av.b_setMailboxContents(av.mailboxContents)
-        self.sendUpdateToAvatarId(avId, 'acceptItemResponse', [context, item.recordPurchase(av, optional)])
+        self.sendUpdateToAvatarId(
+            avId, "acceptItemResponse", [context, item.recordPurchase(av, optional)]
+        )
 
     def discardItemMessage(self, context, item, index, optional):
         avId = self.air.getAvatarIdFromSender()
@@ -115,12 +119,16 @@ class DistributedMailboxAI(DistributedObjectAI):
             return
 
         if index >= len(av.mailboxContents):
-            self.sendUpdateToAvatarId(avId, 'discardItemResponse', [context, ToontownGlobals.P_InvalidIndex])
+            self.sendUpdateToAvatarId(
+                avId, "discardItemResponse", [context, ToontownGlobals.P_InvalidIndex]
+            )
             return
 
         del av.mailboxContents[index]
         av.b_setMailboxContents(av.mailboxContents)
-        self.sendUpdateToAvatarId(avId, 'discardItemResponse', [context, ToontownGlobals.P_ItemAvailable])
+        self.sendUpdateToAvatarId(
+            avId, "discardItemResponse", [context, ToontownGlobals.P_ItemAvailable]
+        )
 
     def acceptInviteMessage(self, todo0, todo1):
         pass  # TODO
@@ -139,5 +147,9 @@ class DistributedMailboxAI(DistributedObjectAI):
             self.b_setFullIndicator(0)
 
     def resetMovie(self):
-        taskMgr.doMethodLater(2, self.d_setMovie, 'resetMovie-%d' % self.doId,
-                              extraArgs=[MailboxGlobals.MAILBOX_MOVIE_CLEAR, 0])
+        taskMgr.doMethodLater(
+            2,
+            self.d_setMovie,
+            "resetMovie-%d" % self.doId,
+            extraArgs=[MailboxGlobals.MAILBOX_MOVIE_CLEAR, 0],
+        )
