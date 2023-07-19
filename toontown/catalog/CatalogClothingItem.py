@@ -309,10 +309,18 @@ class CatalogClothingItem(CatalogItem.CatalogItem):
             return forBoys
 
     def forBoysOnly(self):
-        return 0
+        article = ClothingTypes[self.clothingType][CTArticle]
+        if article == ABoysShirt or article == ABoysShorts:
+            return 1
+        else:
+            return 0
 
     def forGirlsOnly(self):
-        return 0
+        article = ClothingTypes[self.clothingType][CTArticle]
+        if article == AGirlsShirt or article == AGirlsSkirt or article == AGirlsShorts:
+            return 1
+        else:
+            return 0
 
     def getPurchaseLimit(self):
         return 1
