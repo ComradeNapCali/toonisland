@@ -61,8 +61,6 @@ class DistributedNPCTailor(DistributedNPCToonBase):
         return
 
     def resetTailor(self):
-        if not self.isLocalToon:
-            return
         self.ignoreAll()
         taskMgr.remove(self.uniqueName('popupPurchaseGUI'))
         if self.cameraLerp:

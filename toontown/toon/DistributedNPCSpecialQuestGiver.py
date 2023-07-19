@@ -91,8 +91,7 @@ class DistributedNPCSpecialQuestGiver(DistributedNPCToonBase):
             place.fsm.request('walk')
 
     def finishMovie(self, av, isLocalToon, elapsedTime):
-        if isLocalToon:
-            self.cleanupMovie()
+        self.cleanupMovie()
         av.startLookAround()
         self.startLookAround()
         self.detectAvatars()
@@ -115,11 +114,10 @@ class DistributedNPCSpecialQuestGiver(DistributedNPCToonBase):
     def setMovie(self, mode, npcId, avId, quests, timestamp):
         timeStamp = ClockDelta.globalClockDelta.localElapsedTime(timestamp)
         isLocalToon = avId == base.localAvatar.doId
-        if mode == NPCToons.QUEST_MOVIE_CLEAR and isLocalToon:
-
+        if mode == NPCToons.QUEST_MOVIE_CLEAR:
             self.cleanupMovie()
             return
-        if mode == NPCToons.QUEST_MOVIE_TIMEOUT and isLocalToon:
+        if mode == NPCToons.QUEST_MOVIE_TIMEOUT:
             self.cleanupMovie()
             if isLocalToon:
                 self.freeAvatar()

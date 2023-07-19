@@ -11,7 +11,7 @@ class DistributedNPCFishermanAI(DistributedNPCToonBaseAI):
     def __init__(self, air, npcId):
         DistributedNPCToonBaseAI.__init__(self, air, npcId)
         self.givesQuests = 0
-        self.busy = []
+        self.busy = 0
 
     def delete(self):
         taskMgr.remove(self.uniqueName('clearMovie'))
@@ -23,12 +23,11 @@ class DistributedNPCFishermanAI(DistributedNPCToonBaseAI):
         if avId not in self.air.doId2do:
             self.notify.warning('Avatar: %s not found' % avId)
             return
-        if self.isBusy(avId):
+        if self.isBusy():
             self.freeAvatar(avId)
             return
         av = self.air.doId2do[avId]
-        if avId not in self.busy:
-            self.busy.append(avId)
+        self.busy = avId
         self.acceptOnce(self.air.getAvatarExitEvent(avId), self.__handleUnexpectedExit, extraArgs=[avId])
         value = av.fishTank.getTotalValue()
         if value > 0:
@@ -53,23 +52,20 @@ class DistributedNPCFishermanAI(DistributedNPCToonBaseAI):
          ClockDelta.globalClockDelta.getRealNetworkTime()])
 
     def sendTimeoutMovie(self, task):
-        avId = self.air.getAvatarIdFromSender()
-
-        self.d_setMovie(avId, NPCToons.SELL_MOVIE_TIMEOUT)
+        self.d_setMovie(self.busy, NPCToons.SELL_MOVIE_TIMEOUT)
         self.sendClearMovie(None)
         return Task.done
 
     def sendClearMovie(self, task):
-        avId = self.air.getAvatarIdFromSender()
         self.ignore(self.air.getAvatarExitEvent(self.busy))
         taskMgr.remove(self.uniqueName('clearMovie'))
-        self.busy.remove(avId)
-        self.d_setMovie(avId, NPCToons.SELL_MOVIE_CLEAR)
+        self.busy = 0
+        self.d_setMovie(0, NPCToons.SELL_MOVIE_CLEAR)
         return Task.done
 
     def completeSale(self, sell):
         avId = self.air.getAvatarIdFromSender()
-        if avId not in self.busy:
+        if self.busy != avId:
             self.air.writeServerEvent('suspicious', avId, 'DistributedNPCFishermanAI.completeSale busy with %s' % self.busy)
             self.notify.warning('somebody called setMovieDone that I was not busy with! avId: %s' % avId)
             return
