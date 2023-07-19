@@ -3,11 +3,11 @@ from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobal
 
 
 class DistributedDeliveryManagerUD(DistributedObjectGlobalUD):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDeliveryManagerUD")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedDeliveryManagerUD')
 
     def requestAck(self):
         avId = self.air.getAvatarIdFromSender()
         if not avId:
             return
 
-        self.sendUpdateToAvatarId(avId, "returnAck", [])
+        self.sendUpdateToAvatarId(avId, 'returnAck', [])

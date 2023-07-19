@@ -8,7 +8,10 @@ import types
 
 class SCMenuHolder(SCElement):
     N = 0.9
-    DefaultFrameColor = (0, 0, 0, 1.0 - N)
+    DefaultFrameColor = (0,
+                         0,
+                         0,
+                         1.0 - N)
     del N
     MenuColorScaleDown = 0.95
 
@@ -16,7 +19,7 @@ class SCMenuHolder(SCElement):
         SCElement.__init__(self)
         self.title = title
         scGui = loader.loadModel(SCMenu.GuiModelName)
-        self.scArrow = scGui.find("**/chatArrow")
+        self.scArrow = scGui.find('**/chatArrow')
         self.menu = None
         self.setMenu(menu)
         return
@@ -81,22 +84,20 @@ class SCMenuHolder(SCElement):
     def enterActive(self):
         SCElement.enterActive(self)
         self.showMenu()
-        if hasattr(self, "button"):
+        if hasattr(self, 'button'):
             r, g, b = self.getColorScheme().getMenuHolderActiveColor()
             a = self.getColorScheme().getAlpha()
             self.button.frameStyle[DGG.BUTTON_READY_STATE].setColor(r, g, b, a)
             self.button.updateFrameStyle()
         else:
             self.notify.warning(
-                "SCMenuHolder has no button (has finalize been called?)."
-            )
+                'SCMenuHolder has no button (has finalize been called?).')
 
     def exitActive(self):
         SCElement.exitActive(self)
         self.hideMenu()
         self.button.frameStyle[DGG.BUTTON_READY_STATE].setColor(
-            *SCMenuHolder.DefaultFrameColor
-        )
+            *SCMenuHolder.DefaultFrameColor)
         self.button.updateFrameStyle()
 
     def getDisplayText(self):
@@ -145,14 +146,15 @@ class SCMenuHolder(SCElement):
         if self.isActive():
             r, g, b = self.getColorScheme().getMenuHolderActiveColor()
             a = self.getColorScheme().getAlpha()
-            frameColor = (r, g, b, a)
+            frameColor = (r,
+                          g,
+                          b,
+                          a)
         else:
             frameColor = SCMenuHolder.DefaultFrameColor
-        args = {
-            "image": self.scArrow,
-            "image_pos": (self.width - 0.5, 0, -self.height * 0.5),
-            "frameColor": frameColor,
-        }
+        args = {'image': self.scArrow,
+                'image_pos': (self.width - 0.5, 0, -self.height * 0.5),
+                'frameColor': frameColor}
         args.update(dbArgs)
         SCElement.finalize(self, dbArgs=args)
         return

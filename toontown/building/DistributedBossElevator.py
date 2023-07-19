@@ -13,25 +13,17 @@ from toontown.hood import ZoneUtil
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 
-
 class DistributedBossElevator(DistributedElevatorExt.DistributedElevatorExt):
+
     def __init__(self, cr):
         DistributedElevatorExt.DistributedElevatorExt.__init__(self, cr)
         self.elevatorPoints = BigElevatorPoints
-        self.openSfx = base.loader.loadSfx(
-            "phase_9/audio/sfx/CHQ_FACT_door_open_sliding.ogg"
-        )
-        self.finalOpenSfx = base.loader.loadSfx(
-            "phase_9/audio/sfx/CHQ_FACT_door_open_final.ogg"
-        )
-        self.closeSfx = base.loader.loadSfx(
-            "phase_9/audio/sfx/CHQ_FACT_door_open_sliding.ogg"
-        )
-        self.finalCloseSfx = base.loader.loadSfx(
-            "phase_9/audio/sfx/CHQ_FACT_door_open_final.ogg"
-        )
+        self.openSfx = base.loader.loadSfx('phase_9/audio/sfx/CHQ_FACT_door_open_sliding.ogg')
+        self.finalOpenSfx = base.loader.loadSfx('phase_9/audio/sfx/CHQ_FACT_door_open_final.ogg')
+        self.closeSfx = base.loader.loadSfx('phase_9/audio/sfx/CHQ_FACT_door_open_sliding.ogg')
+        self.finalCloseSfx = base.loader.loadSfx('phase_9/audio/sfx/CHQ_FACT_door_open_final.ogg')
         self.type = ELEVATOR_VP
-        self.countdownTime = ElevatorData[self.type]["countdown"]
+        self.countdownTime = ElevatorData[self.type]['countdown']
 
     def disable(self):
         DistributedElevator.DistributedElevator.disable(self)
@@ -45,13 +37,13 @@ class DistributedBossElevator(DistributedElevatorExt.DistributedElevatorExt):
         DistributedElevatorExt.DistributedElevatorExt.delete(self)
 
     def setupElevator(self):
-        self.elevatorModel = loader.loadModel("phase_9/models/cogHQ/cogHQ_elevator")
-        icon = self.elevatorModel.find("**/big_frame/")
+        self.elevatorModel = loader.loadModel('phase_9/models/cogHQ/cogHQ_elevator')
+        icon = self.elevatorModel.find('**/big_frame/')
         icon.hide()
-        self.leftDoor = self.elevatorModel.find("**/left-door")
-        self.rightDoor = self.elevatorModel.find("**/right-door")
+        self.leftDoor = self.elevatorModel.find('**/left-door')
+        self.rightDoor = self.elevatorModel.find('**/right-door')
         geom = base.cr.playGame.hood.loader.geom
-        locator = geom.find("**/elevator_locator")
+        locator = geom.find('**/elevator_locator')
         self.elevatorModel.reparentTo(locator)
         self.elevatorModel.setH(180)
         DistributedElevator.DistributedElevator.setupElevator(self)
@@ -71,39 +63,29 @@ class DistributedBossElevator(DistributedElevatorExt.DistributedElevatorExt):
     def setBossOfficeZone(self, zoneId):
         if self.localToonOnBoard:
             hoodId = self.cr.playGame.hood.hoodId
-            doneStatus = {
-                "loader": "cogHQLoader",
-                "where": "cogHQBossBattle",
-                "how": "movie",
-                "zoneId": zoneId,
-                "hoodId": hoodId,
-            }
+            doneStatus = {'loader': 'cogHQLoader',
+             'where': 'cogHQBossBattle',
+             'how': 'movie',
+             'zoneId': zoneId,
+             'hoodId': hoodId}
             self.cr.playGame.getPlace().elevator.signalDone(doneStatus)
 
     def setBossOfficeZoneForce(self, zoneId):
         place = self.cr.playGame.getPlace()
         if place:
-            place.fsm.request("elevator", [self, 1])
+            place.fsm.request('elevator', [self, 1])
             hoodId = self.cr.playGame.hood.hoodId
-            doneStatus = {
-                "loader": "cogHQLoader",
-                "where": "cogHQBossBattle",
-                "how": "movie",
-                "zoneId": zoneId,
-                "hoodId": hoodId,
-            }
-            if hasattr(place, "elevator") and place.elevator:
+            doneStatus = {'loader': 'cogHQLoader',
+             'where': 'cogHQBossBattle',
+             'how': 'movie',
+             'zoneId': zoneId,
+             'hoodId': hoodId}
+            if hasattr(place, 'elevator') and place.elevator:
                 place.elevator.signalDone(doneStatus)
             else:
-                self.notify.warning(
-                    "setMintInteriorZoneForce: Couldn't find playGame.getPlace().elevator, zoneId: %s"
-                    % zoneId
-                )
+                self.notify.warning("setMintInteriorZoneForce: Couldn't find playGame.getPlace().elevator, zoneId: %s" % zoneId)
         else:
-            self.notify.warning(
-                "setBossOfficeZoneForce: Couldn't find playGame.getPlace(), zoneId: %s"
-                % zoneId
-            )
+            self.notify.warning("setBossOfficeZoneForce: Couldn't find playGame.getPlace(), zoneId: %s" % zoneId)
 
     def getDestName(self):
         return TTLocalizer.ElevatorSellBotBoss

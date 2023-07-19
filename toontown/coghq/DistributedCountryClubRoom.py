@@ -10,21 +10,15 @@ from . import FactoryEntityCreator
 from . import CountryClubRoomSpecs
 from otp.level import LevelSpec, LevelConstants
 from toontown.toonbase import TTLocalizer
-
 if __dev__:
     from otp.level import EditorGlobals
 
-
 def getCountryClubRoomReadyPostName(doId):
-    return "countryClubRoomReady-%s" % doId
+    return 'countryClubRoomReady-%s' % doId
 
 
-class DistributedCountryClubRoom(
-    DistributedLevel.DistributedLevel,
-    CountryClubRoomBase.CountryClubRoomBase,
-    CountryClubRoom.CountryClubRoom,
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedCountryClubRoom")
+class DistributedCountryClubRoom(DistributedLevel.DistributedLevel, CountryClubRoomBase.CountryClubRoomBase, CountryClubRoom.CountryClubRoom):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCountryClubRoom')
     EmulateEntrancePoint = False
 
     def __init__(self, cr):
@@ -44,7 +38,7 @@ class DistributedCountryClubRoom(
         return FactoryEntityCreator.FactoryEntityCreator(level=self)
 
     def generate(self):
-        self.notify.debug("generate")
+        self.notify.debug('generate')
         DistributedLevel.DistributedLevel.generate(self)
 
     def delete(self):
@@ -54,19 +48,19 @@ class DistributedCountryClubRoom(
         self.ignoreAll()
 
     def setCountryClubId(self, countryClubId):
-        self.notify.debug("countryClubId: %s" % countryClubId)
+        self.notify.debug('countryClubId: %s' % countryClubId)
         CountryClubRoomBase.CountryClubRoomBase.setCountryClubId(self, countryClubId)
 
     def setRoomId(self, roomId):
-        self.notify.debug("roomId: %s" % roomId)
+        self.notify.debug('roomId: %s' % roomId)
         CountryClubRoomBase.CountryClubRoomBase.setRoomId(self, roomId)
 
     def setRoomNum(self, num):
-        self.notify.debug("roomNum: %s" % num)
+        self.notify.debug('roomNum: %s' % num)
         CountryClubRoom.CountryClubRoom.setRoomNum(self, num)
 
     def levelAnnounceGenerate(self):
-        self.notify.debug("levelAnnounceGenerate")
+        self.notify.debug('levelAnnounceGenerate')
         DistributedLevel.DistributedLevel.levelAnnounceGenerate(self)
         specModule = CountryClubRoomSpecs.getCountryClubRoomSpecModule(self.roomId)
         roomSpec = LevelSpec.LevelSpec(specModule)
@@ -86,7 +80,7 @@ class DistributedCountryClubRoom(
         DistributedLevel.DistributedLevel.privGotSpec(self, levelSpec)
         base.localAvatar.setH(-90)
         CountryClubRoom.CountryClubRoom.enter(self)
-        self.acceptOnce("leavingCountryClub", self.announceLeaving)
+        self.acceptOnce('leavingCountryClub', self.announceLeaving)
         bboard.post(self.getReadyPostName())
 
     def fixupLevelModel(self):
@@ -100,9 +94,8 @@ class DistributedCountryClubRoom(
         self.countryClub.setBossConfronted(avId)
 
     def setDefeated(self):
-        self.notify.info("setDefeated")
+        self.notify.info('setDefeated')
         from toontown.coghq import DistributedCountryClub
-
         messenger.send(DistributedCountryClub.DistributedCountryClub.WinEvent)
 
     def initVisibility(self, *args, **kw):
@@ -144,43 +137,30 @@ class DistributedCountryClubRoom(
         CountryClubRoom.CountryClubRoom.enterLtNotPresent(self)
         if __dev__:
             bboard.removeIfEqual(EditorGlobals.EditTargetPostName, self)
-        self.ignore("f2")
+        self.ignore('f2')
 
     def enterLtPresent(self):
         CountryClubRoom.CountryClubRoom.enterLtPresent(self)
         if __dev__:
             bboard.post(EditorGlobals.EditTargetPostName, self)
         if self.countryClub is not None:
-            self.countryClub.currentRoomName = (
-                CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[self.roomId]
-            )
+            self.countryClub.currentRoomName = CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[self.roomId]
 
-        def printPos(self=self):
+        def printPos(self = self):
             thisZone = self.getZoneNode(LevelConstants.UberZoneEntId)
             pos = base.localAvatar.getPos(thisZone)
             h = base.localAvatar.getH(thisZone)
-            roomName = CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[
-                self.roomId
-            ]
-            print("countryClub pos: %s, h: %s, room: %s" % (repr(pos), h, roomName))
+            roomName = CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[self.roomId]
+            print('countryClub pos: %s, h: %s, room: %s' % (repr(pos), h, roomName))
             if self.countryClub is not None:
                 floorNum = self.countryClub.floorNum
             else:
-                floorNum = "???"
-            posStr = (
-                "X: %.3f" % pos[0]
-                + "\nY: %.3f" % pos[1]
-                + "\nZ: %.3f" % pos[2]
-                + "\nH: %.3f" % h
-                + "\ncountryClubId: %s" % self.countryClubId
-                + "\nfloor: %s" % floorNum
-                + "\nroomId: %s" % self.roomId
-                + "\nroomName: %s" % roomName
-            )
+                floorNum = '???'
+            posStr = 'X: %.3f' % pos[0] + '\nY: %.3f' % pos[1] + '\nZ: %.3f' % pos[2] + '\nH: %.3f' % h + '\ncountryClubId: %s' % self.countryClubId + '\nfloor: %s' % floorNum + '\nroomId: %s' % self.roomId + '\nroomName: %s' % roomName
             base.localAvatar.setChatAbsolute(posStr, CFThought | CFTimeout)
             return
 
-        self.accept("f2", printPos)
+        self.accept('f2', printPos)
         return
 
     def handleSOSPanel(self, panel):
@@ -192,11 +172,11 @@ class DistributedCountryClubRoom(
         panel.setFactoryToonIdList(avIds)
 
     def disable(self):
-        self.notify.debug("disable")
+        self.notify.debug('disable')
         CountryClubRoom.CountryClubRoom.exit(self)
-        if hasattr(self, "suits"):
+        if hasattr(self, 'suits'):
             del self.suits
-        if hasattr(self, "relatedObjectMgrRequest") and self.relatedObjectMgrRequest:
+        if hasattr(self, 'relatedObjectMgrRequest') and self.relatedObjectMgrRequest:
             self.cr.relatedObjectMgr.abortRequest(self.relatedObjectMgrRequest)
             del self.relatedObjectMgrRequest
         bboard.remove(self.getReadyPostName())
@@ -235,14 +215,10 @@ class DistributedCountryClubRoom(
         return TTLocalizer.CountryClubBossBattleTaunt
 
     def __str__(self):
-        if hasattr(self, "roomId"):
-            return "%s %s: %s" % (
-                self.__class__.__name__,
-                self.roomId,
-                CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[self.roomId],
-            )
+        if hasattr(self, 'roomId'):
+            return '%s %s: %s' % (self.__class__.__name__, self.roomId, CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName[self.roomId])
         else:
-            return "DistributedCountryClubRoom"
+            return 'DistributedCountryClubRoom'
 
     def __repr__(self):
         return str(self)

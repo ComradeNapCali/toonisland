@@ -5,7 +5,6 @@ import random
 from toontown.hood import Place
 from toontown.toonbase import ToontownGlobals
 
-
 class BRPlayground(Playground.Playground):
     STILL = 1
     RUN = 2
@@ -28,12 +27,12 @@ class BRPlayground(Playground.Playground):
     def enter(self, requestStatus):
         Playground.Playground.enter(self, requestStatus)
         self.nextWindTime = 0
-        taskMgr.add(self.__windTask, "br-wind")
+        taskMgr.add(self.__windTask, 'br-wind')
         self.state = 0
 
     def exit(self):
-        taskMgr.remove("br-wind")
-        taskMgr.remove("lerp-snow")
+        taskMgr.remove('br-wind')
+        taskMgr.remove('lerp-snow')
         Playground.Playground.exit(self)
 
     def enterTunnelOut(self, requestStatus):
@@ -57,5 +56,4 @@ class BRPlayground(Playground.Playground):
     def showPaths(self):
         from toontown.classicchars import CCharPaths
         from toontown.toonbase import TTLocalizer
-
         self.showPathPoints(CCharPaths.getPaths(TTLocalizer.Pluto))

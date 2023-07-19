@@ -6,19 +6,18 @@ from .BattleSounds import *
 from . import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
 import types
-
-notify = DirectNotifyGlobal.directNotify.newCategory("MovieToonVictory")
-
+notify = DirectNotifyGlobal.directNotify.newCategory('MovieToonVictory')
 
 def __findToonReward(rewards, toon):
     for r in rewards:
-        if r["toon"] == toon:
+        if r['toon'] == toon:
             return r
 
     return None
 
 
 class ToonVictorySkipper(DirectObject):
+
     def __init__(self, numToons, noSkip):
         self._numToons = numToons
         self._noSkip = noSkip
@@ -43,7 +42,7 @@ class ToonVictorySkipper(DirectObject):
     def setStartTime(self, index, startT):
         self._startTimes[index] = startT
 
-    def setIvals(self, ivals, timeOffset=0.0):
+    def setIvals(self, ivals, timeOffset = 0.0):
         for index in self._startTimes:
             self._startTimes[index] += timeOffset
 
@@ -52,12 +51,12 @@ class ToonVictorySkipper(DirectObject):
     def _setupSkipListen(self, index):
         if not self._noSkip:
             func = Functor(self._skipToon, index)
-            self.accept("escape", func)
+            self.accept('escape', func)
             self.accept(RewardPanel.SkipBattleMovieEvent, func)
 
     def _teardownSkipListen(self, index):
         if not self._noSkip:
-            self.ignore("escape")
+            self.ignore('escape')
             self.ignore(RewardPanel.SkipBattleMovieEvent)
 
     def _skipToon(self, index):
@@ -73,25 +72,14 @@ class ToonVictorySkipper(DirectObject):
                 ival.setT(self._startTimes[nextIndex])
 
 
-def doToonVictory(
-    localToonActive,
-    toons,
-    rewardToonIds,
-    rewardDicts,
-    deathList,
-    rpanel,
-    allowGroupShot=1,
-    uberList=[],
-    helpfulToonsList=[],
-    noSkip=False,
-):
+def doToonVictory(localToonActive, toons, rewardToonIds, rewardDicts, deathList, rpanel, allowGroupShot = 1, uberList = [], helpfulToonsList = [], noSkip = False):
     track = Sequence()
     if localToonActive == 1:
         track.append(Func(rpanel.show))
         track.append(Func(NametagGlobals.setOnscreenChatForced, 1))
     camTrack = Sequence()
     endTrack = Sequence()
-    danceSound = globalBattleSoundCache.getSound("ENC_Win.ogg")
+    danceSound = globalBattleSoundCache.getSound('ENC_Win.ogg')
     toonList = []
     countToons = 0
     uberListNew = []
@@ -118,22 +106,7 @@ def doToonVictory(
         t = toonList[tIndex]
         rdict = __findToonReward(rewardDicts, t)
         if rdict != None:
-            expTrack = rpanel.getExpTrack(
-                t,
-                rdict["origExp"],
-                rdict["earnedExp"],
-                deathList,
-                rdict["origQuests"],
-                rdict["items"],
-                rdict["missedItems"],
-                rdict["origMerits"],
-                rdict["merits"],
-                rdict["parts"],
-                rewardToonList,
-                uberListNew[tIndex],
-                helpfulToonsList,
-                noSkip=noSkip,
-            )
+            expTrack = rpanel.getExpTrack(t, rdict['origExp'], rdict['earnedExp'], deathList, rdict['origQuests'], rdict['items'], rdict['missedItems'], rdict['origMerits'], rdict['merits'], rdict['parts'], rewardToonList, uberListNew[tIndex], helpfulToonsList, noSkip=noSkip)
             if expTrack:
                 skipper.setStartTime(tIndex, track.getDuration())
                 track.append(skipper.getTeardownFunc(lastListenIndex))
@@ -142,11 +115,7 @@ def doToonVictory(
                 track.append(expTrack)
                 camDuration = expTrack.getDuration()
                 camExpTrack = MovieCamera.chooseRewardShot(t, camDuration)
-                camTrack.append(
-                    MovieCamera.chooseRewardShot(
-                        t, camDuration, allowGroupShot=allowGroupShot
-                    )
-                )
+                camTrack.append(MovieCamera.chooseRewardShot(t, camDuration, allowGroupShot=allowGroupShot))
 
     track.append(skipper.getTeardownFunc(lastListenIndex))
     track.append(Func(skipper.destroy))

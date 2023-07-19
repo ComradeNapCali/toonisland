@@ -13,23 +13,20 @@ class Settings:
     Either way, an ideal setup would have some form of this class instantiated in whatever ShowBase
     class you are using, and accessible via base.settings.
     """
+    notify = DirectNotifyGlobal.directNotify.newCategory('Settings')
 
-    notify = DirectNotifyGlobal.directNotify.newCategory("Settings")
-
-    def __init__(self, fileName="settings.json"):
+    def __init__(self, fileName='settings.json'):
         # The name of the settings file.
         self.fileName = fileName
 
         # The settings file might be located inside of another directory. If it doesn't already exist, we want
         # to create that directory, otherwise the file won't be able to be saved.
-        if os.path.dirname(self.fileName) and not os.path.exists(
-            os.path.dirname(self.fileName)
-        ):
+        if os.path.dirname(self.fileName) and not os.path.exists(os.path.dirname(self.fileName)):
             os.makedirs(os.path.dirname(self.fileName))
 
         # Let's attempt to load the settings file.
         try:
-            with open(self.fileName, "r") as f:
+            with open(self.fileName, 'r') as f:
                 self.settings = json.load(f)
         except:
             # If we got here, then that means that we weren't able to load the settings file, for whatever reason.
@@ -99,7 +96,7 @@ class Settings:
         """
         Attempts to write the data from the settings dictionary to the settings file.
         """
-        with open(self.fileName, "w+") as f:
+        with open(self.fileName, 'w+') as f:
             json.dump(self.settings, f, indent=4)
 
     def updateSetting(self, category, attribute, value):

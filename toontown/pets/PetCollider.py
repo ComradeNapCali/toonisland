@@ -3,7 +3,6 @@ from direct.showbase.PythonUtil import reduceAngle
 from otp.movement import Impulse
 from otp.otpbase import OTPGlobals
 
-
 class PetCollider(Impulse.Impulse):
     SerialNum = 0
 
@@ -18,7 +17,7 @@ class PetCollider(Impulse.Impulse):
         self.leftCLine = CollisionSegment(0.0, 0.0, 0.0, -1.0, 1.0, 0.0)
         self.rightCLine = CollisionSegment(0.0, 0.0, 0.0, 1.0, 1.0, 0.0)
         self.calcCollLines()
-        cLineNode = CollisionNode("cLineNode")
+        cLineNode = CollisionNode('cLineNode')
         cLineNode.addSolid(self.fwdCLine)
         cLineNode.addSolid(self.leftCLine)
         cLineNode.addSolid(self.rightCLine)
@@ -53,16 +52,16 @@ class PetCollider(Impulse.Impulse):
         self.rightCLine.setPointB(Point3(self.petRadius, self.petRadius, 0))
 
     def _getSerialNum(self):
-        if not hasattr(self, "serialNum"):
+        if not hasattr(self, 'serialNum'):
             self.serialNum = PetCollider.SerialNum
             PetCollider.SerialNum += 1
         return self.serialNum
 
     def _getCollisionEvent(self):
-        return "petFeeler-%s" % self._getSerialNum()
+        return 'petFeeler-%s' % self._getSerialNum()
 
     def handleCollision(self, collEntry):
-        print("collision!")
+        print('collision!')
         cPoint = collEntry.getSurfacePoint(self.cLineNodePath)
         cNormal = collEntry.getSurfaceNormal(self.cLineNodePath)
         messenger.send(self.mover.getCollisionEventName(), [cPoint, cNormal])

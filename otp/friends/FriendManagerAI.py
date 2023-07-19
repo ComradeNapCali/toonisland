@@ -11,8 +11,8 @@ from otp.otpbase import OTPGlobals
 
 
 class FriendManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("FriendManagerAI")
-    serverDataFolder = simbase.config.GetString("server-data-folder", "")
+    notify = DirectNotifyGlobal.directNotify.newCategory('FriendManagerAI')
+    serverDataFolder = simbase.config.GetString('server-data-folder', '')
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -21,7 +21,7 @@ class FriendManagerAI(DistributedObjectAI):
         self.shard = str(air.districtId)
         self.filename = self.getFilename()
         self.tfCodes = self.loadTrueFriendCodes()
-        taskMgr.add(self.__trueFriendCodesTask, "tf-codes-clear-task")
+        taskMgr.add(self.__trueFriendCodesTask, 'tf-codes-clear-task')
 
     def friendQuery(self, inviteeId):
         avId = self.air.getAvatarIdFromSender()
@@ -31,20 +31,14 @@ class FriendManagerAI(DistributedObjectAI):
 
         if inviteeId not in self.air.doId2do:
             self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to friend a player that does not exist!",
-            )
+                'suspicious', avId, 'Player tried to friend a player that does not exist!')
             return
 
         context = self.currentContext
-        self.requests[context] = [[avId, inviteeId], "friendQuery"]
+        self.requests[context] = [[avId, inviteeId], 'friendQuery']
         self.currentContext += 1
-        self.sendUpdateToAvatarId(
-            inviteeId,
-            "inviteeFriendQuery",
-            [avId, av.getName(), av.getDNAString(), context],
-        )
+        self.sendUpdateToAvatarId(inviteeId, 'inviteeFriendQuery', [
+                                  avId, av.getName(), av.getDNAString(), context])
 
     def cancelFriendQuery(self, context):
         avId = self.air.getAvatarIdFromSender()
@@ -53,22 +47,17 @@ class FriendManagerAI(DistributedObjectAI):
 
         if context not in self.requests:
             self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to cancel a request that doesn't exist!",
-            )
+                'suspicious', avId, 'Player tried to cancel a request that doesn\'t exist!')
             return
 
         if avId != self.requests[context][0][0]:
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to cancel someone else's request!"
-            )
+                'suspicious', avId, 'Player tried to cancel someone else\'s request!')
             return
 
-        self.requests[context][1] = "cancelled"
+        self.requests[context][1] = 'cancelled'
         self.sendUpdateToAvatarId(
-            self.requests[context][0][1], "inviteeCancelFriendQuery", [context]
-        )
+            self.requests[context][0][1], 'inviteeCancelFriendQuery', [context])
 
     def inviteeFriendConsidering(self, yesNo, context):
         avId = self.air.getAvatarIdFromSender()
@@ -76,36 +65,29 @@ class FriendManagerAI(DistributedObjectAI):
             return
 
         if context not in self.requests:
-            self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to consider a friend request that doesn't exist!",
-            )
+            self.air.writeServerEvent('suspicious', avId,
+                                      'Player tried to consider a friend request that doesn\'t exist!')
             return
 
         if avId != self.requests[context][0][1]:
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to consider for someone else!"
-            )
+                'suspicious', avId, 'Player tried to consider for someone else!')
             return
 
-        if self.requests[context][1] != "friendQuery":
+        if self.requests[context][1] != 'friendQuery':
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to reconsider friend request!"
-            )
+                'suspicious', avId, 'Player tried to reconsider friend request!')
             return
 
         if yesNo != 1:
             self.sendUpdateToAvatarId(
-                self.requests[context][0][0], "friendConsidering", [yesNo, context]
-            )
+                self.requests[context][0][0], 'friendConsidering', [yesNo, context])
             del self.requests[context]
             return
 
-        self.requests[context][1] = "friendConsidering"
+        self.requests[context][1] = 'friendConsidering'
         self.sendUpdateToAvatarId(
-            self.requests[context][0][0], "friendConsidering", [yesNo, context]
-        )
+            self.requests[context][0][0], 'friendConsidering', [yesNo, context])
 
     def inviteeFriendResponse(self, response, context):
         avId = self.air.getAvatarIdFromSender()
@@ -113,30 +95,22 @@ class FriendManagerAI(DistributedObjectAI):
             return
 
         if context not in self.requests:
-            self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to respond to a friend request that doesn't exist!",
-            )
+            self.air.writeServerEvent('suspicious', avId,
+                                      'Player tried to respond to a friend request that doesn\'t exist!')
             return
 
         if avId != self.requests[context][0][1]:
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to respond to someone else's request!"
-            )
+                'suspicious', avId, 'Player tried to respond to someone else\'s request!')
             return
 
-        if self.requests[context][1] == "cancelled":
+        if self.requests[context][1] == 'cancelled':
             self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to respond to a non-active friend request!",
-            )
+                'suspicious', avId, 'Player tried to respond to a non-active friend request!')
             return
 
         self.sendUpdateToAvatarId(
-            self.requests[context][0][0], "friendResponse", [response, context]
-        )
+            self.requests[context][0][0], 'friendResponse', [response, context])
         if response == 1:
             requestedAv = self.air.doId2do.get(self.requests[context][0][1])
             if not requestedAv:
@@ -149,23 +123,19 @@ class FriendManagerAI(DistributedObjectAI):
                 return
 
             dg = PyDatagram()
-            dg.addServerHeader(
-                self.GetPuppetConnectionChannel(requestedAv.getDoId()),
-                self.air.ourChannel,
-                CLIENTAGENT_DECLARE_OBJECT,
-            )
+            dg.addServerHeader(self.GetPuppetConnectionChannel(requestedAv.getDoId()), self.air.ourChannel,
+                               CLIENTAGENT_DECLARE_OBJECT)
             dg.addUint32(requesterAv.getDoId())
-            dg.addUint16(self.air.dclassesByName["DistributedToonAI"].getNumber())
+            dg.addUint16(
+                self.air.dclassesByName['DistributedToonAI'].getNumber())
             self.air.send(dg)
 
             dg = PyDatagram()
-            dg.addServerHeader(
-                self.GetPuppetConnectionChannel(requesterAv.getDoId()),
-                self.air.ourChannel,
-                CLIENTAGENT_DECLARE_OBJECT,
-            )
+            dg.addServerHeader(self.GetPuppetConnectionChannel(requesterAv.getDoId()), self.air.ourChannel,
+                               CLIENTAGENT_DECLARE_OBJECT)
             dg.addUint32(requestedAv.getDoId())
-            dg.addUint16(self.air.dclassesByName["DistributedToonAI"].getNumber())
+            dg.addUint16(
+                self.air.dclassesByName['DistributedToonAI'].getNumber())
             self.air.send(dg)
 
             requestedAv.extendFriendsList(requesterAv.getDoId(), 0)
@@ -182,23 +152,18 @@ class FriendManagerAI(DistributedObjectAI):
             return
 
         if context not in self.requests:
-            self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "Player tried to acknowledge the cancel of a friend request that doesn't exist!",
-            )
+            self.air.writeServerEvent('suspicious', avId,
+                                      'Player tried to acknowledge the cancel of a friend request that doesn\'t exist!')
             return
 
         if avId != self.requests[context][0][1]:
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to acknowledge someone else's cancel!"
-            )
+                'suspicious', avId, 'Player tried to acknowledge someone else\'s cancel!')
             return
 
-        if self.requests[context][1] != "cancelled":
+        if self.requests[context][1] != 'cancelled':
             self.air.writeServerEvent(
-                "suspicious", avId, "Player tried to cancel non-cancelled request!"
-            )
+                'suspicious', avId, 'Player tried to cancel non-cancelled request!')
             return
 
         del self.requests[context]
@@ -210,73 +175,33 @@ class FriendManagerAI(DistributedObjectAI):
             return
 
         if len(av.getFriendsList()) >= OTPGlobals.MaxFriends:
-            self.d_requestSecretResponse(avId, 0, "")
+            self.d_requestSecretResponse(avId, 0, '')
         else:
             day = datetime.datetime.now().day
             tfCode = self.generateTrueFriendCode()
             self.tfCodes[tfCode] = (avId, day)
             self.updateTrueFriendCodesFile()
             self.d_requestSecretResponse(avId, 1, tfCode)
-            self.air.writeServerEvent("tf-code-requested", avId=avId, tfCode=tfCode)
+            self.air.writeServerEvent(
+                'tf-code-requested', avId=avId, tfCode=tfCode)
 
     def generateTrueFriendCode(self):
-        chars = [
-            "a",
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "h",
-            "i",
-            "j",
-            "k",
-            "l",
-            "m",
-            "n",
-            "o",
-            "p",
-            "q",
-            "r",
-            "s",
-            "t",
-            "u",
-            "v",
-            "w",
-            "x",
-            "y",
-            "z",
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-        ]
+        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         def randomChar():
             return random.choice(chars)
 
-        tfCode = "%s%s%s %s%s%s" % (
-            randomChar(),
-            randomChar(),
-            randomChar(),
-            randomChar(),
-            randomChar(),
-            randomChar(),
-        )
+        tfCode = '%s%s%s %s%s%s' % (randomChar(), randomChar(
+        ), randomChar(), randomChar(), randomChar(), randomChar())
         return tfCode
 
     def d_requestSecretResponse(self, avId, result, secret):
         if not avId:
             return
 
-        self.sendUpdateToAvatarId(avId, "requestSecretResponse", [result, secret])
+        self.sendUpdateToAvatarId(
+            avId, 'requestSecretResponse', [result, secret])
 
     def submitSecret(self, secret):
         avId = self.air.getAvatarIdFromSender()
@@ -296,34 +221,24 @@ class FriendManagerAI(DistributedObjectAI):
                 if avId == friendId:
                     self.d_submitSecretResponse(avId, 3, 0)
                     self.removeSecret(secret)
-                elif (
-                    len(friend.getFriendsList()) >= OTPGlobals.MaxFriends
-                    or len(av.getFriendsList()) >= OTPGlobals.MaxFriends
-                ):
+                elif len(friend.getFriendsList()) >= OTPGlobals.MaxFriends or len(
+                        av.getFriendsList()) >= OTPGlobals.MaxFriends:
                     self.d_submitSecretResponse(avId, 2, friendId)
                 else:
                     dg = PyDatagram()
-                    dg.addServerHeader(
-                        self.GetPuppetConnectionChannel(friendId),
-                        self.air.ourChannel,
-                        CLIENTAGENT_DECLARE_OBJECT,
-                    )
+                    dg.addServerHeader(self.GetPuppetConnectionChannel(friendId), self.air.ourChannel,
+                                       CLIENTAGENT_DECLARE_OBJECT)
                     dg.addUint32(avId)
                     dg.addUint16(
-                        self.air.dclassesByName["DistributedToonAI"].getNumber()
-                    )
+                        self.air.dclassesByName['DistributedToonAI'].getNumber())
                     self.air.send(dg)
 
                     dg = PyDatagram()
-                    dg.addServerHeader(
-                        self.GetPuppetConnectionChannel(avId),
-                        self.air.ourChannel,
-                        CLIENTAGENT_DECLARE_OBJECT,
-                    )
+                    dg.addServerHeader(self.GetPuppetConnectionChannel(avId), self.air.ourChannel,
+                                       CLIENTAGENT_DECLARE_OBJECT)
                     dg.addUint32(friendId)
                     dg.addUint16(
-                        self.air.dclassesByName["DistributedToonAI"].getNumber()
-                    )
+                        self.air.dclassesByName['DistributedToonAI'].getNumber())
                     self.air.send(dg)
 
                     friend.extendFriendsList(avId, 1)
@@ -337,11 +252,11 @@ class FriendManagerAI(DistributedObjectAI):
             else:
                 # Friend is offline!
                 def handleAvatar(dclass, fields):
-                    if dclass != self.air.dclassesByName["DistributedToonAI"]:
+                    if dclass != self.air.dclassesByName['DistributedToonAI']:
                         return
 
                     newFriendsList = []
-                    oldFriendsList = fields["setFriendsList"][0]
+                    oldFriendsList = fields['setFriendsList'][0]
                     if len(oldFriendsList) >= OTPGlobals.MaxFriends:
                         self.d_submitSecretResponse(avId, 2, friendId)
                         return
@@ -350,28 +265,26 @@ class FriendManagerAI(DistributedObjectAI):
                         newFriendsList.append(oldFriend)
 
                     newFriendsList.append((avId, 1))
-                    self.air.dbInterface.updateObject(
-                        self.air.dbId,
-                        friendId,
-                        self.air.dclassesByName["DistributedToonAI"],
-                        {"setFriendsList": [newFriendsList]},
-                    )
+                    self.air.dbInterface.updateObject(self.air.dbId, friendId,
+                                                      self.air.dclassesByName['DistributedToonAI'],
+                                                      {'setFriendsList': [newFriendsList]})
                     av.extendFriendsList(friendId, 1)
                     av.d_setFriendsList(av.getFriendsList())
                     self.d_submitSecretResponse(avId, 1, friendId)
                     self.removeSecret(secret)
 
-                self.air.dbInterface.queryObject(self.air.dbId, friendId, handleAvatar)
+                self.air.dbInterface.queryObject(
+                    self.air.dbId, friendId, handleAvatar)
 
         self.air.writeServerEvent(
-            "tf-code-submitted", avId=avId, friendId=friendId, tfCode=secret
-        )
+            'tf-code-submitted', avId=avId, friendId=friendId, tfCode=secret)
 
     def d_submitSecretResponse(self, avId, result, friendId):
         if not avId:
             return
 
-        self.sendUpdateToAvatarId(avId, "submitSecretResponse", [result, friendId])
+        self.sendUpdateToAvatarId(
+            avId, 'submitSecretResponse', [result, friendId])
 
     def removeSecret(self, secret):
         if secret in self.tfCodes:
@@ -379,16 +292,11 @@ class FriendManagerAI(DistributedObjectAI):
             self.updateTrueFriendCodesFile()
 
     def getFilename(self):
-        return "%s%s%s%s.json" % (
-            self.serverDataFolder,
-            "trueFriendCodes/",
-            "trueFriendCodes_",
-            self.shard,
-        )
+        return '%s%s%s%s.json' % (self.serverDataFolder, 'trueFriendCodes/', 'trueFriendCodes_', self.shard)
 
     def loadTrueFriendCodes(self):
         try:
-            tfCodesFile = open(self.filename, "r")
+            tfCodesFile = open(self.filename, 'r')
             tfCodesData = json.load(tfCodesFile)
             return tfCodesData
         except:
@@ -399,7 +307,7 @@ class FriendManagerAI(DistributedObjectAI):
             if not os.path.exists(os.path.dirname(self.filename)):
                 os.makedirs(os.path.dirname(self.filename))
 
-            tfCodesFile = open(self.filename, "w")
+            tfCodesFile = open(self.filename, 'w')
             tfCodesFile.seek(0)
             json.dump(self.tfCodes, tfCodesFile)
             tfCodesFile.close()
@@ -412,7 +320,8 @@ class FriendManagerAI(DistributedObjectAI):
             tfCodeDay = tfCodeInfo[1]
             today = datetime.datetime.now().day
             if tfCodeDay + 2 == today:
-                self.notify.info("Removing 2-day-old True Friend code: %s" % tfCode)
+                self.notify.info(
+                    'Removing 2-day-old True Friend code: %s' % tfCode)
                 self.removeSecret(tfCode)
 
         return task.again

@@ -4,14 +4,14 @@ from toontown.toonbase import ToontownGlobals
 from otp.otpbase import OTPGlobals
 from direct.fsm import FSM
 
-
 class DistributedCashbotBossCraneAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM):
+
     def __init__(self, air, boss, index):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
-        FSM.FSM.__init__(self, "DistributedCashbotBossCraneAI")
+        FSM.FSM.__init__(self, 'DistributedCashbotBossCraneAI')
         self.boss = boss
         self.index = index
-        cn = CollisionNode("controls")
+        cn = CollisionNode('controls')
         cs = CollisionSphere(0, -6, 0, 6)
         cn.addSolid(cs)
         self.goonShield = NodePath(cn)
@@ -26,23 +26,23 @@ class DistributedCashbotBossCraneAI(DistributedObjectAI.DistributedObjectAI, FSM
         return self.index
 
     def d_setState(self, state, avId):
-        self.sendUpdate("setState", [state, avId])
+        self.sendUpdate('setState', [state, avId])
 
     def requestControl(self):
         avId = self.air.getAvatarIdFromSender()
         if avId in self.boss.involvedToons and self.avId == 0:
             craneId = self.__getCraneId(avId)
             if craneId == 0:
-                self.request("Controlled", avId)
+                self.request('Controlled', avId)
 
     def requestFree(self):
         avId = self.air.getAvatarIdFromSender()
         if avId == self.avId:
-            self.request("Free")
+            self.request('Free')
 
     def removeToon(self, avId):
         if avId == self.avId:
-            self.request("Free")
+            self.request('Free')
 
     def __getCraneId(self, avId):
         if self.boss and self.boss.cranes != None:
@@ -60,16 +60,16 @@ class DistributedCashbotBossCraneAI(DistributedObjectAI.DistributedObjectAI, FSM
 
     def enterControlled(self, avId):
         self.avId = avId
-        self.d_setState("C", avId)
+        self.d_setState('C', avId)
 
     def exitControlled(self):
         if self.objectId:
             obj = self.air.doId2do[self.objectId]
-            obj.request("Dropped", self.avId, self.doId)
+            obj.request('Dropped', self.avId, self.doId)
 
     def enterFree(self):
         self.avId = 0
-        self.d_setState("F", 0)
+        self.d_setState('F', 0)
 
     def exitFree(self):
         pass

@@ -3,13 +3,12 @@ from toontown.toonbase.ToontownGlobals import *
 from direct.distributed.ClockDelta import *
 from direct.distributed import DistributedObjectAI
 from direct.task import Task
-
 HEIGHT_DELTA = 0.5
 MAX_HEIGHT = 10.0
 MIN_HEIGHT = 2.0
 
-
 class DistributedDGFlowerAI(DistributedObjectAI.DistributedObjectAI):
+
     def __init__(self, air):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
         self.height = MIN_HEIGHT
@@ -28,7 +27,7 @@ class DistributedDGFlowerAI(DistributedObjectAI.DistributedObjectAI):
             self.avList.append(avId)
             if self.height + HEIGHT_DELTA <= MAX_HEIGHT:
                 self.height += HEIGHT_DELTA
-                self.sendUpdate("setHeight", [self.height])
+                self.sendUpdate('setHeight', [self.height])
 
     def avatarExit(self):
         avId = self.air.getAvatarIdFromSender()
@@ -36,4 +35,4 @@ class DistributedDGFlowerAI(DistributedObjectAI.DistributedObjectAI):
             self.avList.remove(avId)
             if self.height - HEIGHT_DELTA >= MIN_HEIGHT:
                 self.height -= HEIGHT_DELTA
-                self.sendUpdate("setHeight", [self.height])
+                self.sendUpdate('setHeight', [self.height])

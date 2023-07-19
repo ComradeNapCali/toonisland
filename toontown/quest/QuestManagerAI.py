@@ -5,7 +5,7 @@ from toontown.toonbase import ToontownBattleGlobals
 
 
 class QuestManagerAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory("QuestManagerAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('QuestManagerAI')
 
     def __init__(self, air):
         self.air = air
@@ -28,33 +28,15 @@ class QuestManagerAI:
                     continue
 
                 if quest.isLocationMatch(zoneId):
-                    if quest.getHolder() == Quests.Any or quest.getHolderType() in [
-                        "type",
-                        "track",
-                        "level",
-                    ]:
+                    if quest.getHolder() == Quests.Any or quest.getHolderType() in ['type', 'track', 'level']:
                         for suit in suitsKilled:
-                            if (
-                                quest.getCompletionStatus(toon, toon.quests[index])
-                                == Quests.COMPLETE
-                            ):
+                            if quest.getCompletionStatus(toon, toon.quests[index]) == Quests.COMPLETE:
                                 break
 
-                            if (
-                                (quest.getHolder() == Quests.Any)
-                                or (
-                                    quest.getHolderType() == "type"
-                                    and quest.getHolder() == suit["type"]
-                                )
-                                or (
-                                    quest.getHolderType() == "track"
-                                    and quest.getHolder() == suit["track"]
-                                )
-                                or (
-                                    quest.getHolderType() == "level"
-                                    and quest.getHolder() <= suit["level"]
-                                )
-                            ):
+                            if (quest.getHolder() == Quests.Any) or (
+                                    quest.getHolderType() == 'type' and quest.getHolder() == suit['type']) or (
+                                    quest.getHolderType() == 'track' and quest.getHolder() == suit['track']) or (
+                                    quest.getHolderType() == 'level' and quest.getHolder() <= suit['level']):
                                 # This seems to be how Disney did it.
                                 progress = toon.quests[index][4] & pow(2, 16) - 1
                                 completion = quest.testRecover(progress)
@@ -75,9 +57,7 @@ class QuestManagerAI:
         for index, quest in enumerate(self.__toonQuestsList2Quests(toon.quests)):
             if isinstance(quest, Quests.CogQuest):
                 for suit in suitsKilled:
-                    for _ in range(
-                        quest.doesCogCount(toon.getDoId(), suit, zoneId, activeToons)
-                    ):
+                    for _ in range(quest.doesCogCount(toon.getDoId(), suit, zoneId, activeToons)):
                         self.__incrementQuestProgress(toon.quests[index])
 
         if toon.quests:
@@ -91,14 +71,9 @@ class QuestManagerAI:
         for index, quest in enumerate(self.__toonQuestsList2Quests(toon.quests)):
             if isinstance(quest, Quests.BuildingQuest):
                 if quest.isLocationMatch(zoneId):
-                    if (
-                        quest.getBuildingTrack() == Quests.Any
-                        or quest.getBuildingTrack() == track
-                    ):
+                    if quest.getBuildingTrack() == Quests.Any or quest.getBuildingTrack() == track:
                         if floors >= quest.getNumFloors():
-                            for _ in range(
-                                quest.doesBuildingCount(toon.getDoId(), activeToons)
-                            ):
+                            for _ in range(quest.doesBuildingCount(toon.getDoId(), activeToons)):
                                 self.__incrementQuestProgress(toon.quests[index])
 
         if toon.quests:
@@ -107,9 +82,7 @@ class QuestManagerAI:
     def toonDefeatedFactory(self, toon, factoryId, activeToonVictors):
         for index, quest in enumerate(self.__toonQuestsList2Quests(toon.quests)):
             if isinstance(quest, Quests.FactoryQuest):
-                for _ in range(
-                    quest.doesFactoryCount(toon.getDoId(), factoryId, activeToonVictors)
-                ):
+                for _ in range(quest.doesFactoryCount(toon.getDoId(), factoryId, activeToonVictors)):
                     self.__incrementQuestProgress(toon.quests[index])
 
         if toon.quests:
@@ -121,9 +94,7 @@ class QuestManagerAI:
     def toonDefeatedMint(self, toon, mintId, activeToonVictors):
         for index, quest in enumerate(self.__toonQuestsList2Quests(toon.quests)):
             if isinstance(quest, Quests.MintQuest):
-                for _ in range(
-                    quest.doesMintCount(toon.getDoId(), mintId, activeToonVictors)
-                ):
+                for _ in range(quest.doesMintCount(toon.getDoId(), mintId, activeToonVictors)):
                     self.__incrementQuestProgress(toon.quests[index])
 
         if toon.quests:
@@ -152,15 +123,11 @@ class QuestManagerAI:
                 continue
 
             if avId in list(self.air.tutorialManager.avId2fsm.keys()):
-                self.air.tutorialManager.avId2fsm[avId].demand("Tunnel")
+                self.air.tutorialManager.avId2fsm[avId].demand('Tunnel')
 
             if isinstance(quest, Quests.DeliverGagQuest):
                 track, level = quest.getGagType()
-                av.inventory.setItem(
-                    track,
-                    level,
-                    av.inventory.numItem(track, level) - quest.getNumGags(),
-                )
+                av.inventory.setItem(track, level, av.inventory.numItem(track, level) - quest.getNumGags())
                 av.b_setInventory(av.inventory.makeNetString())
 
             nextQuest = Quests.getNextQuest(questId, npc, av)
@@ -188,15 +155,9 @@ class QuestManagerAI:
 
         if avId in list(self.air.tutorialManager.avId2fsm.keys()):
             if av.getRewardHistory()[0] == 0:
-                self.npcGiveQuest(
-                    npc,
-                    av,
-                    101,
-                    Quests.findFinalRewardId(101)[0],
-                    Quests.getQuestToNpcId(101),
-                    storeReward=True,
-                )
-                self.air.tutorialManager.avId2fsm[avId].demand("Battle")
+                self.npcGiveQuest(npc, av, 101, Quests.findFinalRewardId(101)[0], Quests.getQuestToNpcId(101),
+                                  storeReward=True)
+                self.air.tutorialManager.avId2fsm[avId].demand('Battle')
                 return
 
         tier = av.getRewardHistory()[0]
@@ -235,12 +196,11 @@ class QuestManagerAI:
         toon = self.air.doId2do.get(toonId)
         if not toon:
             return
-        self.notify.debug("toonId %d chose trackId %d to train." % (toonId, trackId))
+        self.notify.debug('toonId %d chose trackId %d to train.' % (toonId, trackId))
         rewardId = 401 + trackId
         npc.completeQuest(toonId, questId, rewardId)
         self.completeQuest(toon, questId)
         self.giveReward(toon, rewardId)
-
     def npcGiveQuest(self, npc, av, questId, rewardId, toNpcId, storeReward=False):
         rewardId = Quests.transformReward(rewardId, av)
         finalReward = rewardId if storeReward else 0
@@ -288,10 +248,7 @@ class QuestManagerAI:
     def toonFished(self, toon, zoneId):
         for index, quest in enumerate(self.__toonQuestsList2Quests(toon.quests)):
             if isinstance(quest, Quests.RecoverItemQuest):
-                if (
-                    quest.getCompletionStatus(toon, toon.quests[index])
-                    == Quests.COMPLETE
-                ):
+                if quest.getCompletionStatus(toon, toon.quests[index]) == Quests.COMPLETE:
                     continue
 
                 if quest.isLocationMatch(zoneId):

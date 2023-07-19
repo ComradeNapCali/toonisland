@@ -1,7 +1,6 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
-
 class DistributedMailManagerAI(DistributedObjectAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedMailManagerAI")
 
@@ -10,3 +9,4 @@ class DistributedMailManagerAI(DistributedObjectAI):
 
     def setNumMailItems(self, todo0, todo1):
         pass
+

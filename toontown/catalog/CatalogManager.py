@@ -1,9 +1,8 @@
 from direct.distributed import DistributedObject
 from direct.directnotify import DirectNotifyGlobal
 
-
 class CatalogManager(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("CatalogManager")
+    notify = DirectNotifyGlobal.directNotify.newCategory('CatalogManager')
     neverDisable = 1
 
     def __init__(self, cr):
@@ -14,10 +13,7 @@ class CatalogManager(DistributedObject.DistributedObject):
             base.cr.catalogManager.delete()
         base.cr.catalogManager = self
         DistributedObject.DistributedObject.generate(self)
-        if (
-            hasattr(base.localAvatar, "catalogScheduleNextTime")
-            and base.localAvatar.catalogScheduleNextTime == 0
-        ):
+        if hasattr(base.localAvatar, 'catalogScheduleNextTime') and base.localAvatar.catalogScheduleNextTime == 0:
             self.d_startCatalog()
         return
 
@@ -32,4 +28,4 @@ class CatalogManager(DistributedObject.DistributedObject):
         return
 
     def d_startCatalog(self):
-        self.sendUpdate("startCatalog", [])
+        self.sendUpdate('startCatalog', [])

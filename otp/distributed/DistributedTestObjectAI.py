@@ -3,7 +3,8 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class DistributedTestObjectAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedTestObjectAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        "DistributedTestObjectAI")
 
     def setParentingRules(self, todo0, todo1):
         pass

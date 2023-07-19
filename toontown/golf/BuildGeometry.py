@@ -4,9 +4,7 @@ from toontown.toonbase import ToontownGlobals
 from panda3d.core import *
 from math import *
 import math
-
 GEO_ID = 0
-
 
 def circleX(angle, radius, centerX, centerY):
     x = radius * cos(angle) + centerX
@@ -18,15 +16,11 @@ def circleY(angle, radius, centerX, centerY):
     return y
 
 
-def getCirclePoints(segCount, centerX, centerY, radius, wideX=1.0, wideY=1.0):
+def getCirclePoints(segCount, centerX, centerY, radius, wideX = 1.0, wideY = 1.0):
     returnShape = []
     for seg in range(0, segCount):
-        coordX = wideX * circleX(
-            pi * 2.0 * float(float(seg) / float(segCount)), radius, centerX, centerY
-        )
-        coordY = wideY * circleY(
-            pi * 2.0 * float(float(seg) / float(segCount)), radius, centerX, centerY
-        )
+        coordX = wideX * circleX(pi * 2.0 * float(float(seg) / float(segCount)), radius, centerX, centerY)
+        coordY = wideY * circleY(pi * 2.0 * float(float(seg) / float(segCount)), radius, centerX, centerY)
         returnShape.append((coordX, coordY, 1))
 
     coordX = wideX * circleX(pi * 2.0 * float(0 / segCount), radius, centerX, centerY)
@@ -35,16 +29,14 @@ def getCirclePoints(segCount, centerX, centerY, radius, wideX=1.0, wideY=1.0):
     return returnShape
 
 
-def addCircle(attachNode, vertexCount, radius, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
-    targetGN = GeomNode("Circle Geom")
+def addCircle(attachNode, vertexCount, radius, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
+    targetGN = GeomNode('Circle Geom')
     zFloat = 0.025
     targetCircleShape = getCirclePoints(5 + vertexCount, 0.0, 0.0, radius)
     gFormat = GeomVertexFormat.getV3cp()
-    targetCircleVertexData = GeomVertexData(
-        "holds my vertices", gFormat, Geom.UHDynamic
-    )
-    targetCircleVertexWriter = GeomVertexWriter(targetCircleVertexData, "vertex")
-    targetCircleColorWriter = GeomVertexWriter(targetCircleVertexData, "color")
+    targetCircleVertexData = GeomVertexData('holds my vertices', gFormat, Geom.UHDynamic)
+    targetCircleVertexWriter = GeomVertexWriter(targetCircleVertexData, 'vertex')
+    targetCircleColorWriter = GeomVertexWriter(targetCircleVertexData, 'color')
     targetCircleVertexWriter.addData3f(0.0, 0.0, zFloat)
     targetCircleColorWriter.addData4f(color[0], color[1], color[2], color[3])
     for vertex in targetCircleShape:
@@ -65,30 +57,28 @@ def addCircle(attachNode, vertexCount, radius, color=Vec4(1.0, 1.0, 1.0, 1.0), l
     return targetGeom
 
 
-def addCircleGeom(
-    rootNode, vertexCount, radius, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0
-):
+def addCircleGeom(rootNode, vertexCount, radius, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
     global GEO_ID
-    GN = GeomNode("Circle %s" % GEO_ID)
+    GN = GeomNode('Circle %s' % GEO_ID)
     GEO_ID += 1
     NodePathGeom = rootNode.attachNewNode(GN)
     geo = addCircle(GN, vertexCount, radius, color, layer)
     return (NodePathGeom, GN, geo)
 
 
-def addSquare(attachNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
-    targetGN = GeomNode("Square Geom")
+def addSquare(attachNode, sizeX, sizeY, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
+    targetGN = GeomNode('Square Geom')
     sX = sizeX / 2.0
     sY = sizeY / 2.0
     color1 = color
     color2 = color
     color3 = color
     gFormat = GeomVertexFormat.getV3n3cpt2()
-    boxVertexData = GeomVertexData("vertices", gFormat, Geom.UHDynamic)
-    boxVertexWriter = GeomVertexWriter(boxVertexData, "vertex")
-    boxNormalWriter = GeomVertexWriter(boxVertexData, "normal")
-    boxColorWriter = GeomVertexWriter(boxVertexData, "color")
-    boxTextureWriter = GeomVertexWriter(boxVertexData, "texcoord")
+    boxVertexData = GeomVertexData('vertices', gFormat, Geom.UHDynamic)
+    boxVertexWriter = GeomVertexWriter(boxVertexData, 'vertex')
+    boxNormalWriter = GeomVertexWriter(boxVertexData, 'normal')
+    boxColorWriter = GeomVertexWriter(boxVertexData, 'color')
+    boxTextureWriter = GeomVertexWriter(boxVertexData, 'texcoord')
     boxVertexWriter.addData3f(-sX, sY, 0.0)
     boxNormalWriter.addData3f(0, 0, 1)
     boxColorWriter.addData4f(color[0], color[1], color[2], color[3])
@@ -117,17 +107,17 @@ def addSquare(attachNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0)
     return boxGeom
 
 
-def addSquareGeom(rootNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
+def addSquareGeom(rootNode, sizeX, sizeY, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
     global GEO_ID
-    GN = GeomNode("Square %s" % GEO_ID)
+    GN = GeomNode('Square %s' % GEO_ID)
     GEO_ID += 1
     NodePathGeom = rootNode.attachNewNode(GN)
     geo = addSquare(GN, sizeX, sizeY, color, layer)
     return (NodePathGeom, GN, geo)
 
 
-def addBox(attachNode, sizeX, sizeY, sizeZ, color=Vec4(1.0, 1.0, 1.0, 1.0), darken=0):
-    targetGN = GeomNode("Box Geom")
+def addBox(attachNode, sizeX, sizeY, sizeZ, color = Vec4(1.0, 1.0, 1.0, 1.0), darken = 0):
+    targetGN = GeomNode('Box Geom')
     sX = sizeX / 2.0
     sY = sizeY / 2.0
     sZ = sizeZ / 2.0
@@ -139,10 +129,10 @@ def addBox(attachNode, sizeX, sizeY, sizeZ, color=Vec4(1.0, 1.0, 1.0, 1.0), dark
         color2 = color * 0.5
         color3 = color * 0.25
     gFormat = GeomVertexFormat.getV3n3cp()
-    boxVertexData = GeomVertexData("vertices", gFormat, Geom.UHDynamic)
-    boxVertexWriter = GeomVertexWriter(boxVertexData, "vertex")
-    boxNormalWriter = GeomVertexWriter(boxVertexData, "normal")
-    boxColorWriter = GeomVertexWriter(boxVertexData, "color")
+    boxVertexData = GeomVertexData('vertices', gFormat, Geom.UHDynamic)
+    boxVertexWriter = GeomVertexWriter(boxVertexData, 'vertex')
+    boxNormalWriter = GeomVertexWriter(boxVertexData, 'normal')
+    boxColorWriter = GeomVertexWriter(boxVertexData, 'color')
     boxVertexWriter.addData3f(sX, sY, sZ)
     boxNormalWriter.addData3f(0, 1, 0)
     boxColorWriter.addData4f(color[0], color[1], color[2], color[3])
@@ -252,27 +242,27 @@ def addBox(attachNode, sizeX, sizeY, sizeZ, color=Vec4(1.0, 1.0, 1.0, 1.0), dark
     return boxGeom
 
 
-def addBoxGeom(rootNode, sizeX, sizeY, sizeZ, color=Vec4(1.0, 1.0, 1.0, 1.0), darken=0):
+def addBoxGeom(rootNode, sizeX, sizeY, sizeZ, color = Vec4(1.0, 1.0, 1.0, 1.0), darken = 0):
     global GEO_ID
-    GN = GeomNode("Box %s" % GEO_ID)
+    GN = GeomNode('Box %s' % GEO_ID)
     GEO_ID += 1
     nodePathGeom = rootNode.attachNewNode(GN)
     geo = addBox(GN, sizeX, sizeY, sizeZ, color, darken)
     return (nodePathGeom, GN, geo)
 
 
-def addArrow(attachNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
-    targetGN = GeomNode("Arrow Geom")
+def addArrow(attachNode, sizeX, sizeY, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
+    targetGN = GeomNode('Arrow Geom')
     sX = sizeX / 2.0
     sY = sizeY / 2.0
     color1 = color
     color2 = color
     color3 = color
     gFormat = GeomVertexFormat.getV3n3cp()
-    boxVertexData = GeomVertexData("vertices", gFormat, Geom.UHDynamic)
-    boxVertexWriter = GeomVertexWriter(boxVertexData, "vertex")
-    boxNormalWriter = GeomVertexWriter(boxVertexData, "normal")
-    boxColorWriter = GeomVertexWriter(boxVertexData, "color")
+    boxVertexData = GeomVertexData('vertices', gFormat, Geom.UHDynamic)
+    boxVertexWriter = GeomVertexWriter(boxVertexData, 'vertex')
+    boxNormalWriter = GeomVertexWriter(boxVertexData, 'normal')
+    boxColorWriter = GeomVertexWriter(boxVertexData, 'color')
     boxVertexWriter.addData3f(-sX, sY, 0.0)
     boxNormalWriter.addData3f(0, 0, 1)
     boxColorWriter.addData4f(color[0], color[1], color[2], color[3])
@@ -310,9 +300,9 @@ def addArrow(attachNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
     return boxGeom
 
 
-def addArrowGeom(rootNode, sizeX, sizeY, color=Vec4(1.0, 1.0, 1.0, 1.0), layer=0):
+def addArrowGeom(rootNode, sizeX, sizeY, color = Vec4(1.0, 1.0, 1.0, 1.0), layer = 0):
     global GEO_ID
-    GN = GeomNode("Arrow %s" % GEO_ID)
+    GN = GeomNode('Arrow %s' % GEO_ID)
     GEO_ID += 1
     NodePathGeom = rootNode.attachNewNode(GN)
     geo = addArrow(GN, sizeX, sizeY, color, layer)

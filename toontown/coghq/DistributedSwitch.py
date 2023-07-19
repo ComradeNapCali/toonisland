@@ -9,29 +9,14 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import ClassicFSM, State
 from otp.level import DistributedEntity
 
+class DistributedSwitch(DistributedSwitchBase.DistributedSwitchBase, BasicEntities.DistributedNodePathEntity):
 
-class DistributedSwitch(
-    DistributedSwitchBase.DistributedSwitchBase, BasicEntities.DistributedNodePathEntity
-):
     def __init__(self, cr):
         BasicEntities.DistributedNodePathEntity.__init__(self, cr)
-        self.fsm = ClassicFSM.ClassicFSM(
-            "DistributedSwitch",
-            [
-                State.State("off", self.enterOff, self.exitOff, ["playing", "attract"]),
-                State.State(
-                    "attract", self.enterAttract, self.exitAttract, ["playing"]
-                ),
-                State.State(
-                    "playing", self.enterPlaying, self.exitPlaying, ["attract"]
-                ),
-            ],
-            "off",
-            "off",
-        )
+        self.fsm = ClassicFSM.ClassicFSM('DistributedSwitch', [State.State('off', self.enterOff, self.exitOff, ['playing', 'attract']), State.State('attract', self.enterAttract, self.exitAttract, ['playing']), State.State('playing', self.enterPlaying, self.exitPlaying, ['attract'])], 'off', 'off')
         self.fsm.enterInitialState()
         self.node = None
-        self.triggerName = ""
+        self.triggerName = ''
         return
 
     def setup(self):
@@ -39,7 +24,7 @@ class DistributedSwitch(
         self.setState(self.initialState, self.initialStateTimestamp)
         del self.initialState
         del self.initialStateTimestamp
-        self.accept("exit%s" % (self.getName(),), self.exitTrigger)
+        self.accept('exit%s' % (self.getName(),), self.exitTrigger)
         self.acceptAvatar()
 
     def takedown(self):
@@ -60,7 +45,7 @@ class DistributedSwitch(
 
     def disable(self):
         self.ignoreAll()
-        self.fsm.request("off")
+        self.fsm.request('off')
         BasicEntities.DistributedNodePathEntity.disable(self)
         self.takedown()
 
@@ -69,7 +54,7 @@ class DistributedSwitch(
         BasicEntities.DistributedNodePathEntity.delete(self)
 
     def acceptAvatar(self):
-        self.acceptOnce("enter%s" % (self.getName(),), self.enterTrigger)
+        self.acceptOnce('enter%s' % (self.getName(),), self.enterTrigger)
 
     def rejectInteract(self):
         self.acceptAvatar()
@@ -78,7 +63,7 @@ class DistributedSwitch(
         self.acceptAvatar()
 
     def getName(self):
-        return "switch-%s" % (self.entId,)
+        return 'switch-%s' % (self.entId,)
 
     def setupSwitch(self):
         pass
@@ -99,11 +84,11 @@ class DistributedSwitch(
             self.initialState = state
             self.initialStateTimestamp = timestamp
 
-    def enterTrigger(self, args=None):
-        self.sendUpdate("requestInteract")
+    def enterTrigger(self, args = None):
+        self.sendUpdate('requestInteract')
 
-    def exitTrigger(self, args=None):
-        self.sendUpdate("requestExit")
+    def exitTrigger(self, args = None):
+        self.sendUpdate('requestExit')
 
     def enterOff(self):
         pass

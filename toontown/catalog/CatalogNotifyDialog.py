@@ -3,59 +3,24 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from direct.gui.DirectGui import *
 from panda3d.core import *
-
 CatalogNotifyBaseXPos = -0.933333
 
-
 class CatalogNotifyDialog:
-    notify = DirectNotifyGlobal.directNotify.newCategory("CatalogNotifyDialog")
+    notify = DirectNotifyGlobal.directNotify.newCategory('CatalogNotifyDialog')
 
     def __init__(self, message):
         self.message = message
         self.messageIndex = 0
         framePosX = CatalogNotifyBaseXPos
         from toontown.toon import LocalToon
-
         if LocalToon.WantNewsPage:
             framePosX += LocalToon.AdjustmentForNewsButton
-        self.frame = DirectFrame(
-            parent=base.a2dTopRight,
-            relief=None,
-            sortOrder=DGG.BACKGROUND_SORT_INDEX - 2,
-            image=DGG.getDefaultDialogGeom(),
-            image_color=ToontownGlobals.GlobalDialogColor,
-            image_scale=(1.2, 1.0, 0.4),
-            text=message[0],
-            text_wordwrap=16,
-            text_scale=0.06,
-            text_pos=(-0.1, 0.1),
-            pos=(framePosX, 0, -0.22),
-        )
-        buttons = loader.loadModel("phase_3/models/gui/dialog_box_buttons_gui")
-        cancelImageList = (
-            buttons.find("**/CloseBtn_UP"),
-            buttons.find("**/CloseBtn_DN"),
-            buttons.find("**/CloseBtn_Rllvr"),
-        )
-        okImageList = (
-            buttons.find("**/ChtBx_OKBtn_UP"),
-            buttons.find("**/ChtBx_OKBtn_DN"),
-            buttons.find("**/ChtBx_OKBtn_Rllvr"),
-        )
-        self.nextButton = DirectButton(
-            parent=self.frame,
-            relief=None,
-            image=okImageList,
-            command=self.handleButton,
-            pos=(0, 0, -0.14),
-        )
-        self.doneButton = DirectButton(
-            parent=self.frame,
-            relief=None,
-            image=cancelImageList,
-            command=self.handleButton,
-            pos=(0, 0, -0.14),
-        )
+        self.frame = DirectFrame(parent=base.a2dTopRight, relief=None, sortOrder=DGG.BACKGROUND_SORT_INDEX - 2, image=DGG.getDefaultDialogGeom(), image_color=ToontownGlobals.GlobalDialogColor, image_scale=(1.2, 1.0, 0.4), text=message[0], text_wordwrap=16, text_scale=0.06, text_pos=(-0.1, 0.1), pos=(framePosX, 0, -0.22))
+        buttons = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
+        cancelImageList = (buttons.find('**/CloseBtn_UP'), buttons.find('**/CloseBtn_DN'), buttons.find('**/CloseBtn_Rllvr'))
+        okImageList = (buttons.find('**/ChtBx_OKBtn_UP'), buttons.find('**/ChtBx_OKBtn_DN'), buttons.find('**/ChtBx_OKBtn_Rllvr'))
+        self.nextButton = DirectButton(parent=self.frame, relief=None, image=okImageList, command=self.handleButton, pos=(0, 0, -0.14))
+        self.doneButton = DirectButton(parent=self.frame, relief=None, image=cancelImageList, command=self.handleButton, pos=(0, 0, -0.14))
         if len(message) == 1:
             self.nextButton.hide()
         else:
@@ -67,7 +32,7 @@ class CatalogNotifyDialog:
         if self.messageIndex >= len(self.message):
             self.cleanup()
             return
-        self.frame["text"] = self.message[self.messageIndex]
+        self.frame['text'] = self.message[self.messageIndex]
         if self.messageIndex + 1 == len(self.message):
             self.nextButton.hide()
             self.doneButton.show()

@@ -5,30 +5,27 @@ from toontown.toonbase import ToontownGlobals
 from direct.directnotify import DirectNotifyGlobal
 import types
 
-
 class MovingPlatform(DirectObject.DirectObject, NodePath):
-    notify = DirectNotifyGlobal.directNotify.newCategory("MovingPlatform")
+    notify = DirectNotifyGlobal.directNotify.newCategory('MovingPlatform')
 
     def __init__(self):
         self.hasLt = 0
         DirectObject.DirectObject.__init__(self)
         NodePath.__init__(self)
 
-    def setupCopyModel(
-        self, parentToken, model, floorNodeName=None, parentingNode=None
-    ):
+    def setupCopyModel(self, parentToken, model, floorNodeName = None, parentingNode = None):
         if floorNodeName is None:
-            floorNodeName = "floor"
+            floorNodeName = 'floor'
         if type(parentToken) == int:
             parentToken = ToontownGlobals.SPDynamic + parentToken
         self.parentToken = parentToken
-        self._name = "MovingPlatform-%s" % parentToken
+        self._name = 'MovingPlatform-%s' % parentToken
         self.assign(hidden.attachNewNode(self._name))
         self.model = model.copyTo(self)
         self.ownsModel = 1
-        floorList = self.model.findAllMatches("**/%s" % floorNodeName)
+        floorList = self.model.findAllMatches('**/%s' % floorNodeName)
         if len(floorList) == 0:
-            MovingPlatform.notify.warning("no floors in model")
+            MovingPlatform.notify.warning('no floors in model')
             return
         for floor in floorList:
             floor.setName(self._name)
@@ -37,8 +34,8 @@ class MovingPlatform(DirectObject.DirectObject, NodePath):
             parentingNode = self
         base.cr.parentMgr.registerParent(self.parentToken, parentingNode)
         self.parentingNode = parentingNode
-        self.accept("enter%s" % self._name, self.__handleEnter)
-        self.accept("exit%s" % self._name, self.__handleExit)
+        self.accept('enter%s' % self._name, self.__handleEnter)
+        self.accept('exit%s' % self._name, self.__handleExit)
         return
 
     def destroy(self):
@@ -49,26 +46,26 @@ class MovingPlatform(DirectObject.DirectObject, NodePath):
         if self.ownsModel:
             self.model.removeNode()
             del self.model
-        if hasattr(self, "parentingNode") and self.parentingNode is self:
+        if hasattr(self, 'parentingNode') and self.parentingNode is self:
             del self.parentingNode
 
     def getEnterEvent(self):
-        return "%s-enter" % self._name
+        return '%s-enter' % self._name
 
     def getExitEvent(self):
-        return "%s-exit" % self._name
+        return '%s-exit' % self._name
 
     def releaseLocalToon(self):
         if self.hasLt:
             self.__releaseLt()
 
     def __handleEnter(self, collEntry):
-        self.notify.debug("on movingPlatform %s" % self._name)
+        self.notify.debug('on movingPlatform %s' % self._name)
         self.__grabLt()
         messenger.send(self.getEnterEvent())
 
     def __handleExit(self, collEntry):
-        self.notify.debug("off movingPlatform %s" % self._name)
+        self.notify.debug('off movingPlatform %s' % self._name)
         self.__releaseLt()
         messenger.send(self.getExitEvent())
 

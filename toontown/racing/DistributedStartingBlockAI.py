@@ -8,13 +8,11 @@ from direct.fsm import ClassicFSM
 from direct.fsm import State
 from direct.showbase.DirectObject import DirectObject
 from toontown.racing.KartShopGlobals import KartGlobals
-
 if __debug__:
     import pdb
 
-
 class DistributedStartingBlockAI(DistributedObjectAI.DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStartingBlockAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStartingBlockAI')
 
     def __init__(self, air, kartPad, x, y, z, h, p, r, padLocationId):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
@@ -23,7 +21,12 @@ class DistributedStartingBlockAI(DistributedObjectAI.DistributedObjectAI):
         self.kartPad = kartPad
         self.unexpectedEvent = None
         self.padLocationId = padLocationId
-        self.posHpr = (x, y, z, h, p, r)
+        self.posHpr = (x,
+         y,
+         z,
+         h,
+         p,
+         r)
         self.currentMovie = None
         return
 
@@ -49,9 +52,7 @@ class DistributedStartingBlockAI(DistributedObjectAI.DistributedObjectAI):
         avId = self.air.getAvatarIdFromSender()
         if self.isActive and self.avId == 0:
             success = self.kartPad.addAvBlock(avId, self, paid)
-            self.notify.debug(
-                "requestEnter: avId %s wants to enter the kart block." % avId
-            )
+            self.notify.debug('requestEnter: avId %s wants to enter the kart block.' % avId)
             if success == KartGlobals.ERROR_CODE.success:
                 self.avId = avId
                 self.isActive = False
@@ -60,25 +61,18 @@ class DistributedStartingBlockAI(DistributedObjectAI.DistributedObjectAI):
                 self.d_setOccupied(self.avId)
                 self.d_setMovie(KartGlobals.ENTER_MOVIE)
             else:
-                self.sendUpdateToAvatarId(avId, "rejectEnter", [success])
+                self.sendUpdateToAvatarId(avId, 'rejectEnter', [success])
         else:
-            if hasattr(self.kartPad, "state") and self.kartPad.state in [
-                "WaitBoarding",
-                "AllAboard",
-            ]:
+            if hasattr(self.kartPad, 'state') and self.kartPad.state in ['WaitBoarding', 'AllAboard']:
                 errorCode = KartGlobals.ERROR_CODE.eBoardOver
             else:
                 errorCode = KartGlobals.ERROR_CODE.eOccupied
-            self.sendUpdateToAvatarId(avId, "rejectEnter", [errorCode])
+            self.sendUpdateToAvatarId(avId, 'rejectEnter', [errorCode])
 
     def requestExit(self):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug("requestExit: avId %s wants to exit the Kart Block." % avId)
-        success = self.validate(
-            avId,
-            self.avId == avId,
-            "requestExit: avId is not occupying this kart block.",
-        )
+        self.notify.debug('requestExit: avId %s wants to exit the Kart Block.' % avId)
+        success = self.validate(avId, self.avId == avId, 'requestExit: avId is not occupying this kart block.')
         if not success:
             return
         self.normalExit()
@@ -111,20 +105,18 @@ class DistributedStartingBlockAI(DistributedObjectAI.DistributedObjectAI):
         return
 
     def d_setOccupied(self, avId):
-        self.sendUpdate("setOccupied", [avId])
+        self.sendUpdate('setOccupied', [avId])
 
     def d_setMovie(self, mode):
         self.currentMovie = mode
-        self.sendUpdate("setMovie", [mode])
+        self.sendUpdate('setMovie', [mode])
 
 
 class DistributedViewingBlockAI(DistributedStartingBlockAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedViewingBlockAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedViewingBlockAI')
 
     def __init__(self, air, kartPad, x, y, z, h, p, r, padLocationId):
-        DistributedStartingBlockAI.__init__(
-            self, air, kartPad, x, y, z, h, p, r, padLocationId
-        )
+        DistributedStartingBlockAI.__init__(self, air, kartPad, x, y, z, h, p, r, padLocationId)
 
     def delete(self):
         DistributedStartingBlockAI.delete(self)

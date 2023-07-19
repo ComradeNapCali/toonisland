@@ -3,15 +3,13 @@ from otp.speedchat.SCMenu import SCMenu
 from otp.speedchat.SCMenuHolder import SCMenuHolder
 from otp.speedchat.SCStaticTextTerminal import SCStaticTextTerminal
 from otp.otpbase import OTPLocalizer
-
-SillyPhaseOneMenu = [
-    (OTPLocalizer.SillyHolidayMenuSections[1], [30303, 30304, 30305, 30306]),
-    (OTPLocalizer.SillyHolidayMenuSections[2], [30307, 30308]),
-    (OTPLocalizer.SillyHolidayMenuSections[0], [30301, 30302]),
-]
-
+SillyPhaseOneMenu = [(OTPLocalizer.SillyHolidayMenuSections[1], [30303,
+   30304,
+   30305,
+   30306]), (OTPLocalizer.SillyHolidayMenuSections[2], [30307, 30308]), (OTPLocalizer.SillyHolidayMenuSections[0], [30301, 30302])]
 
 class TTSCSillyPhaseOneMenu(SCMenu):
+
     def __init__(self):
         SCMenu.__init__(self)
         self.__SillyPhaseOneMessagesChanged()
@@ -34,10 +32,7 @@ class TTSCSillyPhaseOneMenu(SCMenu):
             if section[0] == -1:
                 for phrase in section[1]:
                     if phrase not in OTPLocalizer.SpeedChatStaticText:
-                        print(
-                            "warning: tried to link Silly PhaseOne phrase %s which does not seem to exist"
-                            % phrase
-                        )
+                        print('warning: tried to link Silly PhaseOne phrase %s which does not seem to exist' % phrase)
                         break
                     self.append(SCStaticTextTerminal(phrase))
 
@@ -45,10 +40,7 @@ class TTSCSillyPhaseOneMenu(SCMenu):
                 menu = SCMenu()
                 for phrase in section[1]:
                     if phrase not in OTPLocalizer.SpeedChatStaticText:
-                        print(
-                            "warning: tried to link Silly PhaseOne phrase %s which does not seem to exist"
-                            % phrase
-                        )
+                        print('warning: tried to link Silly PhaseOne phrase %s which does not seem to exist' % phrase)
                         break
                     menu.append(SCStaticTextTerminal(phrase))
 

@@ -13,17 +13,27 @@ CIRCLELARGE = 3
 CIRCLESMALL = 4
 POP = 5
 CIRCLESPRITE = 6
-styleNames = [
-    "CIRCLE",
-    "ROCKET",
-    "RING",
-    "CIRCLELARGE",
-    "CIRCLESMALL",
-    "POP",
-    "CIRCLESPRITE",
-]
-styleNamesShort = ["CIR", "RKT", "RNG", "CLG", "CSM", "POP", "SPR"]
-Names = ["Pow", "Rocket", "Ring", "Large\nPow", "Small\nPow", "Pop", "Widow\nMaker"]
+styleNames = ['CIRCLE',
+ 'ROCKET',
+ 'RING',
+ 'CIRCLELARGE',
+ 'CIRCLESMALL',
+ 'POP',
+ 'CIRCLESPRITE']
+styleNamesShort = ['CIR',
+ 'RKT',
+ 'RNG',
+ 'CLG',
+ 'CSM',
+ 'POP',
+ 'SPR']
+Names = ['Pow',
+ 'Rocket',
+ 'Ring',
+ 'Large\nPow',
+ 'Small\nPow',
+ 'Pop',
+ 'Widow\nMaker']
 WHITE = 0
 RED = 1
 BLUE = 2
@@ -33,17 +43,15 @@ PINK = 5
 PURPLE = 6
 CYAN = 7
 PEACH = 8
-ColorNames = [
-    "White",
-    "Red",
-    "Blue",
-    "Yellow",
-    "Green",
-    "Pink",
-    "Purple",
-    "Cyan",
-    "Peach",
-]
+ColorNames = ['White',
+ 'Red',
+ 'Blue',
+ 'Yellow',
+ 'Green',
+ 'Pink',
+ 'Purple',
+ 'Cyan',
+ 'Peach']
 SNOWFLAKE = 0
 MUSICNOTE = 1
 FLOWER = 2
@@ -54,7 +62,6 @@ skyTransitionDuration = 2.0
 preShowPauseDuration = 2.0
 postShowPauseDuration = 4.0
 preNormalMusicPauseDuration = 0.5
-
 
 class FireworkTrailType:
     Default = 0

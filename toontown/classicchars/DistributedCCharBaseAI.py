@@ -5,9 +5,8 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
 import functools
 
-
 class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedCCharBaseAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCCharBaseAI')
 
     def __init__(self, air, name):
         DistributedAvatarAI.DistributedAvatarAI.__init__(self, air)
@@ -27,15 +26,15 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
 
     def avatarEnter(self):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug("adding avatar " + str(avId) + " to the nearby avatar list")
+        self.notify.debug('adding avatar ' + str(avId) + ' to the nearby avatar list')
         if avId not in self.nearbyAvatars:
             self.nearbyAvatars.append(avId)
         else:
-            self.air.writeServerEvent("suspicious", avId, "CCharBase.avatarEnter")
-            self.notify.warning("Avatar %s already in nearby avatars!" % avId)
+            self.air.writeServerEvent('suspicious', avId, 'CCharBase.avatarEnter')
+            self.notify.warning('Avatar %s already in nearby avatars!' % avId)
         self.nearbyAvatarInfoDict[avId] = {}
-        self.nearbyAvatarInfoDict[avId]["enterTime"] = globalClock.getRealTime()
-        self.nearbyAvatarInfoDict[avId]["lastChatTime"] = 0
+        self.nearbyAvatarInfoDict[avId]['enterTime'] = globalClock.getRealTime()
+        self.nearbyAvatarInfoDict[avId]['lastChatTime'] = 0
         self.sortNearbyAvatars()
         self.__interestingAvatarEventOccured()
         avExitEvent = self.air.getAvatarExitEvent(avId)
@@ -48,11 +47,9 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
 
     def doAvatarExit(self, avId):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug(
-            "removing avatar " + str(avId) + " from the nearby avatar list"
-        )
+        self.notify.debug('removing avatar ' + str(avId) + ' from the nearby avatar list')
         if avId not in self.nearbyAvatars:
-            self.notify.debug("avatar " + str(avId) + " not in the nearby avatar list")
+            self.notify.debug('avatar ' + str(avId) + ' not in the nearby avatar list')
         else:
             avExitEvent = self.air.getAvatarExitEvent(avId)
             self.ignore(avExitEvent)
@@ -71,9 +68,10 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
         self.nearbyAvatarInfoDict = {}
 
     def sortNearbyAvatars(self):
-        def nAv_compare(a, b, nAvIDict=self.nearbyAvatarInfoDict):
-            tsA = nAvIDict[a]["enterTime"]
-            tsB = nAvIDict[b]["enterTime"]
+
+        def nAv_compare(a, b, nAvIDict = self.nearbyAvatarInfoDict):
+            tsA = nAvIDict[a]['enterTime']
+            tsB = nAvIDict[b]['enterTime']
             if tsA == tsB:
                 return 0
             elif tsA < tsB:
@@ -89,13 +87,13 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
     def __avatarSpoke(self, avId):
         now = globalClock.getRealTime()
         if avId in self.nearbyAvatarInfoDict:
-            self.nearbyAvatarInfoDict[avId]["lastChatTime"] = now
+            self.nearbyAvatarInfoDict[avId]['lastChatTime'] = now
             self.__interestingAvatarEventOccured()
 
     def __initAttentionSpan(self):
         self.__avatarTimeoutBase = 0
 
-    def __interestingAvatarEventOccured(self, t=None):
+    def __interestingAvatarEventOccured(self, t = None):
         if t == None:
             t = globalClock.getRealTime()
         self.__avatarTimeoutBase = t
@@ -112,92 +110,55 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
 
     def setNearbyAvatarChat(self, msg):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug(
-            "setNearbyAvatarChat: avatar " + str(avId) + " said " + str(msg)
-        )
+        self.notify.debug('setNearbyAvatarChat: avatar ' + str(avId) + ' said ' + str(msg))
         self.__avatarSpoke(avId)
 
     def setNearbyAvatarSC(self, msgIndex):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug(
-            "setNearbyAvatarSC: avatar %s said SpeedChat phrase %s" % (avId, msgIndex)
-        )
+        self.notify.debug('setNearbyAvatarSC: avatar %s said SpeedChat phrase %s' % (avId, msgIndex))
         self.__avatarSpoke(avId)
 
     def setNearbyAvatarSCCustom(self, msgIndex):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug(
-            "setNearbyAvatarSCCustom: avatar %s said custom SpeedChat phrase %s"
-            % (avId, msgIndex)
-        )
+        self.notify.debug('setNearbyAvatarSCCustom: avatar %s said custom SpeedChat phrase %s' % (avId, msgIndex))
         self.__avatarSpoke(avId)
 
     def setNearbyAvatarSCToontask(self, taskId, toNpcId, toonProgress, msgIndex):
         avId = self.air.getAvatarIdFromSender()
-        self.notify.debug(
-            "setNearbyAvatarSCToontask: avatar %s said %s"
-            % (avId, (taskId, toNpcId, toonProgress, msgIndex))
-        )
+        self.notify.debug('setNearbyAvatarSCToontask: avatar %s said %s' % (avId, (taskId,
+          toNpcId,
+          toonProgress,
+          msgIndex)))
         self.__avatarSpoke(avId)
 
     def getWalk(self):
-        return ("", "", 0)
+        return ('', '', 0)
 
     def walkSpeed(self):
         return 0.1
 
     def handleHolidays(self):
         self.CCChatter = 0
-        if hasattr(simbase.air, "holidayManager"):
-            if (
-                ToontownGlobals.CRASHED_LEADERBOARD
-                in simbase.air.holidayManager.currentHolidays
-            ):
+        if hasattr(simbase.air, 'holidayManager'):
+            if ToontownGlobals.CRASHED_LEADERBOARD in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.CRASHED_LEADERBOARD
-            elif (
-                ToontownGlobals.CIRCUIT_RACING_EVENT
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.CIRCUIT_RACING_EVENT in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.CIRCUIT_RACING_EVENT
-            elif (
-                ToontownGlobals.WINTER_CAROLING
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.WINTER_CAROLING in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.WINTER_CAROLING
-            elif (
-                ToontownGlobals.WINTER_DECORATIONS
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.WINTER_DECORATIONS in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.WINTER_DECORATIONS
-            elif (
-                ToontownGlobals.VALENTINES_DAY
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.VALENTINES_DAY in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.VALENTINES_DAY
-            elif (
-                ToontownGlobals.APRIL_FOOLS_COSTUMES
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.APRIL_FOOLS_COSTUMES in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.APRIL_FOOLS_COSTUMES
-            elif (
-                ToontownGlobals.SILLY_CHATTER_ONE
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.SILLY_CHATTER_ONE in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.SILLY_CHATTER_ONE
-            elif (
-                ToontownGlobals.SILLY_CHATTER_TWO
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.SILLY_CHATTER_TWO in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.SILLY_CHATTER_TWO
-            elif (
-                ToontownGlobals.SILLY_CHATTER_THREE
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.SILLY_CHATTER_THREE in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.SILLY_CHATTER_THREE
-            elif (
-                ToontownGlobals.SILLY_CHATTER_FOUR
-                in simbase.air.holidayManager.currentHolidays
-            ):
+            elif ToontownGlobals.SILLY_CHATTER_FOUR in simbase.air.holidayManager.currentHolidays:
                 self.CCChatter = ToontownGlobals.SILLY_CHATTER_FOUR
 
     def getCCLocation(self):
@@ -208,7 +169,7 @@ class DistributedCCharBaseAI(DistributedAvatarAI.DistributedAvatarAI):
         return self.CCChatter
 
     def fadeAway(self):
-        self.sendUpdate("fadeAway", [])
+        self.sendUpdate('fadeAway', [])
 
     def transitionCostume(self):
         self.transitionToCostume = 1

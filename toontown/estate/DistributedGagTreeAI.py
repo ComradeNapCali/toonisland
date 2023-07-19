@@ -13,7 +13,7 @@ PROBLEM_HARVESTED_LATELY = 4
 
 class DistributedGagTreeAI(DistributedPlantBaseAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedGagTreeAI")
-    GrowRate = config.GetBool("trees-grow-rate", 2)
+    GrowRate = config.GetBool('trees-grow-rate', 2)
 
     def __init__(self, mgr):
         DistributedPlantBaseAI.__init__(self, mgr)
@@ -25,13 +25,13 @@ class DistributedGagTreeAI(DistributedPlantBaseAI):
 
     def announceGenerate(self):
         DistributedPlantBaseAI.announceGenerate(self)
-        messenger.send(self.getEventName("generate"))
+        messenger.send(self.getEventName('generate'))
 
     def setWilted(self, wilted):
         self.wilted = wilted
 
     def d_setWilted(self, wilted):
-        self.sendUpdate("setWilted", [wilted])
+        self.sendUpdate('setWilted', [wilted])
 
     def b_setWilted(self, wilted):
         self.setWilted(wilted)
@@ -89,32 +89,23 @@ class DistributedGagTreeAI(DistributedPlantBaseAI):
                 self.b_setWilted(1)
                 continue
 
-            self.accept(
-                self.getEventName("going-down", id(self.mgr.gardenMgr)), self.ignoreAll
-            )
-            self.accept(
-                self.getEventName("remove", track * 7 + value), self.calcDependencies
-            )
+            self.accept(self.getEventName('going-down', id(self.mgr.gardenMgr)), self.ignoreAll)
+            self.accept(self.getEventName('remove', track * 7 + value), self.calcDependencies)
 
     def getEventName(self, string, typeIndex=None):
         typeIndex = typeIndex if typeIndex is not None else self.typeIndex
-        return "garden-%d-%d-%s" % (self.ownerDoId, typeIndex, string)
+        return 'garden-%d-%d-%s' % (self.ownerDoId, typeIndex, string)
 
     def delete(self):
-        messenger.send(self.getEventName("remove"))
+        messenger.send(self.getEventName('remove'))
         self.ignoreAll()
         DistributedPlantBaseAI.delete(self)
 
     def update(self):
-        mapData = list(map(list, self.mgr.data["trees"]))
-        mapData[self.getTreeIndex()] = [
-            self.typeIndex,
-            self.waterLevel,
-            self.lastCheck,
-            self.getGrowthLevel(),
-            self.lastHarvested,
-        ]
-        self.mgr.data["trees"] = mapData
+        mapData = list(map(list, self.mgr.data['trees']))
+        mapData[self.getTreeIndex()] = [self.typeIndex, self.waterLevel, self.lastCheck, self.getGrowthLevel(),
+                                        self.lastHarvested]
+        self.mgr.data['trees'] = mapData
         self.mgr.update()
 
     def isFruiting(self):
@@ -140,19 +131,13 @@ class DistributedGagTreeAI(DistributedPlantBaseAI):
             return
 
         if avId != self.ownerDoId:
-            self.air.writeServerEvent(
-                "suspicious", avId, "tried to harvest someone else's tree!"
-            )
+            self.air.writeServerEvent('suspicious', avId, 'tried to harvest someone else\'s tree!')
             return
 
         problem = self.isFruiting()
         if problem:
-            self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "tried to harvest a tree that's not fruiting!",
-                problem=problem,
-            )
+            self.air.writeServerEvent('suspicious', avId, 'tried to harvest a tree that\'s not fruiting!',
+                                      problem=problem)
             return
 
         harvested = 0
@@ -184,17 +169,17 @@ class DistributedGagTreeAI(DistributedPlantBaseAI):
             plot.generateWithRequired(self.zoneId)
             plot.d_setMovie(GardenGlobals.MOVIE_FINISHREMOVING, avId)
             plot.d_setMovie(GardenGlobals.MOVIE_CLEAR, avId)
-            self.air.writeServerEvent("remove-tree", avId, plot=self.plot)
+            self.air.writeServerEvent('remove-tree', avId, plot=self.plot)
             self.requestDelete()
             self.mgr.trees.remove(self)
-            mapData = list(map(list, self.mgr.data["trees"]))
+            mapData = list(map(list, self.mgr.data['trees']))
             mapData[self.getTreeIndex()] = self.mgr.getNullPlant()
-            self.mgr.data["trees"] = mapData
+            self.mgr.data['trees'] = mapData
             self.mgr.update()
             self.mgr.reconsiderAvatarOrganicBonus()
             return task.done
 
-        taskMgr.doMethodLater(7, handleRemove, self.uniqueName("do-remove"))
+        taskMgr.doMethodLater(7, handleRemove, self.uniqueName('do-remove'))
 
     def doGrow(self, grown):
         maxGrowth = self.growthThresholds[2]

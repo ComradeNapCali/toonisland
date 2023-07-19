@@ -1,6 +1,5 @@
 from direct.distributed.DistributedObject import ESGenerating, ESGenerated, ESNum2Str
 
-
 class DelayDeletable:
     DelayDeleteSerialGen = SerialNumGen()
 
@@ -10,14 +9,8 @@ class DelayDeletable:
     def acquireDelayDelete(self, name):
         global ESGenerating
         global ESGenerated
-        if not self._delayDeleteForceAllow and self.activeState not in (
-            ESGenerating,
-            ESGenerated,
-        ):
-            self.notify.error(
-                'cannot acquire DelayDelete "%s" on %s because it is in state %s'
-                % (name, self.__class__.__name__, ESNum2Str[self.activeState])
-            )
+        if not self._delayDeleteForceAllow and self.activeState not in (ESGenerating, ESGenerated):
+            self.notify.error('cannot acquire DelayDelete "%s" on %s because it is in state %s' % (name, self.__class__.__name__, ESNum2Str[self.activeState]))
         if self.getDelayDeleteCount() == 0:
             self.cr._addDelayDeletedDO(self)
         token = next(DelayDeletable.DelayDeleteSerialGen)

@@ -2,19 +2,9 @@ from .ColorSpace import *
 
 
 class SCColorScheme:
-    def __init__(
-        self,
-        arrowColor=(0.5, 0.5, 1),
-        rolloverColor=(0.53, 0.9, 0.53),
-        frameColor=None,
-        pressedColor=None,
-        menuHolderActiveColor=None,
-        emoteIconColor=None,
-        textColor=(0, 0, 0),
-        emoteIconDisabledColor=(0.5, 0.5, 0.5),
-        textDisabledColor=(0.4, 0.4, 0.4),
-        alpha=0.95,
-    ):
+
+    def __init__(self, arrowColor=(0.5, 0.5, 1), rolloverColor=(0.53, 0.9, 0.53), frameColor=None, pressedColor=None, menuHolderActiveColor=None, emoteIconColor=None, textColor=(0, 0, 0), emoteIconDisabledColor=(0.5, 0.5, 0.5), textDisabledColor=(0.4, 0.4, 0.4), alpha=0.95):
+
         def scaleColor(color, s):
             y, u, v = rgb2yuv(*color)
             return yuv2rgb(y * s, u, v)
@@ -34,10 +24,10 @@ class SCColorScheme:
             self.__frameColor = hsv2rgb(h, 0.2 * s, v)
         h, s, v = rgb2hsv(*self.__frameColor)
         self.__frameColor = hsv2rgb(h, 0.5 * s, v)
-        self.__pressedColor = scaleIfNone(pressedColor, self.__rolloverColor, 0.92)
+        self.__pressedColor = scaleIfNone(
+            pressedColor, self.__rolloverColor, 0.92)
         self.__menuHolderActiveColor = scaleIfNone(
-            menuHolderActiveColor, self.__rolloverColor, 0.84
-        )
+            menuHolderActiveColor, self.__rolloverColor, 0.84)
         self.__emoteIconColor = emoteIconColor
         if self.__emoteIconColor is None:
             h, s, v = rgb2hsv(*self.__rolloverColor)
@@ -79,26 +69,14 @@ class SCColorScheme:
         return self.__alpha
 
     def __str__(self):
-        members = (
-            "arrowColor",
-            "rolloverColor",
-            "frameColor",
-            "pressedColor",
-            "menuHolderActiveColor",
-            "emoteIconColor",
-            "textColor",
-            "emoteIconDisabledColor",
-            "textDisabledColor",
-            "alpha",
-        )
-        result = ""
+        members = ('arrowColor', 'rolloverColor', 'frameColor', 'pressedColor', 'menuHolderActiveColor',
+                   'emoteIconColor', 'textColor', 'emoteIconDisabledColor', 'textDisabledColor', 'alpha')
+        result = ''
         for member in members:
-            result += "%s = %s" % (
-                member,
-                self.__dict__["_%s__%s" % (self.__class__.__name__, member)],
-            )
+            result += '%s = %s' % (member,
+                                   self.__dict__['_%s__%s' % (self.__class__.__name__, member)])
             if member is not members[-1]:
-                result += "\n"
+                result += '\n'
 
         return result
 

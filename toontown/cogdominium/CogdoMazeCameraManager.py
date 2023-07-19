@@ -3,7 +3,6 @@ from . import CogdoMazeGameGlobals as Globals
 import math
 import random
 
-
 class CogdoMazeCameraManager:
     toonJumpSpeed = 30.0
     toonJumpDir = 1.0
@@ -40,7 +39,7 @@ class CogdoMazeCameraManager:
         self._camTargetDistance = self._camDistance
 
     def enable(self):
-        self.parent = self.root.attachNewNode("GameCamParent")
+        self.parent = self.root.attachNewNode('GameCamParent')
         self.parent.setPos(self.toon, 0, 0, 0)
         self.parent.setHpr(self.root, 180, self._camAngle, 0)
         self.camera.reparentTo(self.parent)
@@ -59,12 +58,7 @@ class CogdoMazeCameraManager:
 
     def update(self, dt):
         toonPos = self.toon.getPos()
-        self.parent.setPos(
-            self.toon.getParent(),
-            clamp(toonPos.getX(), self.minPos[0], self.maxPos[0]),
-            clamp(toonPos.getY(), self.minPos[1], self.maxPos[1]),
-            0,
-        )
+        self.parent.setPos(self.toon.getParent(), clamp(toonPos.getX(), self.minPos[0], self.maxPos[0]), clamp(toonPos.getY(), self.minPos[1], self.maxPos[1]), 0)
         if self._camDistance != self._camTargetDistance:
             self._updateCameraDistance()
         if self.shakeOffset > 0 or self.shakeStrength > 0:
@@ -73,15 +67,9 @@ class CogdoMazeCameraManager:
 
     def _updateCameraDistance(self):
         if self._camDistance < self._camTargetDistance:
-            self._camDistance += min(
-                0.4 * (self._camDistance / self._camTargetDistance),
-                self._camTargetDistance - self._camDistance,
-            )
+            self._camDistance += min(0.4 * (self._camDistance / self._camTargetDistance), self._camTargetDistance - self._camDistance)
         elif self._camDistance > self._camTargetDistance:
-            self._camDistance += max(
-                -0.4 * (self._camDistance / self._camTargetDistance),
-                self._camTargetDistance - self._camDistance,
-            )
+            self._camDistance += max(-0.4 * (self._camDistance / self._camTargetDistance), self._camTargetDistance - self._camDistance)
         self.camera.setY(self._camDistance)
 
     def updateShake(self, dt):
@@ -101,10 +89,7 @@ class CogdoMazeCameraManager:
 
     def updateToonShake(self, dt):
         if self.toonIsShaking:
-            newHeight = (
-                self.toon.getZ()
-                + self.toonJumpDir * dt * self.savedShakeStrength * self.toonJumpSpeed
-            )
+            newHeight = self.toon.getZ() + self.toonJumpDir * dt * self.savedShakeStrength * self.toonJumpSpeed
             maxHeight = self.savedShakeStrength * self.maxHeightOffset
             if maxHeight > self.toonMaxHeight:
                 maxHeight = self.toonMaxHeight

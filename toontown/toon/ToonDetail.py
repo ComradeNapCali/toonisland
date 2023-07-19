@@ -2,12 +2,11 @@ from direct.directnotify.DirectNotifyGlobal import directNotify
 from otp.avatar import AvatarDetail
 from toontown.toon import DistributedToon
 
-
 class ToonDetail(AvatarDetail.AvatarDetail):
-    notify = directNotify.newCategory("ToonDetail")
+    notify = directNotify.newCategory('ToonDetail')
 
     def getDClass(self):
-        return "DistributedToon"
+        return 'DistributedToon'
 
     def createHolder(self):
         toon = DistributedToon.DistributedToon(base.cr, bFake=True)

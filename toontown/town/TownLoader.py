@@ -21,45 +21,22 @@ from toontown.hood import QuietZoneState
 from toontown.hood import ZoneUtil
 from direct.interval.IntervalGlobal import *
 
-
 class TownLoader(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory("TownLoader")
+    notify = DirectNotifyGlobal.directNotify.newCategory('TownLoader')
 
     def __init__(self, hood, parentFSMState, doneEvent):
         StateData.StateData.__init__(self, doneEvent)
         self.hood = hood
         self.parentFSMState = parentFSMState
-        self.fsm = ClassicFSM.ClassicFSM(
-            "TownLoader",
-            [
-                State.State(
-                    "start",
-                    self.enterStart,
-                    self.exitStart,
-                    ["quietZone", "street", "toonInterior"],
-                ),
-                State.State("street", self.enterStreet, self.exitStreet, ["quietZone"]),
-                State.State(
-                    "toonInterior",
-                    self.enterToonInterior,
-                    self.exitToonInterior,
-                    ["quietZone"],
-                ),
-                State.State(
-                    "quietZone",
-                    self.enterQuietZone,
-                    self.exitQuietZone,
-                    ["street", "toonInterior"],
-                ),
-                State.State("final", self.enterFinal, self.exitFinal, ["start"]),
-            ],
-            "start",
-            "final",
-        )
+        self.fsm = ClassicFSM.ClassicFSM('TownLoader', [State.State('start', self.enterStart, self.exitStart, ['quietZone', 'street', 'toonInterior']),
+         State.State('street', self.enterStreet, self.exitStreet, ['quietZone']),
+         State.State('toonInterior', self.enterToonInterior, self.exitToonInterior, ['quietZone']),
+         State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['street', 'toonInterior']),
+         State.State('final', self.enterFinal, self.exitFinal, ['start'])], 'start', 'final')
         self.branchZone = None
         self.canonicalBranchZone = None
-        self.placeDoneEvent = "placeDone"
-        self.townBattleDoneEvent = "town-battle-done"
+        self.placeDoneEvent = 'placeDone'
+        self.townBattleDoneEvent = 'town-battle-done'
         return
 
     def loadBattleAnims(self):
@@ -76,9 +53,7 @@ class TownLoader(StateData.StateData):
         self.canonicalBranchZone = ZoneUtil.getCanonicalBranchZone(zoneId)
         self.music = base.loader.loadMusic(self.musicFile)
         self.activityMusic = base.loader.loadMusic(self.activityMusicFile)
-        self.battleMusic = base.loader.loadMusic(
-            "phase_3.5/audio/bgm/encntr_general_bg.ogg"
-        )
+        self.battleMusic = base.loader.loadMusic('phase_3.5/audio/bgm/encntr_general_bg.ogg')
         self.townBattle = TownBattle.TownBattle(self.townBattleDoneEvent)
         self.townBattle.load()
 
@@ -112,15 +87,15 @@ class TownLoader(StateData.StateData):
         del self.activityMusic
         del self.holidayPropTransforms
         self.deleteAnimatedProps()
-        cleanupDialog("globalDialog")
+        cleanupDialog('globalDialog')
         ModelPool.garbageCollect()
         TexturePool.garbageCollect()
 
     def enter(self, requestStatus):
-        teleportDebug(requestStatus, "TownLoader.enter(%s)" % requestStatus)
+        teleportDebug(requestStatus, 'TownLoader.enter(%s)' % requestStatus)
         self.fsm.enterInitialState()
-        teleportDebug(requestStatus, "setting state: %s" % requestStatus["where"])
-        self.setState(requestStatus["where"], requestStatus)
+        teleportDebug(requestStatus, 'setting state: %s' % requestStatus['where'])
+        self.setState(requestStatus['where'], requestStatus)
 
     def exit(self):
         self.ignoreAll()
@@ -135,7 +110,7 @@ class TownLoader(StateData.StateData):
         pass
 
     def enterStreet(self, requestStatus):
-        teleportDebug(requestStatus, "enterStreet(%s)" % requestStatus)
+        teleportDebug(requestStatus, 'enterStreet(%s)' % requestStatus)
         self.acceptOnce(self.placeDoneEvent, self.streetDone)
         self.place = self.streetClass(self, self.fsm, self.placeDoneEvent)
         self.place.load()
@@ -152,12 +127,8 @@ class TownLoader(StateData.StateData):
     def streetDone(self):
         self.requestStatus = self.place.doneStatus
         status = self.place.doneStatus
-        if (
-            status["loader"] == "townLoader"
-            and ZoneUtil.getBranchZone(status["zoneId"]) == self.branchZone
-            and status["shardId"] == None
-        ):
-            self.fsm.request("quietZone", [status])
+        if status['loader'] == 'townLoader' and ZoneUtil.getBranchZone(status['zoneId']) == self.branchZone and status['shardId'] == None:
+            self.fsm.request('quietZone', [status])
         else:
             self.doneStatus = status
             messenger.send(self.doneEvent)
@@ -165,9 +136,7 @@ class TownLoader(StateData.StateData):
 
     def enterToonInterior(self, requestStatus):
         self.acceptOnce(self.placeDoneEvent, self.handleToonInteriorDone)
-        self.place = ToonInterior.ToonInterior(
-            self, self.fsm.getStateNamed("toonInterior"), self.placeDoneEvent
-        )
+        self.place = ToonInterior.ToonInterior(self, self.fsm.getStateNamed('toonInterior'), self.placeDoneEvent)
         base.cr.playGame.setPlace(self.place)
         self.place.load()
         self.place.enter(requestStatus)
@@ -182,18 +151,15 @@ class TownLoader(StateData.StateData):
 
     def handleToonInteriorDone(self):
         status = self.place.doneStatus
-        if (
-            ZoneUtil.getBranchZone(status["zoneId"]) == self.branchZone
-            and status["shardId"] == None
-        ):
-            self.fsm.request("quietZone", [status])
+        if ZoneUtil.getBranchZone(status['zoneId']) == self.branchZone and status['shardId'] == None:
+            self.fsm.request('quietZone', [status])
         else:
             self.doneStatus = status
             messenger.send(self.doneEvent)
         return
 
     def enterQuietZone(self, requestStatus):
-        self.quietZoneDoneEvent = uniqueName("quietZoneDone")
+        self.quietZoneDoneEvent = uniqueName('quietZoneDone')
         self.acceptOnce(self.quietZoneDoneEvent, self.handleQuietZoneDone)
         self.quietZoneStateData = QuietZoneState.QuietZoneState(self.quietZoneDoneEvent)
         self.quietZoneStateData.load()
@@ -209,7 +175,7 @@ class TownLoader(StateData.StateData):
 
     def handleQuietZoneDone(self):
         status = self.quietZoneStateData.getRequestStatus()
-        self.fsm.request(status["where"], [status])
+        self.fsm.request(status['where'], [status])
 
     def enterFinal(self):
         pass
@@ -217,14 +183,14 @@ class TownLoader(StateData.StateData):
     def exitFinal(self):
         pass
 
-    def createHood(self, dnaFile, loadStorage=1):
+    def createHood(self, dnaFile, loadStorage = 1):
         if loadStorage:
-            loader.loadDNAFile(self.hood.dnaStore, "phase_5/dna/storage_town.dna")
-            self.notify.debug("done loading %s" % "phase_5/dna/storage_town.dna")
+            loader.loadDNAFile(self.hood.dnaStore, 'phase_5/dna/storage_town.dna')
+            self.notify.debug('done loading %s' % 'phase_5/dna/storage_town.dna')
             loader.loadDNAFile(self.hood.dnaStore, self.townStorageDNAFile)
-            self.notify.debug("done loading %s" % self.townStorageDNAFile)
+            self.notify.debug('done loading %s' % self.townStorageDNAFile)
         node = loader.loadDNAFile(self.hood.dnaStore, dnaFile)
-        self.notify.debug("done loading %s" % dnaFile)
+        self.notify.debug('done loading %s' % dnaFile)
         if node.getNumParents() == 1:
             self.geom = NodePath(node.getParent(0))
             self.geom.reparentTo(hidden)
@@ -235,26 +201,26 @@ class TownLoader(StateData.StateData):
         self.renameFloorPolys(self.nodeList)
         self.createAnimatedProps(self.nodeList)
         self.holidayPropTransforms = {}
-        npl = self.geom.findAllMatches("**/=DNARoot=holiday_prop")
+        npl = self.geom.findAllMatches('**/=DNARoot=holiday_prop')
         for i in range(npl.getNumPaths()):
             np = npl.getPath(i)
-            np.setTag("transformIndex", repr(i))
+            np.setTag('transformIndex', repr(i))
             self.holidayPropTransforms[i] = np.getNetTransform()
 
-        self.notify.info("skipping self.geom.flattenMedium")
+        self.notify.info('skipping self.geom.flattenMedium')
         gsg = base.win.getGsg()
         if gsg:
             self.geom.prepareScene(gsg)
-        self.geom.setName("town_top_level")
+        self.geom.setName('town_top_level')
 
     def reparentLandmarkBlockNodes(self):
-        bucket = self.landmarkBlocks = hidden.attachNewNode("landmarkBlocks")
-        npc = self.geom.findAllMatches("**/sb*:*_landmark_*_DNARoot")
+        bucket = self.landmarkBlocks = hidden.attachNewNode('landmarkBlocks')
+        npc = self.geom.findAllMatches('**/sb*:*_landmark_*_DNARoot')
         for i in range(npc.getNumPaths()):
             nodePath = npc.getPath(i)
             nodePath.wrtReparentTo(bucket)
 
-        npc = self.geom.findAllMatches("**/sb*:*animated_building*_DNARoot")
+        npc = self.geom.findAllMatches('**/sb*:*animated_building*_DNARoot')
         for i in range(npc.getNumPaths()):
             nodePath = npc.getPath(i)
             nodePath.wrtReparentTo(bucket)
@@ -274,38 +240,22 @@ class TownLoader(StateData.StateData):
             groupName = base.cr.hoodMgr.extractGroupName(groupFullName)
             zoneId = int(groupName)
             zoneId = ZoneUtil.getTrueZoneId(zoneId, self.zoneId)
-            groupNode = self.geom.find("**/" + groupFullName)
+            groupNode = self.geom.find('**/' + groupFullName)
             if groupNode.isEmpty():
-                self.notify.error("Could not find visgroup")
+                self.notify.error('Could not find visgroup')
             else:
-                if ":" in groupName:
-                    groupName = "%s%s" % (zoneId, groupName[groupName.index(":") :])
+                if ':' in groupName:
+                    groupName = '%s%s' % (zoneId, groupName[groupName.index(':'):])
                 else:
-                    groupName = "%s" % zoneId
+                    groupName = '%s' % zoneId
                 groupNode.setName(groupName)
             self.nodeDict[zoneId] = []
             self.nodeList.append(groupNode)
             self.zoneDict[zoneId] = groupNode
             self.nodeToZone[groupNode] = zoneId
             fadeDuration = 0.5
-            self.fadeOutDict[groupNode] = Sequence(
-                Func(groupNode.setTransparency, 1),
-                LerpColorScaleInterval(groupNode, fadeDuration, a0, startColorScale=a1),
-                Func(groupNode.clearColorScale),
-                Func(groupNode.clearTransparency),
-                Func(groupNode.stash),
-                name="fadeZone-" + str(zoneId),
-                autoPause=1,
-            )
-            self.fadeInDict[groupNode] = Sequence(
-                Func(groupNode.unstash),
-                Func(groupNode.setTransparency, 1),
-                LerpColorScaleInterval(groupNode, fadeDuration, a1, startColorScale=a0),
-                Func(groupNode.clearColorScale),
-                Func(groupNode.clearTransparency),
-                name="fadeZone-" + str(zoneId),
-                autoPause=1,
-            )
+            self.fadeOutDict[groupNode] = Sequence(Func(groupNode.setTransparency, 1), LerpColorScaleInterval(groupNode, fadeDuration, a0, startColorScale=a1), Func(groupNode.clearColorScale), Func(groupNode.clearTransparency), Func(groupNode.stash), name='fadeZone-' + str(zoneId), autoPause=1)
+            self.fadeInDict[groupNode] = Sequence(Func(groupNode.unstash), Func(groupNode.setTransparency, 1), LerpColorScaleInterval(groupNode, fadeDuration, a1, startColorScale=a0), Func(groupNode.clearColorScale), Func(groupNode.clearTransparency), name='fadeZone-' + str(zoneId), autoPause=1)
 
         for i in range(numVisGroups):
             groupFullName = dnaStore.getDNAVisGroupName(i)
@@ -326,7 +276,7 @@ class TownLoader(StateData.StateData):
 
     def renameFloorPolys(self, nodeList):
         for i in nodeList:
-            collNodePaths = i.findAllMatches("**/+CollisionNode")
+            collNodePaths = i.findAllMatches('**/+CollisionNode')
             numCollNodePaths = collNodePaths.getNumPaths()
             visGroupName = i.node().getName()
             for j in range(numCollNodePaths):
@@ -339,38 +289,38 @@ class TownLoader(StateData.StateData):
         self.animPropDict = {}
         self.zoneIdToInteractivePropDict = {}
         for i in nodeList:
-            animPropNodes = i.findAllMatches("**/animated_prop_*")
+            animPropNodes = i.findAllMatches('**/animated_prop_*')
             numAnimPropNodes = animPropNodes.getNumPaths()
             for j in range(numAnimPropNodes):
                 animPropNode = animPropNodes.getPath(j)
-                if animPropNode.getName().startswith("animated_prop_generic"):
-                    className = "GenericAnimatedProp"
-                elif animPropNode.getName().startswith("animated_prop_"):
-                    name = animPropNode.getName()[len("animated_prop_") :]
-                    splits = name.split("_")
+                if animPropNode.getName().startswith('animated_prop_generic'):
+                    className = 'GenericAnimatedProp'
+                elif animPropNode.getName().startswith('animated_prop_'):
+                    name = animPropNode.getName()[len('animated_prop_'):]
+                    splits = name.split('_')
                     className = splits[0]
                 else:
                     className = animPropNode.getName()[14:-8]
                 symbols = {}
-                base.cr.importModule(symbols, "toontown.hood", [className])
+                base.cr.importModule(symbols, 'toontown.hood', [className])
                 classObj = getattr(symbols[className], className)
                 animPropObj = classObj(animPropNode)
                 animPropList = self.animPropDict.setdefault(i, [])
                 animPropList.append(animPropObj)
 
-            interactivePropNodes = i.findAllMatches("**/interactive_prop_*")
+            interactivePropNodes = i.findAllMatches('**/interactive_prop_*')
             numInteractivePropNodes = interactivePropNodes.getNumPaths()
             for j in range(numInteractivePropNodes):
                 interactivePropNode = interactivePropNodes.getPath(j)
-                className = "InteractiveAnimatedProp"
-                if "hydrant" in interactivePropNode.getName():
-                    className = "HydrantInteractiveProp"
-                elif "trashcan" in interactivePropNode.getName():
-                    className = "TrashcanInteractiveProp"
-                elif "mailbox" in interactivePropNode.getName():
-                    className = "MailboxInteractiveProp"
+                className = 'InteractiveAnimatedProp'
+                if 'hydrant' in interactivePropNode.getName():
+                    className = 'HydrantInteractiveProp'
+                elif 'trashcan' in interactivePropNode.getName():
+                    className = 'TrashcanInteractiveProp'
+                elif 'mailbox' in interactivePropNode.getName():
+                    className = 'MailboxInteractiveProp'
                 symbols = {}
-                base.cr.importModule(symbols, "toontown.hood", [className])
+                base.cr.importModule(symbols, 'toontown.hood', [className])
                 classObj = getattr(symbols[className], className)
                 interactivePropObj = classObj(interactivePropNode)
                 animPropList = self.animPropDict.get(i)
@@ -382,22 +332,19 @@ class TownLoader(StateData.StateData):
                     if zoneId not in self.zoneIdToInteractivePropDict:
                         self.zoneIdToInteractivePropDict[zoneId] = interactivePropObj
                     else:
-                        self.notify.error(
-                            "already have interactive prop %s in zone %s"
-                            % (self.zoneIdToInteractivePropDict, zoneId)
-                        )
+                        self.notify.error('already have interactive prop %s in zone %s' % (self.zoneIdToInteractivePropDict, zoneId))
 
-            animatedBuildingNodes = i.findAllMatches("**/*:animated_building_*;-h")
+            animatedBuildingNodes = i.findAllMatches('**/*:animated_building_*;-h')
             for np in animatedBuildingNodes:
-                if np.getName().startswith("sb"):
+                if np.getName().startswith('sb'):
                     animatedBuildingNodes.removePath(np)
 
             numAnimatedBuildingNodes = animatedBuildingNodes.getNumPaths()
             for j in range(numAnimatedBuildingNodes):
                 animatedBuildingNode = animatedBuildingNodes.getPath(j)
-                className = "GenericAnimatedBuilding"
+                className = 'GenericAnimatedBuilding'
                 symbols = {}
-                base.cr.importModule(symbols, "toontown.hood", [className])
+                base.cr.importModule(symbols, 'toontown.hood', [className])
                 classObj = getattr(symbols[className], className)
                 animatedBuildingObj = classObj(animatedBuildingNode)
                 animPropList = self.animPropDict.get(i)

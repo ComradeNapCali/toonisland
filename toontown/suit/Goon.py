@@ -6,27 +6,23 @@ from toontown.toonbase import TTLocalizer
 from . import GoonGlobals
 from . import SuitDNA
 import math
-
-AnimDict = {
-    "pg": (("walk", "-walk"), ("collapse", "-collapse"), ("recovery", "-recovery")),
-    "sg": (("walk", "-walk"), ("collapse", "-collapse"), ("recovery", "-recovery")),
-    "fg1": (("walk", "-walk"), ("collapse", "-collapse"), ("recovery", "-recovery")),
-}
-ModelDict = {
-    "pg": "phase_9/models/char/Cog_Goonie",
-    "sg": "phase_9/models/char/Cog_Goonie",
-    "fg1": "phase_9/models/char/Cog_Goonie",
-}
+AnimDict = {'pg': (('walk', '-walk'), ('collapse', '-collapse'), ('recovery', '-recovery')),
+ 'sg': (('walk', '-walk'), ('collapse', '-collapse'), ('recovery', '-recovery')),
+ 'fg1': (('walk', '-walk'), ('collapse', '-collapse'), ('recovery', '-recovery'))}
+ModelDict = {'pg': 'phase_9/models/char/Cog_Goonie',
+ 'sg': 'phase_9/models/char/Cog_Goonie',
+ 'fg1': 'phase_9/models/char/Cog_Goonie'}
 
 
 class Goon(Avatar.Avatar):
-    def __init__(self, dnaName=None):
+
+    def __init__(self, dnaName = None):
         try:
             self.Goon_initialized
         except:
             self.Goon_initialized = 1
             Avatar.Avatar.__init__(self)
-            self.ignore("nametagAmbientLightChanged")
+            self.ignore('nametagAmbientLightChanged')
             self.hFov = 70
             self.attackRadius = 15
             self.strength = 15
@@ -43,14 +39,12 @@ class Goon(Avatar.Avatar):
         self.setDNA(dna)
         self.type = dnaName
         self.createHead()
-        self.find("**/actorGeom").setH(180)
+        self.find('**/actorGeom').setH(180)
 
     def initializeBodyCollisions(self, collIdStr):
         Avatar.Avatar.initializeBodyCollisions(self, collIdStr)
         if not self.ghostMode:
-            self.collNode.setCollideMask(
-                self.collNode.getIntoCollideMask() | ToontownGlobals.PieBitmask
-            )
+            self.collNode.setCollideMask(self.collNode.getIntoCollideMask() | ToontownGlobals.PieBitmask)
 
     def delete(self):
         try:
@@ -58,7 +52,7 @@ class Goon(Avatar.Avatar):
         except:
             self.Goon_deleted = 1
             filePrefix = ModelDict[self.style.name]
-            loader.unloadModel(filePrefix + "-zero")
+            loader.unloadModel(filePrefix + '-zero')
             animList = AnimDict[self.style.name]
             for anim in animList:
                 loader.unloadModel(filePrefix + anim[1])
@@ -84,7 +78,7 @@ class Goon(Avatar.Avatar):
     def generateGoon(self):
         dna = self.style
         filePrefix = ModelDict[dna.name]
-        self.loadModel(filePrefix + "-zero")
+        self.loadModel(filePrefix + '-zero')
         animDict = {}
         animList = AnimDict[dna.name]
         for anim in animList:
@@ -100,25 +94,25 @@ class Goon(Avatar.Avatar):
 
     def createHead(self):
         self.headHeight = 3.0
-        head = self.find("**/joint35")
+        head = self.find('**/joint35')
         if head.isEmpty():
-            head = self.find("**/joint40")
-        self.hat = self.find("**/joint8")
+            head = self.find('**/joint40')
+        self.hat = self.find('**/joint8')
         parentNode = head.getParent()
-        self.head = parentNode.attachNewNode("headRotate")
+        self.head = parentNode.attachNewNode('headRotate')
         head.reparentTo(self.head)
         self.hat.reparentTo(self.head)
-        if self.type == "pg":
-            self.hat.find("**/security_hat").hide()
-        elif self.type == "sg":
-            self.hat.find("**/hard_hat").hide()
-        elif self.type == "fg1":
-            self.hat.find("**/security_hat").hide()
+        if self.type == 'pg':
+            self.hat.find('**/security_hat').hide()
+        elif self.type == 'sg':
+            self.hat.find('**/hard_hat').hide()
+        elif self.type == 'fg1':
+            self.hat.find('**/security_hat').hide()
             self.hat.setColor(0.862745, 0.517647, 0.0941177, 1)
         else:
-            self.hat.find("**/security_hat").hide()
-            self.hat.find("**/hard_hat").hide()
-        self.eye = self.find("**/eye")
+            self.hat.find('**/security_hat').hide()
+            self.hat.find('**/hard_hat').hide()
+        self.eye = self.find('**/eye')
         self.eye.setColorScale(1, 1, 1, 1)
         self.eye.setColor(1, 1, 0, 1)
         self.radar = None
@@ -127,12 +121,12 @@ class Goon(Avatar.Avatar):
     def scaleRadar(self):
         if self.radar:
             self.radar.removeNode()
-        self.radar = self.eye.attachNewNode("radar")
-        model = loader.loadModel("phase_9/models/cogHQ/alphaCone2")
-        beam = self.radar.attachNewNode("beam")
-        transformNode = model.find("**/transform")
+        self.radar = self.eye.attachNewNode('radar')
+        model = loader.loadModel('phase_9/models/cogHQ/alphaCone2')
+        beam = self.radar.attachNewNode('beam')
+        transformNode = model.find('**/transform')
         transformNode.getChildren().reparentTo(beam)
-        self.radar.setPos(0, -0.5, 0.4)
+        self.radar.setPos(0, -.5, 0.4)
         self.radar.setTransparency(1)
         self.radar.setDepthWrite(0)
         self.halfFov = self.hFov / 2.0
@@ -148,11 +142,11 @@ class Goon(Avatar.Avatar):
         self.radar.setColor(1, 1, 1, 0.2)
 
     def colorHat(self):
-        if self.type == "pg":
+        if self.type == 'pg':
             colorList = GoonGlobals.PG_COLORS
-        elif self.type == "sg":
+        elif self.type == 'sg':
             colorList = GoonGlobals.SG_COLORS
-        elif self.type == "fg1":
+        elif self.type == 'fg1':
             colorList = GoonGlobals.FG1_COLORS
         else:
             return

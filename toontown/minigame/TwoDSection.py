@@ -8,9 +8,8 @@ from toontown.minigame import TwoDTreasureMgr
 from toontown.minigame import TwoDSpawnPointMgr
 from toontown.minigame import TwoDStomperMgr
 
-
 class TwoDSection(DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("TwoDSection")
+    notify = DirectNotifyGlobal.directNotify.newCategory('TwoDSection')
 
     def __init__(self, indexNum, sectionInfo, sectionNP, sectionMgr):
         self.indexNum = indexNum
@@ -71,13 +70,10 @@ class TwoDSection(DirectObject):
         for stomperIndex in stomperIndicesSelected:
             self.stomperList.append(stompersPool[stomperIndex])
 
-        self.blocksNP = NodePath("Blocks")
+        self.blocksNP = NodePath('Blocks')
         self.blocksNP.reparentTo(self.sectionNP)
         if self.blockList[0][1][0] != (0, 0, 12):
-            self.notify.warning(
-                "First block of section %s does not start at (0, 0, 12)"
-                % self.sectionTypeNum
-            )
+            self.notify.warning('First block of section %s does not start at (0, 0, 12)' % self.sectionTypeNum)
         for index in range(0, len(self.blockList)):
             blockAttribs = self.blockList[index]
             fileName = ToonBlitzGlobals.BlockTypes[blockAttribs[0]][0]
@@ -89,14 +85,10 @@ class TwoDSection(DirectObject):
             self.blocks.append(newBlock)
 
         self.enemyMgr = TwoDEnemyMgr.TwoDEnemyMgr(self, self.enemyList)
-        self.treasureMgr = TwoDTreasureMgr.TwoDTreasureMgr(
-            self, self.treasureList, self.enemyList
-        )
-        self.spawnPointMgr = TwoDSpawnPointMgr.TwoDSpawnPointMgr(
-            self, self.spawnPointList
-        )
+        self.treasureMgr = TwoDTreasureMgr.TwoDTreasureMgr(self, self.treasureList, self.enemyList)
+        self.spawnPointMgr = TwoDSpawnPointMgr.TwoDSpawnPointMgr(self, self.spawnPointList)
         self.stomperMgr = TwoDStomperMgr.TwoDStomperMgr(self, self.stomperList)
-        if self.sectionTypeNum == "end":
+        if self.sectionTypeNum == 'end':
             self.spawnPointMgr.setupLastSavePointHandle()
 
     def enterPlay(self, elapsedTime):
@@ -124,11 +116,12 @@ class TwoDSection(DirectObject):
         self.stomperMgr.exitPause()
 
     def getSectionizedId(self, num):
+
         def getTwoDigitString(index):
             if index < 10:
-                output = "0" + str(index)
+                output = '0' + str(index)
             else:
                 output = str(index)
             return output
 
-        return getTwoDigitString(self.indexNum) + "-" + getTwoDigitString(num)
+        return getTwoDigitString(self.indexNum) + '-' + getTwoDigitString(num)

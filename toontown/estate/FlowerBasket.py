@@ -2,9 +2,8 @@ from . import GardenGlobals
 from direct.directnotify import DirectNotifyGlobal
 from . import FlowerBase
 
-
 class FlowerBasket:
-    notify = DirectNotifyGlobal.directNotify.newCategory("FlowerBasket")
+    notify = DirectNotifyGlobal.directNotify.newCategory('FlowerBasket')
 
     def __init__(self):
         self.flowerList = []
@@ -49,7 +48,6 @@ class FlowerBasket:
 
     def generateRandomBasket(self):
         import random
-
         numFish = random.randint(1, 20)
         self.flowerList = []
         for i in range(numFish):
@@ -66,10 +64,10 @@ class FlowerBasket:
     def __str__(self):
         numFlower = len(self.flowerList)
         value = 0
-        txt = "Flower Basket (%s flower):" % numFlower
+        txt = 'Flower Basket (%s flower):' % numFlower
         for flower in self.flowerList:
-            txt += "\n" + str(flower)
+            txt += '\n' + str(flower)
 
         value = self.getTotalValue()
-        txt += "\nTotal value: %s" % value
+        txt += '\nTotal value: %s' % value
         return txt

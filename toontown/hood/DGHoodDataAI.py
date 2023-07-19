@@ -8,9 +8,8 @@ from toontown.classicchars import DistributedDaisyAI
 from toontown.safezone import DistributedDGFlowerAI
 from toontown.safezone import ButterflyGlobals
 
-
 class DGHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DGHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DGHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.WitheringWoods

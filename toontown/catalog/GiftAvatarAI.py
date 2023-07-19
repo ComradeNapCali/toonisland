@@ -7,6 +7,7 @@ from toontown.toon import ToonDNA
 
 
 class GiftAvatarAI:
+
     def __init__(self):
         self.style = None
         self.mailboxContents = None
@@ -44,41 +45,31 @@ class GiftAvatarAI:
         return self.shoes
 
     def getGiftScheduleBlob(self):
-        return self.onGiftOrder.getBlob(
-            store=CatalogItem.Customization | CatalogItem.DeliveryDate
-        )
+        return self.onGiftOrder.getBlob(store=CatalogItem.Customization | CatalogItem.DeliveryDate)
 
     def setDNAString(self, dnaString):
         self.style = ToonDNA.ToonDNA()
         self.style.makeFromNetString(base64.b64decode(dnaString))
 
     def setMailboxContents(self, mailboxContents):
-        self.mailboxContents = CatalogItemList.CatalogItemList(
-            base64.b64decode(mailboxContents), store=CatalogItem.Customization
-        )
+        self.mailboxContents = CatalogItemList.CatalogItemList(base64.b64decode(mailboxContents),
+                                                               store=CatalogItem.Customization)
 
     def setAwardMailboxContents(self, awardMailboxContents):
-        self.awardMailboxContents = CatalogItemList.CatalogItemList(
-            base64.b64decode(awardMailboxContents), store=CatalogItem.Customization
-        )
+        self.awardMailboxContents = CatalogItemList.CatalogItemList(base64.b64decode(awardMailboxContents),
+                                                                    store=CatalogItem.Customization)
 
     def setGiftSchedule(self, onOrder):
-        self.onGiftOrder = CatalogItemList.CatalogItemList(
-            base64.b64decode(onOrder),
-            store=CatalogItem.Customization | CatalogItem.DeliveryDate,
-        )
+        self.onGiftOrder = CatalogItemList.CatalogItemList(base64.b64decode(onOrder),
+                                                           store=CatalogItem.Customization | CatalogItem.DeliveryDate)
 
     def setDeliverySchedule(self, onOrder):
-        self.onOrder = CatalogItemList.CatalogItemList(
-            base64.b64decode(onOrder),
-            store=CatalogItem.Customization | CatalogItem.DeliveryDate,
-        )
+        self.onOrder = CatalogItemList.CatalogItemList(base64.b64decode(onOrder),
+                                                       store=CatalogItem.Customization | CatalogItem.DeliveryDate)
 
     def setAwardSchedule(self, onOrder):
-        self.onAwardOrder = CatalogItemList.CatalogItemList(
-            base64.b64decode(onOrder),
-            store=CatalogItem.Customization | CatalogItem.DeliveryDate,
-        )
+        self.onAwardOrder = CatalogItemList.CatalogItemList(base64.b64decode(onOrder),
+                                                            store=CatalogItem.Customization | CatalogItem.DeliveryDate)
 
     def setHat(self, hat):
         self.hat = hat
@@ -120,21 +111,16 @@ class GiftAvatarAI:
         self.petTrickPhrases = tricks[0]
 
     def addToGiftSchedule(self, avId, targetId, item, minutes=0):
-        if config.GetBool("want-instant-delivery", False):
+        if config.GetBool('want-instant-delivery', False):
             minutes = 0
 
         item.giftTag = avId
-        item.deliveryDate = int(time.time() / 60.0 + minutes + 0.5)
+        item.deliveryDate = int(time.time() / 60. + minutes + .5)
         self.onGiftOrder.append(item)
         simbase.air.send(
-            simbase.air.dclassesByName["DistributedToonAI"].aiFormatUpdate(
-                "setGiftSchedule",
-                targetId,
-                targetId,
-                simbase.air.ourChannel,
-                [self.getGiftScheduleBlob()],
-            )
-        )
+            simbase.air.dclassesByName['DistributedToonAI'].aiFormatUpdate('setGiftSchedule', targetId, targetId,
+                                                                           simbase.air.ourChannel,
+                                                                           [self.getGiftScheduleBlob()]))
 
     @staticmethod
     def createFromFields(fields):

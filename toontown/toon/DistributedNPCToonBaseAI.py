@@ -9,9 +9,9 @@ from . import NPCToons
 from direct.task import Task
 from toontown.quest import Quests
 
-
 class DistributedNPCToonBaseAI(DistributedToonAI.DistributedToonAI):
-    def __init__(self, air, npcId, questCallback=None):
+
+    def __init__(self, air, npcId, questCallback = None):
         DistributedToonAI.DistributedToonAI.__init__(self, air)
         self.air = air
         self.npcId = npcId
@@ -20,7 +20,7 @@ class DistributedNPCToonBaseAI(DistributedToonAI.DistributedToonAI):
         self.givesQuests = 1
 
     def delete(self):
-        taskMgr.remove(self.uniqueName("clearMovie"))
+        taskMgr.remove(self.uniqueName('clearMovie'))
         DistributedToonAI.DistributedToonAI.delete(self)
 
     def _doPlayerEnter(self):
@@ -55,7 +55,7 @@ class DistributedNPCToonBaseAI(DistributedToonAI.DistributedToonAI):
         return self.npcId
 
     def freeAvatar(self, avId):
-        self.sendUpdateToAvatarId(avId, "freeAvatar", [])
+        self.sendUpdateToAvatarId(avId, 'freeAvatar', [])
 
     def setPositionIndex(self, posIndex):
         self.posIndex = posIndex

@@ -7,9 +7,8 @@ from toontown.classicchars import DistributedMickeyAI
 from toontown.safezone import ButterflyGlobals
 from direct.task import Task
 
-
 class TTHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("TTHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('TTHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.ToonIslandCentral
@@ -33,16 +32,16 @@ class TTHoodDataAI(HoodDataAI.HoodDataAI):
         self.addDistObj(self.classicChar)
         self.createButterflies(ButterflyGlobals.TTC)
         if simbase.blinkTrolley:
-            taskMgr.doMethodLater(0.5, self._deleteTrolley, "deleteTrolley")
-        messenger.send("TTHoodSpawned", [self])
+            taskMgr.doMethodLater(0.5, self._deleteTrolley, 'deleteTrolley')
+        messenger.send('TTHoodSpawned', [self])
 
     def shutdown(self):
         HoodDataAI.HoodDataAI.shutdown(self)
-        messenger.send("TTHoodDestroyed", [self])
+        messenger.send('TTHoodDestroyed', [self])
 
     def _deleteTrolley(self, task):
         self.trolley.requestDelete()
-        taskMgr.doMethodLater(0.5, self._createTrolley, "createTrolley")
+        taskMgr.doMethodLater(0.5, self._createTrolley, 'createTrolley')
         return Task.done
 
     def _createTrolley(self, task):
@@ -50,5 +49,5 @@ class TTHoodDataAI(HoodDataAI.HoodDataAI):
         trolley.generateWithRequired(self.zoneId)
         trolley.start()
         self.trolley = trolley
-        taskMgr.doMethodLater(0.5, self._deleteTrolley, "deleteTrolley")
+        taskMgr.doMethodLater(0.5, self._deleteTrolley, 'deleteTrolley')
         return Task.done

@@ -5,9 +5,9 @@ from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
 import functools
 
-
 class CatalogItemList:
-    def __init__(self, source=None, store=0):
+
+    def __init__(self, source = None, store = 0):
         self.store = store
         self.__blob = None
         self.__list = None
@@ -29,7 +29,7 @@ class CatalogItemList:
             self.__blob = None
         return
 
-    def getBlob(self, store=None):
+    def getBlob(self, store = None):
         if store == None or store == self.store:
             if self.__blob == None:
                 self.__encodeList()
@@ -69,10 +69,7 @@ class CatalogItemList:
             else:
                 afterTime.append(item)
 
-        return (
-            CatalogItemList(beforeTime, store=self.store),
-            CatalogItemList(afterTime, store=self.store),
-        )
+        return (CatalogItemList(beforeTime, store=self.store), CatalogItemList(afterTime, store=self.store))
 
     def extractOldestItems(self, count):
         return (self[0:count], self[count:])
@@ -131,7 +128,7 @@ class CatalogItemList:
         self.__blob = None
         return
 
-    def pop(self, index=None):
+    def pop(self, index = None):
         if self.__list == None:
             self.__decodeList()
         self.__blob = None
@@ -155,7 +152,7 @@ class CatalogItemList:
         self.__blob = None
         return
 
-    def sort(self, cmpfunc=None):
+    def sort(self, cmpfunc = None):
         if self.__list == None:
             self.__decodeList()
         if cmpfunc == None:
@@ -229,11 +226,11 @@ class CatalogItemList:
     def __str__(self):
         return self.output()
 
-    def output(self, store=-1):
+    def output(self, store = -1):
         if self.__list == None:
             self.__decodeList()
-        inner = ""
+        inner = ''
         for item in self.__list:
-            inner += ", %s" % item.output(store)
+            inner += ', %s' % item.output(store)
 
-        return "CatalogItemList([%s])" % inner[2:]
+        return 'CatalogItemList([%s])' % inner[2:]

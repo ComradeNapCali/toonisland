@@ -2,11 +2,10 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals, TTLocalizer
 from toontown.ai import HolidayBaseAI
 
-
 class TrolleyWeekendMgrAI(HolidayBaseAI.HolidayBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("TrolleyWeekendMgrAI")
-    PostName = "TrolleyWeekend"
-    StartStopMsg = "TrolleyWeekendStartStop"
+    notify = DirectNotifyGlobal.directNotify.newCategory('TrolleyWeekendMgrAI')
+    PostName = 'TrolleyWeekend'
+    StartStopMsg = 'TrolleyWeekendStartStop'
 
     def __init__(self, air, holidayId):
         HolidayBaseAI.HolidayBaseAI.__init__(self, air, holidayId)

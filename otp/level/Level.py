@@ -1,7 +1,6 @@
 from direct.directnotify import DirectNotifyGlobal
 import string
 from . import LevelConstants
-
 try:
     from direct.showbase.PythonUtil import lineInfo
 except ImportError:
@@ -11,7 +10,7 @@ import types
 
 
 class Level:
-    notify = DirectNotifyGlobal.directNotify.newCategory("Level")
+    notify = DirectNotifyGlobal.directNotify.newCategory('Level')
 
     def __init__(self):
         self.levelSpec = None
@@ -31,11 +30,13 @@ class Level:
         self.nonlocalEntIds = {}
         self.nothingEntIds = {}
         self.entityCreator = self.createEntityCreator()
-        self.entType2ids = self.levelSpec.getEntType2ids(self.levelSpec.getAllEntIds())
+        self.entType2ids = self.levelSpec.getEntType2ids(
+            self.levelSpec.getAllEntIds())
         for entType in self.entityCreator.getEntityTypes():
             self.entType2ids.setdefault(entType, [])
 
-        self.createAllEntities(priorityTypes=["levelMgr", "zone", "propSpinner"])
+        self.createAllEntities(
+            priorityTypes=['levelMgr', 'zone', 'propSpinner'])
         self.levelMgrEntity = self.getEntity(LevelConstants.LevelMgrEntId)
         self.uberZoneEntity = self.getEntity(LevelConstants.UberZoneEntId)
         self.initialized = 1
@@ -60,14 +61,15 @@ class Level:
         del self.createdEntIds
         del self.nonlocalEntIds
         del self.nothingEntIds
-        if hasattr(self, "entities"):
+        if hasattr(self, 'entities'):
             del self.entities
-        if hasattr(self, "levelSpec"):
+        if hasattr(self, 'levelSpec'):
             self.levelSpec.destroy()
             del self.levelSpec
 
     def createEntityCreator(self):
-        Level.notify.error("concrete Level class must override %s" % lineInfo()[2])
+        Level.notify.error(
+            'concrete Level class must override %s' % lineInfo()[2])
 
     def createAllEntities(self, priorityTypes=[]):
         self.entities = {}
@@ -86,22 +88,18 @@ class Level:
         self.nonlocalEntIds = {}
         self.nothingEntIds = {}
         if not uniqueElements(self.createdEntIds):
-            Level.notify.warning(
-                "%s: self.createdEntIds is not unique: %s"
-                % (getattr(self, "doId", None), self.createdEntIds)
-            )
+            Level.notify.warning('%s: self.createdEntIds is not unique: %s' % (
+                getattr(self, 'doId', None), self.createdEntIds))
         while len(self.createdEntIds) > 0:
             entId = self.createdEntIds.pop()
             entity = self.getEntity(entId)
             if entity is not None:
-                Level.notify.debug(
-                    "destroying %s %s" % (self.getEntityType(entId), entId)
-                )
+                Level.notify.debug('destroying %s %s' %
+                                   (self.getEntityType(entId), entId))
                 entity.destroy()
             else:
                 Level.notify.error(
-                    "trying to destroy entity %s, but it is already gone" % entId
-                )
+                    'trying to destroy entity %s, but it is already gone' % entId)
 
         return
 
@@ -114,12 +112,12 @@ class Level:
 
     def createEntity(self, entId):
         spec = self.levelSpec.getEntitySpec(entId)
-        Level.notify.debug("creating %s %s" % (spec["type"], entId))
+        Level.notify.debug('creating %s %s' % (spec['type'], entId))
         entity = self.entityCreator.createEntity(entId)
         announce = False
-        if entity is "nonlocal":
+        if entity is 'nonlocal':
             self.nonlocalEntIds[entId] = None
-        elif entity is "nothing":
+        elif entity is 'nothing':
             self.nothingEntIds[entId] = None
             announce = True
         else:
@@ -133,14 +131,14 @@ class Level:
         entId = entity.entId
         spec = self.levelSpec.getEntitySpec(entId)
         for key, value in list(spec.items()):
-            if key in ("type", "name", "comment"):
+            if key in ('type', 'name', 'comment'):
                 continue
             entity.setAttribInit(key, value)
 
         self.entities[entId] = entity
 
     def getEntity(self, entId):
-        if hasattr(self, "entities"):
+        if hasattr(self, 'entities'):
             return self.entities.get(entId)
         else:
             return None
@@ -154,7 +152,7 @@ class Level:
 
     def getEntityZoneId(self, entId):
         zoneEntId = self.getEntityZoneEntId(entId)
-        if not hasattr(self, "zoneNum2zoneId"):
+        if not hasattr(self, 'zoneNum2zoneId'):
             return None
         return self.zoneNum2zoneId.get(zoneEntId)
 
@@ -168,22 +166,22 @@ class Level:
         return entId
 
     def getLevelPreCreateEvent(self):
-        return "levelPreCreate-%s" % self.levelId
+        return 'levelPreCreate-%s' % self.levelId
 
     def getLevelPostCreateEvent(self):
-        return "levelPostCreate-%s" % self.levelId
+        return 'levelPostCreate-%s' % self.levelId
 
     def getEntityTypePreCreateEvent(self, entType):
-        return "entityTypePreCreate-%s-%s" % (self.levelId, entType)
+        return 'entityTypePreCreate-%s-%s' % (self.levelId, entType)
 
     def getEntityTypePostCreateEvent(self, entType):
-        return "entityTypePostCreate-%s-%s" % (self.levelId, entType)
+        return 'entityTypePostCreate-%s-%s' % (self.levelId, entType)
 
     def getEntityCreateEvent(self, entId):
-        return "entityCreate-%s-%s" % (self.levelId, entId)
+        return 'entityCreate-%s-%s' % (self.levelId, entId)
 
     def getEntityOfTypeCreateEvent(self, entType):
-        return "entityOfTypeCreate-%s-%s" % (self.levelId, entType)
+        return 'entityOfTypeCreate-%s-%s' % (self.levelId, entType)
 
     def onLevelPreCreate(self):
         messenger.send(self.getLevelPreCreateEvent())
@@ -199,9 +197,8 @@ class Level:
 
     def onEntityCreate(self, entId):
         messenger.send(self.getEntityCreateEvent(entId))
-        messenger.send(
-            self.getEntityOfTypeCreateEvent(self.getEntityType(entId)), [entId]
-        )
+        messenger.send(self.getEntityOfTypeCreateEvent(
+            self.getEntityType(entId)), [entId])
         if entId in self.entId2createCallbacks:
             for callback in self.entId2createCallbacks[entId]:
                 callback()
@@ -224,7 +221,7 @@ class Level:
         return
 
     def getEntityDestroyEvent(self, entId):
-        return "entityDestroy-%s-%s" % (self.levelId, entId)
+        return 'entityDestroy-%s-%s' % (self.levelId, entId)
 
     def onEntityDestroy(self, entId):
         messenger.send(self.getEntityDestroyEvent(entId))
@@ -238,21 +235,22 @@ class Level:
     if __dev__:
 
         def getAttribChangeEventName(self):
-            return "attribChange-%s" % self.levelId
+            return 'attribChange-%s' % self.levelId
 
         def getInsertEntityEventName(self):
-            return "insertEntity-%s" % self.levelId
+            return 'insertEntity-%s' % self.levelId
 
         def getRemoveEntityEventName(self):
-            return "removeEntity-%s" % self.levelId
+            return 'removeEntity-%s' % self.levelId
 
         def handleAttribChange(self, entId, attrib, value, username=None):
             entity = self.getEntity(entId)
             if entity is not None:
                 entity.handleAttribChange(attrib, value)
-            messenger.send(
-                self.getAttribChangeEventName(), [entId, attrib, value, username]
-            )
+            messenger.send(self.getAttribChangeEventName(), [entId,
+                                                             attrib,
+                                                             value,
+                                                             username])
             return
 
         def setEntityCreatorUsername(self, entId, editUsername):

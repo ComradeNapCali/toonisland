@@ -3,13 +3,8 @@ from direct.distributed import DistributedObject
 from toontown.speedchat.TTSCIndexedTerminal import TTSCIndexedMsgEvent
 from . import DistributedScavengerHuntTarget
 
-
-class DistributedWinterCarolingTarget(
-    DistributedScavengerHuntTarget.DistributedScavengerHuntTarget
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedWinterCarolingTarget"
-    )
+class DistributedWinterCarolingTarget(DistributedScavengerHuntTarget.DistributedScavengerHuntTarget):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedWinterCarolingTarget')
 
     def __init__(self, cr):
         DistributedScavengerHuntTarget.DistributedScavengerHuntTarget.__init__(self, cr)
@@ -22,7 +17,7 @@ class DistributedWinterCarolingTarget(
     def phraseSaid(self, phraseId, displayType):
         if displayType != 0:
             return
-        self.notify.debug("Checking if phrase was said")
+        self.notify.debug('Checking if phrase was said')
         helpPhrases = []
         for i in range(6):
             helpPhrases.append(30220 + i)
@@ -33,6 +28,4 @@ class DistributedWinterCarolingTarget(
         if phraseId in helpPhrases and not self.triggered:
             self.triggered = True
             self.attemptScavengerHunt()
-            taskMgr.doMethodLater(
-                self.triggerDelay, reset, "ScavengerHunt-phrase-reset", extraArgs=[]
-            )
+            taskMgr.doMethodLater(self.triggerDelay, reset, 'ScavengerHunt-phrase-reset', extraArgs=[])

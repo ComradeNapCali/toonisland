@@ -5,22 +5,20 @@ from direct.distributed.ClockDelta import *
 from direct.distributed import DistributedSmoothNodeAI
 from direct.fsm import FSM
 from direct.task import Task
-
-if __debug__:
+if (__debug__):
     import pdb
 
-
 class DistributedVehicleAI(DistributedSmoothNodeAI.DistributedSmoothNodeAI, FSM.FSM):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedVehicleAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedVehicleAI')
 
     def __init__(self, air, avId):
         self.ownerId = avId
         DistributedSmoothNodeAI.DistributedSmoothNodeAI.__init__(self, air)
-        FSM.FSM.__init__(self, "DistributedVehicleAI")
+        FSM.FSM.__init__(self, 'DistributedVehicleAI')
         self.driverId = 0
         self.kartDNA = [-1] * getNumFields()
         self.__initDNA()
-        self.request("Off")
+        self.request('Off')
 
     def generate(self):
         DistributedSmoothNodeAI.DistributedSmoothNodeAI.generate(self)
@@ -41,25 +39,23 @@ class DistributedVehicleAI(DistributedSmoothNodeAI.DistributedSmoothNodeAI, FSM.
             self.kartDNA[KartDNA.rimsType] = owner.getKartRimType()
             self.kartDNA[KartDNA.decalType] = owner.getKartDecalType()
         else:
-            self.notify.warning(
-                "__initDNA - OWNER %s OF KART NOT FOUND!" % self.ownerId
-            )
+            self.notify.warning('__initDNA - OWNER %s OF KART NOT FOUND!' % self.ownerId)
 
     def d_setState(self, state, avId):
-        self.sendUpdate("setState", [state, avId])
+        self.sendUpdate('setState', [state, avId])
 
     def requestControl(self):
         avId = self.air.getAvatarIdFromSender()
         if self.driverId == 0:
-            self.request("Controlled", avId)
+            self.request('Controlled', avId)
 
     def requestParked(self):
         avId = self.air.getAvatarIdFromSender()
         if avId == self.driverId:
-            self.request("Parked")
+            self.request('Parked')
 
     def start(self):
-        self.request("Parked")
+        self.request('Parked')
 
     def enterOff(self):
         return None
@@ -69,7 +65,7 @@ class DistributedVehicleAI(DistributedSmoothNodeAI.DistributedSmoothNodeAI, FSM.
 
     def enterParked(self):
         self.driverId = 0
-        self.d_setState("P", 0)
+        self.d_setState('P', 0)
         return None
 
     def exitParked(self):
@@ -77,42 +73,37 @@ class DistributedVehicleAI(DistributedSmoothNodeAI.DistributedSmoothNodeAI, FSM.
 
     def enterControlled(self, avId):
         self.driverId = avId
-        fieldList = [
-            "setComponentL",
-            "setComponentX",
-            "setComponentY",
-            "setComponentZ",
-            "setComponentH",
-            "setComponentP",
-            "setComponentR",
-            "setComponentT",
-            "setSmStop",
-            "setSmH",
-            "setSmZ",
-            "setSmXY",
-            "setSmXZ",
-            "setSmPos",
-            "setSmHpr",
-            "setSmXYH",
-            "setSmXYZH",
-            "setSmPosHpr",
-            "setSmPosHprL",
-            "clearSmoothing",
-            "suggestResync",
-            "returnResync",
-        ]
+        fieldList = ['setComponentL',
+         'setComponentX',
+         'setComponentY',
+         'setComponentZ',
+         'setComponentH',
+         'setComponentP',
+         'setComponentR',
+         'setComponentT',
+         'setSmStop',
+         'setSmH',
+         'setSmZ',
+         'setSmXY',
+         'setSmXZ',
+         'setSmPos',
+         'setSmHpr',
+         'setSmXYH',
+         'setSmXYZH',
+         'setSmPosHpr',
+         'setSmPosHprL',
+         'clearSmoothing',
+         'suggestResync',
+         'returnResync']
         self.air.setAllowClientSend(avId, self, fieldNameList=fieldList)
-        self.d_setState("C", self.driverId)
+        self.d_setState('C', self.driverId)
 
     def exitControlled(self):
         pass
 
     def __handleUnexpectedExit(self):
-        self.notify.warning(
-            "toon: %d exited unexpectedly, resetting vehicle %d"
-            % (self.driverId, self.doId)
-        )
-        self.request("Parked")
+        self.notify.warning('toon: %d exited unexpectedly, resetting vehicle %d' % (self.driverId, self.doId))
+        self.request('Parked')
         self.requestDelete()
 
     def getBodyType(self):

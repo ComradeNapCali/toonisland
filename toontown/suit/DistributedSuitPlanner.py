@@ -3,43 +3,44 @@ from direct.distributed import DistributedObject
 from . import SuitPlannerBase
 from toontown.toonbase import ToontownGlobals
 
+class DistributedSuitPlanner(DistributedObject.DistributedObject, SuitPlannerBase.SuitPlannerBase):
 
-class DistributedSuitPlanner(
-    DistributedObject.DistributedObject, SuitPlannerBase.SuitPlannerBase
-):
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         SuitPlannerBase.SuitPlannerBase.__init__(self)
         self.suitList = []
-        self.buildingList = [0, 0, 0, 0]
+        self.buildingList = [0,
+         0,
+         0,
+         0]
         self.pathViz = None
         return
 
     def generate(self):
-        self.notify.info("DistributedSuitPlanner %d: generating" % self.getDoId())
+        self.notify.info('DistributedSuitPlanner %d: generating' % self.getDoId())
         DistributedObject.DistributedObject.generate(self)
         base.cr.currSuitPlanner = self
 
     def disable(self):
-        self.notify.info("DistributedSuitPlanner %d: disabling" % self.getDoId())
+        self.notify.info('DistributedSuitPlanner %d: disabling' % self.getDoId())
         self.hidePaths()
         DistributedObject.DistributedObject.disable(self)
         base.cr.currSuitPlanner = None
         return
 
     def d_suitListQuery(self):
-        self.sendUpdate("suitListQuery")
+        self.sendUpdate('suitListQuery')
 
     def suitListResponse(self, suitList):
         self.suitList = suitList
-        messenger.send("suitListResponse")
+        messenger.send('suitListResponse')
 
     def d_buildingListQuery(self):
-        self.sendUpdate("buildingListQuery")
+        self.sendUpdate('buildingListQuery')
 
     def buildingListResponse(self, buildingList):
         self.buildingList = buildingList
-        messenger.send("buildingListResponse")
+        messenger.send('buildingListResponse')
 
     def hidePaths(self):
         if self.pathViz:
@@ -49,26 +50,19 @@ class DistributedSuitPlanner(
 
     def showPaths(self):
         self.hidePaths()
-        vizNode = GeomNode(self.uniqueName("PathViz"))
+        vizNode = GeomNode(self.uniqueName('PathViz'))
         lines = LineSegs()
         self.pathViz = render.attachNewNode(vizNode)
-        points = (
-            self.frontdoorPointList
-            + self.sidedoorPointList
-            + self.cogHQDoorPointList
-            + self.streetPointList
-        )
+        points = self.frontdoorPointList + self.sidedoorPointList + self.cogHQDoorPointList + self.streetPointList
         while len(points) > 0:
             self.__doShowPoints(vizNode, lines, None, points)
 
-        cnode = CollisionNode("battleCells")
+        cnode = CollisionNode('battleCells')
         cnode.setCollideMask(BitMask32.allOff())
         for zoneId, cellPos in list(self.battlePosDict.items()):
             cnode.addSolid(CollisionSphere(cellPos, 9))
-            text = "%s" % zoneId
-            self.__makePathVizText(
-                text, cellPos[0], cellPos[1], cellPos[2] + 9, (1, 1, 1, 1)
-            )
+            text = '%s' % zoneId
+            self.__makePathVizText(text, cellPos[0], cellPos[1], cellPos[2] + 9, (1, 1, 1, 1))
 
         self.pathViz.attachNewNode(cnode).show()
         return
@@ -85,7 +79,7 @@ class DistributedSuitPlanner(
                 return
             pi = points.index(p)
             del points[pi]
-        text = "%s" % p.getIndex()
+        text = '%s' % p.getIndex()
         pos = p.getPos()
         if p.getPointType() == DNASuitPoint.FRONTDOORPOINT:
             color = (1, 0, 0, 1)
@@ -119,8 +113,8 @@ class DistributedSuitPlanner(
         return
 
     def __makePathVizText(self, text, x, y, z, color):
-        if not hasattr(self, "debugTextNode"):
-            self.debugTextNode = TextNode("debugTextNode")
+        if not hasattr(self, 'debugTextNode'):
+            self.debugTextNode = TextNode('debugTextNode')
             self.debugTextNode.setAlign(TextNode.ACenter)
             self.debugTextNode.setFont(ToontownGlobals.getSignFont())
         self.debugTextNode.setTextColor(*color)

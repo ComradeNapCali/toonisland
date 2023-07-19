@@ -4,8 +4,8 @@ from toontown.toonbase.ToontownGlobals import *
 from direct.directnotify import DirectNotifyGlobal
 from . import DistributedBarrelBase
 
-
 class DistributedBeanBarrel(DistributedBarrelBase.DistributedBarrelBase):
+
     def __init__(self, cr):
         DistributedBarrelBase.DistributedBarrelBase.__init__(self, cr)
         self.numGags = 0
@@ -21,8 +21,8 @@ class DistributedBeanBarrel(DistributedBarrelBase.DistributedBarrelBase):
         DistributedBarrelBase.DistributedBarrelBase.delete(self)
 
     def applyLabel(self):
-        purchaseModels = loader.loadModel("phase_4/models/gui/purchase_gui")
-        self.gagModel = purchaseModels.find("**/Jar")
+        purchaseModels = loader.loadModel('phase_4/models/gui/purchase_gui')
+        self.gagModel = purchaseModels.find('**/Jar')
         self.gagModel.reparentTo(self.gagNode)
         self.gagModel.setScale(self.gagScale)
         self.gagModel.setPos(0, -0.1, 0)

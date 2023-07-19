@@ -11,28 +11,26 @@ from toontown.coghq import LaserGameMineSweeper
 from toontown.coghq import LaserGameRoll
 import random
 
+class DistributedMoverAI(DistributedEntityAI.DistributedEntityAI, NodePath, BasicEntities.NodePathAttribs):
 
-class DistributedMoverAI(
-    DistributedEntityAI.DistributedEntityAI, NodePath, BasicEntities.NodePathAttribs
-):
     def __init__(self, level, entId):
         DistributedEntityAI.DistributedEntityAI.__init__(self, level, entId)
-        node = hidden.attachNewNode("DistributedMoverAI")
+        node = hidden.attachNewNode('DistributedMoverAI')
         NodePath.__init__(self, node)
-        if not hasattr(self, "switchId"):
+        if not hasattr(self, 'switchId'):
             self.switchId = 0
-        if not hasattr(self, "pos0Wait"):
+        if not hasattr(self, 'pos0Wait'):
             self.pos0Wait = 1.0
-        if not hasattr(self, "pos0Move"):
+        if not hasattr(self, 'pos0Move'):
             self.pos0Move = 1.0
-        if not hasattr(self, "pos1Wait"):
+        if not hasattr(self, 'pos1Wait'):
             self.pos1Wait = 1.0
-        if not hasattr(self, "pos1Move"):
+        if not hasattr(self, 'pos1Move'):
             self.pos1Move = 1.0
-        if not hasattr(self, "startOn"):
+        if not hasattr(self, 'startOn'):
             self.startOn = 0
-        if not hasattr(self, "cycleType"):
-            self.cycleType = "return"
+        if not hasattr(self, 'cycleType'):
+            self.cycleType = 'return'
         self.moveTime = {}
         self.setTimes()
         self.oK2Play = 1
@@ -41,7 +39,7 @@ class DistributedMoverAI(
         DistributedEntityAI.DistributedEntityAI.generate(self)
         if self.switchId != 0:
             self.accept(self.getOutputEventName(self.switchId), self.reactToSwitch)
-        self.timerName = "mover %s" % self.doId
+        self.timerName = 'mover %s' % self.doId
         self.setPos(self.pos)
         self.setHpr(self.hpr)
         self.setTimes()
@@ -54,7 +52,7 @@ class DistributedMoverAI(
         DistributedEntityAI.DistributedEntityAI.delete(self)
 
     def destroy(self):
-        self.notify.info("destroy entity(laserField) %s" % self.entId)
+        self.notify.info('destroy entity(laserField) %s' % self.entId)
         DistributedEntityAI.DistributedEntityAI.destroy(self)
 
     def reactToSwitch(self, on):
@@ -79,12 +77,10 @@ class DistributedMoverAI(
 
     def setTimes(self):
         self.moveTime = {}
-        self.moveTime["return"] = self.pos0Move + self.pos1Wait + self.pos1Move
-        self.moveTime["loop"] = (
-            self.pos0Wait + self.pos0Move + self.pos1Wait + self.pos1Move
-        )
-        self.moveTime["oneWay"] = self.pos0Move
-        self.moveTime["linear"] = self.pos0Move * 8
+        self.moveTime['return'] = self.pos0Move + self.pos1Wait + self.pos1Move
+        self.moveTime['loop'] = self.pos0Wait + self.pos0Move + self.pos1Wait + self.pos1Move
+        self.moveTime['oneWay'] = self.pos0Move
+        self.moveTime['linear'] = self.pos0Move * 8
 
     def setCycleType(self, type):
         self.cycleType = type
@@ -97,15 +93,13 @@ class DistributedMoverAI(
     def sendMove(self):
         timeStamp = ClockDelta.globalClockDelta.getRealNetworkTime()
         if self.oK2Play:
-            self.sendUpdate("startMove", [timeStamp])
-            taskMgr.doMethodLater(
-                self.moveTime[self.cycleType], self.__resetTimer, self.timerName
-            )
+            self.sendUpdate('startMove', [timeStamp])
+            taskMgr.doMethodLater(self.moveTime[self.cycleType], self.__resetTimer, self.timerName)
         self.oK2Play = 0
 
-    def __resetTimer(self, taskMgrFooler=1):
-        if not self.cycleType == "oneWay":
+    def __resetTimer(self, taskMgrFooler = 1):
+        if not self.cycleType == 'oneWay':
             self.oK2Play = 1
-            if self.cycleType in ("loop", "linear") or self.startOn:
+            if self.cycleType in ('loop', 'linear') or self.startOn:
                 self.sendMove()
         return Task.done

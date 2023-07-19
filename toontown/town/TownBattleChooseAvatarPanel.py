@@ -7,60 +7,29 @@ from direct.gui.DirectGui import *
 from panda3d.core import *
 from toontown.toonbase import TTLocalizer
 
-
 class TownBattleChooseAvatarPanel(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory("ChooseAvatarPanel")
+    notify = DirectNotifyGlobal.directNotify.newCategory('ChooseAvatarPanel')
 
     def __init__(self, doneEvent, toon):
-        self.notify.debug("Init choose panel...")
+        self.notify.debug('Init choose panel...')
         StateData.StateData.__init__(self, doneEvent)
         self.numAvatars = 0
         self.chosenAvatar = 0
         self.toon = toon
 
     def load(self):
-        gui = loader.loadModel("phase_3.5/models/gui/battle_gui")
-        self.frame = DirectFrame(
-            relief=None,
-            image=gui.find("**/BtlPick_TAB"),
-            image_color=Vec4(1, 0.2, 0.2, 1),
-        )
+        gui = loader.loadModel('phase_3.5/models/gui/battle_gui')
+        self.frame = DirectFrame(relief=None, image=gui.find('**/BtlPick_TAB'), image_color=Vec4(1, 0.2, 0.2, 1))
         self.frame.hide()
-        self.statusFrame = DirectFrame(
-            parent=self.frame,
-            relief=None,
-            image=gui.find("**/ToonBtl_Status_BG"),
-            image_color=Vec4(0.5, 0.9, 0.5, 1),
-            pos=(0.611, 0, 0),
-        )
-        self.textFrame = DirectFrame(
-            parent=self.frame,
-            relief=None,
-            image=gui.find("**/PckMn_Select_Tab"),
-            image_color=Vec4(1, 1, 0, 1),
-            text="",
-            text_fg=Vec4(0, 0, 0, 1),
-            text_pos=(0, -0.025, 0),
-            text_scale=0.08,
-            pos=(-0.013, 0, 0.013),
-        )
+        self.statusFrame = DirectFrame(parent=self.frame, relief=None, image=gui.find('**/ToonBtl_Status_BG'), image_color=Vec4(0.5, 0.9, 0.5, 1), pos=(0.611, 0, 0))
+        self.textFrame = DirectFrame(parent=self.frame, relief=None, image=gui.find('**/PckMn_Select_Tab'), image_color=Vec4(1, 1, 0, 1), text='', text_fg=Vec4(0, 0, 0, 1), text_pos=(0, -0.025, 0), text_scale=0.08, pos=(-0.013, 0, 0.013))
         if self.toon:
-            self.textFrame["text"] = TTLocalizer.TownBattleChooseAvatarToonTitle
+            self.textFrame['text'] = TTLocalizer.TownBattleChooseAvatarToonTitle
         else:
-            self.textFrame["text"] = TTLocalizer.TownBattleChooseAvatarCogTitle
+            self.textFrame['text'] = TTLocalizer.TownBattleChooseAvatarCogTitle
         self.avatarButtons = []
         for i in range(4):
-            button = DirectButton(
-                parent=self.frame,
-                relief=None,
-                image=(
-                    gui.find("**/PckMn_Arrow_Up"),
-                    gui.find("**/PckMn_Arrow_Dn"),
-                    gui.find("**/PckMn_Arrow_Rlvr"),
-                ),
-                command=self.__handleAvatar,
-                extraArgs=[i],
-            )
+            button = DirectButton(parent=self.frame, relief=None, image=(gui.find('**/PckMn_Arrow_Up'), gui.find('**/PckMn_Arrow_Dn'), gui.find('**/PckMn_Arrow_Rlvr')), command=self.__handleAvatar, extraArgs=[i])
             if self.toon:
                 button.setScale(1, 1, -1)
                 button.setPos(0, 0, -0.2)
@@ -69,22 +38,7 @@ class TownBattleChooseAvatarPanel(StateData.StateData):
                 button.setPos(0, 0, 0.2)
             self.avatarButtons.append(button)
 
-        self.backButton = DirectButton(
-            parent=self.frame,
-            relief=None,
-            image=(
-                gui.find("**/PckMn_BackBtn"),
-                gui.find("**/PckMn_BackBtn_Dn"),
-                gui.find("**/PckMn_BackBtn_Rlvr"),
-            ),
-            pos=(-0.647, 0, 0.006),
-            scale=1.05,
-            text=TTLocalizer.TownBattleChooseAvatarBack,
-            text_scale=0.05,
-            text_pos=(0.01, -0.012),
-            text_fg=Vec4(0, 0, 0.8, 1),
-            command=self.__handleBack,
-        )
+        self.backButton = DirectButton(parent=self.frame, relief=None, image=(gui.find('**/PckMn_BackBtn'), gui.find('**/PckMn_BackBtn_Dn'), gui.find('**/PckMn_BackBtn_Rlvr')), pos=(-0.647, 0, 0.006), scale=1.05, text=TTLocalizer.TownBattleChooseAvatarBack, text_scale=0.05, text_pos=(0.01, -0.012), text_fg=Vec4(0, 0, 0.8, 1), command=self.__handleBack)
         gui.removeNode()
         return
 
@@ -96,14 +50,7 @@ class TownBattleChooseAvatarPanel(StateData.StateData):
         del self.avatarButtons
         del self.backButton
 
-    def enter(
-        self,
-        numAvatars,
-        localNum=None,
-        luredIndices=None,
-        trappedIndices=None,
-        track=None,
-    ):
+    def enter(self, numAvatars, localNum = None, luredIndices = None, trappedIndices = None, track = None):
         self.frame.show()
         invalidTargets = []
         if not self.toon:
@@ -119,11 +66,12 @@ class TownBattleChooseAvatarPanel(StateData.StateData):
         self.frame.hide()
 
     def __handleBack(self):
-        doneStatus = {"mode": "Back"}
+        doneStatus = {'mode': 'Back'}
         messenger.send(self.doneEvent, [doneStatus])
 
     def __handleAvatar(self, avatar):
-        doneStatus = {"mode": "Avatar", "avatar": avatar}
+        doneStatus = {'mode': 'Avatar',
+         'avatar': avatar}
         messenger.send(self.doneEvent, [doneStatus])
 
     def adjustCogs(self, numAvatars, luredIndices, trappedIndices, track):
@@ -162,5 +110,5 @@ class TownBattleChooseAvatarPanel(StateData.StateData):
             self.avatarButtons[2].setX(-0.2)
             self.avatarButtons[3].setX(-0.6)
         else:
-            self.notify.error("Invalid number of avatars: %s" % numAvatars)
+            self.notify.error('Invalid number of avatars: %s' % numAvatars)
         return None

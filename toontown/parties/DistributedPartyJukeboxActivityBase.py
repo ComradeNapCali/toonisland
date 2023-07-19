@@ -9,9 +9,8 @@ from toontown.parties.PartyGlobals import ActivityIds, ActivityTypes, JUKEBOX_TI
 from toontown.parties.PartyGlobals import getMusicRepeatTimes, MUSIC_PATH, sanitizePhase
 from toontown.parties.JukeboxGui import JukeboxGui
 
-
 class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
-    notify = directNotify.newCategory("DistributedPartyJukeboxActivityBase")
+    notify = directNotify.newCategory('DistributedPartyJukeboxActivityBase')
 
     def __init__(self, cr, actId, phaseToMusicData):
         DistributedPartyActivity.__init__(self, cr, actId, ActivityTypes.Continuous)
@@ -30,15 +29,10 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
 
     def load(self):
         DistributedPartyActivity.load(self)
-        self.jukebox = Actor(
-            "phase_13/models/parties/jukebox_model",
-            {"dance": "phase_13/models/parties/jukebox_dance"},
-        )
+        self.jukebox = Actor('phase_13/models/parties/jukebox_model', {'dance': 'phase_13/models/parties/jukebox_dance'})
         self.jukebox.reparentTo(self.root)
         self.collNode = CollisionNode(self.getCollisionName())
-        self.collNode.setCollideMask(
-            ToontownGlobals.CameraBitmask | ToontownGlobals.WallBitmask
-        )
+        self.collNode.setCollideMask(ToontownGlobals.CameraBitmask | ToontownGlobals.WallBitmask)
         collTube = CollisionTube(0, 0, 0, 0.0, 0.0, 4.25, 2.25)
         collTube.setTangible(1)
         self.collNode.addSolid(collTube)
@@ -58,14 +52,14 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         return
 
     def getCollisionName(self):
-        return self.uniqueName("jukeboxCollision")
+        return self.uniqueName('jukeboxCollision')
 
     def activate(self):
-        self.accept("enter" + self.getCollisionName(), self.__handleEnterCollision)
+        self.accept('enter' + self.getCollisionName(), self.__handleEnterCollision)
 
     def __handleEnterCollision(self, collisionEntry):
-        if base.cr.playGame.getPlace().fsm.getCurrentState().getName() == "walk":
-            base.cr.playGame.getPlace().fsm.request("activity")
+        if base.cr.playGame.getPlace().fsm.getCurrentState().getName() == 'walk':
+            base.cr.playGame.getPlace().fsm.request('activity')
             self.d_toonJoinRequest()
 
     def joinRequestDenied(self, reason):
@@ -85,19 +79,14 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
             self.__deactivateGui()
 
     def handleToonDisabled(self, toonId):
-        self.notify.warning("handleToonDisabled no implementation yet")
+        self.notify.warning('handleToonDisabled no implementation yet')
 
     def __localUseJukebox(self):
         base.localAvatar.disableAvatarControls()
         base.localAvatar.stopPosHprBroadcast()
         self.__activateGui()
         self.accept(JukeboxGui.CLOSE_EVENT, self.__handleGuiClose)
-        taskMgr.doMethodLater(
-            0.5,
-            self.__localToonWillExitTask,
-            self.uniqueName("toonWillExitJukeboxOnTimeout"),
-            extraArgs=None,
-        )
+        taskMgr.doMethodLater(0.5, self.__localToonWillExitTask, self.uniqueName('toonWillExitJukeboxOnTimeout'), extraArgs=None)
         self.accept(JukeboxGui.ADD_SONG_CLICK_EVENT, self.__handleQueueSong)
         if self.isUserHost():
             self.accept(JukeboxGui.MOVE_TO_TOP_CLICK_EVENT, self.__handleMoveSongToTop)
@@ -111,9 +100,7 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         self.gui.enable(timer=JUKEBOX_TIMEOUT)
         self.gui.disableAddSongButton()
         if self.currentSongData is not None:
-            self.gui.setSongCurrentlyPlaying(
-                self.currentSongData[0], self.currentSongData[1]
-            )
+            self.gui.setSongCurrentlyPlaying(self.currentSongData[0], self.currentSongData[1])
         self.d_queuedSongsRequest()
         return
 
@@ -121,7 +108,7 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         self.ignore(JukeboxGui.CLOSE_EVENT)
         self.ignore(JukeboxGui.SONG_SELECT_EVENT)
         self.ignore(JukeboxGui.MOVE_TO_TOP_CLICK_EVENT)
-        base.cr.playGame.getPlace().setState("walk")
+        base.cr.playGame.getPlace().setState('walk')
         base.localAvatar.startPosHprBroadcast()
         base.localAvatar.enableAvatarControls()
         self.gui.unload()
@@ -131,7 +118,7 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         return self.party.partyInfo.hostId == base.localAvatar.doId
 
     def d_queuedSongsRequest(self):
-        self.sendUpdate("queuedSongsRequest")
+        self.sendUpdate('queuedSongsRequest')
 
     def queuedSongsResponse(self, songInfoList, index):
         if self.gui.isLoaded():
@@ -149,7 +136,7 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         self.d_setNextSong(values[0], values[1])
 
     def d_setNextSong(self, phase, filename):
-        self.sendUpdate("setNextSong", [(phase, filename)])
+        self.sendUpdate('setNextSong', [(phase, filename)])
 
     def setSongInQueue(self, songInfo):
         if self.gui.isLoaded():
@@ -158,18 +145,16 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
             data = self.getMusicData(phase, filename)
             if data:
                 if self.localQueuedSongListItem is not None:
-                    self.localQueuedSongListItem["text"] = data[0]
+                    self.localQueuedSongListItem['text'] = data[0]
                 else:
                     self.__addSongToQueue(songInfo, isLocalQueue=True)
         return
 
-    def __addSongToQueue(self, songInfo, isLocalQueue=False):
+    def __addSongToQueue(self, songInfo, isLocalQueue = False):
         isHost = isLocalQueue and self.isUserHost()
         data = self.getMusicData(sanitizePhase(songInfo[0]), songInfo[1])
         if data:
-            listItem = self.gui.addSongToQueue(
-                data[0], highlight=isLocalQueue, moveToTopButton=isHost
-            )
+            listItem = self.gui.addSongToQueue(data[0], highlight=isLocalQueue, moveToTopButton=isHost)
             if isLocalQueue:
                 self.localQueuedSongInfo = songInfo
                 self.localQueuedSongListItem = listItem
@@ -180,20 +165,16 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         return
 
     def __play(self, phase, filename, length):
-        self.music = base.loader.loadMusic((MUSIC_PATH + "%s") % (phase, filename))
+        self.music = base.loader.loadMusic((MUSIC_PATH + '%s') % (phase, filename))
         if self.music:
-            if (
-                self.__checkPartyValidity()
-                and hasattr(base.cr.playGame.getPlace().loader, "music")
-                and base.cr.playGame.getPlace().loader.music
-            ):
+            if self.__checkPartyValidity() and hasattr(base.cr.playGame.getPlace().loader, 'music') and base.cr.playGame.getPlace().loader.music:
                 base.cr.playGame.getPlace().loader.music.stop()
             self.music.setTime(0.0)
             self.music.setLoopCount(getMusicRepeatTimes(length))
             self.music.play()
-            jukeboxAnimControl = self.jukebox.getAnimControl("dance")
+            jukeboxAnimControl = self.jukebox.getAnimControl('dance')
             if not jukeboxAnimControl.isPlaying():
-                self.jukebox.loop("dance")
+                self.jukebox.loop('dance')
             self.currentSongData = (phase, filename)
 
     def __stop(self):
@@ -229,11 +210,11 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         return
 
     def d_moveHostSongToTopRequest(self):
-        self.notify.debug("d_moveHostSongToTopRequest")
-        self.sendUpdate("moveHostSongToTopRequest")
+        self.notify.debug('d_moveHostSongToTopRequest')
+        self.sendUpdate('moveHostSongToTopRequest')
 
     def moveHostSongToTop(self):
-        self.notify.debug("moveHostSongToTop")
+        self.notify.debug('moveHostSongToTop')
         if self.gui.isLoaded():
             self.gui.pushQueuedItemToTop(self.localQueuedSongListItem)
 
@@ -246,12 +227,7 @@ class DistributedPartyJukeboxActivityBase(DistributedPartyActivity):
         return data
 
     def __checkPartyValidity(self):
-        if (
-            hasattr(base.cr.playGame, "getPlace")
-            and base.cr.playGame.getPlace()
-            and hasattr(base.cr.playGame.getPlace(), "loader")
-            and base.cr.playGame.getPlace().loader
-        ):
+        if hasattr(base.cr.playGame, 'getPlace') and base.cr.playGame.getPlace() and hasattr(base.cr.playGame.getPlace(), 'loader') and base.cr.playGame.getPlace().loader:
             return True
         else:
             return False

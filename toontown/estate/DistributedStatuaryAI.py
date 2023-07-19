@@ -9,7 +9,7 @@ FOUR_DAYS = 86400 * 4
 
 
 class DistributedStatuaryAI(DistributedLawnDecorAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStatuaryAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStatuaryAI')
 
     def __init__(self, mgr):
         DistributedLawnDecorAI.__init__(self, mgr)
@@ -21,15 +21,13 @@ class DistributedStatuaryAI(DistributedLawnDecorAI):
 
     def calculate(self, lastCheck):
         self.attributes = GardenGlobals.PlantAttributes[self.index]
-        self.growthThresholds = self.attributes.get("growthThresholds", (0, 0))
+        self.growthThresholds = self.attributes.get('growthThresholds', (0, 0))
         now = int(time.time())
         self.lastCheck = lastCheck
         if self.lastCheck == 0:
             self.lastCheck = now
 
-        self.growthLevel = min(
-            (now - self.lastCheck) // FOUR_DAYS, self.growthThresholds[-1] + 1
-        )
+        self.growthLevel = min((now - self.lastCheck) // FOUR_DAYS, self.growthThresholds[-1] + 1)
         self.update()
 
     def setTypeIndex(self, typeIndex):
@@ -54,9 +52,7 @@ class DistributedStatuaryAI(DistributedLawnDecorAI):
         return self.data
 
     def update(self):
-        self.mgr.data["statuary"] = self.mgr.S_pack(
-            self.data, self.lastCheck, self.index, self.growthLevel
-        )
+        self.mgr.data['statuary'] = self.mgr.S_pack(self.data, self.lastCheck, self.index, self.growthLevel)
         self.mgr.update()
 
     def removeItem(self):
@@ -78,13 +74,11 @@ class DistributedStatuaryAI(DistributedLawnDecorAI):
             plot.generateWithRequired(self.zoneId)
             plot.d_setMovie(GardenGlobals.MOVIE_FINISHREMOVING, avId)
             plot.d_setMovie(GardenGlobals.MOVIE_CLEAR, avId)
-            self.air.writeServerEvent("remove-statuary", avId, plot=self.plot)
+            self.air.writeServerEvent('remove-statuary', avId, plot=self.plot)
             self.requestDelete()
             self.mgr.objects.remove(self)
-            self.mgr.data["statuary"] = 0
+            self.mgr.data['statuary'] = 0
             self.mgr.update()
             return task.done
 
-        taskMgr.doMethodLater(
-            7, handleRemoveItem, self.uniqueName("handle-remove-item")
-        )
+        taskMgr.doMethodLater(7, handleRemoveItem, self.uniqueName('handle-remove-item'))

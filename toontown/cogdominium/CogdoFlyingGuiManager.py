@@ -6,25 +6,24 @@ from .CogdoGameMessageDisplay import CogdoGameMessageDisplay
 from .CogdoMemoGui import CogdoMemoGui
 from . import CogdoFlyingGameGlobals as Globals
 
-
 class CogdoFlyingGuiManager:
-    ClearMessageDisplayEventName = "ClearMessageDisplayEvent"
-    EagleTargetingLocalPlayerEventName = "EagleTargetingLocalPlayerEvent"
-    EagleAttackingLocalPlayerEventName = "EagleAttackingLocalPlayerEvent"
-    FirstPressOfCtrlEventName = "FirstPressOfCtrlEvent"
-    PickedUpFirstPropellerEventName = "PickedUpFirstPropellerEvent"
-    InvulnerableEventName = "InvulnerableEvent"
-    StartRunningOutOfTimeMusicEventName = "StartRunningOutOfTimeEvent"
+    ClearMessageDisplayEventName = 'ClearMessageDisplayEvent'
+    EagleTargetingLocalPlayerEventName = 'EagleTargetingLocalPlayerEvent'
+    EagleAttackingLocalPlayerEventName = 'EagleAttackingLocalPlayerEvent'
+    FirstPressOfCtrlEventName = 'FirstPressOfCtrlEvent'
+    PickedUpFirstPropellerEventName = 'PickedUpFirstPropellerEvent'
+    InvulnerableEventName = 'InvulnerableEvent'
+    StartRunningOutOfTimeMusicEventName = 'StartRunningOutOfTimeEvent'
 
     def __init__(self, level):
         self._level = level
-        self.root = NodePath("CogdoFlyingGui")
+        self.root = NodePath('CogdoFlyingGui')
         self.root.reparentTo(aspect2d)
         self.root.stash()
-        self.fuelGui = NodePath("CogdoFlyingFuelGui")
+        self.fuelGui = NodePath('CogdoFlyingFuelGui')
         self.fuelGui.reparentTo(base.a2dBottomLeft)
         self.fuelGui.stash()
-        self.progressGui = NodePath("CogdoFlyingProgressGui")
+        self.progressGui = NodePath('CogdoFlyingProgressGui')
         self.progressGui.reparentTo(base.a2dBottomRight)
         self.progressGui.stash()
         self._initTimer()
@@ -35,7 +34,7 @@ class CogdoFlyingGuiManager:
         self._progressGui = CogdoFlyingProgressGui(self.progressGui, self._level)
 
     def _initHud(self):
-        self._memoGui = CogdoMemoGui(self.root, "memo_card")
+        self._memoGui = CogdoMemoGui(self.root, 'memo_card')
         self._memoGui.posNextToLaffMeter()
 
     def _initTimer(self):
@@ -45,10 +44,8 @@ class CogdoFlyingGuiManager:
 
     def _initMessageDisplay(self):
         audioMgr = base.cogdoGameAudioMgr
-        sound = audioMgr.createSfx("popupHelpText")
-        self._messageDisplay = CogdoGameMessageDisplay(
-            "CogdoFlyingMessageDisplay", self.root, sfx=sound
-        )
+        sound = audioMgr.createSfx('popupHelpText')
+        self._messageDisplay = CogdoGameMessageDisplay('CogdoFlyingMessageDisplay', self.root, sfx=sound)
 
     def destroyTimer(self):
         if self._timer is not None:
@@ -65,26 +62,16 @@ class CogdoFlyingGuiManager:
         self._progressGui.hide()
 
     def presentProgressGui(self):
-        ToontownIntervals.start(
-            ToontownIntervals.getPresentGuiIval(
-                self._progressGui, "present_progress_gui"
-            )
-        )
+        ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._progressGui, 'present_progress_gui'))
 
     def presentRefuelGui(self):
-        ToontownIntervals.start(
-            ToontownIntervals.getPresentGuiIval(self._refuelGui, "present_fuel_gui")
-        )
+        ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._refuelGui, 'present_fuel_gui'))
 
     def presentTimerGui(self):
-        ToontownIntervals.start(
-            ToontownIntervals.getPresentGuiIval(self._timer, "present_timer_gui")
-        )
+        ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._timer, 'present_timer_gui'))
 
     def presentMemoGui(self):
-        ToontownIntervals.start(
-            ToontownIntervals.getPresentGuiIval(self._memoGui, "present_memo_gui")
-        )
+        ToontownIntervals.start(ToontownIntervals.getPresentGuiIval(self._memoGui, 'present_memo_gui'))
 
     def offstage(self):
         self.root.stash()
@@ -100,7 +87,7 @@ class CogdoFlyingGuiManager:
     def isTimeRunningOut(self):
         return self.getTimeLeft() < Globals.Gameplay.TimeRunningOutSeconds
 
-    def startTimer(self, duration, timerExpiredCallback=None, keepHidden=False):
+    def startTimer(self, duration, timerExpiredCallback = None, keepHidden = False):
         if self._timer is None:
             self._initTimer()
         self._timer.setTime(duration)
@@ -112,7 +99,7 @@ class CogdoFlyingGuiManager:
         return
 
     def stopTimer(self):
-        if hasattr(self, "_timer") and self._timer is not None:
+        if hasattr(self, '_timer') and self._timer is not None:
             self.hideTimer()
             self._timer.stop()
         return
@@ -134,10 +121,10 @@ class CogdoFlyingGuiManager:
     def hideRefuelGui(self):
         self._refuelGui.hide()
 
-    def setMessage(self, text, color=None, transition="fade"):
+    def setMessage(self, text, color = None, transition = 'fade'):
         self._messageDisplay.updateMessage(text, color, transition)
 
-    def setTemporaryMessage(self, text, duration=3.0, color=None):
+    def setTemporaryMessage(self, text, duration = 3.0, color = None):
         self._messageDisplay.showMessageTemporarily(text, duration, color)
 
     def setFuel(self, fuel):
@@ -172,10 +159,10 @@ class CogdoFlyingGuiManager:
         self._progressGui.update()
 
     def destroy(self):
-        ToontownIntervals.cleanup("present_fuel_gui")
-        ToontownIntervals.cleanup("present_timer_gui")
-        ToontownIntervals.cleanup("present_memo_gui")
-        ToontownIntervals.cleanup("present_progress_gui")
+        ToontownIntervals.cleanup('present_fuel_gui')
+        ToontownIntervals.cleanup('present_timer_gui')
+        ToontownIntervals.cleanup('present_memo_gui')
+        ToontownIntervals.cleanup('present_progress_gui')
         self._refuelGui.destroy()
         self._refuelGui = None
         self._memoGui.destroy()

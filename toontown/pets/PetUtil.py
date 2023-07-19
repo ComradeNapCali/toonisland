@@ -3,15 +3,12 @@ from toontown.pets import PetNameGenerator
 from direct.showbase import PythonUtil
 import random
 
-
 def getPetInfoFromSeed(seed, safezoneId):
     S = random.getstate()
     random.seed(seed)
     dnaArray = PetDNA.getRandomPetDNA(safezoneId)
     gender = PetDNA.getGender(dnaArray)
-    nameString = PetNameGenerator.PetNameGenerator().randomName(
-        gender=gender, seed=seed + safezoneId
-    )
+    nameString = PetNameGenerator.PetNameGenerator().randomName(gender=gender, seed=seed + safezoneId)
     traitSeed = PythonUtil.randUint31()
     random.setstate(S)
     return (nameString, dnaArray, traitSeed)

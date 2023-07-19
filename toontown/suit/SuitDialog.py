@@ -2,9 +2,7 @@ import random
 from direct.directnotify import DirectNotifyGlobal
 from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
-
-notify = DirectNotifyGlobal.directNotify.newCategory("SuitDialog")
-
+notify = DirectNotifyGlobal.directNotify.newCategory('SuitDialog')
 
 def getBrushOffIndex(suitName):
     if suitName in SuitBrushOffs:
@@ -20,7 +18,7 @@ def getBrushOffIndex(suitName):
             return i
         count += chunk
 
-    notify.error("getBrushOffs() - no brush off found!")
+    notify.error('getBrushOffs() - no brush off found!')
     return
 
 

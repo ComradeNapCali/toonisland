@@ -5,14 +5,11 @@ from . import DistributedCrusherEntityAI
 from . import StomperGlobals
 from direct.distributed import ClockDelta
 
-
 class DistributedStomperAI(DistributedCrusherEntityAI.DistributedCrusherEntityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStomperAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStomperAI')
 
-    def __init__(self, level, entId, pairId=-1):
-        DistributedCrusherEntityAI.DistributedCrusherEntityAI.__init__(
-            self, level, entId
-        )
+    def __init__(self, level, entId, pairId = -1):
+        DistributedCrusherEntityAI.DistributedCrusherEntityAI.__init__(self, level, entId)
         self.pairId = pairId
 
     def generate(self):
@@ -27,14 +24,7 @@ class DistributedStomperAI(DistributedCrusherEntityAI.DistributedCrusherEntityAI
         DistributedCrusherEntityAI.DistributedCrusherEntityAI.delete(self)
 
     def d_startStomper(self):
-        self.sendUpdate(
-            "setMovie",
-            [
-                StomperGlobals.STOMPER_START,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-                [],
-            ],
-        )
+        self.sendUpdate('setMovie', [StomperGlobals.STOMPER_START, ClockDelta.globalClockDelta.getRealNetworkTime(), []])
 
     def reactToSwitch(self, on):
         if on:
@@ -46,20 +36,6 @@ class DistributedStomperAI(DistributedCrusherEntityAI.DistributedCrusherEntityAI
                         crushedList.append(id)
 
                 self.sendCrushMsg()
-            self.sendUpdate(
-                "setMovie",
-                [
-                    StomperGlobals.STOMPER_STOMP,
-                    ClockDelta.globalClockDelta.getRealNetworkTime(),
-                    crushedList,
-                ],
-            )
+            self.sendUpdate('setMovie', [StomperGlobals.STOMPER_STOMP, ClockDelta.globalClockDelta.getRealNetworkTime(), crushedList])
         else:
-            self.sendUpdate(
-                "setMovie",
-                [
-                    StomperGlobals.STOMPER_RISE,
-                    ClockDelta.globalClockDelta.getRealNetworkTime(),
-                    [],
-                ],
-            )
+            self.sendUpdate('setMovie', [StomperGlobals.STOMPER_RISE, ClockDelta.globalClockDelta.getRealNetworkTime(), []])

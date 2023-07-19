@@ -6,11 +6,11 @@ from . import DistributedAnimatedPropAI
 from direct.task.Task import Task
 from direct.fsm import State
 
-
 class DistributedKnockKnockDoorAI(DistributedAnimatedPropAI.DistributedAnimatedPropAI):
+
     def __init__(self, air, propId):
         DistributedAnimatedPropAI.DistributedAnimatedPropAI.__init__(self, air, propId)
-        self.fsm.setName("DistributedKnockKnockDoor")
+        self.fsm.setName('DistributedKnockKnockDoor')
         self.propId = propId
         self.doLaterTask = None
         return
@@ -22,7 +22,7 @@ class DistributedKnockKnockDoorAI(DistributedAnimatedPropAI.DistributedAnimatedP
         DistributedAnimatedPropAI.DistributedAnimatedPropAI.exitOff(self)
 
     def attractTask(self, task):
-        self.fsm.request("attract")
+        self.fsm.request('attract')
         return Task.done
 
     def enterAttract(self):
@@ -33,9 +33,7 @@ class DistributedKnockKnockDoorAI(DistributedAnimatedPropAI.DistributedAnimatedP
 
     def enterPlaying(self):
         DistributedAnimatedPropAI.DistributedAnimatedPropAI.enterPlaying(self)
-        self.doLaterTask = taskMgr.doMethodLater(
-            9, self.attractTask, self.uniqueName("knockKnock-timer")
-        )
+        self.doLaterTask = taskMgr.doMethodLater(9, self.attractTask, self.uniqueName('knockKnock-timer'))
 
     def exitPlaying(self):
         DistributedAnimatedPropAI.DistributedAnimatedPropAI.exitPlaying(self)

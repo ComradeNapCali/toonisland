@@ -6,12 +6,11 @@ from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
 import types
 
-
 class DatabaseObject:
-    notify = directNotify.newCategory("DatabaseObject")
+    notify = directNotify.newCategory('DatabaseObject')
     notify.setInfo(0)
 
-    def __init__(self, air, doId=None, doneEvent="DatabaseObject"):
+    def __init__(self, air, doId = None, doneEvent = 'DatabaseObject'):
         self.air = air
         self.doId = doId
         self.values = {}
@@ -19,7 +18,7 @@ class DatabaseObject:
         self.doneEvent = doneEvent
         return
 
-    def readToon(self, fields=None):
+    def readToon(self, fields = None):
         toon = DistributedToonAI.DistributedToonAI(self.air)
         self.readObject(toon, fields)
         return toon
@@ -28,19 +27,17 @@ class DatabaseObject:
 
         def readPet(self):
             from toontown.pets import DistributedPetAI
-
             pet = DistributedPetAI.DistributedPetAI(self.air)
             self.readObject(pet, None)
             return pet
 
         def readPetProxy(self):
             from toontown.pets import DistributedPetProxyAI
-
             petProxy = DistributedPetProxyAI.DistributedPetProxyAI(self.air)
             self.readObject(petProxy, None)
             return petProxy
 
-    def readObject(self, do, fields=None):
+    def readObject(self, do, fields = None):
         self.do = do
         className = do.__class__.__name__
         self.dclass = self.air.dclassesByName[className]
@@ -51,7 +48,7 @@ class DatabaseObject:
             self.getFields(self.getDatabaseFields(self.dclass))
         return
 
-    def storeObject(self, do, fields=None):
+    def storeObject(self, do, fields = None):
         self.do = do
         className = do.__class__.__name__
         self.dclass = self.air.dclassesByName[className]
@@ -67,7 +64,7 @@ class DatabaseObject:
                 if field in self.values:
                     values[field] = self.values[field]
                 else:
-                    self.notify.warning("Field %s not defined." % field)
+                    self.notify.warning('Field %s not defined.' % field)
 
         self.setFields(values)
         return
@@ -89,7 +86,7 @@ class DatabaseObject:
     def getFieldsResponse(self, di):
         objId = di.getUint32()
         if objId != self.doId:
-            self.notify.warning("Unexpected doId %d" % objId)
+            self.notify.warning('Unexpected doId %d' % objId)
             return
         count = di.getUint16()
         fields = []
@@ -99,7 +96,7 @@ class DatabaseObject:
 
         retCode = di.getUint8()
         if retCode != 0:
-            self.notify.warning("Failed to retrieve data for object %d" % self.doId)
+            self.notify.warning('Failed to retrieve data for object %d' % self.doId)
         else:
             values = []
             for i in range(count):
@@ -109,7 +106,7 @@ class DatabaseObject:
             for i in range(count):
                 found = di.getUint8()
                 if not found:
-                    self.notify.info("field %s is not found" % fields[i])
+                    self.notify.info('field %s is not found' % fields[i])
                     try:
                         del self.values[fields[i]]
                     except:
@@ -118,7 +115,7 @@ class DatabaseObject:
                 else:
                     self.values[fields[i]] = PyDatagram(values[i])
 
-            self.notify.info("got data for %d" % self.doId)
+            self.notify.info('got data for %d' % self.doId)
             if self.gotDataHandler != None:
                 self.gotDataHandler(self.do, self.dclass)
                 self.gotDataHandler = None
@@ -154,8 +151,8 @@ class DatabaseObject:
     def fillin(self, do, dclass):
         do.doId = self.doId
         for field, value in list(self.values.items()):
-            if field == "setZonesVisited" and value.getLength() == 1:
-                self.notify.warning("Ignoring broken setZonesVisited")
+            if field == 'setZonesVisited' and value.getLength() == 1:
+                self.notify.warning('Ignoring broken setZonesVisited')
             else:
                 dclass.directUpdate(do, field, value)
 
@@ -165,7 +162,7 @@ class DatabaseObject:
         for fieldName in fields:
             field = dclass.getFieldByName(fieldName)
             if field == None:
-                self.notify.warning("No definition for %s" % fieldName)
+                self.notify.warning('No definition for %s' % fieldName)
             else:
                 dg = PyDatagram()
                 packOk = dclass.packRequiredField(dg, do, field)
@@ -183,11 +180,9 @@ class DatabaseObject:
         self.air.dbObjMap[context] = self
         self.createObjType = objectType
         dg = PyDatagram()
-        dg.addServerHeader(
-            DBSERVER_ID, self.air.ourChannel, DBSERVER_CREATE_STORED_OBJECT
-        )
+        dg.addServerHeader(DBSERVER_ID, self.air.ourChannel, DBSERVER_CREATE_STORED_OBJECT)
         dg.addUint32(context)
-        dg.addString("")
+        dg.addString('')
         dg.addUint16(objectType)
         dg.addUint16(len(values))
         for field in list(values.keys()):
@@ -201,7 +196,7 @@ class DatabaseObject:
     def handleCreateObjectResponse(self, di):
         retCode = di.getUint8()
         if retCode != 0:
-            self.notify.warning("Database object %s create failed" % self.createObjType)
+            self.notify.warning('Database object %s create failed' % self.createObjType)
         else:
             del self.createObjType
             self.doId = di.getUint32()
@@ -210,11 +205,9 @@ class DatabaseObject:
         return
 
     def deleteObject(self):
-        self.notify.warning("deleting object %s" % self.doId)
+        self.notify.warning('deleting object %s' % self.doId)
         dg = PyDatagram()
-        dg.addServerHeader(
-            DBSERVER_ID, self.air.ourChannel, DBSERVER_DELETE_STORED_OBJECT
-        )
+        dg.addServerHeader(DBSERVER_ID, self.air.ourChannel, DBSERVER_DELETE_STORED_OBJECT)
         dg.addUint32(self.doId)
         dg.addUint32(3735928559)
         self.air.send(dg)

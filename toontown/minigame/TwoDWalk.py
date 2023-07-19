@@ -1,9 +1,8 @@
 from .OrthoWalk import *
 
-
 class TwoDWalk(OrthoWalk):
-    notify = DirectNotifyGlobal.directNotify.newCategory("TwoDWalk")
-    BROADCAST_POS_TASK = "TwoDWalkBroadcastPos"
+    notify = DirectNotifyGlobal.directNotify.newCategory('TwoDWalk')
+    BROADCAST_POS_TASK = 'TwoDWalkBroadcastPos'
 
     def doBroadcast(self, task):
         dt = globalClock.getDt()

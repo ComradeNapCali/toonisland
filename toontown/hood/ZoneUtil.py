@@ -1,9 +1,7 @@
 from toontown.toonbase.ToontownGlobals import *
 from direct.directnotify import DirectNotifyGlobal
-
-zoneUtilNotify = DirectNotifyGlobal.directNotify.newCategory("ZoneUtil")
+zoneUtilNotify = DirectNotifyGlobal.directNotify.newCategory('ZoneUtil')
 tutorialDict = None
-
 
 def isGoofySpeedwayZone(zoneId):
     return zoneId == 8000
@@ -32,19 +30,19 @@ def getStreetName(branchId):
 def getLoaderName(zoneId):
     if tutorialDict:
         if zoneId == ToonIslandCentral:
-            loaderName = "safeZoneLoader"
+            loaderName = 'safeZoneLoader'
         else:
-            loaderName = "townLoader"
+            loaderName = 'townLoader'
     else:
         suffix = zoneId % 1000
         if suffix >= 500:
             suffix -= 500
         if isCogHQZone(zoneId):
-            loaderName = "cogHQLoader"
+            loaderName = 'cogHQLoader'
         elif suffix < 100:
-            loaderName = "safeZoneLoader"
+            loaderName = 'safeZoneLoader'
         else:
-            loaderName = "townLoader"
+            loaderName = 'townLoader'
     return loaderName
 
 
@@ -64,78 +62,69 @@ def getToonWhereName(zoneId):
 
 def isPlayground(zoneId):
     whereName = getWhereName(zoneId, False)
-    if whereName == "cogHQExterior":
+    if whereName == 'cogHQExterior':
         return True
     else:
         return zoneId % 1000 == 0 and zoneId < DynamicZonesBegin
 
 
 def isPetshop(zoneId):
-    if (
-        zoneId == 2522
-        or zoneId == 1510
-        or zoneId == 3511
-        or zoneId == 4508
-        or zoneId == 5505
-        or zoneId == 9508
-    ):
+    if zoneId == 2522 or zoneId == 1510 or zoneId == 3511 or zoneId == 4508 or zoneId == 5505 or zoneId == 9508:
         return True
     return False
 
 
 def getWhereName(zoneId, isToon):
     if tutorialDict:
-        if zoneId in tutorialDict["interiors"]:
-            where = "toonInterior"
-        elif zoneId in tutorialDict["exteriors"]:
-            where = "street"
+        if zoneId in tutorialDict['interiors']:
+            where = 'toonInterior'
+        elif zoneId in tutorialDict['exteriors']:
+            where = 'street'
         elif zoneId == ToonIslandCentral or zoneId == WelcomeValleyToken:
-            where = "playground"
+            where = 'playground'
         else:
-            zoneUtilNotify.error("No known zone: " + str(zoneId))
+            zoneUtilNotify.error('No known zone: ' + str(zoneId))
     else:
         suffix = zoneId % 1000
         suffix = suffix - suffix % 100
         if isCogHQZone(zoneId):
             if suffix == 0:
-                where = "cogHQExterior"
+                where = 'cogHQExterior'
             elif suffix == 100:
-                where = "cogHQLobby"
+                where = 'cogHQLobby'
             elif suffix == 200:
-                where = "factoryExterior"
+                where = 'factoryExterior'
             elif getHoodId(zoneId) == LawbotHQ and suffix in (300, 400, 500, 600):
-                where = "stageInterior"
+                where = 'stageInterior'
             elif getHoodId(zoneId) == BossbotHQ and suffix in (500, 600, 700):
-                where = "countryClubInterior"
+                where = 'countryClubInterior'
             elif suffix >= 500:
                 if getHoodId(zoneId) == SellbotHQ:
                     if suffix == 600:
-                        where = "fatalInterior"
+                        where = 'fatalInterior'
                     else:
-                        where = "factoryInterior"
+                        where = 'factoryInterior'
                 elif getHoodId(zoneId) == CashbotHQ:
-                    where = "mintInterior"
+                    where = 'mintInterior'
                 else:
-                    zoneUtilNotify.error(
-                        "unknown cogHQ interior for hood: " + str(getHoodId(zoneId))
-                    )
+                    zoneUtilNotify.error('unknown cogHQ interior for hood: ' + str(getHoodId(zoneId)))
             else:
-                zoneUtilNotify.error("unknown cogHQ where: " + str(zoneId))
+                zoneUtilNotify.error('unknown cogHQ where: ' + str(zoneId))
         elif suffix == 0:
-            where = "playground"
+            where = 'playground'
         elif suffix >= 500:
             if isToon:
-                where = "toonInterior"
+                where = 'toonInterior'
             else:
-                where = "suitInterior"
+                where = 'suitInterior'
         else:
-            where = "street"
+            where = 'street'
     return where
 
 
 def getBranchZone(zoneId):
     if tutorialDict:
-        branchId = tutorialDict["branch"]
+        branchId = tutorialDict['branch']
     else:
         branchId = zoneId - zoneId % 100
         if not isCogHQZone(zoneId):
@@ -149,11 +138,7 @@ def getCanonicalBranchZone(zoneId):
 
 
 def isWelcomeValley(zoneId):
-    return (
-        zoneId == WelcomeValleyToken
-        or zoneId >= WelcomeValleyBegin
-        and zoneId < WelcomeValleyEnd
-    )
+    return zoneId == WelcomeValleyToken or zoneId >= WelcomeValleyBegin and zoneId < WelcomeValleyEnd
 
 
 def getCanonicalZoneId(zoneId):
@@ -169,11 +154,7 @@ def getCanonicalZoneId(zoneId):
 
 
 def getTrueZoneId(zoneId, currentZoneId):
-    if (
-        zoneId >= WelcomeValleyBegin
-        and zoneId < WelcomeValleyEnd
-        or zoneId == WelcomeValleyToken
-    ):
+    if zoneId >= WelcomeValleyBegin and zoneId < WelcomeValleyEnd or zoneId == WelcomeValleyToken:
         zoneId = getCanonicalZoneId(zoneId)
     if currentZoneId >= WelcomeValleyBegin and currentZoneId < WelcomeValleyEnd:
         hoodId = getHoodId(zoneId)
@@ -210,7 +191,7 @@ def getCanonicalSafeZoneId(zoneId):
 
 def isInterior(zoneId):
     if tutorialDict:
-        if zoneId in tutorialDict["interiors"]:
+        if zoneId in tutorialDict['interiors']:
             r = 1
         else:
             r = 0
@@ -222,12 +203,10 @@ def isInterior(zoneId):
 def overrideOn(branch, exteriorList, interiorList):
     global tutorialDict
     if tutorialDict:
-        zoneUtilNotify.warning("setTutorialDict: tutorialDict is already set!")
-    tutorialDict = {
-        "branch": branch,
-        "exteriors": exteriorList,
-        "interiors": interiorList,
-    }
+        zoneUtilNotify.warning('setTutorialDict: tutorialDict is already set!')
+    tutorialDict = {'branch': branch,
+     'exteriors': exteriorList,
+     'interiors': interiorList}
 
 
 def overrideOff():
@@ -236,7 +215,7 @@ def overrideOff():
     return
 
 
-def getWakeInfo(hoodId=None, zoneId=None):
+def getWakeInfo(hoodId = None, zoneId = None):
     wakeWaterHeight = 0
     showWake = 0
     try:

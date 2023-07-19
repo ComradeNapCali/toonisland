@@ -6,8 +6,8 @@ from otp.otpbase import OTPLocalizer
 from direct.interval.IntervalGlobal import *
 from toontown.toontowngui import TTDialog
 
-
 class CatalogRentalItem(CatalogItem.CatalogItem):
+
     def makeNewItem(self, typeIndex, duration, cost):
         self.typeIndex = typeIndex
         self.duration = duration
@@ -24,13 +24,7 @@ class CatalogRentalItem(CatalogItem.CatalogItem):
         return 0
 
     def reachedPurchaseLimit(self, avatar):
-        if (
-            self in avatar.onOrder
-            or self in avatar.mailboxContents
-            or self in avatar.onGiftOrder
-            or self in avatar.awardMailboxContents
-            or self in avatar.onAwardOrder
-        ):
+        if self in avatar.onOrder or self in avatar.mailboxContents or self in avatar.onGiftOrder or self in avatar.awardMailboxContents or self in avatar.onAwardOrder:
             return 1
         return 0
 
@@ -43,31 +37,25 @@ class CatalogRentalItem(CatalogItem.CatalogItem):
     def getName(self):
         hours = int(self.duration / 60)
         if self.typeIndex == ToontownGlobals.RentalCannon:
-            return "%s %s %s %s" % (
-                hours,
-                TTLocalizer.RentalHours,
-                TTLocalizer.RentalOf,
-                TTLocalizer.RentalCannon,
-            )
+            return '%s %s %s %s' % (hours,
+             TTLocalizer.RentalHours,
+             TTLocalizer.RentalOf,
+             TTLocalizer.RentalCannon)
         elif self.typeIndex == ToontownGlobals.RentalGameTable:
-            return "%s %s %s" % (
-                hours,
-                TTLocalizer.RentalHours,
-                TTLocalizer.RentalGameTable,
-            )
+            return '%s %s %s' % (hours, TTLocalizer.RentalHours, TTLocalizer.RentalGameTable)
         else:
             return TTLocalizer.RentalTypeName
 
     def recordPurchase(self, avatar, optional):
-        self.notify.debug("rental -- record purchase")
+        self.notify.debug('rental -- record purchase')
         if avatar:
-            self.notify.debug("rental -- has avater")
+            self.notify.debug('rental -- has avater')
             estate = simbase.air.estateMgr.estate.get(avatar.doId)
             if estate:
-                self.notify.debug("rental -- has estate")
+                self.notify.debug('rental -- has estate')
                 estate.rentItem(self.typeIndex, self.duration)
             else:
-                self.notify.debug("rental -- something not there")
+                self.notify.debug('rental -- something not there')
         return ToontownGlobals.P_ItemAvailable
 
     def getPicture(self, avatar):
@@ -78,19 +66,16 @@ class CatalogRentalItem(CatalogItem.CatalogItem):
         spin = 1
         down = -1
         if self.typeIndex == ToontownGlobals.RentalCannon:
-            model = loader.loadModel("phase_4/models/minigames/toon_cannon")
+            model = loader.loadModel('phase_4/models/minigames/toon_cannon')
             scale = 0.5
             heading = 45
         elif self.typeIndex == ToontownGlobals.RentalGameTable:
-            model = loader.loadModel("phase_6/models/golf/game_table")
+            model = loader.loadModel('phase_6/models/golf/game_table')
         self.hasPicture = True
         return self.makeFrameModel(model, spin)
 
-    def output(self, store=-1):
-        return "CatalogRentalItem(%s%s)" % (
-            self.typeIndex,
-            self.formatOptionalData(store),
-        )
+    def output(self, store = -1):
+        return 'CatalogRentalItem(%s%s)' % (self.typeIndex, self.formatOptionalData(store))
 
     def compareTo(self, other):
         return self.typeIndex - other.typeIndex
@@ -128,12 +113,7 @@ class CatalogRentalItem(CatalogItem.CatalogItem):
         return 1
 
     def acceptItem(self, mailbox, index, callback):
-        self.confirmRent = TTDialog.TTGlobalDialog(
-            doneEvent="confirmRent",
-            message=TTLocalizer.MessageConfirmRent,
-            command=Functor(self.handleRentConfirm, mailbox, index, callback),
-            style=TTDialog.TwoChoice,
-        )
+        self.confirmRent = TTDialog.TTGlobalDialog(doneEvent='confirmRent', message=TTLocalizer.MessageConfirmRent, command=Functor(self.handleRentConfirm, mailbox, index, callback), style=TTDialog.TwoChoice)
         self.confirmRent.show()
 
     def handleRentConfirm(self, mailbox, index, callback, choice):

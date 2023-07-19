@@ -3,18 +3,15 @@ from direct.directnotify import DirectNotifyGlobal
 from panda3d.core import NodePath
 from otp.level import BasicEntities
 
-
-class DistributedCrushableEntity(
-    DistributedEntity.DistributedEntity, NodePath, BasicEntities.NodePathAttribs
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedCrushableEntity")
+class DistributedCrushableEntity(DistributedEntity.DistributedEntity, NodePath, BasicEntities.NodePathAttribs):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCrushableEntity')
 
     def __init__(self, cr):
         DistributedEntity.DistributedEntity.__init__(self, cr)
-        node = hidden.attachNewNode("DistributedNodePathEntity")
+        node = hidden.attachNewNode('DistributedNodePathEntity')
 
     def initNodePath(self):
-        node = hidden.attachNewNode("DistributedNodePathEntity")
+        node = hidden.attachNewNode('DistributedNodePathEntity')
         NodePath.__init__(self, node)
 
     def announceGenerate(self):

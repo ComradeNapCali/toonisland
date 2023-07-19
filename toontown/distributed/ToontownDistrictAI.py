@@ -4,7 +4,7 @@ from otp.distributed.DistributedDistrictAI import DistributedDistrictAI
 
 
 class ToontownDistrictAI(DistributedDistrictAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("ToontownDistrictAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('ToontownDistrictAI')
 
     def __init__(self, air):
         DistributedDistrictAI.__init__(self, air)
@@ -14,7 +14,7 @@ class ToontownDistrictAI(DistributedDistrictAI):
         self.ahnnLog = ahnnLog
 
     def d_allowAHNNLog(self, ahnnLog):
-        self.sendUpdate("allowAHNNLog", [ahnnLog])
+        self.sendUpdate('allowAHNNLog', [ahnnLog])
 
     def b_allowAHNNLog(self, ahnnLog):
         self.allowAHNNLog(ahnnLog)

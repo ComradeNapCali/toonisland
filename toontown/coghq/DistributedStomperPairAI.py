@@ -4,9 +4,8 @@ from otp.level import DistributedEntityAI
 from . import StomperGlobals
 from direct.distributed import ClockDelta
 
-
 class DistributedStomperPairAI(DistributedEntityAI.DistributedEntityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStomperAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStomperAI')
 
     def __init__(self, level, entId):
         DistributedEntityAI.DistributedEntityAI.__init__(self, level, entId)
@@ -24,7 +23,7 @@ class DistributedStomperPairAI(DistributedEntityAI.DistributedEntityAI):
         for id in doIds:
             self.children = simbase.air.doId2do[id]
 
-        self.sendUpdate("setChildren", [doIds])
+        self.sendUpdate('setChildren', [doIds])
 
     def setSquash(self):
         avId = self.air.getAvatarIdFromSender()

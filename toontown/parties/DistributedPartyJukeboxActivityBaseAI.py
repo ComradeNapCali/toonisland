@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.parties.DistributedPartyActivityAI import DistributedPartyActivityAI
 
-
 class DistributedPartyJukeboxActivityBaseAI(DistributedPartyActivityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedPartyJukeboxActivityBaseAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyJukeboxActivityBaseAI")
 
     def setNextSong(self, todo0):
         pass
@@ -27,3 +24,4 @@ class DistributedPartyJukeboxActivityBaseAI(DistributedPartyActivityAI):
 
     def moveHostSongToTop(self):
         pass
+

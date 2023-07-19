@@ -5,43 +5,15 @@ from direct.fsm import StateData
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 
-
 class Walk(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory("Walk")
+    notify = DirectNotifyGlobal.directNotify.newCategory('Walk')
 
     def __init__(self, doneEvent):
         StateData.StateData.__init__(self, doneEvent)
-        self.fsm = ClassicFSM.ClassicFSM(
-            "Walk",
-            [
-                State.State(
-                    "off",
-                    self.enterOff,
-                    self.exitOff,
-                    ["walking", "swimming", "slowWalking"],
-                ),
-                State.State(
-                    "walking",
-                    self.enterWalking,
-                    self.exitWalking,
-                    ["swimming", "slowWalking"],
-                ),
-                State.State(
-                    "swimming",
-                    self.enterSwimming,
-                    self.exitSwimming,
-                    ["walking", "slowWalking"],
-                ),
-                State.State(
-                    "slowWalking",
-                    self.enterSlowWalking,
-                    self.exitSlowWalking,
-                    ["walking", "swimming"],
-                ),
-            ],
-            "off",
-            "off",
-        )
+        self.fsm = ClassicFSM.ClassicFSM('Walk', [State.State('off', self.enterOff, self.exitOff, ['walking', 'swimming', 'slowWalking']),
+         State.State('walking', self.enterWalking, self.exitWalking, ['swimming', 'slowWalking']),
+         State.State('swimming', self.enterSwimming, self.exitSwimming, ['walking', 'slowWalking']),
+         State.State('slowWalking', self.enterSlowWalking, self.exitSlowWalking, ['walking', 'swimming'])], 'off', 'off')
         self.fsm.enterInitialState()
         self.IsSwimSoundAudible = 0
         self.swimSoundPlaying = 0
@@ -52,15 +24,13 @@ class Walk(StateData.StateData):
     def unload(self):
         del self.fsm
 
-    def enter(self, slowWalk=0):
+    def enter(self, slowWalk = 0):
         base.localAvatar.startPosHprBroadcast()
         base.localAvatar.startBlink()
         base.localAvatar.attachCamera()
         shouldPush = 1
         if len(base.localAvatar.cameraPositions) > 0:
-            shouldPush = not base.localAvatar.cameraPositions[
-                base.localAvatar.cameraIndex
-            ][4]
+            shouldPush = not base.localAvatar.cameraPositions[base.localAvatar.cameraIndex][4]
         base.localAvatar.startUpdateSmartCamera(shouldPush)
         base.localAvatar.showName()
         base.localAvatar.collisionsOn()
@@ -68,8 +38,8 @@ class Walk(StateData.StateData):
         base.localAvatar.enableAvatarControls()
 
     def exit(self):
-        self.fsm.request("off")
-        self.ignore("control")
+        self.fsm.request('off')
+        self.ignore('control')
         base.localAvatar.disableAvatarControls()
         base.localAvatar.stopUpdateSmartCamera()
         base.localAvatar.stopPosHprBroadcast()
@@ -90,7 +60,7 @@ class Walk(StateData.StateData):
             base.localAvatar.startTrackAnimToSpeed()
             base.localAvatar.setWalkSpeedNormal()
         else:
-            self.fsm.request("slowWalking")
+            self.fsm.request('slowWalking')
 
     def exitWalking(self):
         base.localAvatar.stopTrackAnimToSpeed()
@@ -105,12 +75,12 @@ class Walk(StateData.StateData):
         base.localAvatar.setWalkSpeedNormal()
         self.swimSound = swimSound
         self.swimSoundPlaying = 0
-        base.localAvatar.b_setAnimState("swim", base.localAvatar.animMultiplier)
+        base.localAvatar.b_setAnimState('swim', base.localAvatar.animMultiplier)
         base.localAvatar.startSleepSwimTest()
-        taskMgr.add(self.__swim, "localToonSwimming")
+        taskMgr.add(self.__swim, 'localToonSwimming')
 
     def exitSwimming(self):
-        taskMgr.remove("localToonSwimming")
+        taskMgr.remove('localToonSwimming')
         self.swimSound.stop()
         del self.swimSound
         self.swimSoundPlaying = 0
@@ -127,13 +97,13 @@ class Walk(StateData.StateData):
         return Task.cont
 
     def enterSlowWalking(self):
-        self.accept(base.localAvatar.uniqueName("positiveHP"), self.__handlePositiveHP)
+        self.accept(base.localAvatar.uniqueName('positiveHP'), self.__handlePositiveHP)
         base.localAvatar.startTrackAnimToSpeed()
         base.localAvatar.setWalkSpeedSlow()
 
     def __handlePositiveHP(self):
-        self.fsm.request("walking")
+        self.fsm.request('walking')
 
     def exitSlowWalking(self):
         base.localAvatar.stopTrackAnimToSpeed()
-        self.ignore(base.localAvatar.uniqueName("positiveHP"))
+        self.ignore(base.localAvatar.uniqueName('positiveHP'))

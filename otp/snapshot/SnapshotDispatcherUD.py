@@ -3,7 +3,8 @@ from direct.distributed.DistributedObjectUD import DistributedObjectUD
 
 
 class SnapshotDispatcherUD(DistributedObjectUD):
-    notify = DirectNotifyGlobal.directNotify.newCategory("SnapshotDispatcherUD")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        "SnapshotDispatcherUD")
 
     def online(self):
         pass

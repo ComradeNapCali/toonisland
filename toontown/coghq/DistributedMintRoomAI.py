@@ -8,15 +8,10 @@ from toontown.coghq import MintRoomBase, LevelSuitPlannerAI
 from toontown.coghq import DistributedMintBattleAI
 from toontown.suit import DistributedMintSuitAI
 
+class DistributedMintRoomAI(DistributedLevelAI.DistributedLevelAI, MintRoomBase.MintRoomBase):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedMintRoomAI')
 
-class DistributedMintRoomAI(
-    DistributedLevelAI.DistributedLevelAI, MintRoomBase.MintRoomBase
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedMintRoomAI")
-
-    def __init__(
-        self, air, mintId, mintDoId, zoneId, roomId, roomNum, avIds, battleExpAggreg
-    ):
+    def __init__(self, air, mintId, mintDoId, zoneId, roomId, roomNum, avIds, battleExpAggreg):
         DistributedLevelAI.DistributedLevelAI.__init__(self, air, zoneId, 0, avIds)
         MintRoomBase.MintRoomBase.__init__(self)
         self.setMintId(mintId)
@@ -32,37 +27,28 @@ class DistributedMintRoomAI(
         return ToontownBattleGlobals.getMintCreditMultiplier(self.mintId)
 
     def generate(self):
-        self.notify.debug("generate %s: room=%s" % (self.doId, self.roomId))
-        self.notify.debug("loading spec")
+        self.notify.debug('generate %s: room=%s' % (self.doId, self.roomId))
+        self.notify.debug('loading spec')
         specModule = MintRoomSpecs.getMintRoomSpecModule(self.roomId)
         roomSpec = LevelSpec.LevelSpec(specModule)
         if __dev__:
-            self.notify.debug("creating entity type registry")
+            self.notify.debug('creating entity type registry')
             typeReg = self.getMintEntityTypeReg()
             roomSpec.setEntityTypeReg(typeReg)
-        self.notify.debug("creating entities")
+        self.notify.debug('creating entities')
         DistributedLevelAI.DistributedLevelAI.generate(self, roomSpec)
-        self.notify.debug("creating cogs")
+        self.notify.debug('creating cogs')
         cogSpecModule = MintRoomSpecs.getCogSpecModule(self.roomId)
-        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(
-            self.air,
-            self,
-            DistributedMintSuitAI.DistributedMintSuitAI,
-            DistributedMintBattleAI.DistributedMintBattleAI,
-            cogSpecModule.CogData,
-            cogSpecModule.ReserveCogData,
-            cogSpecModule.BattleCells,
-            battleExpAggreg=self.battleExpAggreg,
-        )
+        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedMintSuitAI.DistributedMintSuitAI, DistributedMintBattleAI.DistributedMintBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
         suitHandles = self.planner.genSuits()
-        messenger.send("plannerCreated-" + str(self.doId))
-        self.suits = suitHandles["activeSuits"]
-        self.reserveSuits = suitHandles["reserveSuits"]
+        messenger.send('plannerCreated-' + str(self.doId))
+        self.suits = suitHandles['activeSuits']
+        self.reserveSuits = suitHandles['reserveSuits']
         self.d_setSuits()
-        self.notify.debug("finish mint room %s %s creation" % (self.roomId, self.doId))
+        self.notify.debug('finish mint room %s %s creation' % (self.roomId, self.doId))
 
     def delete(self):
-        self.notify.debug("delete: %s" % self.doId)
+        self.notify.debug('delete: %s' % self.doId)
         suits = self.suits
         for reserve in self.reserveSuits:
             suits.append(reserve[0])
@@ -90,7 +76,7 @@ class DistributedMintRoomAI(
         return self.cogLevel
 
     def d_setSuits(self):
-        self.sendUpdate("setSuits", [self.getSuits(), self.getReserveSuits()])
+        self.sendUpdate('setSuits', [self.getSuits(), self.getReserveSuits()])
 
     def getSuits(self):
         suitIds = []
@@ -108,11 +94,9 @@ class DistributedMintRoomAI(
 
     def d_setBossConfronted(self, toonId):
         if toonId not in self.avIdList:
-            self.notify.warning(
-                "d_setBossConfronted: %s not in list of participants" % toonId
-            )
+            self.notify.warning('d_setBossConfronted: %s not in list of participants' % toonId)
             return
-        self.sendUpdate("setBossConfronted", [toonId])
+        self.sendUpdate('setBossConfronted', [toonId])
 
     def setVictors(self, victorIds):
         activeVictors = []
@@ -123,9 +107,9 @@ class DistributedMintRoomAI(
                 activeVictors.append(toon)
                 activeVictorIds.append(victorId)
 
-        description = "%s|%s" % (self.mintId, activeVictorIds)
+        description = '%s|%s' % (self.mintId, activeVictorIds)
         for avId in activeVictorIds:
-            self.air.writeServerEvent("mintDefeated", avId, description)
+            self.air.writeServerEvent('mintDefeated', avId, description)
 
         for toon in activeVictors:
             simbase.air.questManager.toonDefeatedMint(toon, self.mintId, activeVictors)
@@ -137,7 +121,7 @@ class DistributedMintRoomAI(
         self.setDefeated()
 
     def d_setDefeated(self):
-        self.sendUpdate("setDefeated")
+        self.sendUpdate('setDefeated')
 
     def setDefeated(self):
         pass
@@ -149,5 +133,5 @@ class DistributedMintRoomAI(
             if mint is not None:
                 mint.allToonsGone()
             else:
-                self.notify.warning("no mint %s in allToonsGone" % self.mintDoId)
+                self.notify.warning('no mint %s in allToonsGone' % self.mintDoId)
         return

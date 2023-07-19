@@ -4,13 +4,11 @@ from direct.task import Task
 from panda3d.core import *
 from toontown.racing.DistributedKartPad import DistributedKartPad
 from toontown.racing.KartShopGlobals import KartGlobals
-
-if __debug__:
+if (__debug__):
     import pdb
 
-
 class DistributedViewPad(DistributedKartPad):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedViewPad")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedViewPad')
     id = 0
 
     def __init__(self, cr):

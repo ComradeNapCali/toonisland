@@ -5,10 +5,10 @@ from direct.showbase import Transitions
 from direct.gui.DirectGui import *
 from . import LaffMeter
 
-
 class DeathForceAcknowledge:
+
     def __init__(self, doneEvent):
-        fadeModel = loader.loadModel("phase_3/models/misc/fade")
+        fadeModel = loader.loadModel('phase_3/models/misc/fade')
         if fadeModel:
             self.fade = DirectFrame(
                 parent=aspect2dp,
@@ -16,27 +16,25 @@ class DeathForceAcknowledge:
                 image=fadeModel,
                 image_color=(0, 0, 0, 0.4),
                 image_scale=3.0,
-                state=DGG.NORMAL,
-            )
+                state=DGG.NORMAL)
             self.fade.reparentTo(aspect2d, DGG.FADE_SORT_INDEX)
             fadeModel.removeNode()
         else:
-            print("Problem loading fadeModel.")
+            print('Problem loading fadeModel.')
             self.fade = None
         self.dialog = TTDialog.TTGlobalDialog(
             message=TTLocalizer.PlaygroundDeathAckMessage,
             doneEvent=doneEvent,
             style=TTDialog.Acknowledge,
-            suppressKeys=True,
-        )
-        self.dialog["text_pos"] = (-0.26, 0.1)
-        scale = self.dialog.component("image0").getScale()
+            suppressKeys=True)
+        self.dialog['text_pos'] = (-.26, 0.1)
+        scale = self.dialog.component('image0').getScale()
         scale.setX(scale[0] * 1.3)
-        self.dialog.component("image0").setScale(scale)
+        self.dialog.component('image0').setScale(scale)
         av = base.localAvatar
         self.laffMeter = LaffMeter.LaffMeter(av.style, av.hp, av.maxHp)
         self.laffMeter.reparentTo(self.dialog)
-        if av.style.getAnimal() == "monkey":
+        if av.style.getAnimal() == 'monkey':
             self.laffMeter.setPos(-0.46, 0, -0.035)
             self.laffMeter.setScale(0.085)
         else:

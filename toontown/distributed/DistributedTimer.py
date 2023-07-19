@@ -5,9 +5,8 @@ from panda3d.core import *
 from direct.distributed.ClockDelta import *
 import time
 
-
 class DistributedTimer(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedTimer")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedTimer')
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
@@ -23,7 +22,7 @@ class DistributedTimer(DistributedObject.DistributedObject):
 
     def setStartTime(self, time):
         self.startTime = time
-        print("TIMER startTime %s" % time)
+        print('TIMER startTime %s' % time)
 
     def getStartTime(self):
         return self.startTime

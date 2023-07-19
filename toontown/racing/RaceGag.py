@@ -2,15 +2,17 @@ from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase import DirectObject
 from .DroppedGag import *
-
-types = ["", "Pie", "Banana", "Anvil"]
-
+types = ['',
+ 'Pie',
+ 'Banana',
+ 'Anvil']
 
 class RaceGag(DirectObject.DirectObject):
+
     def __init__(self, parent, slot, testPos):
         DirectObject.DirectObject.__init__(self)
         self.parent = parent
-        self.name = "gag-" + str(slot)
+        self.name = 'gag-' + str(slot)
         self.geom = DroppedGag(self.name, base.race.qbox)
         self.geom.dropShadow.setScale(0.7)
         self.geom.setPos(testPos + Vec3(0, 0, -1))
@@ -22,8 +24,8 @@ class RaceGag(DirectObject.DirectObject):
         self.gagnp.node().setFromCollideMask(BitMask32(32768))
         self.slot = slot
         self.type = 0
-        self.accept("imIn-" + self.name, self.hitGag)
-        self.pickupSound = base.loader.loadSfx("phase_6/audio/sfx/KART_getGag.ogg")
+        self.accept('imIn-' + self.name, self.hitGag)
+        self.pickupSound = base.loader.loadSfx('phase_6/audio/sfx/KART_getGag.ogg')
         self.fadeout = None
         return
 
@@ -36,7 +38,7 @@ class RaceGag(DirectObject.DirectObject):
         self.geom.delete()
         self.geom = None
         del self.parent
-        self.ignore("imIn-" + self.name)
+        self.ignore('imIn-' + self.name)
         return
 
     def getType(self):

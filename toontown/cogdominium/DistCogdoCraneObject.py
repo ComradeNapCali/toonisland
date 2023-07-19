@@ -7,38 +7,29 @@ from toontown.toonbase import ToontownGlobals
 from otp.otpbase import OTPGlobals
 from direct.fsm import FSM
 from direct.task import Task
-
 smileyDoId = 1
 
-
 class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistCogdoCraneObject")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistCogdoCraneObject')
     wantsWatchDrift = 1
 
     def __init__(self, cr):
         DistributedSmoothNode.DistributedSmoothNode.__init__(self, cr)
-        FSM.FSM.__init__(self, "DistCogdoCraneObject")
+        FSM.FSM.__init__(self, 'DistCogdoCraneObject')
         self.craneGame = None
         self.avId = 0
         self.craneId = 0
         self.cleanedUp = 0
-        self.collisionNode = CollisionNode("object")
-        self.collisionNode.setIntoCollideMask(
-            ToontownGlobals.PieBitmask
-            | OTPGlobals.WallBitmask
-            | ToontownGlobals.CashbotBossObjectBitmask
-            | OTPGlobals.CameraBitmask
-        )
-        self.collisionNode.setFromCollideMask(
-            ToontownGlobals.PieBitmask | OTPGlobals.FloorBitmask
-        )
+        self.collisionNode = CollisionNode('object')
+        self.collisionNode.setIntoCollideMask(ToontownGlobals.PieBitmask | OTPGlobals.WallBitmask | ToontownGlobals.CashbotBossObjectBitmask | OTPGlobals.CameraBitmask)
+        self.collisionNode.setFromCollideMask(ToontownGlobals.PieBitmask | OTPGlobals.FloorBitmask)
         self.collisionNodePath = NodePath(self.collisionNode)
         self.physicsActivated = 0
         self.toMagnetSoundInterval = Sequence()
         self.hitFloorSoundInterval = Sequence()
-        self.hitBossSfx = loader.loadSfx("phase_5/audio/sfx/AA_drop_safe_miss.ogg")
+        self.hitBossSfx = loader.loadSfx('phase_5/audio/sfx/AA_drop_safe_miss.ogg')
         self.hitBossSoundInterval = SoundInterval(self.hitBossSfx)
-        self.touchedBossSfx = loader.loadSfx("phase_5/audio/sfx/AA_drop_sandbag.ogg")
+        self.touchedBossSfx = loader.loadSfx('phase_5/audio/sfx/AA_drop_sandbag.ogg')
         self.touchedBossSoundInterval = SoundInterval(self.touchedBossSfx, duration=0.8)
         self.lerpInterval = None
         return
@@ -53,7 +44,7 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
             return
         else:
             self.cleanedUp = 1
-        self.demand("Off")
+        self.demand('Off')
         self.detachNode()
         self.toMagnetSoundInterval.finish()
         self.hitFloorSoundInterval.finish()
@@ -67,40 +58,40 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         return
 
     def setupPhysics(self, name):
-        an = ActorNode("%s-%s" % (name, self.doId))
+        an = ActorNode('%s-%s' % (name, self.doId))
         anp = NodePath(an)
         if not self.isEmpty():
             self.reparentTo(anp)
         NodePath.assign(self, anp)
         self.physicsObject = an.getPhysicsObject()
-        self.setTag("object", str(self.doId))
+        self.setTag('object', str(self.doId))
         self.collisionNodePath.reparentTo(self)
         self.handler = PhysicsCollisionHandler()
         self.handler.addCollider(self.collisionNodePath, self)
-        self.collideName = self.uniqueName("collide")
-        self.handler.addInPattern(self.collideName + "-%in")
-        self.handler.addAgainPattern(self.collideName + "-%in")
-        self.watchDriftName = self.uniqueName("watchDrift")
+        self.collideName = self.uniqueName('collide')
+        self.handler.addInPattern(self.collideName + '-%in')
+        self.handler.addAgainPattern(self.collideName + '-%in')
+        self.watchDriftName = self.uniqueName('watchDrift')
 
     def activatePhysics(self):
         if not self.physicsActivated:
             self.craneGame.physicsMgr.attachPhysicalNode(self.node())
             base.cTrav.addCollider(self.collisionNodePath, self.handler)
             self.physicsActivated = 1
-            self.accept(self.collideName + "-floor", self.__hitFloor)
-            self.accept(self.collideName + "-goon", self.__hitGoon)
-            self.acceptOnce(self.collideName + "-headTarget", self.__hitBoss)
-            self.accept(self.collideName + "-dropPlane", self.__hitDropPlane)
+            self.accept(self.collideName + '-floor', self.__hitFloor)
+            self.accept(self.collideName + '-goon', self.__hitGoon)
+            self.acceptOnce(self.collideName + '-headTarget', self.__hitBoss)
+            self.accept(self.collideName + '-dropPlane', self.__hitDropPlane)
 
     def deactivatePhysics(self):
         if self.physicsActivated:
             self.craneGame.physicsMgr.removePhysicalNode(self.node())
             base.cTrav.removeCollider(self.collisionNodePath)
             self.physicsActivated = 0
-            self.ignore(self.collideName + "-floor")
-            self.ignore(self.collideName + "-goon")
-            self.ignore(self.collideName + "-headTarget")
-            self.ignore(self.collideName + "-dropPlane")
+            self.ignore(self.collideName + '-floor')
+            self.ignore(self.collideName + '-goon')
+            self.ignore(self.collideName + '-headTarget')
+            self.ignore(self.collideName + '-dropPlane')
 
     def hideShadows(self):
         pass
@@ -115,13 +106,13 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         self.collisionNodePath.unstash()
 
     def __hitFloor(self, entry):
-        if self.state == "Dropped" or self.state == "LocalDropped":
+        if self.state == 'Dropped' or self.state == 'LocalDropped':
             self.d_hitFloor()
-            self.demand("SlidingFloor", localAvatar.doId)
+            self.demand('SlidingFloor', localAvatar.doId)
 
     def __hitGoon(self, entry):
-        if self.state == "Dropped" or self.state == "LocalDropped":
-            goonId = int(entry.getIntoNodePath().getNetTag("doId"))
+        if self.state == 'Dropped' or self.state == 'LocalDropped':
+            goonId = int(entry.getIntoNodePath().getNetTag('doId'))
             goon = self.cr.doId2do.get(goonId)
             if goon:
                 self.doHitGoon(goon)
@@ -130,30 +121,28 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         pass
 
     def __hitBoss(self, entry):
-        if (
-            self.state == "Dropped" or self.state == "LocalDropped"
-        ) and self.craneId != self.craneGame.doId:
+        if (self.state == 'Dropped' or self.state == 'LocalDropped') and self.craneId != self.craneGame.doId:
             vel = self.physicsObject.getVelocity()
             vel = self.crane.root.getRelativeVector(render, vel)
             vel.normalize()
             impact = vel[1]
             if impact >= self.getMinImpact():
-                print("hit! %s" % impact)
+                print('hit! %s' % impact)
                 self.hitBossSoundInterval.start()
                 self.doHitBoss(impact)
             else:
                 self.touchedBossSoundInterval.start()
-                print("--not hard enough: %s" % impact)
+                print('--not hard enough: %s' % impact)
 
     def doHitBoss(self, impact):
         self.d_hitBoss(impact)
 
     def __hitDropPlane(self, entry):
-        self.notify.info("%s fell out of the world." % self.doId)
+        self.notify.info('%s fell out of the world.' % self.doId)
         self.fellOut()
 
     def fellOut(self):
-        raise Exception("fellOut unimplented")
+        raise Exception('fellOut unimplented')
 
     def getMinImpact(self):
         return 0
@@ -162,7 +151,7 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         v = self.physicsObject.getVelocity()
         if abs(v[0]) < 0.0001 and abs(v[1]) < 0.0001:
             self.d_requestFree()
-            self.demand("Free")
+            self.demand('Free')
         return Task.cont
 
     def prepareGrab(self):
@@ -176,39 +165,40 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         self.craneGame = base.cr.doId2do[craneGameId]
 
     def setObjectState(self, state, avId, craneId):
-        if state == "G":
-            self.demand("Grabbed", avId, craneId)
-        elif state == "D":
-            if self.state != "Dropped":
-                self.demand("Dropped", avId, craneId)
-        elif state == "s":
-            if self.state != "SlidingFloor":
-                self.demand("SlidingFloor", avId)
-        elif state == "F":
-            self.demand("Free")
+        if state == 'G':
+            self.demand('Grabbed', avId, craneId)
+        elif state == 'D':
+            if self.state != 'Dropped':
+                self.demand('Dropped', avId, craneId)
+        elif state == 's':
+            if self.state != 'SlidingFloor':
+                self.demand('SlidingFloor', avId)
+        elif state == 'F':
+            self.demand('Free')
         else:
-            self.notify.error("Invalid state from AI: %s" % state)
+            self.notify.error('Invalid state from AI: %s' % state)
 
     def d_requestGrab(self):
-        self.sendUpdate("requestGrab")
+        self.sendUpdate('requestGrab')
 
     def rejectGrab(self):
-        if self.state == "LocalGrabbed":
-            self.demand("LocalDropped", self.avId, self.craneId)
+        if self.state == 'LocalGrabbed':
+            self.demand('LocalDropped', self.avId, self.craneId)
 
     def d_requestDrop(self):
-        self.sendUpdate("requestDrop")
+        self.sendUpdate('requestDrop')
 
     def d_hitFloor(self):
-        self.sendUpdate("hitFloor")
+        self.sendUpdate('hitFloor')
 
     def d_requestFree(self):
-        self.sendUpdate(
-            "requestFree", [self.getX(), self.getY(), self.getZ(), self.getH()]
-        )
+        self.sendUpdate('requestFree', [self.getX(),
+         self.getY(),
+         self.getZ(),
+         self.getH()])
 
     def d_hitBoss(self, impact):
-        self.sendUpdate("hitBoss", [impact])
+        self.sendUpdate('hitBoss', [impact])
 
     def defaultFilter(self, request, args):
         if self.craneGame == None:
@@ -234,14 +224,14 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         self.crane.grabObject(self)
 
     def exitLocalGrabbed(self):
-        if self.newState != "Grabbed":
+        if self.newState != 'Grabbed':
             self.crane.dropObject(self)
             self.prepareRelease()
             del self.crane
             self.showShadows()
 
     def enterGrabbed(self, avId, craneId):
-        if self.oldState == "LocalGrabbed":
+        if self.oldState == 'LocalGrabbed':
             if craneId == self.craneId:
                 return
             else:
@@ -271,7 +261,7 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
         self.handler.setDynamicFrictionCoef(0)
 
     def exitLocalDropped(self):
-        if self.newState != "SlidingFloor" and self.newState != "Dropped":
+        if self.newState != 'SlidingFloor' and self.newState != 'Dropped':
             self.deactivatePhysics()
             self.stopPosHprBroadcast()
         del self.crane
@@ -292,7 +282,7 @@ class DistCogdoCraneObject(DistributedSmoothNode.DistributedSmoothNode, FSM.FSM)
 
     def exitDropped(self):
         if self.avId == base.localAvatar.doId:
-            if self.newState != "SlidingFloor":
+            if self.newState != 'SlidingFloor':
                 self.deactivatePhysics()
                 self.stopPosHprBroadcast()
         else:

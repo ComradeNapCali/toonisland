@@ -6,28 +6,14 @@ from otp.distributed.OtpDoGlobals import *
 
 
 class ToontownInternalRepository(AstronInternalRepository):
-    notify = DirectNotifyGlobal.directNotify.newCategory("ToontownInternalRepository")
+    notify = DirectNotifyGlobal.directNotify.newCategory('ToontownInternalRepository')
     GameGlobalsId = OTP_DO_ID_TOONTOWN
     dbId = 4003
 
-    def __init__(
-        self,
-        baseChannel,
-        serverId=None,
-        dcFileNames=None,
-        dcSuffix="AI",
-        connectMethod=None,
-        threadedNet=None,
-    ):
-        AstronInternalRepository.__init__(
-            self,
-            baseChannel,
-            serverId,
-            dcFileNames,
-            dcSuffix,
-            connectMethod,
-            threadedNet,
-        )
+    def __init__(self, baseChannel, serverId=None, dcFileNames=None, dcSuffix='AI', connectMethod=None,
+                 threadedNet=None):
+        AstronInternalRepository.__init__(self, baseChannel, serverId, dcFileNames, dcSuffix, connectMethod,
+                                          threadedNet)
 
     def getAvatarIdFromSender(self):
         return self.getMsgSender() & 0xFFFFFFFF
@@ -43,11 +29,7 @@ class ToontownInternalRepository(AstronInternalRepository):
 
     def setAllowClientSend(self, avId, distObj, fieldNameList=[]):
         dg = PyDatagram()
-        dg.addServerHeader(
-            distObj.GetPuppetConnectionChannel(avId),
-            self.ourChannel,
-            CLIENTAGENT_SET_FIELDS_SENDABLE,
-        )
+        dg.addServerHeader(distObj.GetPuppetConnectionChannel(avId), self.ourChannel, CLIENTAGENT_SET_FIELDS_SENDABLE)
         fieldIds = []
         for fieldName in fieldNameList:
             field = distObj.dclass.getFieldByName(fieldName)

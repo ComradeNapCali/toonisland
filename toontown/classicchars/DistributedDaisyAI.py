@@ -9,51 +9,16 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from . import CharStateDatasAI
 
-
 class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDaisyAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedDaisyAI')
 
     def __init__(self, air):
-        DistributedCCharBaseAI.DistributedCCharBaseAI.__init__(
-            self, air, TTLocalizer.Daisy
-        )
-        self.fsm = ClassicFSM.ClassicFSM(
-            "DistributedDaisyAI",
-            [
-                State.State(
-                    "Off",
-                    self.enterOff,
-                    self.exitOff,
-                    ["Lonely", "TransitionToCostume", "Walk"],
-                ),
-                State.State(
-                    "Lonely",
-                    self.enterLonely,
-                    self.exitLonely,
-                    ["Chatty", "Walk", "TransitionToCostume"],
-                ),
-                State.State(
-                    "Chatty",
-                    self.enterChatty,
-                    self.exitChatty,
-                    ["Lonely", "Walk", "TransitionToCostume"],
-                ),
-                State.State(
-                    "Walk",
-                    self.enterWalk,
-                    self.exitWalk,
-                    ["Lonely", "Chatty", "TransitionToCostume"],
-                ),
-                State.State(
-                    "TransitionToCostume",
-                    self.enterTransitionToCostume,
-                    self.exitTransitionToCostume,
-                    ["Off"],
-                ),
-            ],
-            "Off",
-            "Off",
-        )
+        DistributedCCharBaseAI.DistributedCCharBaseAI.__init__(self, air, TTLocalizer.Daisy)
+        self.fsm = ClassicFSM.ClassicFSM('DistributedDaisyAI', [State.State('Off', self.enterOff, self.exitOff, ['Lonely', 'TransitionToCostume', 'Walk']),
+         State.State('Lonely', self.enterLonely, self.exitLonely, ['Chatty', 'Walk', 'TransitionToCostume']),
+         State.State('Chatty', self.enterChatty, self.exitChatty, ['Lonely', 'Walk', 'TransitionToCostume']),
+         State.State('Walk', self.enterWalk, self.exitWalk, ['Lonely', 'Chatty', 'TransitionToCostume']),
+         State.State('TransitionToCostume', self.enterTransitionToCostume, self.exitTransitionToCostume, ['Off'])], 'Off', 'Off')
         self.fsm.enterInitialState()
         self.handleHolidays()
 
@@ -71,66 +36,46 @@ class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
     def generate(self):
         DistributedCCharBaseAI.DistributedCCharBaseAI.generate(self)
         name = self.getName()
-        self.lonelyDoneEvent = self.taskName(name + "-lonely-done")
+        self.lonelyDoneEvent = self.taskName(name + '-lonely-done')
         self.lonely = CharStateDatasAI.CharLonelyStateAI(self.lonelyDoneEvent, self)
-        self.chattyDoneEvent = self.taskName(name + "-chatty-done")
+        self.chattyDoneEvent = self.taskName(name + '-chatty-done')
         self.chatty = CharStateDatasAI.CharChattyStateAI(self.chattyDoneEvent, self)
-        self.walkDoneEvent = self.taskName(name + "-walk-done")
+        self.walkDoneEvent = self.taskName(name + '-walk-done')
         if self.diffPath == None:
             self.walk = CharStateDatasAI.CharWalkStateAI(self.walkDoneEvent, self)
         else:
-            self.walk = CharStateDatasAI.CharWalkStateAI(
-                self.walkDoneEvent, self, self.diffPath
-            )
+            self.walk = CharStateDatasAI.CharWalkStateAI(self.walkDoneEvent, self, self.diffPath)
         return
 
     def walkSpeed(self):
         return ToontownGlobals.DaisySpeed
 
     def start(self):
-        self.fsm.request("Lonely")
+        self.fsm.request('Lonely')
 
     def __decideNextState(self, doneStatus):
         if self.transitionToCostume == 1:
             curWalkNode = self.walk.getDestNode()
             if simbase.air.holidayManager:
-                if (
-                    ToontownGlobals.HALLOWEEN_COSTUMES
-                    in simbase.air.holidayManager.currentHolidays
-                    and simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.HALLOWEEN_COSTUMES
-                    ]
-                ):
-                    simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.HALLOWEEN_COSTUMES
-                    ].triggerSwitch(curWalkNode, self)
-                    self.fsm.request("TransitionToCostume")
-                elif (
-                    ToontownGlobals.APRIL_FOOLS_COSTUMES
-                    in simbase.air.holidayManager.currentHolidays
-                    and simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.APRIL_FOOLS_COSTUMES
-                    ]
-                ):
-                    simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.APRIL_FOOLS_COSTUMES
-                    ].triggerSwitch(curWalkNode, self)
-                    self.fsm.request("TransitionToCostume")
+                if ToontownGlobals.HALLOWEEN_COSTUMES in simbase.air.holidayManager.currentHolidays and simbase.air.holidayManager.currentHolidays[ToontownGlobals.HALLOWEEN_COSTUMES]:
+                    simbase.air.holidayManager.currentHolidays[ToontownGlobals.HALLOWEEN_COSTUMES].triggerSwitch(curWalkNode, self)
+                    self.fsm.request('TransitionToCostume')
+                elif ToontownGlobals.APRIL_FOOLS_COSTUMES in simbase.air.holidayManager.currentHolidays and simbase.air.holidayManager.currentHolidays[ToontownGlobals.APRIL_FOOLS_COSTUMES]:
+                    simbase.air.holidayManager.currentHolidays[ToontownGlobals.APRIL_FOOLS_COSTUMES].triggerSwitch(curWalkNode, self)
+                    self.fsm.request('TransitionToCostume')
                 else:
-                    self.notify.warning(
-                        "transitionToCostume == 1 but no costume holiday"
-                    )
+                    self.notify.warning('transitionToCostume == 1 but no costume holiday')
             else:
-                self.notify.warning("transitionToCostume == 1 but no holiday Manager")
-        if doneStatus["state"] == "lonely" and doneStatus["status"] == "done":
-            self.fsm.request("Walk")
-        elif doneStatus["state"] == "chatty" and doneStatus["status"] == "done":
-            self.fsm.request("Walk")
-        elif doneStatus["state"] == "walk" and doneStatus["status"] == "done":
+                self.notify.warning('transitionToCostume == 1 but no holiday Manager')
+        if doneStatus['state'] == 'lonely' and doneStatus['status'] == 'done':
+            self.fsm.request('Walk')
+        elif doneStatus['state'] == 'chatty' and doneStatus['status'] == 'done':
+            self.fsm.request('Walk')
+        elif doneStatus['state'] == 'walk' and doneStatus['status'] == 'done':
             if len(self.nearbyAvatars) > 0:
-                self.fsm.request("Chatty")
+                self.fsm.request('Chatty')
             else:
-                self.fsm.request("Lonely")
+                self.fsm.request('Lonely')
 
     def enterOff(self):
         pass
@@ -147,8 +92,8 @@ class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
         self.lonely.exit()
 
     def __goForAWalk(self, task):
-        self.notify.debug("going for a walk")
-        self.fsm.request("Walk")
+        self.notify.debug('going for a walk')
+        self.fsm.request('Walk')
         return Task.done
 
     def enterChatty(self):
@@ -160,7 +105,7 @@ class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
         self.chatty.exit()
 
     def enterWalk(self):
-        self.notify.debug("going for a walk")
+        self.notify.debug('going for a walk')
         self.walk.enter()
         self.acceptOnce(self.walkDoneEvent, self.__decideNextState)
 
@@ -170,19 +115,17 @@ class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
 
     def avatarEnterNextState(self):
         if len(self.nearbyAvatars) == 1:
-            if self.fsm.getCurrentState().getName() != "Walk":
-                self.fsm.request("Chatty")
+            if self.fsm.getCurrentState().getName() != 'Walk':
+                self.fsm.request('Chatty')
             else:
-                self.notify.debug("avatarEnterNextState: in walk state")
+                self.notify.debug('avatarEnterNextState: in walk state')
         else:
-            self.notify.debug(
-                "avatarEnterNextState: num avatars: " + str(len(self.nearbyAvatars))
-            )
+            self.notify.debug('avatarEnterNextState: num avatars: ' + str(len(self.nearbyAvatars)))
 
     def avatarExitNextState(self):
         if len(self.nearbyAvatars) == 0:
-            if self.fsm.getCurrentState().getName() != "Walk":
-                self.fsm.request("Lonely")
+            if self.fsm.getCurrentState().getName() != 'Walk':
+                self.fsm.request('Lonely')
 
     def enterTransitionToCostume(self):
         pass
@@ -192,19 +135,8 @@ class DistributedDaisyAI(DistributedCCharBaseAI.DistributedCCharBaseAI):
 
     def handleHolidays(self):
         DistributedCCharBaseAI.DistributedCCharBaseAI.handleHolidays(self)
-        if hasattr(simbase.air, "holidayManager"):
-            if (
-                ToontownGlobals.APRIL_FOOLS_COSTUMES
-                in simbase.air.holidayManager.currentHolidays
-            ):
-                if (
-                    simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.APRIL_FOOLS_COSTUMES
-                    ]
-                    != None
-                    and simbase.air.holidayManager.currentHolidays[
-                        ToontownGlobals.APRIL_FOOLS_COSTUMES
-                    ].getRunningState()
-                ):
+        if hasattr(simbase.air, 'holidayManager'):
+            if ToontownGlobals.APRIL_FOOLS_COSTUMES in simbase.air.holidayManager.currentHolidays:
+                if simbase.air.holidayManager.currentHolidays[ToontownGlobals.APRIL_FOOLS_COSTUMES] != None and simbase.air.holidayManager.currentHolidays[ToontownGlobals.APRIL_FOOLS_COSTUMES].getRunningState():
                     self.diffPath = TTLocalizer.Mickey
         return

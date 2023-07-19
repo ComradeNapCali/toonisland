@@ -7,8 +7,8 @@ from direct.task.Task import Task
 from toontown.suit import Suit
 from toontown.suit import SuitDNA
 
-
 class Ouch(DirectObject.DirectObject):
+
     def __init__(self, keyEvent, callback):
         DirectObject.DirectObject.__init__(self)
         self.accept(keyEvent, callback)
@@ -18,7 +18,8 @@ class Ouch(DirectObject.DirectObject):
 
 
 class CyclePlacer(DirectObject.DirectObject):
-    def __init__(self, locations, keyEvent, startIndex=0):
+
+    def __init__(self, locations, keyEvent, startIndex = 0):
         DirectObject.DirectObject.__init__(self)
         self.locations = locations
         self.index = startIndex
@@ -33,7 +34,7 @@ class CyclePlacer(DirectObject.DirectObject):
         self.index = (self.index + 1) % len(self.locations)
         self.gotoLocation()
 
-    def gotoLocation(self, index=None):
+    def gotoLocation(self, index = None):
         if index is None:
             index = self.index
         pos, h = self.locations[index]
@@ -46,13 +47,13 @@ class CyclePlacer(DirectObject.DirectObject):
 class ToonLifter(DirectObject.DirectObject):
     SerialNum = 0
 
-    def __init__(self, keyDownEvent, speed=2):
+    def __init__(self, keyDownEvent, speed = 2):
         DirectObject.DirectObject.__init__(self)
         self.serialNum = ToonLifter.SerialNum
         ToonLifter.SerialNum += 1
-        self.taskName = "ToonLifter%s" % self.serialNum
+        self.taskName = 'ToonLifter%s' % self.serialNum
         self.keyDownEvent = keyDownEvent
-        self.keyUpEvent = self.keyDownEvent + "-up"
+        self.keyUpEvent = self.keyDownEvent + '-up'
         self.speed = speed
         self.accept(self.keyDownEvent, self.startLifting)
 
@@ -61,11 +62,12 @@ class ToonLifter(DirectObject.DirectObject):
         taskMgr.remove(self.taskName)
 
     def startLifting(self):
-        def liftTask(task, self=self):
+
+        def liftTask(task, self = self):
             base.localAvatar.setZ(base.localAvatar.getZ() + self.speed)
             return Task.cont
 
-        def stopLifting(self=self):
+        def stopLifting(self = self):
             taskMgr.remove(self.taskName)
             self.ignore(self.keyUpEvent)
             self.accept(self.keyDownEvent, self.startLifting)

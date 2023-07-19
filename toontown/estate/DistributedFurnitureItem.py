@@ -10,12 +10,8 @@ from direct.distributed import DistributedSmoothNode
 from direct.task import Task
 from . import HouseGlobals
 
-
-class DistributedFurnitureItem(
-    DistributedHouseItem.DistributedHouseItem,
-    DistributedSmoothNode.DistributedSmoothNode,
-):
-    notify = directNotify.newCategory("DistributedFurnitureItem")
+class DistributedFurnitureItem(DistributedHouseItem.DistributedHouseItem, DistributedSmoothNode.DistributedSmoothNode):
+    notify = directNotify.newCategory('DistributedFurnitureItem')
 
     def __init__(self, cr):
         DistributedHouseItem.DistributedHouseItem.__init__(self, cr)
@@ -31,7 +27,7 @@ class DistributedFurnitureItem(
     def generate(self):
         DistributedHouseItem.DistributedHouseItem.generate(self)
         DistributedSmoothNode.DistributedSmoothNode.generate(self)
-        self.__taskName = self.taskName("sendRequestPosHpr")
+        self.__taskName = self.taskName('sendRequestPosHpr')
 
     def announceGenerate(self):
         DistributedHouseItem.DistributedHouseItem.announceGenerate(self)
@@ -76,9 +72,7 @@ class DistributedFurnitureItem(
         posHpr = self.__getPosHpr()
         self.__oldPosHpr = posHpr
         self.sendRequestPosHpr(0, *posHpr)
-        taskMgr.doMethodLater(
-            self.__broadcastFrequency, self.__posHprBroadcast, self.__taskName
-        )
+        taskMgr.doMethodLater(self.__broadcastFrequency, self.__posHprBroadcast, self.__taskName)
 
     def __posHprBroadcast(self, task):
         posHpr = self.__getPosHpr()
@@ -87,9 +81,7 @@ class DistributedFurnitureItem(
         else:
             self.__oldPosHpr = posHpr
             self.sendRequestPosHpr(0, *posHpr)
-        taskMgr.doMethodLater(
-            self.__broadcastFrequency, self.__posHprBroadcast, self.__taskName
-        )
+        taskMgr.doMethodLater(self.__broadcastFrequency, self.__posHprBroadcast, self.__taskName)
         return Task.done
 
     def stopAdjustPosHpr(self):
@@ -103,7 +95,14 @@ class DistributedFurnitureItem(
 
     def sendRequestPosHpr(self, final, x, y, z, h, p, r):
         t = globalClockDelta.getFrameNetworkTime()
-        self.sendUpdate("requestPosHpr", (final, x, y, z, h, p, r, t))
+        self.sendUpdate('requestPosHpr', (final,
+         x,
+         y,
+         z,
+         h,
+         p,
+         r,
+         t))
 
     def setMode(self, mode, avId):
         if mode == HouseGlobals.FURNITURE_MODE_START:
@@ -115,7 +114,7 @@ class DistributedFurnitureItem(
         elif mode == HouseGlobals.FURNITURE_MODE_OFF:
             pass
         else:
-            self.notify.warning("setMode: unknown mode: %s avId: %s" % (mode, avId))
+            self.notify.warning('setMode: unknown mode: %s avId: %s' % (mode, avId))
 
     def __getPosHpr(self):
         if self.transmitRelativeTo == None:
@@ -124,7 +123,12 @@ class DistributedFurnitureItem(
         else:
             pos = self.getPos(self.transmitRelativeTo)
             hpr = self.getHpr(self.transmitRelativeTo)
-        return (pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2])
+        return (pos[0],
+         pos[1],
+         pos[2],
+         hpr[0],
+         hpr[1],
+         hpr[2])
 
     def __comparePosHpr(self, a, b, threshold):
         for i in range(len(a)):

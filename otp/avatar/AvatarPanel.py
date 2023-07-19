@@ -22,12 +22,12 @@ class AvatarPanel(DirectObject.DirectObject):
             self.avName = avatar.getName()
         else:
             self.avatar = None
-            self.avName = "Player"
-        if hasattr(avatar, "uniqueName"):
+            self.avName = 'Player'
+        if hasattr(avatar, 'uniqueName'):
             self.avId = avatar.doId
-            self.avDisableName = avatar.uniqueName("disable")
-            self.avGenerateName = avatar.uniqueName("generate")
-            self.avHpChangeName = avatar.uniqueName("hpChange")
+            self.avDisableName = avatar.uniqueName('disable')
+            self.avGenerateName = avatar.uniqueName('generate')
+            self.avHpChangeName = avatar.uniqueName('hpChange')
             if self.avId in base.cr.doId2do:
                 self.avatar = base.cr.doId2do[self.avId]
         else:

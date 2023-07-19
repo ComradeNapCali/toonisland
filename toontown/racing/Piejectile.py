@@ -11,7 +11,6 @@ from otp.otpbase import OTPGlobals
 from toontown.racing.FlyingGag import FlyingGag
 from toontown.battle import MovieUtil
 
-
 class Piejectile(DirectObject, FlyingGag):
     physicsCalculationsPerSecond = 60
     maxPhysicsDt = 1.0
@@ -19,7 +18,7 @@ class Piejectile(DirectObject, FlyingGag):
     maxPhysicsFrames = maxPhysicsDt * physicsCalculationsPerSecond
 
     def __init__(self, sourceId, targetId, type, name):
-        FlyingGag.__init__(self, "flyingGag", base.race.pie)
+        FlyingGag.__init__(self, 'flyingGag', base.race.pie)
         self.billboard = False
         self.race = base.race
         self.scale = 1
@@ -44,14 +43,10 @@ class Piejectile(DirectObject, FlyingGag):
         self.rotH = randFloat(-360, 360)
         self.rotP = randFloat(-90, 90)
         self.rotR = randFloat(-90, 90)
-        print("generating Pie %s" % self.name)
-        self.ownerKart = base.cr.doId2do.get(
-            base.race.kartMap.get(sourceId, None), None
-        )
+        print('generating Pie %s' % self.name)
+        self.ownerKart = base.cr.doId2do.get(base.race.kartMap.get(sourceId, None), None)
         if targetId != 0:
-            self.targetKart = base.cr.doId2do.get(
-                base.race.kartMap.get(targetId, None), None
-            )
+            self.targetKart = base.cr.doId2do.get(base.race.kartMap.get(targetId, None), None)
             self.hasTarget = 1
         if self.ownerId == localAvatar.doId:
             startPos = self.ownerKart.getPos(render)
@@ -61,22 +56,18 @@ class Piejectile(DirectObject, FlyingGag):
         self.__setupCollisions()
         self.setupPhysics()
         self.__enableCollisions()
-        self.forward = NodePath("forward")
+        self.forward = NodePath('forward')
         self.forward.setPos(0, 1, 0)
-        self.splatTaskName = "splatTask %s" % self.name
+        self.splatTaskName = 'splatTask %s' % self.name
         if self.hasTarget:
-            self.splatTask = taskMgr.doMethodLater(
-                self.maxTime, self.splat, self.splatTaskName
-            )
+            self.splatTask = taskMgr.doMethodLater(self.maxTime, self.splat, self.splatTaskName)
         else:
-            self.splatTask = taskMgr.doMethodLater(
-                self.maxTime / 2.5, self.splat, self.splatTaskName
-            )
+            self.splatTask = taskMgr.doMethodLater(self.maxTime / 2.5, self.splat, self.splatTaskName)
         self.reparentTo(render)
         return
 
     def delete(self):
-        print("removing piejectile")
+        print('removing piejectile')
         taskMgr.remove(self.taskName)
         self.__undoCollisions()
         self.physicsMgr.clearLinearForces()
@@ -111,14 +102,14 @@ class Piejectile(DirectObject, FlyingGag):
         self.lastPhysicsFrame = 0
         integrator = LinearEulerIntegrator()
         self.physicsMgr.attachLinearIntegrator(integrator)
-        fn = ForceNode("windResistance")
+        fn = ForceNode('windResistance')
         fnp = NodePath(fn)
         fnp.reparentTo(render)
         windResistance = LinearFrictionForce(0.2)
         fn.addForce(windResistance)
         self.physicsMgr.addLinearForce(windResistance)
         self.windResistance = windResistance
-        fn = ForceNode("engine")
+        fn = ForceNode('engine')
         fnp = NodePath(fn)
         fnp.reparentTo(self)
         engine = LinearVectorForce(0, 0, 3)
@@ -135,12 +126,10 @@ class Piejectile(DirectObject, FlyingGag):
         throwSpeed = 50
         throwVel = ownerHeading * throwSpeed
         throwVelCast = Vec3(throwVel[0], throwVel[1], throwVel[2] + 50)
-        self.actorNode.getPhysicsObject().setVelocity(
-            self.ownerKart.getVelocity() + throwVelCast
-        )
+        self.actorNode.getPhysicsObject().setVelocity(self.ownerKart.getVelocity() + throwVelCast)
         lookPoint = render.getRelativePoint(self.ownerKart, Point3(0, 10, 0))
         self.lookAt(lookPoint)
-        self.taskName = "updatePhysics%s" % self.name
+        self.taskName = 'updatePhysics%s' % self.name
         taskMgr.add(self.__updatePhysics, self.taskName, priority=25)
 
     def checkTargetDistance(self):
@@ -152,13 +141,11 @@ class Piejectile(DirectObject, FlyingGag):
     def splatTarget(self):
         if self.targetId == base.localAvatar.getDoId() and base.race.localKart:
             base.race.localKart.splatPie()
-        self.race.effectManager.addSplatEffect(
-            spawner=self.targetKart, parent=self.targetKart
-        )
+        self.race.effectManager.addSplatEffect(spawner=self.targetKart, parent=self.targetKart)
         taskMgr.remove(self.splatTaskName)
         self.remove()
 
-    def splat(self, optional=None):
+    def splat(self, optional = None):
         self.race.effectManager.addSplatEffect(spawner=self)
         taskMgr.remove(self.splatTaskName)
         self.remove()
@@ -179,48 +166,23 @@ class Piejectile(DirectObject, FlyingGag):
                 targetDistance = distMax
             targetVel = self.targetKart.getVelocity()
             targetPos = self.targetKart.getPos()
-            targetAim = Point3(
-                targetPos[0] + targetVel[0] * (targetDistance / distMax),
-                targetPos[1] + targetVel[1] * (targetDistance / distMax),
-                targetPos[2] + targetVel[2] * (targetDistance / distMax),
-            )
+            targetAim = Point3(targetPos[0] + targetVel[0] * (targetDistance / distMax), targetPos[1] + targetVel[1] * (targetDistance / distMax), targetPos[2] + targetVel[2] * (targetDistance / distMax))
             self.lookAt(targetPos)
         if self.d2t < 7 and self.hasTarget:
             self.splatTarget()
             return Task.done
         self.count += 1
         dt = globalClock.getDt()
-        physicsFrame = int(
-            (globalClock.getFrameTime() - self.physicsEpoch)
-            * self.physicsCalculationsPerSecond
-        )
+        physicsFrame = int((globalClock.getFrameTime() - self.physicsEpoch) * self.physicsCalculationsPerSecond)
         numFrames = min(physicsFrame - self.lastPhysicsFrame, self.maxPhysicsFrames)
         self.lastPhysicsFrame = physicsFrame
         if self.hasTarget:
             targetVel = self.targetKart.getVelocity()
             targetSpeed = targetVel.length()
             if self.d2t - 10 * self.physicsDt > self.lastD2t:
-                self.engine.setVector(
-                    Vec3(
-                        0,
-                        150
-                        + 150 * self.timeRatio
-                        + targetSpeed * (1.0 + 1.0 * self.timeRatio)
-                        + self.d2t * (1.0 + 1.0 * self.timeRatio),
-                        12,
-                    )
-                )
+                self.engine.setVector(Vec3(0, 150 + 150 * self.timeRatio + targetSpeed * (1.0 + 1.0 * self.timeRatio) + self.d2t * (1.0 + 1.0 * self.timeRatio), 12))
             else:
-                self.engine.setVector(
-                    Vec3(
-                        0,
-                        10
-                        + 10 * self.timeRatio
-                        + targetSpeed * (0.5 + 0.5 * self.timeRatio)
-                        + self.d2t * (0.5 + 0.5 * self.timeRatio),
-                        12,
-                    )
-                )
+                self.engine.setVector(Vec3(0, 10 + 10 * self.timeRatio + targetSpeed * (0.5 + 0.5 * self.timeRatio) + self.d2t * (0.5 + 0.5 * self.timeRatio), 12))
         else:
             self.engine.setVector(Vec3(0, 100, 3))
         for i in range(numFrames):
@@ -237,7 +199,7 @@ class Piejectile(DirectObject, FlyingGag):
         return Task.cont
 
     def __setupCollisions(self):
-        self.cWallTrav = CollisionTraverser("ProjectileWall")
+        self.cWallTrav = CollisionTraverser('ProjectileWall')
         self.cWallTrav.setRespectPrevTransform(True)
         self.collisionNode = CollisionNode(self.name)
         self.collisionNode.setFromCollideMask(OTPGlobals.WallBitmask)
@@ -250,7 +212,7 @@ class Piejectile(DirectObject, FlyingGag):
         base.cTrav.addCollider(sC, self.wallHandler)
         self.wallHandler.addCollider(self.collisionNodePath, self)
         cRay = CollisionRay(0.0, 0.0, 40000.0, 0.0, 0.0, -1.0)
-        pieFloorRayName = "pieFloorRay%s" % self.name
+        pieFloorRayName = 'pieFloorRay%s' % self.name
         cRayNode = CollisionNode(pieFloorRayName)
         cRayNode.addSolid(cRay)
         cRayNode.setFromCollideMask(OTPGlobals.FloorBitmask)
@@ -268,11 +230,11 @@ class Piejectile(DirectObject, FlyingGag):
 
     def __enableCollisions(self):
         self.cQueue = []
-        self.cRays = NodePath("stickProjectileToFloor")
+        self.cRays = NodePath('stickProjectileToFloor')
         self.cRays.reparentTo(self.gag)
         x = self.gag.getX()
         y = self.gag.getY()
-        rayNode = CollisionNode("floorcast")
+        rayNode = CollisionNode('floorcast')
         ray = CollisionRay(x, y, 40000.0, 0.0, 0.0, -1.0)
         rayNode.addSolid(ray)
         rayNode.setFromCollideMask(OTPGlobals.FloorBitmask)

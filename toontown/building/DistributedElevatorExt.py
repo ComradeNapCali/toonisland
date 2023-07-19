@@ -13,8 +13,8 @@ from toontown.hood import ZoneUtil
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TeaserPanel
 
-
 class DistributedElevatorExt(DistributedElevator.DistributedElevator):
+
     def __init__(self, cr):
         DistributedElevator.DistributedElevator.__init__(self, cr)
         self.nametag = None
@@ -66,19 +66,13 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
         self.bldgRequest = None
         self.bldg = buildingList[0]
         if not self.bldg:
-            self.notify.error(
-                "setBldgDoId: elevator %d cannot find bldg %d!"
-                % (self.doId, self.bldgDoId)
-            )
+            self.notify.error('setBldgDoId: elevator %d cannot find bldg %d!' % (self.doId, self.bldgDoId))
             return
         if self.getBldgDoorOrigin():
             self.bossLevel = self.bldg.getBossLevel()
             self.setupElevator()
         else:
-            self.notify.warning(
-                "setBldgDoId: elevator %d cannot find suitDoorOrigin for bldg %d!"
-                % (self.doId, bldgDoId)
-            )
+            self.notify.warning('setBldgDoId: elevator %d cannot find suitDoorOrigin for bldg %d!' % (self.doId, bldgDoId))
         return
 
     def setFloor(self, floorNumber):
@@ -91,69 +85,50 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
         self.currentFloor = floorNumber
 
     def handleEnterSphere(self, collEntry):
-        self.notify.debug("Entering Elevator Sphere....")
-        if (
-            hasattr(localAvatar, "boardingParty")
-            and localAvatar.boardingParty
-            and localAvatar.boardingParty.getGroupLeader(localAvatar.doId)
-            and localAvatar.boardingParty.getGroupLeader(localAvatar.doId)
-            != localAvatar.doId
-        ):
+        self.notify.debug('Entering Elevator Sphere....')
+        if hasattr(localAvatar, 'boardingParty') and localAvatar.boardingParty and localAvatar.boardingParty.getGroupLeader(localAvatar.doId) and localAvatar.boardingParty.getGroupLeader(localAvatar.doId) != localAvatar.doId:
             base.localAvatar.elevatorNotifier.showMe(TTLocalizer.ElevatorGroupMember)
         elif self.allowedToEnter(self.zoneId):
             self.cr.playGame.getPlace().detectedElevatorCollision(self)
         else:
             place = base.cr.playGame.getPlace()
             if place:
-                place.fsm.request("stopped")
-            self.dialog = TeaserPanel.TeaserPanel(
-                pageName="cogHQ", doneFunc=self.handleOkTeaser
-            )
+                place.fsm.request('stopped')
+            self.dialog = TeaserPanel.TeaserPanel(pageName='cogHQ', doneFunc=self.handleOkTeaser)
 
     def handleEnterElevator(self):
-        if (
-            hasattr(localAvatar, "boardingParty")
-            and localAvatar.boardingParty
-            and localAvatar.boardingParty.getGroupLeader(localAvatar.doId)
-        ):
-            if (
-                localAvatar.boardingParty.getGroupLeader(localAvatar.doId)
-                == localAvatar.doId
-            ):
+        if hasattr(localAvatar, 'boardingParty') and localAvatar.boardingParty and localAvatar.boardingParty.getGroupLeader(localAvatar.doId):
+            if localAvatar.boardingParty.getGroupLeader(localAvatar.doId) == localAvatar.doId:
                 localAvatar.boardingParty.handleEnterElevator(self)
-        elif (
-            self.elevatorTripId and localAvatar.lastElevatorLeft == self.elevatorTripId
-        ):
+        elif self.elevatorTripId and localAvatar.lastElevatorLeft == self.elevatorTripId:
             self.rejectBoard(base.localAvatar.doId, REJECT_SHUFFLE)
         elif base.localAvatar.hp > 0:
             toon = base.localAvatar
-            self.sendUpdate("requestBoard", [])
+            self.sendUpdate('requestBoard', [])
         else:
-            self.notify.warning(
-                "Tried to board elevator with hp: %d" % base.localAvatar.hp
-            )
+            self.notify.warning('Tried to board elevator with hp: %d' % base.localAvatar.hp)
 
     def enterWaitEmpty(self, ts):
         self.elevatorSphereNodePath.unstash()
         self.forceDoorsOpen()
-        self.accept(self.uniqueName("enterelevatorSphere"), self.handleEnterSphere)
-        self.accept(self.uniqueName("enterElevatorOK"), self.handleEnterElevator)
+        self.accept(self.uniqueName('enterelevatorSphere'), self.handleEnterSphere)
+        self.accept(self.uniqueName('enterElevatorOK'), self.handleEnterElevator)
         DistributedElevator.DistributedElevator.enterWaitEmpty(self, ts)
 
     def exitWaitEmpty(self):
         self.elevatorSphereNodePath.stash()
-        self.ignore(self.uniqueName("enterelevatorSphere"))
-        self.ignore(self.uniqueName("enterElevatorOK"))
+        self.ignore(self.uniqueName('enterelevatorSphere'))
+        self.ignore(self.uniqueName('enterElevatorOK'))
         DistributedElevator.DistributedElevator.exitWaitEmpty(self)
 
     def enterWaitCountdown(self, ts):
         DistributedElevator.DistributedElevator.enterWaitCountdown(self, ts)
         self.forceDoorsOpen()
-        self.accept(self.uniqueName("enterElevatorOK"), self.handleEnterElevator)
+        self.accept(self.uniqueName('enterElevatorOK'), self.handleEnterElevator)
         self.startCountdownClock(self.countdownTime, ts)
 
     def exitWaitCountdown(self):
-        self.ignore(self.uniqueName("enterElevatorOK"))
+        self.ignore(self.uniqueName('enterElevatorOK'))
         DistributedElevator.DistributedElevator.exitWaitCountdown(self)
 
     def getZoneId(self):

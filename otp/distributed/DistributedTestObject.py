@@ -2,6 +2,7 @@ from direct.distributed import DistributedObject
 
 
 class DistributedTestObject(DistributedObject.DistributedObject):
+
     def setRequiredField(self, r):
         self.requiredField = r
 
@@ -27,7 +28,7 @@ class DistributedTestObject(DistributedObject.DistributedObject):
         self.BROA = BROA
 
     def gotNonReqThatWasntSet(self):
-        for field in ("B", "BA", "BO", "BR", "BRA", "BRO", "BROA"):
+        for field in ('B', 'BA', 'BO', 'BR', 'BRA', 'BRO', 'BROA'):
             if hasattr(self, field):
                 return True
 

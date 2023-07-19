@@ -4,21 +4,17 @@ import random
 
 
 class ClsendTracker:
-    clsendNotify = directNotify.newCategory("clsend")
+    clsendNotify = directNotify.newCategory('clsend')
     NumTrackersLoggingOverflow = 0
-    MaxTrackersLoggingOverflow = config.GetInt("max-clsend-loggers", 5)
+    MaxTrackersLoggingOverflow = config.GetInt('max-clsend-loggers', 5)
 
     def __init__(self):
         self._logClsendOverflow = False
         if self.isPlayerControlled():
             if simbase.air.getTrackClsends():
-                if (
-                    ClsendTracker.NumTrackersLoggingOverflow
-                    < ClsendTracker.MaxTrackersLoggingOverflow
-                ):
-                    self._logClsendOverflow = random.random() < 1.0 / config.GetFloat(
-                        "clsend-log-one-av-in-every", choice(__dev__, 4, 50)
-                    )
+                if ClsendTracker.NumTrackersLoggingOverflow < ClsendTracker.MaxTrackersLoggingOverflow:
+                    self._logClsendOverflow = random.random(
+                    ) < 1.0 / config.GetFloat('clsend-log-one-av-in-every', choice(__dev__, 4, 50))
         if self._logClsendOverflow:
             ClsendTracker.NumTrackersLoggingOverflow += 1
         self._clsendMsgs = []
@@ -28,7 +24,7 @@ class ClsendTracker:
 
     def announceGenerate(self):
         if self._logClsendOverflow:
-            self.clsendNotify.info("logging all clsends for %s" % self.doId)
+            self.clsendNotify.info('logging all clsends for %s' % self.doId)
 
     def destroy(self):
         if self._logClsendOverflow:
@@ -48,14 +44,15 @@ class ClsendTracker:
 
     def _logClsend(self, senderId, dataStr):
         msgStream = StringStream()
-        simbase.air.describeMessage(msgStream, "", dataStr)
+        simbase.air.describeMessage(msgStream, '', dataStr)
         readableStr = msgStream.getData()
         sstream = StringStream()
         PyDatagram(dataStr).dumpHex(sstream)
         hexDump = sstream.getData()
-        self.clsendNotify.info(
-            "%s [%s]: %s%s" % (self.doId, self._clsendCounter, readableStr, hexDump)
-        )
+        self.clsendNotify.info('%s [%s]: %s%s' % (self.doId,
+                                                  self._clsendCounter,
+                                                  readableStr,
+                                                  hexDump))
 
     def dumpClientSentMsgs(self):
         for msg in self._clsendMsgs:

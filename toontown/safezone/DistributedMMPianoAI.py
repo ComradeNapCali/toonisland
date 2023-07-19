@@ -3,15 +3,25 @@ from toontown.toonbase.ToontownGlobals import *
 from direct.distributed.ClockDelta import *
 from direct.distributed import DistributedObjectAI
 from direct.task import Task
-
-PianoSpeeds = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0]
+PianoSpeeds = [1.0,
+ 2.0,
+ 3.0,
+ 4.0,
+ 5.0,
+ 6.0,
+ 8.0,
+ 10.0,
+ 12.0,
+ 14.0,
+ 16.0,
+ 18.0]
 PianoMaxSpeed = PianoSpeeds[len(PianoSpeeds) - 1]
 PianoSlowDownFactor = 0.7
 PianoSlowDownInterval = 10.0
 PianoSlowDownMinimum = 0.1
 
-
 class DistributedMMPianoAI(DistributedObjectAI.DistributedObjectAI):
+
     def __init__(self, air):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
         self.spinStartTime = 0.0
@@ -43,15 +53,13 @@ class DistributedMMPianoAI(DistributedObjectAI.DistributedObjectAI):
         self.d_playChangeDirection(self.air.getAvatarIdFromSender())
 
     def d_setSpeed(self, rpm, offset, startTime):
-        self.sendUpdate(
-            "setSpeed", [rpm, offset, globalClockDelta.localToNetworkTime(startTime)]
-        )
+        self.sendUpdate('setSpeed', [rpm, offset, globalClockDelta.localToNetworkTime(startTime)])
 
     def d_playSpeedUp(self, avId):
-        self.sendUpdate("playSpeedUp", [avId])
+        self.sendUpdate('playSpeedUp', [avId])
 
     def d_playChangeDirection(self, avId):
-        self.sendUpdate("playChangeDirection", [avId])
+        self.sendUpdate('playChangeDirection', [avId])
 
     def updateSpeed(self, rpm, direction):
         now = globalClock.getRealTime()
@@ -67,7 +75,7 @@ class DistributedMMPianoAI(DistributedObjectAI.DistributedObjectAI):
         return None
 
     def __slowDownLater(self):
-        taskName = self.uniqueName("slowDown")
+        taskName = self.uniqueName('slowDown')
         taskMgr.remove(taskName)
         taskMgr.doMethodLater(PianoSlowDownInterval, self.__slowDown, taskName)
 

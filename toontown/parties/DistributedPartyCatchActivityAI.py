@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.parties.DistributedPartyActivityAI import DistributedPartyActivityAI
 
-
 class DistributedPartyCatchActivityAI(DistributedPartyActivityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedPartyCatchActivityAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyCatchActivityAI")
 
     def setStartTimestamp(self, todo0):
         pass
@@ -24,3 +21,4 @@ class DistributedPartyCatchActivityAI(DistributedPartyActivityAI):
 
     def setObjectCaught(self, todo0, todo1, todo2):
         pass
+

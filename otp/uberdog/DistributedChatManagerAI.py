@@ -3,7 +3,8 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class DistributedChatManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedChatManagerAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        "DistributedChatManagerAI")
 
     def online(self):
         pass

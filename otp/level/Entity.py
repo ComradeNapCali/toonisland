@@ -1,5 +1,4 @@
 from direct.showbase.DirectObject import DirectObject
-
 try:
     from direct.showbase.PythonUtil import lineInfo
 except ImportError:
@@ -8,7 +7,7 @@ from direct.directnotify import DirectNotifyGlobal
 
 
 class Entity(DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("Entity")
+    notify = DirectNotifyGlobal.directNotify.newCategory('Entity')
 
     def __init__(self, level=None, entId=None):
         self.initializeEntity(level, entId)
@@ -21,22 +20,23 @@ class Entity(DirectObject):
         return
 
     def __str__(self):
-        if hasattr(self, "level") and self.level:
-            return "ent%s(%s)" % (self.entId, self.level.getEntityType(self.entId))
-        elif hasattr(self, "name"):
+        if hasattr(self, 'level') and self.level:
+            return 'ent%s(%s)' % (self.entId, self.level.getEntityType(self.entId))
+        elif hasattr(self, 'name'):
             return self.name
-        elif hasattr(self, "entId"):
-            return "%s-%s" % (self.__class__.__name__, self.entId)
+        elif hasattr(self, 'entId'):
+            return '%s-%s' % (self.__class__.__name__, self.entId)
         else:
             return self.__class__.__name__
 
     def destroy(self):
-        Entity.notify.debug("Entity.destroy() %s" % self.entId)
+        Entity.notify.debug('Entity.destroy() %s' % self.entId)
         if self.level:
             if self.level.isInitialized():
                 self.level.onEntityDestroy(self.entId)
             else:
-                Entity.notify.warning("Entity %s destroyed after level??" % self.entId)
+                Entity.notify.warning(
+                    'Entity %s destroyed after level??' % self.entId)
         self.ignoreAll()
         del self.level
         del self.entId
@@ -44,7 +44,7 @@ class Entity(DirectObject):
     def getUniqueName(self, name, entId=None):
         if entId is None:
             entId = self.entId
-        return "%s-%s-%s" % (name, self.level.levelId, entId)
+        return '%s-%s-%s' % (name, self.level.levelId, entId)
 
     def getParentToken(self):
         return self.level.getParentTokenForEntity(self.entId)
@@ -52,7 +52,7 @@ class Entity(DirectObject):
     def getOutputEventName(self, entId=None):
         if entId is None:
             entId = self.entId
-        return self.getUniqueName("entityOutput", entId)
+        return self.getUniqueName('entityOutput', entId)
 
     def getZoneEntId(self):
         return self.level.getEntityZoneEntId(self.entId)
@@ -64,7 +64,7 @@ class Entity(DirectObject):
         return self.getZoneEntity().getNodePath()
 
     def privGetSetter(self, attrib):
-        setFuncName = "set%s%s" % (str.upper(attrib[0]), attrib[1:])
+        setFuncName = 'set%s%s' % (str.upper(attrib[0]), attrib[1:])
         if hasattr(self, setFuncName):
             return getattr(self, setFuncName)
         return None

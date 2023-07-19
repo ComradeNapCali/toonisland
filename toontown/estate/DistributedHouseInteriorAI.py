@@ -16,63 +16,59 @@ from toontown.estate import HouseGlobals
 from toontown.estate.DistributedFurnitureManagerAI import DistributedFurnitureManagerAI
 
 code2furnitureId = {
-    "regular_bed": 200,
-    "closetBoy": 500,
-    "jellybeanBank": 1350,
-    "FireplaceSq": 400,
-    "chairA": 100,
-    "cabinetYwood": 110,
-    "couch_1person": 700,
-    "rug": 1000,
-    "rugA": 1010,
-    "rugB": 1020,
-    "couch_2person": 710,
-    "ending_table": 1200,
-    "lamp_short": 600,
-    "lamp_tall": 610,
-    "phone": 1399,
-    "desk_only_wo_phone": 800,
-    "desk_only": 800,
+    'regular_bed': 200,
+    'closetBoy': 500,
+    'jellybeanBank': 1350,
+    'FireplaceSq': 400,
+    'chairA': 100,
+    'cabinetYwood': 110,
+    'couch_1person': 700,
+    'rug': 1000,
+    'rugA': 1010,
+    'rugB': 1020,
+    'couch_2person': 710,
+    'ending_table': 1200,
+    'lamp_short': 600,
+    'lamp_tall': 610,
+    'phone': 1399,
+    'desk_only_wo_phone': 800,
+    'desk_only': 800
 }
 
-defaultWindows = CatalogItemList(
-    [
-        # Room 1
-        CatalogWindowItem(20, 2),
-        # Room 2
-        CatalogWindowItem(20, 4),
-    ],
-    store=CatalogItem.WindowPlacement,
-)
+defaultWindows = CatalogItemList([
+    # Room 1
+    CatalogWindowItem(20, 2),
+
+    # Room 2
+    CatalogWindowItem(20, 4)
+], store=CatalogItem.WindowPlacement)
 
 # Disney counts moulding, flooring, and wainscoting as wallpapers.
-defaultWallpaper = CatalogItemList(
-    [
-        # Room 1
-        CatalogWallpaperItem(1110, 0, 1010, 0),
-        CatalogMouldingItem(1000, 2),
-        CatalogFlooringItem(1000, 4),
-        CatalogWainscotingItem(1010, 4),
-        # Room 2
-        CatalogWallpaperItem(1110, 0, 1010, 0),
-        CatalogMouldingItem(1000, 2),
-        CatalogFlooringItem(1000, 4),
-        CatalogWainscotingItem(1010, 4),
-    ],
-    store=CatalogItem.Customization,
-)
+defaultWallpaper = CatalogItemList([
+    # Room 1
+    CatalogWallpaperItem(1110, 0, 1010, 0),
+    CatalogMouldingItem(1000, 2),
+    CatalogFlooringItem(1000, 4),
+    CatalogWainscotingItem(1010, 4),
+
+    # Room 2
+    CatalogWallpaperItem(1110, 0, 1010, 0),
+    CatalogMouldingItem(1000, 2),
+    CatalogFlooringItem(1000, 4),
+    CatalogWainscotingItem(1010, 4)
+], store=CatalogItem.Customization)
 
 
 class DistributedHouseInteriorAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedHouseInteriorAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedHouseInteriorAI')
 
     def __init__(self, air, house):
         DistributedObjectAI.__init__(self, air)
         self.house = house
         self.houseId = 0
         self.houseIndex = 0
-        self.wallpaper = ""
-        self.windows = ""
+        self.wallpaper = ''
+        self.windows = ''
         self.gender = None
         self.furnitureManager = None
         self.houseInterior = None
@@ -83,7 +79,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
         self.houseId = houseId
 
     def d_setHouseId(self, houseId):
-        self.sendUpdate("setHouseId", [houseId])
+        self.sendUpdate('setHouseId', [houseId])
 
     def b_setHouseId(self, houseId):
         self.setHouseId(houseId)
@@ -96,7 +92,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
         self.houseIndex = houseIndex
 
     def d_setHouseIndex(self, houseIndex):
-        self.sendUpdate("setHouseIndex", [houseIndex])
+        self.sendUpdate('setHouseIndex', [houseIndex])
 
     def b_setHouseIndex(self, houseIndex):
         self.setHouseIndex(houseIndex)
@@ -109,7 +105,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
         self.wallpaper = wallpaper
 
     def d_setWallpaper(self, wallpaper):
-        self.sendUpdate("setWallpaper", [wallpaper])
+        self.sendUpdate('setWallpaper', [wallpaper])
 
     def b_setWallpaper(self, wallpaper):
         self.setWallpaper(wallpaper)
@@ -123,7 +119,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
         self.windows = windows
 
     def d_setWindows(self, windows):
-        self.sendUpdate("setWindows", [windows])
+        self.sendUpdate('setWindows', [windows])
 
     def b_setWindows(self, windows):
         self.setWindows(windows)
@@ -139,9 +135,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
             return
 
         # Generate the furniture manager:
-        self.furnitureManager = DistributedFurnitureManagerAI(
-            self.air, self.house, self
-        )
+        self.furnitureManager = DistributedFurnitureManagerAI(self.air, self.house, self)
         self.furnitureManager.setOwnerId(self.house.getAvatarId())
         self.furnitureManager.setOwnerName(self.house.getName())
         self.furnitureManager.setInteriorId(self.doId)
@@ -164,7 +158,7 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
             node = self.dnaData.at(i)
 
             # Make sure the DNANode is the interior:
-            if node.getName() == "interior":
+            if node.getName() == 'interior':
                 # Next, iterate over all of the objects:
                 for j in range(node.getNumChildren()):
                     # First, get the object:
@@ -178,37 +172,33 @@ class DistributedHouseInteriorAI(DistributedObjectAI):
 
                     # Store the data in a dictionary for later:
                     furnitureData[objName] = {
-                        "code": code,
-                        "posHpr": (x, y, z, h, 0, 0),
-                        "scale": obj.getScale(),
-                        "itemId": code2furnitureId.get(code, 0),
+                        'code': code,
+                        'posHpr': (x, y, z, h, 0, 0),
+                        'scale': obj.getScale(),
+                        'itemId': code2furnitureId.get(code, 0)
                     }
 
-        furnitureData["phone"] = {
-            "code": "phone",
-            "posHpr": (-11, 2, 0, 0, 0, 0),
-            "scale": "phone",
-            "itemId": code2furnitureId.get("phone", 0),
+        furnitureData['phone'] = {
+            'code': 'phone',
+            'posHpr': (-11, 2, 0, 0, 0, 0),
+            'scale': 'phone',
+            'itemId': code2furnitureId.get('phone', 0)
         }
 
-        interiorItems = CatalogItemList(
-            store=CatalogItem.Customization | CatalogItem.Location
-        )
-        ignoredItems = ["house_interiorA_DNARoot", "GardenA_DNARoot"]
+        interiorItems = CatalogItemList(store=CatalogItem.Customization | CatalogItem.Location)
+        ignoredItems = ['house_interiorA_DNARoot', 'GardenA_DNARoot']
         for name, data in furnitureData.items():
-            itemId = data.get("itemId", 0)
+            itemId = data.get('itemId', 0)
             if itemId == 0:
                 if name not in ignoredItems:
-                    self.notify.warning(
-                        "Tried to generate item %s but the ID was not found!" % name
-                    )
+                    self.notify.warning('Tried to generate item %s but the ID was not found!' % name)
 
                 continue
 
-            if name == "closetBoy_DNARoot" and self.gender == "f":
+            if name == 'closetBoy_DNARoot' and self.gender == 'f':
                 itemId += 10
 
-            newItem = CatalogFurnitureItem(itemId, posHpr=data.get("posHpr"))
+            newItem = CatalogFurnitureItem(itemId, posHpr=data.get('posHpr'))
             interiorItems.append(newItem)
 
         self.house.b_setInteriorItems(interiorItems.getBlob())

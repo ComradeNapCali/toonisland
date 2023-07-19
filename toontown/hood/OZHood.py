@@ -5,30 +5,28 @@ from toontown.toonbase.ToontownGlobals import *
 from toontown.racing import DistributedVehicle
 from . import SkyUtil
 
-
 class OZHood(ToonHood.ToonHood):
+
     def __init__(self, parentFSM, doneEvent, dnaStore, hoodId):
         ToonHood.ToonHood.__init__(self, parentFSM, doneEvent, dnaStore, hoodId)
         self.id = OutdoorZone
         self.safeZoneLoaderClass = OZSafeZoneLoader.OZSafeZoneLoader
-        self.storageDNAFile = "phase_6/dna/storage_OZ.dna"
-        self.holidayStorageDNADict = {
-            HALLOWEEN_PROPS: ["phase_6/dna/halloween_props_storage_OZ.dna"],
-            SPOOKY_PROPS: ["phase_6/dna/halloween_props_storage_OZ.dna"],
-        }
-        self.skyFile = "phase_3.5/models/props/TT_sky"
-        self.spookySkyFile = "phase_3.5/models/props/BR_sky"
+        self.storageDNAFile = 'phase_6/dna/storage_OZ.dna'
+        self.holidayStorageDNADict = {HALLOWEEN_PROPS: ['phase_6/dna/halloween_props_storage_OZ.dna'],
+         SPOOKY_PROPS: ['phase_6/dna/halloween_props_storage_OZ.dna']}
+        self.skyFile = 'phase_3.5/models/props/TT_sky'
+        self.spookySkyFile = 'phase_3.5/models/props/BR_sky'
         self.titleColor = (1.0, 0.5, 0.4, 1.0)
         self.whiteFogColor = Vec4(0.95, 0.95, 0.95, 1)
         self.underwaterFogColor = Vec4(0.0, 0.0, 0.6, 1.0)
 
     def load(self):
         ToonHood.ToonHood.load(self)
-        self.parentFSM.getStateNamed("OZHood").addChild(self.fsm)
-        self.fog = Fog("OZFog")
+        self.parentFSM.getStateNamed('OZHood').addChild(self.fsm)
+        self.fog = Fog('OZFog')
 
     def unload(self):
-        self.parentFSM.getStateNamed("OZHood").removeChild(self.fsm)
+        self.parentFSM.getStateNamed('OZHood').removeChild(self.fsm)
         ToonHood.ToonHood.unload(self)
 
     def enter(self, *args):
@@ -43,7 +41,7 @@ class OZHood(ToonHood.ToonHood):
         return SkyUtil.cloudSkyTrack(task)
 
     def startSky(self):
-        if not self.sky.getTag("sky") == "Regular":
+        if not self.sky.getTag('sky') == 'Regular':
             self.endSpookySky()
         SkyUtil.startCloudSky(self)
 
@@ -72,21 +70,16 @@ class OZHood(ToonHood.ToonHood):
         if self.sky:
             self.stopSky()
         self.sky = loader.loadModel(self.spookySkyFile)
-        self.sky.setTag("sky", "Halloween")
+        self.sky.setTag('sky', 'Halloween')
         self.sky.setScale(1.0)
         self.sky.setDepthTest(0)
         self.sky.setDepthWrite(0)
         self.sky.setColor(0.5, 0.5, 0.5, 1)
-        self.sky.setBin("background", 100)
+        self.sky.setBin('background', 100)
         self.sky.setFogOff()
         self.sky.reparentTo(camera)
         self.sky.setTransparency(TransparencyAttrib.MDual, 1)
-        fadeIn = self.sky.colorScaleInterval(
-            1.5,
-            Vec4(1, 1, 1, 1),
-            startColorScale=Vec4(1, 1, 1, 0.25),
-            blendType="easeInOut",
-        )
+        fadeIn = self.sky.colorScaleInterval(1.5, Vec4(1, 1, 1, 1), startColorScale=Vec4(1, 1, 1, 0.25), blendType='easeInOut')
         fadeIn.start()
         self.sky.setZ(0.0)
         self.sky.setHpr(0.0, 0.0, 0.0)

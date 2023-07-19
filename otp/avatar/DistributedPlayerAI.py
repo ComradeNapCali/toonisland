@@ -6,15 +6,14 @@ from otp.distributed.ClsendTracker import ClsendTracker
 from otp.otpbase import OTPGlobals
 
 
-class DistributedPlayerAI(
-    DistributedAvatarAI.DistributedAvatarAI, PlayerBase.PlayerBase, ClsendTracker
-):
+class DistributedPlayerAI(DistributedAvatarAI.DistributedAvatarAI, PlayerBase.PlayerBase, ClsendTracker):
+
     def __init__(self, air):
         DistributedAvatarAI.DistributedAvatarAI.__init__(self, air)
         PlayerBase.PlayerBase.__init__(self)
         ClsendTracker.__init__(self)
         self.friendsList = []
-        self.DISLname = ""
+        self.DISLname = ''
         self.DISLid = 0
         self.accessLevel = 0
 
@@ -30,13 +29,13 @@ class DistributedPlayerAI(
         self._doPlayerEnter()
 
     def _announceArrival(self):
-        self.sendUpdate("arrivedOnDistrict", [self.air.districtId])
+        self.sendUpdate('arrivedOnDistrict', [self.air.districtId])
 
     def _announceExit(self):
-        self.sendUpdate("arrivedOnDistrict", [0])
+        self.sendUpdate('arrivedOnDistrict', [0])
 
     def _sendExitServerEvent(self):
-        self.air.writeServerEvent("avatarExit", self.doId, "")
+        self.air.writeServerEvent('avatarExit', self.doId, '')
         if __dev__:
             self._sentExitServerEvent = True
 
@@ -53,18 +52,14 @@ class DistributedPlayerAI(
         return True
 
     def setLocation(self, parentId, zoneId):
-        DistributedAvatarAI.DistributedAvatarAI.setLocation(self, parentId, zoneId)
+        DistributedAvatarAI.DistributedAvatarAI.setLocation(
+            self, parentId, zoneId)
         if self.isPlayerControlled():
             if not self.air._isValidPlayerLocation(parentId, zoneId):
-                self.notify.info(
-                    "booting player %s for doing setLocation to (%s, %s)"
-                    % (self.doId, parentId, zoneId)
-                )
+                self.notify.info('booting player %s for doing setLocation to (%s, %s)' % (
+                    self.doId, parentId, zoneId))
                 self.air.writeServerEvent(
-                    "suspicious",
-                    self.doId,
-                    "invalid setLocation: (%s, %s)" % (parentId, zoneId),
-                )
+                    'suspicious', self.doId, 'invalid setLocation: (%s, %s)' % (parentId, zoneId))
                 self.requestDelete()
 
     def _doPlayerEnter(self):
@@ -86,26 +81,26 @@ class DistributedPlayerAI(
         self.d_setChat(chatString, chatFlags)
 
     def d_setChat(self, chatString, chatFlags):
-        self.sendUpdate("setChat", [chatString, chatFlags])
+        self.sendUpdate('setChat', [chatString, chatFlags])
 
     def setChat(self, chatString, chatFlags):
         pass
 
     def d_setMaxHp(self, maxHp):
         DistributedAvatarAI.DistributedAvatarAI.d_setMaxHp(self, maxHp)
-        self.air.writeServerEvent("setMaxHp", self.doId, "%s" % maxHp)
+        self.air.writeServerEvent('setMaxHp', self.doId, '%s' % maxHp)
 
     def d_setSystemMessage(self, aboutId, chatString):
-        self.sendUpdate("setSystemMessage", [aboutId, chatString])
+        self.sendUpdate('setSystemMessage', [aboutId, chatString])
 
     def d_setCommonChatFlags(self, flags):
-        self.sendUpdate("setCommonChatFlags", [flags])
+        self.sendUpdate('setCommonChatFlags', [flags])
 
     def setCommonChatFlags(self, flags):
         pass
 
     def d_friendsNotify(self, avId, status):
-        self.sendUpdate("friendsNotify", [avId, status])
+        self.sendUpdate('friendsNotify', [avId, status])
 
     def friendsNotify(self, avId, status):
         pass
@@ -120,11 +115,11 @@ class DistributedPlayerAI(
         self.DISLid = id
 
     def d_setFriendsList(self, friendsList):
-        self.sendUpdate("setFriendsList", [friendsList])
+        self.sendUpdate('setFriendsList', [friendsList])
 
     def setFriendsList(self, friendsList):
         self.friendsList = friendsList
-        self.notify.debug("setting friends list to %s" % self.friendsList)
+        self.notify.debug('setting friends list to %s' % self.friendsList)
 
     def getFriendsList(self):
         return self.friendsList

@@ -5,14 +5,12 @@ from direct.task.Task import Task
 from direct.interval.IntervalGlobal import *
 from toontown.toonbase import TTLocalizer
 from toontown.effects import DustCloud
-
 TRACK_TYPE_TELEPORT = 1
 TRACK_TYPE_RUN = 2
 TRACK_TYPE_POOF = 3
 
-
 class BoardingGroupShow:
-    notify = DirectNotifyGlobal.directNotify.newCategory("BoardingGroupShow")
+    notify = DirectNotifyGlobal.directNotify.newCategory('BoardingGroupShow')
     thresholdRunDistance = 25.0
 
     def __init__(self, toon):
@@ -27,7 +25,7 @@ class BoardingGroupShow:
             self.clock.removeNode()
 
     def startTimer(self):
-        self.clockNode = TextNode("elevatorClock")
+        self.clockNode = TextNode('elevatorClock')
         self.clockNode.setFont(ToontownGlobals.getSignFont())
         self.clockNode.setAlign(TextNode.ACenter)
         self.clockNode.setTextColor(0.5, 0.5, 0.5, 1)
@@ -57,7 +55,7 @@ class BoardingGroupShow:
             return Task.cont
 
     def __boardingElevatorTimerExpired(self):
-        self.notify.debug("__boardingElevatorTimerExpired")
+        self.notify.debug('__boardingElevatorTimerExpired')
         self.clock.removeNode()
 
     def __stopTimer(self):
@@ -67,12 +65,10 @@ class BoardingGroupShow:
         return
 
     def uniqueName(self, avId):
-        uniqueName = "boardingElevatorTimerTask-" + str(avId)
+        uniqueName = 'boardingElevatorTimerTask-' + str(avId)
         return uniqueName
 
-    def getBoardingTrack(
-        self, elevatorModel, offset, offsetWrtRender, wantToonRotation
-    ):
+    def getBoardingTrack(self, elevatorModel, offset, offsetWrtRender, wantToonRotation):
         self.timeWarningText = TTLocalizer.BoardingTimeWarning
         self.countdownDuration = 6
         trackType = TRACK_TYPE_TELEPORT
@@ -80,24 +76,16 @@ class BoardingGroupShow:
         if self.toon:
             if self.avId == localAvatar.doId:
                 boardingTrack.append(Func(self.startTimer))
-            isInThresholdDist = self.__isInThresholdDist(
-                elevatorModel, offset, self.thresholdRunDistance
-            )
+            isInThresholdDist = self.__isInThresholdDist(elevatorModel, offset, self.thresholdRunDistance)
             isRunPathClear = self.__isRunPathClear(elevatorModel, offsetWrtRender)
             if isInThresholdDist and isRunPathClear:
-                boardingTrack.append(
-                    self.__getRunTrack(elevatorModel, offset, wantToonRotation)
-                )
+                boardingTrack.append(self.__getRunTrack(elevatorModel, offset, wantToonRotation))
                 trackType = TRACK_TYPE_RUN
             elif self.toon.isDisguised:
-                boardingTrack.append(
-                    self.__getPoofTeleportTrack(elevatorModel, offset, wantToonRotation)
-                )
+                boardingTrack.append(self.__getPoofTeleportTrack(elevatorModel, offset, wantToonRotation))
                 trackType = TRACK_TYPE_POOF
             else:
-                boardingTrack.append(
-                    self.__getTeleportTrack(elevatorModel, offset, wantToonRotation)
-                )
+                boardingTrack.append(self.__getTeleportTrack(elevatorModel, offset, wantToonRotation))
         boardingTrack.append(Func(self.cleanup))
         return (boardingTrack, trackType)
 
@@ -111,10 +99,10 @@ class BoardingGroupShow:
         if self.toon:
             if wantToonRotation:
                 teleportTrack.append(Func(self.toon.headsUp, elevatorModel, offset))
-            teleportTrack.append(Func(self.toon.setAnimState, "TeleportOut"))
+            teleportTrack.append(Func(self.toon.setAnimState, 'TeleportOut'))
             teleportTrack.append(Wait(3.5))
             teleportTrack.append(Func(self.toon.setPos, Point3(offset)))
-            teleportTrack.append(Func(self.toon.setAnimState, "TeleportIn"))
+            teleportTrack.append(Func(self.toon.setAnimState, 'TeleportIn'))
             teleportTrack.append(Wait(1))
         return teleportTrack
 
@@ -140,18 +128,11 @@ class BoardingGroupShow:
             dustCloud.setZ(3)
             dustCloud.setScale(0.4)
             dustCloud.createTrack()
-            self.dustCloudIval = Sequence(
-                Func(dustCloud.reparentTo, render),
-                Func(dustCloud.setPos, getDustCloudPos()),
-                dustCloud.track,
-                Func(dustCloud.detachNode),
-                Func(dustCloud.destroy),
-                name="dustCloadIval",
-            )
+            self.dustCloudIval = Sequence(Func(dustCloud.reparentTo, render), Func(dustCloud.setPos, getDustCloudPos()), dustCloud.track, Func(dustCloud.detachNode), Func(dustCloud.destroy), name='dustCloadIval')
             self.dustCloudIval.start()
 
         if self.toon:
-            teleportTrack.append(Func(self.toon.setAnimState, "neutral"))
+            teleportTrack.append(Func(self.toon.setAnimState, 'neutral'))
             teleportTrack.append(Wait(0.5))
             teleportTrack.append(Func(getDustCloudIval))
             teleportTrack.append(Wait(0.25))
@@ -171,9 +152,9 @@ class BoardingGroupShow:
             if wantToonRotation:
                 runTrack.append(Func(self.toon.headsUp, elevatorModel, offset))
             if self.toon.isDisguised:
-                runTrack.append(Func(self.toon.suit.loop, "walk"))
+                runTrack.append(Func(self.toon.suit.loop, 'walk'))
             else:
-                runTrack.append(Func(self.toon.setAnimState, "run"))
+                runTrack.append(Func(self.toon.setAnimState, 'run'))
             runTrack.append(LerpPosInterval(self.toon, 1, Point3(offset)))
         return runTrack
 
@@ -188,10 +169,8 @@ class BoardingGroupShow:
         pathClear = True
         source = self.toon.getPos(render)
         dest = offsetWrtRender
-        collSegment = CollisionSegment(
-            source[0], source[1], source[2], dest[0], dest[1], dest[2]
-        )
-        fromObject = render.attachNewNode(CollisionNode("runCollSegment"))
+        collSegment = CollisionSegment(source[0], source[1], source[2], dest[0], dest[1], dest[2])
+        fromObject = render.attachNewNode(CollisionNode('runCollSegment'))
         fromObject.node().addSolid(collSegment)
         fromObject.node().setFromCollideMask(ToontownGlobals.WallBitmask)
         fromObject.node().setIntoCollideMask(BitMask32.allOff())
@@ -203,7 +182,7 @@ class BoardingGroupShow:
             for entryNum in range(queue.getNumEntries()):
                 entry = queue.getEntry(entryNum)
                 hitObject = entry.getIntoNodePath()
-                if hitObject.getNetTag("pieCode") != "3":
+                if hitObject.getNetTag('pieCode') != '3':
                     pathClear = False
 
         base.cTrav.removeCollider(fromObject)
@@ -226,7 +205,7 @@ class BoardingGroupShow:
     def __getTeleportOutTrack(self):
         teleportOutTrack = Sequence()
         if self.toon and not self.toon.isDisguised:
-            teleportOutTrack.append(Func(self.toon.b_setAnimState, "TeleportOut"))
+            teleportOutTrack.append(Func(self.toon.b_setAnimState, 'TeleportOut'))
         return teleportOutTrack
 
     def getGoButtonPreShow(self):

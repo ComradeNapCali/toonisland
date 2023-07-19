@@ -7,29 +7,26 @@ from otp.avatar import ShadowCaster
 from toontown.racing.KartDNA import *
 from toontown.toonbase import TTLocalizer
 
-
 class Kart(NodePath, ShadowCaster.ShadowCaster):
-    notify = DirectNotifyGlobal.directNotify.newCategory("Kart")
+    notify = DirectNotifyGlobal.directNotify.newCategory('Kart')
     index = 0
     baseScale = 2.0
     RFWHEEL = 0
     LFWHEEL = 1
     RRWHEEL = 2
     LRWHEEL = 3
-    wheelData = [
-        {"node": "wheel*Node2"},
-        {"node": "wheel*Node1"},
-        {"node": "wheel*Node3"},
-        {"node": "wheel*Node4"},
-    ]
+    wheelData = [{'node': 'wheel*Node2'},
+     {'node': 'wheel*Node1'},
+     {'node': 'wheel*Node3'},
+     {'node': 'wheel*Node4'}]
     ShadowScale = 2.5
-    SFX_BaseDir = "phase_6/audio/sfx/"
-    SFX_KartStart = SFX_BaseDir + "KART_Engine_start_%d.ogg"
-    SFX_KartLoop = SFX_BaseDir + "KART_Engine_loop_%d.ogg"
+    SFX_BaseDir = 'phase_6/audio/sfx/'
+    SFX_KartStart = SFX_BaseDir + 'KART_Engine_start_%d.ogg'
+    SFX_KartLoop = SFX_BaseDir + 'KART_Engine_loop_%d.ogg'
 
     def __init__(self):
         NodePath.__init__(self)
-        an = ActorNode("vehicle-test")
+        an = ActorNode('vehicle-test')
         anp = NodePath(an)
         NodePath.assign(self, anp)
         self.actorNode = an
@@ -37,12 +34,10 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         Kart.index += 1
         self.updateFields = []
         self.kartDNA = [-1] * getNumFields()
-        self.kartAccessories = {
-            KartDNA.ebType: None,
-            KartDNA.spType: None,
-            KartDNA.fwwType: (None, None),
-            KartDNA.bwwType: (None, None),
-        }
+        self.kartAccessories = {KartDNA.ebType: None,
+         KartDNA.spType: None,
+         KartDNA.fwwType: (None, None),
+         KartDNA.bwwType: (None, None)}
         self.texCount = 1
         return
 
@@ -57,30 +52,22 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
     def getKartBounds(self):
         return self.geom[0].getTightBounds()
 
-    def generateKart(self, forGui=0):
-        self.LODnode = FadeLODNode("lodNode")
+    def generateKart(self, forGui = 0):
+        self.LODnode = FadeLODNode('lodNode')
         self.LODpath = self.attachNewNode(self.LODnode)
         self.LODnode.setFadeTime(0.15)
         self.geom = {}
         self.pitchNode = {}
         self.toonNode = {}
-        self.rotateNode = self.attachNewNode("rotate")
-        levelIn = [
-            base.config.GetInt("lod1-in", 30),
-            base.config.GetInt("lod2-in", 80),
-            base.config.GetInt("lod2-in", 200),
-        ]
-        levelOut = [
-            base.config.GetInt("lod1-out", 0),
-            base.config.GetInt("lod2-out", 30),
-            base.config.GetInt("lod2-out", 80),
-        ]
+        self.rotateNode = self.attachNewNode('rotate')
+        levelIn = [base.config.GetInt('lod1-in', 30), base.config.GetInt('lod2-in', 80), base.config.GetInt('lod2-in', 200)]
+        levelOut = [base.config.GetInt('lod1-out', 0), base.config.GetInt('lod2-out', 30), base.config.GetInt('lod2-out', 80)]
         lodRequired = 3
         if forGui:
             lodRequired = 1
-            levelIn[0] = base.config.GetInt("lod1-in", 2500)
-            levelIn[1] = base.config.GetInt("lod1-out", 0)
-        self.toonSeat = NodePath("toonSeat")
+            levelIn[0] = base.config.GetInt('lod1-in', 2500)
+            levelIn[1] = base.config.GetInt('lod1-out', 0)
+        self.toonSeat = NodePath('toonSeat')
         for level in range(lodRequired):
             self.__createLODKart(level)
             self.LODnode.addSwitch(levelIn[level], levelOut[level])
@@ -91,7 +78,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
             self.toonSeat = self.toonSeat.instanceTo(self.toonNode[level])
 
         self.LODpath.reparentTo(self.rotateNode)
-        tempNode = NodePath("tempNode")
+        tempNode = NodePath('tempNode')
         self.accGeomScale = tempNode.getScale(self.pitchNode[0]) * self.baseScale
         tempNode.removeNode()
         self.__applyBodyColor()
@@ -105,9 +92,9 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         self.wheelCenters = []
         self.wheelBases = []
         for wheel in self.wheelData:
-            center = self.geom[0].find("**/" + wheel["node"])
+            center = self.geom[0].find('**/' + wheel['node'])
             self.wheelCenters.append(center)
-            wheelBase = center.getParent().attachNewNode("wheelBase")
+            wheelBase = center.getParent().attachNewNode('wheelBase')
             wheelBase.setPos(center.getPos())
             wheelBase.setZ(0)
             self.wheelBases.append(wheelBase)
@@ -136,8 +123,8 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         self.geom[level].reparentTo(self.LODpath)
         self.geom[level].setH(180)
         self.geom[level].setPos(0.0, 0, 0.025)
-        self.pitchNode[level] = self.geom[level].find("**/suspensionNode")
-        self.toonNode[level] = self.geom[level].find("**/toonNode")
+        self.pitchNode[level] = self.geom[level].find('**/suspensionNode')
+        self.toonNode[level] = self.geom[level].find('**/toonNode')
         scale = 1.0 / self.pitchNode[level].getScale()[0]
         scale /= self.baseScale
         self.toonNode[level].setScale(scale)
@@ -153,7 +140,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
     def __update(self):
         for field in self.updateFields:
             if field == KartDNA.bodyType:
-                if hasattr(self, "geom"):
+                if hasattr(self, 'geom'):
                     for kart in self.geom:
                         self.geom[kart].removeNode()
                         self.__createLODKart(kart)
@@ -167,9 +154,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
                     self.__applyDecals()
                     self.__applyAccessoryColor()
                 else:
-                    raise Exception(
-                        "Kart::__update - Has this method been called before generateKart?"
-                    )
+                    raise Exception('Kart::__update - Has this method been called before generateKart?')
             elif field == KartDNA.bodyColor:
                 self.__applyBodyColor()
             elif field == KartDNA.accColor:
@@ -178,7 +163,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
                 if self.kartAccessories[KartDNA.ebType] != None:
                     name = self.kartAccessories[KartDNA.ebType].getName()
                     for key in list(self.geom.keys()):
-                        self.geom[key].find("**/%s" % name).removeNode()
+                        self.geom[key].find('**/%s' % name).removeNode()
 
                     self.kartAccessories[KartDNA.ebType].removeNode()
                     self.kartAccessories[KartDNA.ebType] = None
@@ -187,7 +172,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
                 if self.kartAccessories[KartDNA.spType] != None:
                     name = self.kartAccessories[KartDNA.spType].getName()
                     for key in list(self.geom.keys()):
-                        self.geom[key].find("**/%s" % name).removeNode()
+                        self.geom[key].find('**/%s' % name).removeNode()
 
                     self.kartAccessories[KartDNA.spType].removeNode()
                     self.kartAccessories[KartDNA.spType] = None
@@ -196,8 +181,8 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
                 if self.kartAccessories[KartDNA.fwwType] != (None, None):
                     left, right = self.kartAccessories[KartDNA.fwwType]
                     for key in list(self.geom.keys()):
-                        self.geom[key].find("**/%s" % left.getName()).removeNode()
-                        self.geom[key].find("**/%s" % right.getName()).removeNode()
+                        self.geom[key].find('**/%s' % left.getName()).removeNode()
+                        self.geom[key].find('**/%s' % right.getName()).removeNode()
 
                     left.removeNode()
                     right.removeNode()
@@ -207,8 +192,8 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
                 if self.kartAccessories[KartDNA.bwwType] != (None, None):
                     left, right = self.kartAccessories[KartDNA.bwwType]
                     for key in list(self.geom.keys()):
-                        self.geom[key].find("**/%s" % left.getName()).removeNode()
-                        self.geom[key].find("**/%s" % right.getName()).removeNode()
+                        self.geom[key].find('**/%s' % left.getName()).removeNode()
+                        self.geom[key].find('**/%s' % right.getName()).removeNode()
 
                     left.removeNode()
                     right.removeNode()
@@ -252,7 +237,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         else:
             bodyColor = getAccessory(self.kartDNA[KartDNA.bodyColor])
         for kart in self.geom:
-            kartBody = self.geom[kart].find("**/chasse")
+            kartBody = self.geom[kart].find('**/chasse')
             kartBody.setColorScale(bodyColor)
 
     def __applyAccessoryColor(self):
@@ -261,31 +246,31 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         else:
             accColor = getAccessory(self.kartDNA[KartDNA.accColor])
         for kart in self.geom:
-            hoodDecal = self.geom[kart].find("**/hoodDecal")
-            rightSideDecal = self.geom[kart].find("**/rightSideDecal")
-            leftSideDecal = self.geom[kart].find("**/leftSideDecal")
+            hoodDecal = self.geom[kart].find('**/hoodDecal')
+            rightSideDecal = self.geom[kart].find('**/rightSideDecal')
+            leftSideDecal = self.geom[kart].find('**/leftSideDecal')
             hoodDecal.setColorScale(accColor)
             rightSideDecal.setColorScale(accColor)
             leftSideDecal.setColorScale(accColor)
 
         for type in [KartDNA.ebType, KartDNA.spType]:
             model = self.kartAccessories.get(type, None)
-            if model != None and not model.find("**/vertex").isEmpty():
+            if model != None and not model.find('**/vertex').isEmpty():
                 if self.kartDNA[KartDNA.accColor] == InvalidEntry:
                     accColor = getDefaultColor()
                 else:
                     accColor = getAccessory(self.kartDNA[KartDNA.accColor])
-                model.find("**/vertex").setColorScale(accColor)
+                model.find('**/vertex').setColorScale(accColor)
 
         for type in [KartDNA.fwwType, KartDNA.bwwType]:
             lModel, rModel = self.kartAccessories.get(type, (None, None))
-            if lModel != None and not lModel.find("**/vertex").isEmpty():
+            if lModel != None and not lModel.find('**/vertex').isEmpty():
                 if self.kartDNA[KartDNA.accColor] == InvalidEntry:
                     accColor = getDefaultColor()
                 else:
                     accColor = getAccessory(self.kartDNA[KartDNA.accColor])
-                lModel.find("**/vertex").setColorScale(accColor)
-                rModel.find("**/vertex").setColorScale(accColor)
+                lModel.find('**/vertex').setColorScale(accColor)
+                rModel.find('**/vertex').setColorScale(accColor)
 
         return
 
@@ -298,14 +283,14 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         model = loader.loadModel(ebPath)
         self.kartAccessories[KartDNA.ebType] = model
         model.setScale(self.accGeomScale)
-        if not model.find("**/vertex").isEmpty():
+        if not model.find('**/vertex').isEmpty():
             if self.kartDNA[KartDNA.accColor] == InvalidEntry:
                 accColor = getDefaultColor()
             else:
                 accColor = getAccessory(self.kartDNA[KartDNA.accColor])
-            model.find("**/vertex").setColorScale(accColor)
+            model.find('**/vertex').setColorScale(accColor)
         for kart in self.geom:
-            engineBlockNode = self.geom[kart].find("**/%s" % attachNode)
+            engineBlockNode = self.geom[kart].find('**/%s' % attachNode)
             model.setPos(engineBlockNode.getPos(self.pitchNode[kart]))
             model.setHpr(engineBlockNode.getHpr(self.pitchNode[kart]))
             model.instanceTo(self.pitchNode[kart])
@@ -320,7 +305,7 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         self.kartAccessories[KartDNA.spType] = model
         model.setScale(self.accGeomScale)
         for kart in self.geom:
-            spoilerNode = self.geom[kart].find("**/%s" % attachNode)
+            spoilerNode = self.geom[kart].find('**/%s' % attachNode)
             model.setPos(spoilerNode.getPos(self.pitchNode[kart]))
             model.setHpr(spoilerNode.getHpr(self.pitchNode[kart]))
             model.instanceTo(self.pitchNode[kart])
@@ -330,12 +315,12 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
             rimTexPath = getAccessory(getDefaultRim())
         else:
             rimTexPath = getAccessory(self.kartDNA[KartDNA.rimsType])
-        rimTex = loader.loadTexture("%s.jpg" % rimTexPath, "%s_a.rgb" % rimTexPath)
+        rimTex = loader.loadTexture('%s.jpg' % rimTexPath, '%s_a.rgb' % rimTexPath)
         for kart in self.geom:
-            leftFrontWheelRim = self.geom[kart].find("**/leftFrontWheelRim")
-            rightFrontWheelRim = self.geom[kart].find("**/rightFrontWheelRim")
-            leftRearWheelRim = self.geom[kart].find("**/leftRearWheelRim")
-            rightRearWheelRim = self.geom[kart].find("**/rightRearWheelRim")
+            leftFrontWheelRim = self.geom[kart].find('**/leftFrontWheelRim')
+            rightFrontWheelRim = self.geom[kart].find('**/rightFrontWheelRim')
+            leftRearWheelRim = self.geom[kart].find('**/leftRearWheelRim')
+            rightRearWheelRim = self.geom[kart].find('**/rightRearWheelRim')
             rimTex.setMinfilter(Texture.FTLinearMipmapLinear)
             leftFrontWheelRim.setTexture(rimTex, self.texCount)
             rightFrontWheelRim.setTexture(rimTex, self.texCount)
@@ -350,21 +335,21 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
             return
         fwwPath = getAccessory(fwwType)
         attachNode = getAccessoryAttachNode(fwwType)
-        leftAttachNode = attachNode % "left"
-        rightAttachNode = attachNode % "right"
+        leftAttachNode = attachNode % 'left'
+        rightAttachNode = attachNode % 'right'
         leftModel = loader.loadModel(fwwPath)
         rightModel = loader.loadModel(fwwPath)
         self.kartAccessories[KartDNA.fwwType] = (leftModel, rightModel)
-        if not leftModel.find("**/vertex").isEmpty():
+        if not leftModel.find('**/vertex').isEmpty():
             if self.kartDNA[KartDNA.accColor] == InvalidEntry:
                 accColor = getDefaultColor()
             else:
                 accColor = getAccessory(self.kartDNA[KartDNA.accColor])
-            leftModel.find("**/vertex").setColorScale(accColor)
-            rightModel.find("**/vertex").setColorScale(accColor)
+            leftModel.find('**/vertex').setColorScale(accColor)
+            rightModel.find('**/vertex').setColorScale(accColor)
         for kart in self.geom:
-            leftNode = self.geom[kart].find("**/%s" % leftAttachNode)
-            rightNode = self.geom[kart].find("**/%s" % rightAttachNode)
+            leftNode = self.geom[kart].find('**/%s' % leftAttachNode)
+            rightNode = self.geom[kart].find('**/%s' % rightAttachNode)
             leftNodePath = leftModel.instanceTo(self.pitchNode[kart])
             leftNodePath.setPos(rightNode.getPos(self.pitchNode[kart]))
             leftNodePath.setHpr(rightNode.getHpr(self.pitchNode[kart]))
@@ -382,21 +367,21 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
             return
         bwwPath = getAccessory(bwwType)
         attachNode = getAccessoryAttachNode(bwwType)
-        leftAttachNode = attachNode % "left"
-        rightAttachNode = attachNode % "right"
+        leftAttachNode = attachNode % 'left'
+        rightAttachNode = attachNode % 'right'
         leftModel = loader.loadModel(bwwPath)
         rightModel = loader.loadModel(bwwPath)
         self.kartAccessories[KartDNA.bwwType] = (leftModel, rightModel)
-        if not leftModel.find("**/vertex").isEmpty():
+        if not leftModel.find('**/vertex').isEmpty():
             if self.kartDNA[KartDNA.accColor] == InvalidEntry:
                 accColor = getDefaultColor()
             else:
                 accColor = getAccessory(self.kartDNA[KartDNA.accColor])
-            leftModel.find("**/vertex").setColorScale(accColor)
-            rightModel.find("**/vertex").setColorScale(accColor)
+            leftModel.find('**/vertex').setColorScale(accColor)
+            rightModel.find('**/vertex').setColorScale(accColor)
         for kart in self.geom:
-            leftNode = self.geom[kart].find("**/%s" % leftAttachNode)
-            rightNode = self.geom[kart].find("**/%s" % rightAttachNode)
+            leftNode = self.geom[kart].find('**/%s' % leftAttachNode)
+            rightNode = self.geom[kart].find('**/%s' % rightAttachNode)
             leftNodePath = leftModel.instanceTo(self.pitchNode[kart])
             leftNodePath.setPos(rightNode.getPos(self.pitchNode[kart]))
             leftNodePath.setHpr(rightNode.getHpr(self.pitchNode[kart]))
@@ -412,20 +397,14 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         if self.kartDNA[KartDNA.decalType] != InvalidEntry:
             decalId = getAccessory(self.kartDNA[KartDNA.decalType])
             kartDecal = getDecalId(self.kartDNA[KartDNA.bodyType])
-            hoodDecalTex = loader.loadTexture(
-                "phase_6/maps/%s_HoodDecal_%s.jpg" % (kartDecal, decalId),
-                "phase_6/maps/%s_HoodDecal_%s_a.rgb" % (kartDecal, decalId),
-            )
-            sideDecalTex = loader.loadTexture(
-                "phase_6/maps/%s_SideDecal_%s.jpg" % (kartDecal, decalId),
-                "phase_6/maps/%s_SideDecal_%s_a.rgb" % (kartDecal, decalId),
-            )
+            hoodDecalTex = loader.loadTexture('phase_6/maps/%s_HoodDecal_%s.jpg' % (kartDecal, decalId), 'phase_6/maps/%s_HoodDecal_%s_a.rgb' % (kartDecal, decalId))
+            sideDecalTex = loader.loadTexture('phase_6/maps/%s_SideDecal_%s.jpg' % (kartDecal, decalId), 'phase_6/maps/%s_SideDecal_%s_a.rgb' % (kartDecal, decalId))
             hoodDecalTex.setMinfilter(Texture.FTLinearMipmapLinear)
             sideDecalTex.setMinfilter(Texture.FTLinearMipmapLinear)
             for kart in self.geom:
-                hoodDecal = self.geom[kart].find("**/hoodDecal")
-                rightSideDecal = self.geom[kart].find("**/rightSideDecal")
-                leftSideDecal = self.geom[kart].find("**/leftSideDecal")
+                hoodDecal = self.geom[kart].find('**/hoodDecal')
+                rightSideDecal = self.geom[kart].find('**/rightSideDecal')
+                leftSideDecal = self.geom[kart].find('**/leftSideDecal')
                 hoodDecal.setTexture(hoodDecalTex, self.texCount)
                 rightSideDecal.setTexture(sideDecalTex, self.texCount)
                 leftSideDecal.setTexture(sideDecalTex, self.texCount)
@@ -435,9 +414,9 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
 
         else:
             for kart in self.geom:
-                hoodDecal = self.geom[kart].find("**/hoodDecal")
-                rightSideDecal = self.geom[kart].find("**/rightSideDecal")
-                leftSideDecal = self.geom[kart].find("**/leftSideDecal")
+                hoodDecal = self.geom[kart].find('**/hoodDecal')
+                rightSideDecal = self.geom[kart].find('**/rightSideDecal')
+                leftSideDecal = self.geom[kart].find('**/leftSideDecal')
                 hoodDecal.hide()
                 rightSideDecal.hide()
                 leftSideDecal.hide()
@@ -550,19 +529,9 @@ class Kart(NodePath, ShadowCaster.ShadowCaster):
         def printVol():
             print(self.kartLoopSfx.getVolume())
 
-        track = Parallel(
-            SoundInterval(self.kartStartSfx),
-            Func(self.kartLoopSfx.play),
-            LerpFunctionInterval(
-                self.kartLoopSfx.setVolume, fromData=0, toData=0.4, duration=length
-            ),
-        )
+        track = Parallel(SoundInterval(self.kartStartSfx), Func(self.kartLoopSfx.play), LerpFunctionInterval(self.kartLoopSfx.setVolume, fromData=0, toData=0.4, duration=length))
         return Sequence(track, Func(printVol))
 
-    def generateEngineStopTrack(self, duration=0):
-        track = Parallel(
-            LerpFunctionInterval(
-                self.kartLoopSfx.setVolume, fromData=0.4, toData=0, duration=duration
-            )
-        )
+    def generateEngineStopTrack(self, duration = 0):
+        track = Parallel(LerpFunctionInterval(self.kartLoopSfx.setVolume, fromData=0.4, toData=0, duration=duration))
         return track

@@ -2,8 +2,8 @@ from . import FactorySpecs
 from otp.level import LevelSpec
 from toontown.toonbase import ToontownGlobals
 
-
 class LawOfficeBase:
+
     def __init__(self):
         pass
 
@@ -23,6 +23,5 @@ class LawOfficeBase:
         def getEntityTypeReg(self):
             from . import FactoryEntityTypes
             from otp.level import EntityTypeRegistry
-
             typeReg = EntityTypeRegistry.EntityTypeRegistry(FactoryEntityTypes)
             return typeReg

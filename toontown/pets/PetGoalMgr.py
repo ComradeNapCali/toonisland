@@ -5,9 +5,8 @@ from direct.showbase.PythonUtil import randFloat, lerp
 from toontown.pets import PetConstants
 import random
 
-
 class PetGoalMgr(DirectObject.DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("PetGoalMgr")
+    notify = DirectNotifyGlobal.directNotify.newCategory('PetGoalMgr')
 
     def __init__(self, pet):
         self.pet = pet
@@ -16,15 +15,9 @@ class PetGoalMgr(DirectObject.DirectObject):
         self.primaryGoal = None
         self.primaryStartT = 0
         if __dev__:
-            self.pscSetup = PStatCollector(
-                "App:Show code:petThink:UpdatePriorities:Setup"
-            )
-            self.pscFindPrimary = PStatCollector(
-                "App:Show code:petThink:UpdatePriorities:FindPrimary"
-            )
-            self.pscSetPrimary = PStatCollector(
-                "App:Show code:petThink:UpdatePriorities:SetPrimary"
-            )
+            self.pscSetup = PStatCollector('App:Show code:petThink:UpdatePriorities:Setup')
+            self.pscFindPrimary = PStatCollector('App:Show code:petThink:UpdatePriorities:FindPrimary')
+            self.pscSetPrimary = PStatCollector('App:Show code:petThink:UpdatePriorities:SetPrimary')
         return
 
     def destroy(self):
@@ -91,10 +84,7 @@ class PetGoalMgr(DirectObject.DirectObject):
             self.pscSetPrimary.start()
         newPrimary = random.choice(candidates)
         if self.primaryGoal != newPrimary:
-            self.pet.notify.debug(
-                "new goal: %s, priority=%s"
-                % (newPrimary.__class__.__name__, highestPriority)
-            )
+            self.pet.notify.debug('new goal: %s, priority=%s' % (newPrimary.__class__.__name__, highestPriority))
             self._setPrimaryGoal(newPrimary)
         if __dev__:
             self.pscSetPrimary.stop()
@@ -104,11 +94,11 @@ class PetGoalMgr(DirectObject.DirectObject):
         if self.primaryGoal == goal:
             return
         if self.primaryGoal is not None:
-            self.primaryGoal.fsm.request("background")
+            self.primaryGoal.fsm.request('background')
         self.primaryGoal = goal
         self.primaryStartT = globalClock.getFrameTime()
         if goal is not None:
-            goal.fsm.request("foreground")
+            goal.fsm.request('foreground')
         return
 
     def _handlePrimaryGoalDone(self):
@@ -116,8 +106,8 @@ class PetGoalMgr(DirectObject.DirectObject):
         return
 
     def __repr__(self):
-        string = "%s" % self.__class__.__name__
-        string += "\n Primary: %s" % self.primaryGoal
+        string = '%s' % self.__class__.__name__
+        string += '\n Primary: %s' % self.primaryGoal
         goalPairs = []
         for goal in self.goals:
             goalPairs.append((goal.getPriority(), goal))
@@ -125,6 +115,6 @@ class PetGoalMgr(DirectObject.DirectObject):
         goalPairs.sort()
         goalPairs.reverse()
         for goalPair in goalPairs:
-            string += "\n  %s" % goalPair[1]
+            string += '\n  %s' % goalPair[1]
 
         return string

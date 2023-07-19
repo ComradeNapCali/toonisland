@@ -4,10 +4,10 @@ from direct.directnotify import DirectNotifyGlobal
 
 
 class LocatorEntity(Entity.Entity, NodePath):
-    notify = DirectNotifyGlobal.directNotify.newCategory("LocatorEntity")
+    notify = DirectNotifyGlobal.directNotify.newCategory('LocatorEntity')
 
     def __init__(self, level, entId):
-        node = hidden.attachNewNode("LocatorEntity-%s" % entId)
+        node = hidden.attachNewNode('LocatorEntity-%s' % entId)
         NodePath.__init__(self, node)
         Entity.Entity.__init__(self, level, entId)
         self.doReparent()
@@ -20,10 +20,11 @@ class LocatorEntity(Entity.Entity, NodePath):
         return self
 
     def doReparent(self):
-        if self.searchPath != "":
+        if self.searchPath != '':
             parent = self.level.geom.find(self.searchPath)
             if parent.isEmpty():
-                LocatorEntity.notify.warning("could not find '%s'" % self.searchPath)
+                LocatorEntity.notify.warning(
+                    "could not find '%s'" % self.searchPath)
                 self.reparentTo(hidden)
             else:
                 self.reparentTo(parent)

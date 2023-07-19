@@ -1,27 +1,12 @@
-from panda3d.core import (
-    NodePath,
-    BillboardEffect,
-    Vec3,
-    Point3,
-    TextureStage,
-    TransparencyAttrib,
-    DecalEffect,
-    VBase4,
-)
+from panda3d.core import NodePath, BillboardEffect, Vec3, Point3, TextureStage, TransparencyAttrib, DecalEffect, VBase4
 from direct.fsm import FSM
 from direct.gui.DirectGui import DirectFrame, DGG
-from direct.interval.IntervalGlobal import (
-    LerpScaleInterval,
-    LerpColorScaleInterval,
-    Parallel,
-    Sequence,
-    Wait,
-)
-
+from direct.interval.IntervalGlobal import LerpScaleInterval, LerpColorScaleInterval, Parallel, Sequence, Wait
 
 class DinerStatusIndicator(NodePath, FSM.FSM):
-    def __init__(self, parent, pos=None, scale=None):
-        NodePath.__init__(self, "DinerStatusIndicator")
+
+    def __init__(self, parent, pos = None, scale = None):
+        NodePath.__init__(self, 'DinerStatusIndicator')
         if parent:
             self.reparentTo(parent)
         if pos:
@@ -29,7 +14,7 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
         if scale:
             self.setScale(scale)
         self.loadAssets()
-        FSM.FSM.__init__(self, "DinerStatusIndicator")
+        FSM.FSM.__init__(self, 'DinerStatusIndicator')
         self.activeIval = None
         return
 
@@ -44,10 +29,10 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
         return
 
     def loadAssets(self):
-        iconsFile = loader.loadModel("phase_12/models/bossbotHQ/BanquetIcons")
-        self.angryIcon, self.angryMeter = self.loadIcon(iconsFile, "**/Anger")
-        self.hungryIcon, self.hungryMeter = self.loadIcon(iconsFile, "**/Hunger")
-        self.eatingIcon, self.eatingMeter = self.loadIcon(iconsFile, "**/Food")
+        iconsFile = loader.loadModel('phase_12/models/bossbotHQ/BanquetIcons')
+        self.angryIcon, self.angryMeter = self.loadIcon(iconsFile, '**/Anger')
+        self.hungryIcon, self.hungryMeter = self.loadIcon(iconsFile, '**/Hunger')
+        self.eatingIcon, self.eatingMeter = self.loadIcon(iconsFile, '**/Food')
         self.angryMeter.hide()
         iconsFile.removeNode()
 
@@ -61,7 +46,7 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
         retVal.setEffect(DecalEffect.make())
         retVal.setTransparency(TransparencyAttrib.MAlpha, 1)
         ll, ur = dark.getTightBounds()
-        center = retVal.attachNewNode("center")
+        center = retVal.attachNewNode('center')
         center.setPos(0, 0, ll[2])
         dark.wrtReparentTo(center)
         dark.setTexProjector(TextureStage.getDefault(), center, retVal)
@@ -70,9 +55,7 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
 
     def enterEating(self, timeToFinishFood):
         self.eatingIcon.show()
-        self.activeIval = self.createMeterInterval(
-            self.eatingIcon, self.eatingMeter, timeToFinishFood
-        )
+        self.activeIval = self.createMeterInterval(self.eatingIcon, self.eatingMeter, timeToFinishFood)
         self.activeIval.start()
 
     def exitEating(self):
@@ -84,9 +67,7 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
 
     def enterHungry(self, timeToFinishFood):
         self.hungryIcon.show()
-        self.activeIval = self.createMeterInterval(
-            self.hungryIcon, self.hungryMeter, timeToFinishFood
-        )
+        self.activeIval = self.createMeterInterval(self.hungryIcon, self.hungryMeter, timeToFinishFood)
         self.activeIval.start()
 
     def exitHungry(self):
@@ -119,26 +100,14 @@ class DinerStatusIndicator(NodePath, FSM.FSM):
         pass
 
     def createMeterInterval(self, icon, meter, time):
-        ivalDarkness = LerpScaleInterval(
-            meter, time, scale=Vec3(1, 1, 1), startScale=Vec3(1, 0.001, 0.001)
-        )
+        ivalDarkness = LerpScaleInterval(meter, time, scale=Vec3(1, 1, 1), startScale=Vec3(1, 0.001, 0.001))
         flashingTrack = Sequence()
         flashDuration = 10
         if time > flashDuration:
             flashingTrack.append(Wait(time - flashDuration))
             for i in range(10):
-                flashingTrack.append(
-                    Parallel(
-                        LerpColorScaleInterval(icon, 0.5, VBase4(1, 0, 0, 1)),
-                        icon.scaleInterval(0.5, 1.25),
-                    )
-                )
-                flashingTrack.append(
-                    Parallel(
-                        LerpColorScaleInterval(icon, 0.5, VBase4(1, 1, 1, 1)),
-                        icon.scaleInterval(0.5, 1),
-                    )
-                )
+                flashingTrack.append(Parallel(LerpColorScaleInterval(icon, 0.5, VBase4(1, 0, 0, 1)), icon.scaleInterval(0.5, 1.25)))
+                flashingTrack.append(Parallel(LerpColorScaleInterval(icon, 0.5, VBase4(1, 1, 1, 1)), icon.scaleInterval(0.5, 1)))
 
         retIval = Parallel(ivalDarkness, flashingTrack)
         return retIval

@@ -4,19 +4,18 @@ from toontown.cogdominium.DistCogdoGameAI import DistCogdoGameAI
 from toontown.cogdominium.CogdoEntityCreatorAI import CogdoEntityCreatorAI
 from toontown.cogdominium.CogdoLevelGameBase import CogdoLevelGameBase
 
-
 class DistCogdoLevelGameAI(CogdoLevelGameBase, DistCogdoGameAI, DistributedLevelAI):
-    notify = directNotify.newCategory("DistCogdoLevelGameAI")
+    notify = directNotify.newCategory('DistCogdoLevelGameAI')
 
     def __init__(self, air, interior):
         DistCogdoGameAI.__init__(self, air, interior)
         DistributedLevelAI.__init__(self, air, self.zoneId, 0, self.getToonIds())
 
     def generate(self):
-        self.notify.info("loading spec")
+        self.notify.info('loading spec')
         spec = self.getLevelSpec()
         if __dev__:
-            self.notify.info("creating entity type registry")
+            self.notify.info('creating entity type registry')
             typeReg = self.getEntityTypeReg()
             spec.setEntityTypeReg(typeReg)
 
@@ -26,7 +25,7 @@ class DistCogdoLevelGameAI(CogdoLevelGameBase, DistCogdoGameAI, DistributedLevel
             self.startHandleEdits()
 
     def createEntityCreator(self):
-        return CogdoEntityCreatorAI(level=self)
+        return CogdoEntityCreatorAI(level = self)
 
     def _levelControlsRequestDelete(self):
         return False
@@ -39,4 +38,4 @@ class DistCogdoLevelGameAI(CogdoLevelGameBase, DistCogdoGameAI, DistributedLevel
             self.stopHandleEdits()
 
         DistCogdoGameAI.delete(self)
-        DistributedLevelAI.delete(self, deAllocZone=False)
+        DistributedLevelAI.delete(self, deAllocZone = False)

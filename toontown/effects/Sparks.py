@@ -3,33 +3,33 @@ from direct.particles import ParticleEffect
 from direct.directnotify import DirectNotifyGlobal
 import os
 
-
 class Sparks(NodePath):
+
     def __init__(self, parent, renderParent):
         NodePath.__init__(self)
-        notify = DirectNotifyGlobal.directNotify.newCategory("SparkParticles")
-        self.renderParent = renderParent.attachNewNode("sparkRenderParent")
-        self.renderParent.setBin("fixed", 0)
+        notify = DirectNotifyGlobal.directNotify.newCategory('SparkParticles')
+        self.renderParent = renderParent.attachNewNode('sparkRenderParent')
+        self.renderParent.setBin('fixed', 0)
         self.renderParent.setDepthWrite(0)
-        self.assign(parent.attachNewNode("sparks"))
-        self.effect = ParticleEffect.ParticleEffect("Sparks")
+        self.assign(parent.attachNewNode('sparks'))
+        self.effect = ParticleEffect.ParticleEffect('Sparks')
         particleSearchPath = DSearchPath()
-        particleSearchPath.appendDirectory(Filename("/phase_3.5/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_4/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_5/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_6/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_7/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_8/etc"))
-        particleSearchPath.appendDirectory(Filename("/phase_9/etc"))
-        pfile = Filename("sparks.ptf")
+        particleSearchPath.appendDirectory(Filename('/phase_3.5/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_4/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_5/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_6/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_7/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_8/etc'))
+        particleSearchPath.appendDirectory(Filename('/phase_9/etc'))
+        pfile = Filename('sparks.ptf')
         found = vfs.resolveFilename(pfile, particleSearchPath)
         if not found:
-            notify.warning("loadParticleFile() - no path: %s" % pfile)
+            notify.warning('loadParticleFile() - no path: %s' % pfile)
             return
-        notify.debug("Loading particle file: %s" % pfile)
+        notify.debug('Loading particle file: %s' % pfile)
         self.effect.loadConfig(pfile)
-        ren = self.effect.getParticlesNamed("particles-1").getRenderer()
-        ren.setTextureFromNode("phase_6/models/karting/particleSpark", "**/*")
+        ren = self.effect.getParticlesNamed('particles-1').getRenderer()
+        ren.setTextureFromNode('phase_6/models/karting/particleSpark', '**/*')
 
     def start(self):
         self.effect.start(self, self.renderParent)

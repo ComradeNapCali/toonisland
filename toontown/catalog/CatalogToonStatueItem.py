@@ -5,11 +5,10 @@ from otp.otpbase import OTPLocalizer
 from direct.interval.IntervalGlobal import *
 from toontown.estate import GardenGlobals
 
-
 class CatalogToonStatueItem(CatalogGardenItem.CatalogGardenItem):
     pictureToonStatue = None
 
-    def makeNewItem(self, itemIndex=105, count=1, tagCode=1, endPoseIndex=108):
+    def makeNewItem(self, itemIndex = 105, count = 1, tagCode = 1, endPoseIndex = 108):
         self.startPoseIndex = itemIndex
         self.endPoseIndex = endPoseIndex
         CatalogGardenItem.CatalogGardenItem.makeNewItem(self, itemIndex, count, tagCode)
@@ -19,7 +18,6 @@ class CatalogToonStatueItem(CatalogGardenItem.CatalogGardenItem):
 
     def getPicture(self, avatar):
         from toontown.estate import DistributedToonStatuary
-
         toonStatuary = DistributedToonStatuary.DistributedToonStatuary(None)
         toonStatuary.setupStoneToon(base.localAvatar.style)
         toonStatuary.poseToonFromSpecialsIndex(self.gardenIndex)
@@ -36,9 +34,7 @@ class CatalogToonStatueItem(CatalogGardenItem.CatalogGardenItem):
         return
 
     def decodeDatagram(self, di, versionNumber, store):
-        CatalogGardenItem.CatalogGardenItem.decodeDatagram(
-            self, di, versionNumber, store
-        )
+        CatalogGardenItem.CatalogGardenItem.decodeDatagram(self, di, versionNumber, store)
         self.startPoseIndex = di.getUint8()
         self.endPoseIndex = di.getUint8()
 
@@ -48,10 +44,7 @@ class CatalogToonStatueItem(CatalogGardenItem.CatalogGardenItem):
         dg.addUint8(self.endPoseIndex)
 
     def compareTo(self, other):
-        if (
-            self.gardenIndex >= self.startPoseIndex
-            and self.gardenIndex <= self.endPoseIndex
-        ):
+        if self.gardenIndex >= self.startPoseIndex and self.gardenIndex <= self.endPoseIndex:
             return 0
         return 1
 

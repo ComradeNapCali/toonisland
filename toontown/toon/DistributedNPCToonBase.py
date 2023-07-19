@@ -14,8 +14,8 @@ from toontown.quest import QuestChoiceGui
 from direct.interval.IntervalGlobal import *
 import random
 
-
 class DistributedNPCToonBase(DistributedToon.DistributedToon):
+
     def __init__(self, cr):
         try:
             self.DistributedNPCToon_initialized
@@ -27,7 +27,7 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
             self.setPlayerType(NametagGroup.CCNonPlayer)
 
     def disable(self):
-        self.ignore("enter" + self.cSphereNode.getName())
+        self.ignore('enter' + self.cSphereNode.getName())
         DistributedToon.DistributedToon.disable(self)
 
     def delete(self):
@@ -40,7 +40,7 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
 
     def generate(self):
         DistributedToon.DistributedToon.generate(self)
-        self.cSphereNode.setName(self.uniqueName("NPCToon"))
+        self.cSphereNode.setName(self.uniqueName('NPCToon'))
         self.detectAvatars()
         self.setParent(ToontownGlobals.SPRender)
         self.startLookAround()
@@ -68,15 +68,13 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
         DistributedToon.DistributedToon.announceGenerate(self)
 
     def initToonState(self):
-        self.setAnimState("neutral", 0.9, None, None)
-        npcOrigin = render.find("**/npc_origin_" + repr((self.posIndex)))
+        self.setAnimState('neutral', 0.9, None, None)
+        npcOrigin = render.find('**/npc_origin_' + repr((self.posIndex)))
         if not npcOrigin.isEmpty():
             self.reparentTo(npcOrigin)
             self.initPos()
         else:
-            self.notify.warning(
-                "announceGenerate: Could not find npc_origin_" + str(self.posIndex)
-            )
+            self.notify.warning('announceGenerate: Could not find npc_origin_' + str(self.posIndex))
         return
 
     def initPos(self):
@@ -86,22 +84,18 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
         return 0
 
     def detectAvatars(self):
-        self.accept(
-            "enter" + self.cSphereNode.getName(), self.handleCollisionSphereEnter
-        )
+        self.accept('enter' + self.cSphereNode.getName(), self.handleCollisionSphereEnter)
 
     def ignoreAvatars(self):
-        self.ignore("enter" + self.cSphereNode.getName())
+        self.ignore('enter' + self.cSphereNode.getName())
 
     def getCollSphereRadius(self):
         return 3.25
 
     def __initCollisions(self):
-        self.cSphere = CollisionTube(
-            0.0, 1.0, 0.0, 0.0, 1.0, 5.0, self.getCollSphereRadius()
-        )
+        self.cSphere = CollisionTube(0.0, 1.0, 0.0, 0.0, 1.0, 5.0, self.getCollSphereRadius())
         self.cSphere.setTangible(0)
-        self.cSphereNode = CollisionNode("cSphereNode")
+        self.cSphereNode = CollisionNode('cSphereNode')
         self.cSphereNode.addSolid(self.cSphere)
         self.cSphereNodePath = self.attachNewNode(self.cSphereNode)
         self.cSphereNodePath.hide()
@@ -131,11 +125,11 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
 
     def d_setPageNumber(self, paragraph, pageNumber):
         timestamp = ClockDelta.globalClockDelta.getFrameNetworkTime()
-        self.sendUpdate("setPageNumber", [paragraph, pageNumber, timestamp])
+        self.sendUpdate('setPageNumber', [paragraph, pageNumber, timestamp])
 
     def freeAvatar(self):
         base.localAvatar.posCamera(0, 0)
-        base.cr.playGame.getPlace().setState("walk")
+        base.cr.playGame.getPlace().setState('walk')
 
     def setPositionIndex(self, posIndex):
         self.posIndex = posIndex

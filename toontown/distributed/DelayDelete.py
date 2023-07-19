@@ -1,4 +1,7 @@
+
+
 class DelayDelete:
+
     def __init__(self, distObj, name):
         self._distObj = distObj
         self._name = name
@@ -19,7 +22,7 @@ class DelayDelete:
 
 
 def cleanupDelayDeletes(interval):
-    if hasattr(interval, "delayDelete"):
+    if hasattr(interval, 'delayDelete'):
         delayDelete = interval.delayDelete
         del interval.delayDelete
         if type(delayDelete) == type([]):
@@ -28,7 +31,7 @@ def cleanupDelayDeletes(interval):
 
         else:
             delayDelete.destroy()
-    if hasattr(interval, "delayDeletes"):
+    if hasattr(interval, 'delayDeletes'):
         delayDeletes = interval.delayDeletes
         del interval.delayDeletes
         if type(delayDeletes) == type([]):

@@ -3,7 +3,8 @@ from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
 
 class DistributedDistrictAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDistrictAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        'DistributedDistrictAI')
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -14,7 +15,7 @@ class DistributedDistrictAI(DistributedObjectAI):
         self.name = name
 
     def d_setName(self, name):
-        self.sendUpdate("setName", [name])
+        self.sendUpdate('setName', [name])
 
     def b_setName(self, name):
         self.setName(name)
@@ -27,7 +28,7 @@ class DistributedDistrictAI(DistributedObjectAI):
         self.available = available
 
     def d_setAvilable(self, available):
-        self.sendUpdate("setAvailable", [available])
+        self.sendUpdate('setAvailable', [available])
 
     def b_setAvailable(self, available):
         self.setAvailable(available)

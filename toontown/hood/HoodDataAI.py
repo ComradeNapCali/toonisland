@@ -9,9 +9,8 @@ from panda3d.toontown import *
 from toontown.toon import NPCToons
 from toontown.toonbase import ToontownGlobals, TTLocalizer
 
-
 class HoodDataAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory("HoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('HoodDataAI')
 
     def __init__(self, air, zoneId, canonicalHoodId):
         self.air = air
@@ -30,7 +29,7 @@ class HoodDataAI:
     def startup(self):
         for zone in self.air.zoneTable[self.canonicalHoodId]:
             zoneId = ZoneUtil.getTrueZoneId(zone[0], self.zoneId)
-            self.notify.info("Creating zone... %s" % self.getLocationName(zoneId))
+            self.notify.info('Creating zone... %s' % self.getLocationName(zoneId))
 
         self.createFishingPonds()
         self.createPartyPeople()
@@ -90,9 +89,7 @@ class HoodDataAI:
             dnaData = self.air.dnaDataMap.get(zone[0], None)
             if isinstance(dnaData, DNAData):
                 area = ZoneUtil.getCanonicalZoneId(zoneId)
-                foundFishingPonds, foundFishingPondGroups = self.air.findFishingPonds(
-                    dnaData, zoneId, area
-                )
+                foundFishingPonds, foundFishingPondGroups = self.air.findFishingPonds(dnaData, zoneId, area)
                 self.fishingPonds += foundFishingPonds
                 fishingPondGroups += foundFishingPondGroups
 
@@ -116,9 +113,7 @@ class HoodDataAI:
             if zone[1]:
                 zoneId = ZoneUtil.getTrueZoneId(zone[0], self.zoneId)
                 dnaStore = self.air.dnaStoreMap[zone[0]]
-                mgr = DistributedBuildingMgrAI.DistributedBuildingMgrAI(
-                    self.air, zoneId, dnaStore, self.air.trophyMgr
-                )
+                mgr = DistributedBuildingMgrAI.DistributedBuildingMgrAI(self.air, zoneId, dnaStore, self.air.trophyMgr)
                 self.buildingManagers.append(mgr)
                 self.air.buildingManagers[zoneId] = mgr
 
@@ -137,9 +132,7 @@ class HoodDataAI:
         ButterflyGlobals.generateIndexes(self.zoneId, playground)
         for i in range(0, ButterflyGlobals.NUM_BUTTERFLY_AREAS[playground]):
             for j in range(0, ButterflyGlobals.NUM_BUTTERFLIES[playground]):
-                bfly = DistributedButterflyAI.DistributedButterflyAI(
-                    self.air, playground, i, self.zoneId
-                )
+                bfly = DistributedButterflyAI.DistributedButterflyAI(self.air, playground, i, self.zoneId)
                 bfly.generateWithRequired(self.zoneId)
                 bfly.start()
                 self.addDistObj(bfly)
@@ -191,18 +184,16 @@ class HoodDataAI:
         if isStreet:
             lookupTable = TTLocalizer.GlobalStreetNames
 
-        name = lookupTable.get(zoneId, "")
+        name = lookupTable.get(zoneId, '')
         if isStreet:
-            locationName = "{0}, {1}".format(
-                self.getLocationName(self.zoneId, False), name[2]
-            )
+            locationName = '{0}, {1}'.format(self.getLocationName(self.zoneId, False), name[2])
             if isWelcomeValley and appendWelcomeValley:
-                locationName = locationName + " (" + TTLocalizer.WelcomeValley[2] + ")"
+                locationName = locationName + ' (' + TTLocalizer.WelcomeValley[2] + ')'
 
             return locationName
 
         locationName = name[2]
         if isWelcomeValley and appendWelcomeValley:
-            locationName = locationName + " (" + TTLocalizer.WelcomeValley[2] + ")"
+            locationName = locationName + ' (' + TTLocalizer.WelcomeValley[2] + ')'
 
         return locationName

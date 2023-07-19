@@ -4,7 +4,7 @@ from otp.login.LoginBase import LoginBase
 
 
 class LoginTIAAccount(LoginBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory("LoginTIAAccount")
+    notify = DirectNotifyGlobal.directNotify.newCategory('LoginTIAAccount')
 
     def __init__(self, cr):
         LoginBase.__init__(self, cr)

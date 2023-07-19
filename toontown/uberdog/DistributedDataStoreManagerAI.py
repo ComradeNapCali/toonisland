@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
-
 class DistributedDataStoreManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedDataStoreManagerAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDataStoreManagerAI")
 
     def startStore(self, todo0):
         pass
@@ -21,3 +18,4 @@ class DistributedDataStoreManagerAI(DistributedObjectAI):
 
     def deleteBackupStores(self):
         pass
+

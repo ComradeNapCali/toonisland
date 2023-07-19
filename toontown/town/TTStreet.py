@@ -1,7 +1,7 @@
 from . import Street
 
-
 class TTStreet(Street.Street):
+
     def __init__(self, loader, parentFSM, doneEvent):
         Street.Street.__init__(self, loader, parentFSM, doneEvent)
 
@@ -12,4 +12,4 @@ class TTStreet(Street.Street):
         Street.Street.unload(self)
 
     def doRequestLeave(self, requestStatus):
-        self.fsm.request("trialerFA", [requestStatus])
+        self.fsm.request('trialerFA', [requestStatus])

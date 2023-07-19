@@ -5,9 +5,7 @@ from otp.otpbase.OTPLocalizer import EmoteFuncDict
 
 
 class DistributedResistanceEmoteMgrAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedResistanceEmoteMgrAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedResistanceEmoteMgrAI')
 
     def addResistanceEmote(self):
         avId = self.air.getAvatarIdFromSender()
@@ -15,6 +13,6 @@ class DistributedResistanceEmoteMgrAI(DistributedObjectAI):
         if not av:
             return
 
-        if not av.emoteAccess[EmoteFuncDict["Resistance Salute"]]:
-            av.emoteAccess[EmoteFuncDict["Resistance Salute"]] = 1
+        if not av.emoteAccess[EmoteFuncDict['Resistance Salute']]:
+            av.emoteAccess[EmoteFuncDict['Resistance Salute']] = 1
             av.b_setEmoteAccess(av.emoteAccess)

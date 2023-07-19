@@ -1,5 +1,4 @@
 from . import EditMgrBase
-
 if __dev__:
     from direct.showbase.PythonUtil import list2dict
     from . import EditorGlobals
@@ -13,7 +12,7 @@ class EditMgrAI(EditMgrBase.EditMgrBase):
             entIds = spec.getAllEntIds()
             entIdDict = list2dict(entIds)
             allocRange = EditorGlobals.getEntIdAllocRange()
-            if not hasattr(self, "lastAllocatedEntId"):
+            if not hasattr(self, 'lastAllocatedEntId'):
                 self.lastAllocatedEntId = allocRange[0]
             idChosen = 0
             while not idChosen:
@@ -26,18 +25,19 @@ class EditMgrAI(EditMgrBase.EditMgrBase):
                     if self.lastAllocatedEntId != allocRange[0]:
                         self.lastAllocatedEntId = allocRange[0]
                     else:
-                        self.notify.error("out of entIds")
+                        self.notify.error('out of entIds')
 
-            data.update({"entId": id})
+            data.update({'entId': id})
             self.lastAllocatedEntId = id
-            self.level.setAttribChange(self.entId, "insertEntity", data)
-            self.level.levelSpec.doSetAttrib(self.entId, "requestNewEntity", None)
+            self.level.setAttribChange(self.entId, 'insertEntity', data)
+            self.level.levelSpec.doSetAttrib(
+                self.entId, 'requestNewEntity', None)
             return
 
         def getSpecSaveEvent(self):
-            return "requestSave-%s" % self.level.levelId
+            return 'requestSave-%s' % self.level.levelId
 
         def setRequestSave(self, data):
             messenger.send(self.getSpecSaveEvent())
-            self.level.levelSpec.doSetAttrib(self.entId, "requestSave", None)
+            self.level.levelSpec.doSetAttrib(self.entId, 'requestSave', None)
             return

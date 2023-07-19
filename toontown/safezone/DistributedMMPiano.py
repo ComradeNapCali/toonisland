@@ -4,12 +4,11 @@ from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *
 from direct.distributed import DistributedObject
 from toontown.toonbase import ToontownGlobals
-
 ChangeDirectionDebounce = 1.0
 ChangeDirectionTime = 1.0
 
-
 class DistributedMMPiano(DistributedObject.DistributedObject):
+
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         self.spinStartTime = 0.0
@@ -27,21 +26,19 @@ class DistributedMMPiano(DistributedObject.DistributedObject):
     def generate(self):
         self.piano = base.cr.playGame.hood.loader.piano
         base.cr.parentMgr.registerParent(ToontownGlobals.SPMinniesPiano, self.piano)
-        self.accept("enterlarge_round_keyboard_collisions", self.__handleOnFloor)
-        self.accept("exitlarge_round_keyboard_collisions", self.__handleOffFloor)
-        self.accept("entero7", self.__handleChangeDirectionButton)
-        self.speedUpSound = base.loader.loadSfx("phase_6/audio/sfx/SZ_MM_gliss.ogg")
-        self.changeDirectionSound = base.loader.loadSfx(
-            "phase_6/audio/sfx/SZ_MM_cymbal.ogg"
-        )
+        self.accept('enterlarge_round_keyboard_collisions', self.__handleOnFloor)
+        self.accept('exitlarge_round_keyboard_collisions', self.__handleOffFloor)
+        self.accept('entero7', self.__handleChangeDirectionButton)
+        self.speedUpSound = base.loader.loadSfx('phase_6/audio/sfx/SZ_MM_gliss.ogg')
+        self.changeDirectionSound = base.loader.loadSfx('phase_6/audio/sfx/SZ_MM_cymbal.ogg')
         self.__setupSpin()
         DistributedObject.DistributedObject.generate(self)
 
     def __setupSpin(self):
-        taskMgr.add(self.__updateSpin, self.taskName("pianoSpinTask"))
+        taskMgr.add(self.__updateSpin, self.taskName('pianoSpinTask'))
 
     def __stopSpin(self):
-        taskMgr.remove(self.taskName("pianoSpinTask"))
+        taskMgr.remove(self.taskName('pianoSpinTask'))
 
     def __updateSpin(self, task):
         now = globalClock.getFrameTime()
@@ -59,10 +56,10 @@ class DistributedMMPiano(DistributedObject.DistributedObject):
     def disable(self):
         del self.piano
         base.cr.parentMgr.unregisterParent(ToontownGlobals.SPMinniesPiano)
-        self.ignore("enterlarge_round_keyboard_collisions")
-        self.ignore("exitlarge_round_keyboard_collisions")
-        self.ignore("entero7")
-        self.ignore("entericon_center_collisions")
+        self.ignore('enterlarge_round_keyboard_collisions')
+        self.ignore('exitlarge_round_keyboard_collisions')
+        self.ignore('entero7')
+        self.ignore('entericon_center_collisions')
         self.speedUpSound = None
         self.changeDirectionSound = None
         self.__stopSpin()
@@ -99,15 +96,15 @@ class DistributedMMPiano(DistributedObject.DistributedObject):
             base.playSfx(self.changeDirectionSound)
 
     def __handleOnFloor(self, collEntry):
-        self.cr.playGame.getPlace().activityFsm.request("OnPiano")
-        self.sendUpdate("requestSpeedUp", [])
+        self.cr.playGame.getPlace().activityFsm.request('OnPiano')
+        self.sendUpdate('requestSpeedUp', [])
         base.playSfx(self.speedUpSound)
 
     def __handleOffFloor(self, collEntry):
-        self.cr.playGame.getPlace().activityFsm.request("off")
+        self.cr.playGame.getPlace().activityFsm.request('off')
 
     def __handleSpeedUpButton(self, collEntry):
-        self.sendUpdate("requestSpeedUp", [])
+        self.sendUpdate('requestSpeedUp', [])
         base.playSfx(self.speedUpSound)
 
     def __handleChangeDirectionButton(self, collEntry):
@@ -115,5 +112,5 @@ class DistributedMMPiano(DistributedObject.DistributedObject):
         if now - self.lastChangeDirection < ChangeDirectionDebounce:
             return
         self.lastChangeDirection = now
-        self.sendUpdate("requestChangeDirection", [])
+        self.sendUpdate('requestChangeDirection', [])
         base.playSfx(self.changeDirectionSound)

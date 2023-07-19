@@ -4,12 +4,12 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from . import DivingGameGlobals
 
-
 class DivingTreasure(DirectObject):
+
     def __init__(self, i):
-        self.treasureNode = render.attachNewNode("treasure")
-        loadBase = "phase_4/models/minigames/"
-        self.chest = loader.loadModel(loadBase + "treasure.bam")
+        self.treasureNode = render.attachNewNode('treasure')
+        loadBase = 'phase_4/models/minigames/'
+        self.chest = loader.loadModel(loadBase + 'treasure.bam')
         self.chest.reparentTo(self.treasureNode)
         self.chest.setPos(0, 0, -25)
         self.chest.setScale(1, 0.7, 1)

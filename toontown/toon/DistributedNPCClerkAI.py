@@ -3,14 +3,14 @@ from direct.task.Task import Task
 from panda3d.core import *
 from .DistributedNPCToonBaseAI import *
 
-
 class DistributedNPCClerkAI(DistributedNPCToonBaseAI):
+
     def __init__(self, air, npcId):
         DistributedNPCToonBaseAI.__init__(self, air, npcId)
         self.timedOut = 0
 
     def delete(self):
-        taskMgr.remove(self.uniqueName("clearMovie"))
+        taskMgr.remove(self.uniqueName('clearMovie'))
         self.ignoreAll()
         DistributedNPCToonBaseAI.delete(self)
 
@@ -19,13 +19,9 @@ class DistributedNPCClerkAI(DistributedNPCToonBaseAI):
         DistributedNPCToonBaseAI.avatarEnter(self)
         av = self.air.doId2do.get(avId)
         if av is None:
-            self.notify.warning("toon isnt there! toon: %s" % avId)
+            self.notify.warning('toon isnt there! toon: %s' % avId)
             return
-        self.acceptOnce(
-            self.air.getAvatarExitEvent(avId),
-            self.__handleUnexpectedExit,
-            extraArgs=[avId],
-        )
+        self.acceptOnce(self.air.getAvatarExitEvent(avId), self.__handleUnexpectedExit, extraArgs=[avId])
         if self.isBusy(avId):
             self.freeAvatar(avId)
             return
@@ -39,48 +35,29 @@ class DistributedNPCClerkAI(DistributedNPCToonBaseAI):
         avId = self.air.getAvatarIdFromSender()
         if avId not in self.busy:
             self.busy.append(avId)
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.PURCHASE_MOVIE_START,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
-        taskMgr.doMethodLater(
-            NPCToons.CLERK_COUNTDOWN_TIME,
-            self.sendTimeoutMovie,
-            self.uniqueName("clearMovie"),
-        )
+        self.sendUpdate('setMovie', [NPCToons.PURCHASE_MOVIE_START,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
+        taskMgr.doMethodLater(NPCToons.CLERK_COUNTDOWN_TIME, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def sendNoMoneyMovie(self, avId):
         if avId not in self.busy:
             self.busy.append(avId)
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.PURCHASE_MOVIE_NO_MONEY,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.PURCHASE_MOVIE_NO_MONEY,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         self.sendClearMovie(None)
         return
 
     def sendTimeoutMovie(self, task):
         avId = self.air.getAvatarIdFromSender()
         self.timedOut = 1
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.PURCHASE_MOVIE_TIMEOUT,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.PURCHASE_MOVIE_TIMEOUT,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         self.sendClearMovie(None)
         return Task.done
 
@@ -89,43 +66,27 @@ class DistributedNPCClerkAI(DistributedNPCToonBaseAI):
         self.ignore(self.air.getAvatarExitEvent(avId))
         self.busy.remove(avId)
         self.timedOut = 0
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.PURCHASE_MOVIE_CLEAR,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.PURCHASE_MOVIE_CLEAR,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         return Task.done
 
     def completePurchase(self, avId):
         if avId not in self.busy:
             self.busy.append(avId)
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.PURCHASE_MOVIE_COMPLETE,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.PURCHASE_MOVIE_COMPLETE,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         self.sendClearMovie(None)
         return
 
     def setInventory(self, blob, newMoney, done):
         avId = self.air.getAvatarIdFromSender()
         if avId not in self.busy:
-            self.air.writeServerEvent(
-                "suspicious",
-                avId,
-                "DistributedNPCClerkAI.setInventory busy with %s" % self.busy,
-            )
-            self.notify.warning(
-                "setInventory from unknown avId: %s busy: %s" % (avId, self.busy)
-            )
+            self.air.writeServerEvent('suspicious', avId, 'DistributedNPCClerkAI.setInventory busy with %s' % self.busy)
+            self.notify.warning('setInventory from unknown avId: %s busy: %s' % (avId, self.busy))
             return
         if avId in self.air.doId2do:
             av = self.air.doId2do[avId]
@@ -137,23 +98,17 @@ class DistributedNPCClerkAI(DistributedNPCToonBaseAI):
                     av.d_setInventory(av.inventory.makeNetString())
                     av.d_setMoney(newMoney)
             else:
-                self.air.writeServerEvent(
-                    "suspicious",
-                    avId,
-                    "DistributedNPCClerkAI.setInventory invalid purchase",
-                )
-                self.notify.warning(
-                    "Avatar " + str(avId) + " attempted an invalid purchase."
-                )
+                self.air.writeServerEvent('suspicious', avId, 'DistributedNPCClerkAI.setInventory invalid purchase')
+                self.notify.warning('Avatar ' + str(avId) + ' attempted an invalid purchase.')
                 av.d_setInventory(av.inventory.makeNetString())
                 av.d_setMoney(av.getMoney())
         if self.timedOut:
             return
         if done:
-            taskMgr.remove(self.uniqueName("clearMovie"))
+            taskMgr.remove(self.uniqueName('clearMovie'))
             self.completePurchase(avId)
 
     def __handleUnexpectedExit(self, avId):
-        self.notify.warning("avatar:" + str(avId) + " has exited unexpectedly")
+        self.notify.warning('avatar:' + str(avId) + ' has exited unexpectedly')
         self.sendTimeoutMovie(None)
         return

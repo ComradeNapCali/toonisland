@@ -15,13 +15,11 @@ import string
 from toontown.safezone import DistributedPicnicTableAI
 from toontown.safezone import DistributedChineseCheckersAI
 from toontown.safezone import DistributedCheckersAI
-
 if __debug__:
     import pdb
 
-
 class OZHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("OZHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('OZHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.OutdoorZone
@@ -33,7 +31,7 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
 
     def startup(self):
         HoodDataAI.HoodDataAI.startup(self)
-        if simbase.air.config.GetBool("create-chip-and-dale", 1):
+        if simbase.air.config.GetBool('create-chip-and-dale', 1):
             chip = DistributedChipAI.DistributedChipAI(self.air)
             chip.generateWithRequired(self.zoneId)
             chip.start()
@@ -50,12 +48,12 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
         self.timer = DistributedTimerAI.DistributedTimerAI(self.air)
         self.timer.generateWithRequired(self.zoneId)
         self.createPicnicTables()
-        if simbase.config.GetBool("want-game-tables", 0):
+        if simbase.config.GetBool('want-game-tables', 0):
             self.createGameTables()
 
     def cleanup(self):
         self.timer.delete()
-        taskMgr.removeTasksMatching(str(self) + "_leaderBoardSwitch")
+        taskMgr.removeTasksMatching(str(self) + '_leaderBoardSwitch')
         for board in self.leaderBoards:
             board.delete()
 
@@ -64,33 +62,27 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
     def createLeaderBoards(self):
         self.leaderBoards = []
         dnaStore = DNAStorage()
-        dnaData = simbase.air.loadDNAFileAI(
-            dnaStore, simbase.air.lookupDNAFileName("goofy_speedway_sz.dna")
-        )
+        dnaData = simbase.air.loadDNAFileAI(dnaStore, simbase.air.lookupDNAFileName('goofy_speedway_sz.dna'))
         if isinstance(dnaData, DNAData):
             self.leaderBoards = self.air.findLeaderBoards(dnaData, self.zoneId)
         for distObj in self.leaderBoards:
             if distObj:
-                if distObj.getName().count("city"):
-                    type = "city"
+                if distObj.getName().count('city'):
+                    type = 'city'
                 else:
-                    if distObj.getName().count("stadium"):
-                        type = "stadium"
+                    if distObj.getName().count('stadium'):
+                        type = 'stadium'
                     else:
-                        if distObj.getName().count("country"):
-                            type = "country"
+                        if distObj.getName().count('country'):
+                            type = 'country'
                 for subscription in LBSubscription[type]:
                     distObj.subscribeTo(subscription)
 
                 self.addDistObj(distObj)
 
     def __cycleLeaderBoards(self, task=None):
-        messenger.send("GS_LeaderBoardSwap")
-        taskMgr.doMethodLater(
-            self.cycleDuration,
-            self.__cycleLeaderBoards,
-            str(self) + "_leaderBoardSwitch",
-        )
+        messenger.send('GS_LeaderBoardSwap')
+        taskMgr.doMethodLater(self.cycleDuration, self.__cycleLeaderBoards, str(self) + '_leaderBoardSwitch')
 
     def createStartingBlocks(self):
         self.racingPads = []
@@ -106,12 +98,8 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
             dnaData = self.air.dnaDataMap.get(zone[0], None)
             if isinstance(dnaData, DNAData):
                 area = ZoneUtil.getCanonicalZoneId(zoneId)
-                foundRacingPads, foundRacingPadGroups = self.air.findRacingPads(
-                    dnaData, zoneId, area, overrideDNAZone=True
-                )
-                foundViewingPads, foundViewingPadGroups = self.air.findRacingPads(
-                    dnaData, zoneId, area, type="viewing_pad", overrideDNAZone=True
-                )
+                foundRacingPads, foundRacingPadGroups = self.air.findRacingPads(dnaData, zoneId, area, overrideDNAZone=True)
+                foundViewingPads, foundViewingPadGroups = self.air.findRacingPads(dnaData, zoneId, area, type='viewing_pad', overrideDNAZone=True)
                 self.racingPads += foundRacingPads
                 self.foundRacingPadGroups += foundRacingPadGroups
                 self.viewingPads += foundViewingPads
@@ -139,94 +127,60 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
             self.addDistObj(viewPad)
 
         for racePad in self.racingPads:
-            racePad.request("WaitEmpty")
+            racePad.request('WaitEmpty')
             self.addDistObj(racePad)
 
         return
 
-    def findAndCreateGameTables(
-        self, dnaGroup, zoneId, area, overrideDNAZone=0, type="game_table"
-    ):
+    def findAndCreateGameTables(self, dnaGroup, zoneId, area, overrideDNAZone = 0, type = 'game_table'):
         picnicTables = []
         picnicTableGroups = []
-        if (
-            isinstance(dnaGroup, DNAGroup)
-            and string.find(dnaGroup.getName(), type) >= 0
-        ):
-            if type == "game_table":
-                nameInfo = dnaGroup.getName().split("_")
+        if isinstance(dnaGroup, DNAGroup) and string.find(dnaGroup.getName(), type) >= 0:
+            if type == 'game_table':
+                nameInfo = dnaGroup.getName().split('_')
                 pos = Point3(0, 0, 0)
                 hpr = Point3(0, 0, 0)
                 for i in range(dnaGroup.getNumChildren()):
                     childDnaGroup = dnaGroup.at(i)
-                    if string.find(childDnaGroup.getName(), "game_table") >= 0:
+                    if string.find(childDnaGroup.getName(), 'game_table') >= 0:
                         pos = childDnaGroup.getPos()
                         hpr = childDnaGroup.getHpr()
                         break
 
-                picnicTable = DistributedPicnicTableAI.DistributedPicnicTableAI(
-                    self.air,
-                    zoneId,
-                    nameInfo[2],
-                    pos[0],
-                    pos[1],
-                    pos[2],
-                    hpr[0],
-                    hpr[1],
-                    hpr[2],
-                )
+                picnicTable = DistributedPicnicTableAI.DistributedPicnicTableAI(self.air, zoneId, nameInfo[2], pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2])
                 picnicTables.append(picnicTable)
         else:
             if isinstance(dnaGroup, DNAVisGroup) and not overrideDNAZone:
-                zoneId = ZoneUtil.getTrueZoneId(
-                    int(dnaGroup.getName().split(":")[0]), zoneId
-                )
+                zoneId = ZoneUtil.getTrueZoneId(int(dnaGroup.getName().split(':')[0]), zoneId)
             for i in range(dnaGroup.getNumChildren()):
-                childPicnicTables = self.findAndCreateGameTables(
-                    dnaGroup.at(i), zoneId, area, overrideDNAZone, type
-                )
+                childPicnicTables = self.findAndCreateGameTables(dnaGroup.at(i), zoneId, area, overrideDNAZone, type)
                 picnicTables += childPicnicTables
 
         return picnicTables
 
-    def findAndCreatePicnicTables(
-        self, dnaGroup, zoneId, area, overrideDNAZone=0, type="picnic_table"
-    ):
+    def findAndCreatePicnicTables(self, dnaGroup, zoneId, area, overrideDNAZone = 0, type = 'picnic_table'):
         picnicTables = []
         picnicTableGroups = []
         if isinstance(dnaGroup, DNAGroup) and str.find(dnaGroup.getName(), type) >= 0:
-            if type == "picnic_table":
-                nameInfo = dnaGroup.getName().split("_")
+            if type == 'picnic_table':
+                nameInfo = dnaGroup.getName().split('_')
                 pos = Point3(0, 0, 0)
                 hpr = Point3(0, 0, 0)
                 for i in range(dnaGroup.getNumChildren()):
                     childDnaGroup = dnaGroup.at(i)
-                    if str.find(childDnaGroup.getName(), "picnic_table") >= 0:
+                    if str.find(childDnaGroup.getName(), 'picnic_table') >= 0:
                         pos = childDnaGroup.getPos()
                         hpr = childDnaGroup.getHpr()
                         break
 
-                picnicTable = DistributedPicnicBasketAI.DistributedPicnicBasketAI(
-                    self.air,
-                    nameInfo[2],
-                    pos[0],
-                    pos[1],
-                    pos[2],
-                    hpr[0],
-                    hpr[1],
-                    hpr[2],
-                )
+                picnicTable = DistributedPicnicBasketAI.DistributedPicnicBasketAI(self.air, nameInfo[2], pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2])
                 picnicTable.generateWithRequired(zoneId)
                 picnicTables.append(picnicTable)
         else:
             if isinstance(dnaGroup, DNAVisGroup) and not overrideDNAZone:
-                zoneId = ZoneUtil.getTrueZoneId(
-                    int(dnaGroup.getName().split(":")[0]), zoneId
-                )
+                zoneId = ZoneUtil.getTrueZoneId(int(dnaGroup.getName().split(':')[0]), zoneId)
             for i in range(dnaGroup.getNumChildren()):
-                childPicnicTables = self.findAndCreatePicnicTables(
-                    dnaGroup.at(i), zoneId, area, overrideDNAZone, type
-                )
+                childPicnicTables = self.findAndCreatePicnicTables(dnaGroup.at(i), zoneId, area, overrideDNAZone, type)
                 picnicTables += childPicnicTables
 
         return picnicTables
@@ -238,9 +192,7 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
             dnaData = self.air.dnaDataMap.get(zone[0], None)
             if isinstance(dnaData, DNAData):
                 area = ZoneUtil.getCanonicalZoneId(zoneId)
-                foundTables = self.findAndCreateGameTables(
-                    dnaData, zoneId, area, overrideDNAZone=True
-                )
+                foundTables = self.findAndCreateGameTables(dnaData, zoneId, area, overrideDNAZone=True)
                 self.gameTables += foundTables
 
         for picnicTable in self.gameTables:
@@ -255,9 +207,7 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
             dnaData = self.air.dnaDataMap.get(zone[0], None)
             if isinstance(dnaData, DNAData):
                 area = ZoneUtil.getCanonicalZoneId(zoneId)
-                foundTables = self.findAndCreatePicnicTables(
-                    dnaData, zoneId, area, overrideDNAZone=True
-                )
+                foundTables = self.findAndCreatePicnicTables(dnaData, zoneId, area, overrideDNAZone=True)
                 self.picnicTables += foundTables
 
         for picnicTable in self.picnicTables:
@@ -270,39 +220,17 @@ class OZHoodDataAI(HoodDataAI.HoodDataAI):
         startingBlocks = []
         for i in range(dnaRacingPadGroup.getNumChildren()):
             dnaGroup = dnaRacingPadGroup.at(i)
-            if string.find(dnaGroup.getName(), "starting_block") >= 0:
-                padLocation = dnaGroup.getName().split("_")[2]
+            if string.find(dnaGroup.getName(), 'starting_block') >= 0:
+                padLocation = dnaGroup.getName().split('_')[2]
                 pos = dnaGroup.getPos()
                 hpr = dnaGroup.getHpr()
                 if isinstance(distRacePad, DistributedRacePadAI):
-                    sb = DistributedStartingBlockAI(
-                        self,
-                        distRacePad,
-                        pos[0],
-                        pos[1],
-                        pos[2],
-                        hpr[0],
-                        hpr[1],
-                        hpr[2],
-                        int(padLocation),
-                    )
+                    sb = DistributedStartingBlockAI(self, distRacePad, pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2], int(padLocation))
                 else:
-                    sb = DistributedViewingBlockAI(
-                        self,
-                        distRacePad,
-                        pos[0],
-                        pos[1],
-                        pos[2],
-                        hpr[0],
-                        hpr[1],
-                        hpr[2],
-                        int(padLocation),
-                    )
+                    sb = DistributedViewingBlockAI(self, distRacePad, pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2], int(padLocation))
                 sb.generateWithRequired(distRacePad.zoneId)
                 startingBlocks.append(sb)
             else:
-                self.notify.debug(
-                    "Found dnaGroup that is not a starting_block under a race pad group"
-                )
+                self.notify.debug('Found dnaGroup that is not a starting_block under a race pad group')
 
         return startingBlocks

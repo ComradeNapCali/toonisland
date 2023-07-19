@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
-
 class DistributedPondBingoManagerAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedPondBingoManagerAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPondBingoManagerAI")
 
     def setPondDoId(self, todo0):
         pass
@@ -30,3 +27,4 @@ class DistributedPondBingoManagerAI(DistributedObjectAI):
 
     def setJackpot(self, todo0):
         pass
+

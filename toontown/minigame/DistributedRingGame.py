@@ -16,14 +16,13 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from functools import reduce
 
-
 class DistributedRingGame(DistributedMinigame):
-    UPDATE_ENVIRON_TASK = "RingGameUpdateEnvironTask"
-    UPDATE_LOCALTOON_TASK = "RingGameUpdateLocalToonTask"
-    UPDATE_RINGS_TASK = "RingGameUpdateRingsTask"
-    UPDATE_SHADOWS_TASK = "RingGameUpdateShadowsTask"
-    COLLISION_DETECTION_TASK = "RingGameCollisionDetectionTask"
-    END_GAME_WAIT_TASK = "RingGameCollisionDetectionTask"
+    UPDATE_ENVIRON_TASK = 'RingGameUpdateEnvironTask'
+    UPDATE_LOCALTOON_TASK = 'RingGameUpdateLocalToonTask'
+    UPDATE_RINGS_TASK = 'RingGameUpdateRingsTask'
+    UPDATE_SHADOWS_TASK = 'RingGameUpdateShadowsTask'
+    COLLISION_DETECTION_TASK = 'RingGameCollisionDetectionTask'
+    END_GAME_WAIT_TASK = 'RingGameCollisionDetectionTask'
     COLLISION_DETECTION_PRIORITY = 5
     UPDATE_SHADOWS_PRIORITY = 47
     RT_UNKNOWN = 0
@@ -33,16 +32,7 @@ class DistributedRingGame(DistributedMinigame):
 
     def __init__(self, cr):
         DistributedMinigame.__init__(self, cr)
-        self.gameFSM = ClassicFSM.ClassicFSM(
-            "DistributedRingGame",
-            [
-                State.State("off", self.enterOff, self.exitOff, ["swim"]),
-                State.State("swim", self.enterSwim, self.exitSwim, ["cleanup"]),
-                State.State("cleanup", self.enterCleanup, self.exitCleanup, []),
-            ],
-            "off",
-            "cleanup",
-        )
+        self.gameFSM = ClassicFSM.ClassicFSM('DistributedRingGame', [State.State('off', self.enterOff, self.exitOff, ['swim']), State.State('swim', self.enterSwim, self.exitSwim, ['cleanup']), State.State('cleanup', self.enterCleanup, self.exitCleanup, [])], 'off', 'cleanup')
         self.addChildGameFSM(self.gameFSM)
 
     def getTitle(self):
@@ -57,11 +47,7 @@ class DistributedRingGame(DistributedMinigame):
         return text % RingGameGlobals.ringColors[self.colorIndices[p]][0]
 
     def getMaxDuration(self):
-        return (
-            RingGameGlobals.NUM_RING_GROUPS * self.ringGroupArrivalPeriod
-            + self.T_FIRST_RING_GROUP_ARRIVES
-            + self.GAME_END_DELAY
-        )
+        return RingGameGlobals.NUM_RING_GROUPS * self.ringGroupArrivalPeriod + self.T_FIRST_RING_GROUP_ARRIVES + self.GAME_END_DELAY
 
     def defineConstants(self):
         self.CAMERA_Y = -15
@@ -92,32 +78,32 @@ class DistributedRingGame(DistributedMinigame):
         self.NumRingGroups = 16
 
     def load(self):
-        self.notify.debug("load")
+        self.notify.debug('load')
         DistributedMinigame.load(self)
         self.defineConstants()
-        self.music = base.loader.loadMusic("phase_4/audio/bgm/MG_toontag.ogg")
-        self.sndAmbience = base.loader.loadSfx("phase_4/audio/sfx/AV_ambient_water.ogg")
-        self.sndPerfect = base.loader.loadSfx("phase_4/audio/sfx/ring_perfect.ogg")
-        loadBase = "phase_4/models/minigames/"
-        self.environModel = loader.loadModel(loadBase + "swimming_game.bam")
+        self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_toontag.ogg')
+        self.sndAmbience = base.loader.loadSfx('phase_4/audio/sfx/AV_ambient_water.ogg')
+        self.sndPerfect = base.loader.loadSfx('phase_4/audio/sfx/ring_perfect.ogg')
+        loadBase = 'phase_4/models/minigames/'
+        self.environModel = loader.loadModel(loadBase + 'swimming_game.bam')
         self.environModel.setPos(0, self.ENVIRON_LENGTH / 2.0, self.SEA_FLOOR_Z)
         self.environModel.flattenMedium()
-        self.ringModel = loader.loadModel(loadBase + "swimming_game_ring.bam")
+        self.ringModel = loader.loadModel(loadBase + 'swimming_game_ring.bam')
         self.ringModel.setTransparency(1)
         modelRadius = 4.0
         self.ringModel.setScale(RingGameGlobals.RING_RADIUS / modelRadius)
         self.ringModel.flattenMedium()
-        self.dropShadowModel = loader.loadModel("phase_3/models/props/drop_shadow")
+        self.dropShadowModel = loader.loadModel('phase_3/models/props/drop_shadow')
         self.dropShadowModel.setColor(0, 0, 0, 0.5)
         self.dropShadowModel.flattenMedium()
         self.toonDropShadows = []
         self.ringDropShadows = []
-        self.__textGen = TextNode("ringGame")
+        self.__textGen = TextNode('ringGame')
         self.__textGen.setFont(ToontownGlobals.getSignFont())
         self.__textGen.setAlign(TextNode.ACenter)
 
     def unload(self):
-        self.notify.debug("unload")
+        self.notify.debug('unload')
         DistributedMinigame.unload(self)
         del self.__textGen
         del self.toonDropShadows
@@ -135,12 +121,12 @@ class DistributedRingGame(DistributedMinigame):
         del self.gameFSM
 
     def onstage(self):
-        self.notify.debug("onstage")
+        self.notify.debug('onstage')
         DistributedMinigame.onstage(self)
         self.arrowKeys = ArrowKeys.ArrowKeys()
         toon = base.localAvatar
         toon.reparentTo(render)
-        toon.setAnimState("swim", 1.0)
+        toon.setAnimState('swim', 1.0)
         toon.stopBobSwimTask()
         toon.useLOD(self.TOON_LOD)
         self.__placeToon(self.localAvId)
@@ -148,51 +134,41 @@ class DistributedRingGame(DistributedMinigame):
         camera.reparentTo(render)
         camera.reparentTo(base.localAvatar)
         camera.setPosHpr(0, self.CAMERA_Y + self.TOON_Y, 0, 0, 0, 0)
-        base.camLens.setMinFov(80 / (4.0 / 3.0))
+        base.camLens.setMinFov(80 / (4. / 3.))
         base.camLens.setFar(self.FAR_PLANE_DIST)
         base.setBackgroundColor(self.WATER_COLOR)
-        self.__fog = Fog("ringGameFog")
+        self.__fog = Fog('ringGameFog')
         if base.wantFog:
             self.__fog.setColor(self.WATER_COLOR)
             self.__fog.setLinearRange(0.1, self.FAR_PLANE_DIST - 1.0)
             render.setFog(self.__fog)
-        self.environNode = render.attachNewNode("environNode")
+        self.environNode = render.attachNewNode('environNode')
         self.environBlocks = []
         for i in range(0, 2):
-            instance = self.environModel.instanceUnderNode(self.environNode, "model")
+            instance = self.environModel.instanceUnderNode(self.environNode, 'model')
             y = self.ENVIRON_LENGTH * i
             instance.setY(y)
             self.environBlocks.append(instance)
             for j in range(0, 2):
-                instance = self.environModel.instanceUnderNode(
-                    self.environNode, "blocks"
-                )
+                instance = self.environModel.instanceUnderNode(self.environNode, 'blocks')
                 x = self.ENVIRON_LENGTH * (j + 1)
                 instance.setY(y)
                 instance.setX(-x)
                 self.environBlocks.append(instance)
 
             for j in range(0, 2):
-                instance = self.environModel.instanceUnderNode(
-                    self.environNode, "blocks"
-                )
+                instance = self.environModel.instanceUnderNode(self.environNode, 'blocks')
                 x = self.ENVIRON_LENGTH * (j + 1)
                 instance.setY(y)
                 instance.setX(x)
                 self.environBlocks.append(instance)
 
-        self.ringNode = render.attachNewNode("ringNode")
-        self.sndTable = {
-            "gotRing": [None] * self.numPlayers,
-            "missedRing": [None] * self.numPlayers,
-        }
+        self.ringNode = render.attachNewNode('ringNode')
+        self.sndTable = {'gotRing': [None] * self.numPlayers,
+         'missedRing': [None] * self.numPlayers}
         for i in range(0, self.numPlayers):
-            self.sndTable["gotRing"][i] = base.loader.loadSfx(
-                "phase_4/audio/sfx/ring_get.ogg"
-            )
-            self.sndTable["missedRing"][i] = base.loader.loadSfx(
-                "phase_4/audio/sfx/ring_miss.ogg"
-            )
+            self.sndTable['gotRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_get.ogg')
+            self.sndTable['missedRing'][i] = base.loader.loadSfx('phase_4/audio/sfx/ring_miss.ogg')
 
         self.__addToonDropShadow(self.getAvatar(self.localAvId))
         self.__spawnUpdateEnvironTask()
@@ -203,7 +179,7 @@ class DistributedRingGame(DistributedMinigame):
         return
 
     def offstage(self):
-        self.notify.debug("offstage")
+        self.notify.debug('offstage')
         DistributedMinigame.offstage(self)
         self.music.stop()
         if None != self.sndAmbience:
@@ -215,7 +191,7 @@ class DistributedRingGame(DistributedMinigame):
         self.__removeAllToonDropShadows()
         render.clearFog()
         base.camLens.setFar(ToontownGlobals.DefaultCameraFar)
-        base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov / (4.0 / 3.0))
+        base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov / (4. / 3.))
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         self.arrowKeys.destroy()
         del self.arrowKeys
@@ -231,13 +207,13 @@ class DistributedRingGame(DistributedMinigame):
             if av:
                 av.dropShadow.show()
                 av.resetLOD()
-                av.setAnimState("neutral", 1.0)
+                av.setAnimState('neutral', 1.0)
 
         return
 
     def handleDisabledAvatar(self, avId):
-        self.notify.debug("handleDisabledAvatar")
-        self.notify.debug("avatar " + str(avId) + " disabled")
+        self.notify.debug('handleDisabledAvatar')
+        self.notify.debug('avatar ' + str(avId) + ' disabled')
         self.__removeToonDropShadow(self.remoteToons[avId])
         DistributedMinigame.handleDisabledAvatar(self, avId)
 
@@ -256,13 +232,13 @@ class DistributedRingGame(DistributedMinigame):
     def setGameReady(self):
         if not self.hasLocalToon:
             return
-        self.notify.debug("setGameReady")
+        self.notify.debug('setGameReady')
         if DistributedMinigame.setGameReady(self):
             return
         if not self.isSinglePlayer():
             base.localAvatar.collisionsOff()
             cSphere = CollisionSphere(0.0, 0.0, 0.0, RingGameGlobals.CollisionRadius)
-            cSphereNode = CollisionNode("RingGameSphere-%s" % self.localAvId)
+            cSphereNode = CollisionNode('RingGameSphere-%s' % self.localAvId)
             cSphereNode.addSolid(cSphere)
             cSphereNode.setFromCollideMask(RingGameGlobals.CollideMask)
             cSphereNode.setIntoCollideMask(BitMask32.allOff())
@@ -270,16 +246,14 @@ class DistributedRingGame(DistributedMinigame):
             self.pusher = CollisionHandlerPusher()
             self.pusher.addCollider(self.cSphereNodePath, base.localAvatar)
             self.pusher.setHorizontal(0)
-            self.cTrav = CollisionTraverser("DistributedRingGame")
+            self.cTrav = CollisionTraverser('DistributedRingGame')
             self.cTrav.addCollider(self.cSphereNodePath, self.pusher)
             self.remoteToonCollNPs = {}
             for avId in self.remoteAvIdList:
                 toon = self.getAvatar(avId)
                 if toon:
-                    cSphere = CollisionSphere(
-                        0.0, 0.0, 0.0, RingGameGlobals.CollisionRadius
-                    )
-                    cSphereNode = CollisionNode("RingGameSphere-%s" % avId)
+                    cSphere = CollisionSphere(0.0, 0.0, 0.0, RingGameGlobals.CollisionRadius)
+                    cSphereNode = CollisionNode('RingGameSphere-%s' % avId)
                     cSphereNode.addSolid(cSphere)
                     cSphereNode.setCollideMask(RingGameGlobals.CollideMask)
                     cSphereNP = toon.attachNewNode(cSphereNode)
@@ -290,7 +264,7 @@ class DistributedRingGame(DistributedMinigame):
             if toon:
                 toon.reparentTo(render)
                 self.__placeToon(avId)
-                toon.setAnimState("swim", 1.0)
+                toon.setAnimState('swim', 1.0)
                 toon.stopBobSwimTask()
                 toon.useLOD(self.TOON_LOD)
                 toon.dropShadow.hide()
@@ -307,19 +281,19 @@ class DistributedRingGame(DistributedMinigame):
     def setGameStart(self, timestamp):
         if not self.hasLocalToon:
             return
-        self.notify.debug("setGameStart")
+        self.notify.debug('setGameStart')
         DistributedMinigame.setGameStart(self, timestamp)
-        self.gameFSM.request("swim")
+        self.gameFSM.request('swim')
         base.playMusic(self.music, looping=0, volume=0.8)
 
     def enterOff(self):
-        self.notify.debug("enterOff")
+        self.notify.debug('enterOff')
 
     def exitOff(self):
         pass
 
     def enterSwim(self):
-        self.notify.debug("enterSwim")
+        self.notify.debug('enterSwim')
         self.__ringTimeBase = self.gameStartTime
         self.__numRingGroups = RingGameGlobals.NUM_RING_GROUPS
         self.__ringGroupsPassed = 0
@@ -338,7 +312,7 @@ class DistributedRingGame(DistributedMinigame):
         self.__initTallyDisplay()
 
     def __initTallyDisplay(self):
-        self.__tallyTextNode = TextNode("tally")
+        self.__tallyTextNode = TextNode('tally')
         self.__tallyTextNode.setFont(ToontownGlobals.getSignFont())
         self.__tallyTextNode.setAlign(TextNode.ACenter)
         self.tallyMarkers = [None] * self.__numRingGroups
@@ -355,13 +329,11 @@ class DistributedRingGame(DistributedMinigame):
         del self.__tallyTextNode
 
     def __createTallyMarker(self, index, result):
-        chars = "-OOX"
-        colors = (
-            Point4(0.8, 0.8, 0.8, 1),
-            Point4(0, 1, 0, 1),
-            Point4(1, 1, 0, 1),
-            Point4(1, 0, 0, 1),
-        )
+        chars = '-OOX'
+        colors = (Point4(0.8, 0.8, 0.8, 1),
+         Point4(0, 1, 0, 1),
+         Point4(1, 1, 0, 1),
+         Point4(1, 0, 0, 1))
         self.__deleteTallyMarker(index)
         self.__tallyTextNode.setText(chars[result])
         node = self.__tallyTextNode.generate()
@@ -387,79 +359,172 @@ class DistributedRingGame(DistributedMinigame):
 
     def __generateRings(self):
         self.ringGroups = []
-        difficultyDistributions = {
-            ToontownGlobals.ToonIslandCentral: [14, 2, 0],
-            ToontownGlobals.RainbowRise: [10, 6, 0],
-            ToontownGlobals.WitheringWoods: [4, 12, 0],
-            ToontownGlobals.OliveOasis: [4, 8, 4],
-            ToontownGlobals.CirrusCircus: [4, 6, 6],
-            ToontownGlobals.MintyMines: [2, 6, 8],
-        }
+        difficultyDistributions = {ToontownGlobals.ToonIslandCentral: [14, 2, 0],
+         ToontownGlobals.RainbowRise: [10, 6, 0],
+         ToontownGlobals.WitheringWoods: [4, 12, 0],
+         ToontownGlobals.OliveOasis: [4, 8, 4],
+         ToontownGlobals.CirrusCircus: [4, 6, 6],
+         ToontownGlobals.MintyMines: [2, 6, 8]}
         for distr in list(difficultyDistributions.values()):
             sum = reduce(lambda x, y: x + y, distr)
 
-        difficultyPatterns = {
-            ToontownGlobals.ToonIslandCentral: [
-                [0] * 14 + [1] * 2 + [2] * 0,
-                [0, 0, 0, 0, 0, 0, 0, 1] * 2,
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-            ],
-            ToontownGlobals.RainbowRise: [
-                [0] * 10 + [1] * 6 + [2] * 0,
-                [0, 0, 0, 0, 0, 1, 1, 1] * 2,
-                [0, 0, 0, 1, 0, 0, 1, 1] * 2,
-            ],
-            ToontownGlobals.WitheringWoods: [
-                [0] * 4 + [1] * 12 + [2] * 0,
-                [0, 0, 1, 1, 1, 1, 1, 1] * 2,
-                [0, 1, 1, 1, 0, 1, 1, 1] * 2,
-            ],
-            ToontownGlobals.OliveOasis: [
-                [0] * 4 + [1] * 8 + [2] * 4,
-                [0, 0, 1, 1, 1, 1, 2, 2] * 2,
-                [0, 1, 1, 1, 1, 0, 2, 2] * 2,
-                [0, 1, 1, 2, 0, 1, 1, 2] * 2,
-                [0, 1, 2, 1, 0, 1, 2, 1] * 2,
-            ],
-            ToontownGlobals.CirrusCircus: [
-                [0] * 4 + [1] * 6 + [2] * 6,
-                [0, 0, 1, 1, 1, 2, 2, 2] * 2,
-                [0, 1, 1, 1, 0, 2, 2, 2] * 2,
-                [0, 1, 1, 2, 0, 1, 2, 2] * 2,
-                [0, 1, 2, 1, 0, 1, 2, 2] * 2,
-            ],
-            ToontownGlobals.MintyMines: [
-                [0] * 2 + [1] * 6 + [2] * 8,
-                [0, 1, 1, 1, 2, 2, 2, 2] * 2,
-                [0, 1, 1, 2, 2, 1, 2, 2] * 2,
-                [0, 1, 2, 1, 2, 1, 2, 2] * 2,
-            ],
-        }
+        difficultyPatterns = {ToontownGlobals.ToonIslandCentral: [[0] * 14 + [1] * 2 + [2] * 0, [0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            1] * 2, [0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            1]],
+         ToontownGlobals.RainbowRise: [[0] * 10 + [1] * 6 + [2] * 0, [0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1,
+                                        1,
+                                        1] * 2, [0,
+                                        0,
+                                        0,
+                                        1,
+                                        0,
+                                        0,
+                                        1,
+                                        1] * 2],
+         ToontownGlobals.WitheringWoods: [[0] * 4 + [1] * 12 + [2] * 0, [0,
+                                         0,
+                                         1,
+                                         1,
+                                         1,
+                                         1,
+                                         1,
+                                         1] * 2, [0,
+                                         1,
+                                         1,
+                                         1,
+                                         0,
+                                         1,
+                                         1,
+                                         1] * 2],
+         ToontownGlobals.OliveOasis: [[0] * 4 + [1] * 8 + [2] * 4,
+                                             [0,
+                                              0,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              2,
+                                              2] * 2,
+                                             [0,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              0,
+                                              2,
+                                              2] * 2,
+                                             [0,
+                                              1,
+                                              1,
+                                              2,
+                                              0,
+                                              1,
+                                              1,
+                                              2] * 2,
+                                             [0,
+                                              1,
+                                              2,
+                                              1,
+                                              0,
+                                              1,
+                                              2,
+                                              1] * 2],
+         ToontownGlobals.CirrusCircus: [[0] * 4 + [1] * 6 + [2] * 6,
+                                     [0,
+                                      0,
+                                      1,
+                                      1,
+                                      1,
+                                      2,
+                                      2,
+                                      2] * 2,
+                                     [0,
+                                      1,
+                                      1,
+                                      1,
+                                      0,
+                                      2,
+                                      2,
+                                      2] * 2,
+                                     [0,
+                                      1,
+                                      1,
+                                      2,
+                                      0,
+                                      1,
+                                      2,
+                                      2] * 2,
+                                     [0,
+                                      1,
+                                      2,
+                                      1,
+                                      0,
+                                      1,
+                                      2,
+                                      2] * 2],
+         ToontownGlobals.MintyMines: [[0] * 2 + [1] * 6 + [2] * 8,
+                                            [0,
+                                             1,
+                                             1,
+                                             1,
+                                             2,
+                                             2,
+                                             2,
+                                             2] * 2,
+                                            [0,
+                                             1,
+                                             1,
+                                             2,
+                                             2,
+                                             1,
+                                             2,
+                                             2] * 2,
+                                            [0,
+                                             1,
+                                             2,
+                                             1,
+                                             2,
+                                             1,
+                                             2,
+                                             2] * 2]}
         safezone = self.getSafezoneId()
         numGroupsPerDifficulty = difficultyDistributions[safezone]
 
-        def patternsAreValid(
-            difficultyPatterns=difficultyPatterns,
-            difficultyDistributions=difficultyDistributions,
-        ):
+        def patternsAreValid(difficultyPatterns = difficultyPatterns, difficultyDistributions = difficultyDistributions):
             for sz in list(difficultyPatterns.keys()):
                 for pattern in difficultyPatterns[sz]:
                     for difficulty in [0, 1, 2]:
                         numGroupsPerDifficulty = difficultyDistributions[sz]
-                        if numGroupsPerDifficulty[difficulty] != pattern.count(
-                            difficulty
-                        ):
-                            print("safezone:", sz)
-                            print("pattern:", pattern)
-                            print("difficulty:", difficulty)
-                            print(
-                                "expected %s %ss, found %s"
-                                % (
-                                    numGroupsPerDifficulty[difficulty],
-                                    difficulty,
-                                    pattern.count(difficulty),
-                                )
-                            )
+                        if numGroupsPerDifficulty[difficulty] != pattern.count(difficulty):
+                            print('safezone:', sz)
+                            print('pattern:', pattern)
+                            print('difficulty:', difficulty)
+                            print('expected %s %ss, found %s' % (numGroupsPerDifficulty[difficulty], difficulty, pattern.count(difficulty)))
                             return 0
 
             return 1
@@ -467,23 +532,14 @@ class DistributedRingGame(DistributedMinigame):
         pattern = self.randomNumGen.choice(difficultyPatterns[self.getSafezoneId()])
         for i in range(0, self.__numRingGroups):
             numRings = self.numPlayers
-            trackGroup = RingTrackGroups.getRandomRingTrackGroup(
-                pattern[i], numRings, self.randomNumGen
-            )
-            ringGroup = RingGroup.RingGroup(
-                trackGroup,
-                self.ringModel,
-                RingGameGlobals.MAX_TOONXZ,
-                self.colorIndices,
-            )
+            trackGroup = RingTrackGroups.getRandomRingTrackGroup(pattern[i], numRings, self.randomNumGen)
+            ringGroup = RingGroup.RingGroup(trackGroup, self.ringModel, RingGameGlobals.MAX_TOONXZ, self.colorIndices)
             for r in range(numRings):
                 self.__addRingDropShadow(ringGroup.getRing(r))
 
             self.ringGroups.append(ringGroup)
             ringGroup.reparentTo(self.ringNode)
-            firstGroupOffset = (
-                self.TOON_Y + self.T_FIRST_RING_GROUP_ARRIVES * self.TOON_SWIM_VEL
-            )
+            firstGroupOffset = self.TOON_Y + self.T_FIRST_RING_GROUP_ARRIVES * self.TOON_SWIM_VEL
             ringGroup.setY(i * self.RING_GROUP_SPACING + firstGroupOffset)
 
     def __destroyRings(self):
@@ -542,7 +598,7 @@ class DistributedRingGame(DistributedMinigame):
         if pos[2] > RingGameGlobals.MAX_TOONXZ:
             pos[2] = RingGameGlobals.MAX_TOONXZ
         self.getAvatar(self.localAvId).setPos(pos[0], self.TOON_Y, pos[2])
-        if hasattr(self, "cTrav"):
+        if hasattr(self, 'cTrav'):
             self.cTrav.traverse(render)
         self.__posBroadcast(dt)
         return Task.cont
@@ -562,7 +618,7 @@ class DistributedRingGame(DistributedMinigame):
         self.__destroyRings()
 
     def enterCleanup(self):
-        self.notify.debug("enterCleanup")
+        self.notify.debug('enterCleanup')
         if not self.isSinglePlayer():
             for np in list(self.remoteToonCollNPs.values()):
                 np.removeNode()
@@ -591,9 +647,7 @@ class DistributedRingGame(DistributedMinigame):
                 list.pop(i)
                 return
 
-        self.notify.warning(
-            "parent object " + str(object) + " not found in drop shadow list!"
-        )
+        self.notify.warning('parent object ' + str(object) + ' not found in drop shadow list!')
 
     def __addToonDropShadow(self, object):
         self.__addDropShadow_INTERNAL(object, 0.5, 0.5, 0.5, self.toonDropShadows)
@@ -621,11 +675,7 @@ class DistributedRingGame(DistributedMinigame):
 
     def __spawnUpdateShadowsTask(self):
         taskMgr.remove(self.UPDATE_SHADOWS_TASK)
-        taskMgr.add(
-            self.__updateShadowsTask,
-            self.UPDATE_SHADOWS_TASK,
-            priority=self.UPDATE_SHADOWS_PRIORITY,
-        )
+        taskMgr.add(self.__updateShadowsTask, self.UPDATE_SHADOWS_TASK, priority=self.UPDATE_SHADOWS_PRIORITY)
 
     def __killUpdateShadowsTask(self):
         taskMgr.remove(self.UPDATE_SHADOWS_TASK)
@@ -680,11 +730,7 @@ class DistributedRingGame(DistributedMinigame):
     def __spawnCollisionDetectionTask(self):
         self.__ringGroupsPassed = 0
         taskMgr.remove(self.COLLISION_DETECTION_TASK)
-        taskMgr.add(
-            self.__collisionDetectionTask,
-            self.COLLISION_DETECTION_TASK,
-            priority=self.COLLISION_DETECTION_PRIORITY,
-        )
+        taskMgr.add(self.__collisionDetectionTask, self.COLLISION_DETECTION_TASK, priority=self.COLLISION_DETECTION_PRIORITY)
 
     def __killCollisionDetectionTask(self):
         taskMgr.remove(self.COLLISION_DETECTION_TASK)
@@ -694,40 +740,17 @@ class DistributedRingGame(DistributedMinigame):
         dFade = 0.5 * duration
         dColorChange = duration - dFade
         origColor = ring.getColor()
-        targetColor = Point4(
-            1.0 - origColor[0], 1.0 - origColor[1], 1.0 - origColor[2], 1
-        )
+        targetColor = Point4(1.0 - origColor[0], 1.0 - origColor[1], 1.0 - origColor[2], 1)
 
-        def colorChangeFunc(t, ring=ring, targetColor=targetColor, origColor=origColor):
+        def colorChangeFunc(t, ring = ring, targetColor = targetColor, origColor = origColor):
             newColor = targetColor * t + origColor * (1.0 - t)
             ring.setColor(newColor)
 
-        def fadeFunc(t, ring=ring):
+        def fadeFunc(t, ring = ring):
             ring.setColorScale(1, 1, 1, 1.0 - t)
 
-        fadeAwayTrack = Parallel(
-            Sequence(
-                LerpFunctionInterval(
-                    colorChangeFunc, fromData=0.0, toData=1.0, duration=dColorChange
-                ),
-                LerpFunctionInterval(
-                    fadeFunc, fromData=0.0, toData=1.0, duration=dFade
-                ),
-            ),
-            LerpScaleInterval(ring, duration, targetScale),
-        )
-        successTrack = Sequence(
-            Wait(self.RING_RESPONSE_DELAY),
-            Parallel(
-                SoundInterval(self.sndTable["gotRing"][ringIndex]),
-                Sequence(
-                    Func(ring.wrtReparentTo, render),
-                    fadeAwayTrack,
-                    Func(self.__removeRingDropShadow, ring),
-                    Func(ring.reparentTo, hidden),
-                ),
-            ),
-        )
+        fadeAwayTrack = Parallel(Sequence(LerpFunctionInterval(colorChangeFunc, fromData=0.0, toData=1.0, duration=dColorChange), LerpFunctionInterval(fadeFunc, fromData=0.0, toData=1.0, duration=dFade)), LerpScaleInterval(ring, duration, targetScale))
+        successTrack = Sequence(Wait(self.RING_RESPONSE_DELAY), Parallel(SoundInterval(self.sndTable['gotRing'][ringIndex]), Sequence(Func(ring.wrtReparentTo, render), fadeAwayTrack, Func(self.__removeRingDropShadow, ring), Func(ring.reparentTo, hidden))))
         return successTrack
 
     def __makeRingFailureFadeTrack(self, ring, duration, ringIndex):
@@ -737,30 +760,17 @@ class DistributedRingGame(DistributedMinigame):
         missedText = hidden.attachNewNode(missedTextNode)
         ringColor = RingGameGlobals.ringColors[self.colorIndices[ringIndex]][1]
 
-        def addMissedText(ring=ring, ringColor=ringColor, missedText=missedText):
+        def addMissedText(ring = ring, ringColor = ringColor, missedText = missedText):
             missedText.reparentTo(render)
             missedText.setPos(ring.getPos(render) + Point3(0, -1, 0))
             missedText.setColor(ringColor)
 
-        def removeMissedText(missedText=missedText):
+        def removeMissedText(missedText = missedText):
             missedText.removeNode()
             missedText = None
             return
 
-        failureTrack = Sequence(
-            Wait(self.RING_RESPONSE_DELAY),
-            Parallel(
-                SoundInterval(self.sndTable["missedRing"][ringIndex]),
-                Sequence(
-                    Func(ring.wrtReparentTo, render),
-                    Func(addMissedText),
-                    LerpScaleInterval(ring, duration, targetScale, blendType="easeIn"),
-                    Func(removeMissedText),
-                    Func(self.__removeRingDropShadow, ring),
-                    Func(ring.reparentTo, hidden),
-                ),
-            ),
-        )
+        failureTrack = Sequence(Wait(self.RING_RESPONSE_DELAY), Parallel(SoundInterval(self.sndTable['missedRing'][ringIndex]), Sequence(Func(ring.wrtReparentTo, render), Func(addMissedText), LerpScaleInterval(ring, duration, targetScale, blendType='easeIn'), Func(removeMissedText), Func(self.__removeRingDropShadow, ring), Func(ring.reparentTo, hidden))))
         return failureTrack
 
     def __makeRingFadeAway(self, ring, success, ringIndex):
@@ -785,15 +795,13 @@ class DistributedRingGame(DistributedMinigame):
             distSqrd = distX * distX + distZ * distZ
             if distSqrd <= self.RING_RADIUS_SQRD:
                 gotRing = 1
-            self.__makeRingFadeAway(
-                ourRing, gotRing, self.avIdList.index(self.localAvId)
-            )
+            self.__makeRingFadeAway(ourRing, gotRing, self.avIdList.index(self.localAvId))
             if gotRing:
                 self.resultTable[groupIndex] = self.RT_SUCCESS
             else:
                 self.resultTable[groupIndex] = self.RT_FAILURE
             self.__updateTallyDisplay(groupIndex)
-            self.sendUpdate("setToonGotRing", [gotRing])
+            self.sendUpdate('setToonGotRing', [gotRing])
             if self.isSinglePlayer():
                 self.__processRingGroupResults([gotRing])
             self.__ringGroupsPassed += 1
@@ -813,12 +821,14 @@ class DistributedRingGame(DistributedMinigame):
     def setColorIndices(self, a, b, c, d):
         if not self.hasLocalToon:
             return
-        self.colorIndices = [a, b, c, d]
+        self.colorIndices = [a,
+         b,
+         c,
+         d]
 
     def __getSuccessTrack(self, groupIndex):
-        def makeSuccessTrack(
-            text, holdDuration, fadeDuration=0.5, perfect=0, self=self
-        ):
+
+        def makeSuccessTrack(text, holdDuration, fadeDuration = 0.5, perfect = 0, self = self):
             successText = hidden.attachNewNode(self.__genText(text))
             successText.setScale(0.25)
             successText.setColor(1, 1, 0.5, 1)
@@ -831,19 +841,7 @@ class DistributedRingGame(DistributedMinigame):
                 text = None
                 return
 
-            track = Sequence(
-                Func(successText.reparentTo, aspect2d),
-                Wait(holdDuration),
-                LerpFunctionInterval(
-                    fadeFunc,
-                    extraArgs=[successText],
-                    fromData=0.0,
-                    toData=1.0,
-                    duration=fadeDuration,
-                    blendType="easeIn",
-                ),
-                Func(destroyText, successText),
-            )
+            track = Sequence(Func(successText.reparentTo, aspect2d), Wait(holdDuration), LerpFunctionInterval(fadeFunc, extraArgs=[successText], fromData=0.0, toData=1.0, duration=fadeDuration, blendType='easeIn'), Func(destroyText, successText))
             if perfect:
                 track = Parallel(track, SoundInterval(self.sndPerfect))
             return track
@@ -858,17 +856,13 @@ class DistributedRingGame(DistributedMinigame):
         if groupIndex >= self.__numRingGroups - 1:
             if not self.isSinglePlayer():
                 if isPerfect(self.resultTable, [self.RT_GROUPSUCCESS]):
-                    return makeSuccessTrack(
-                        TTLocalizer.RingGameGroupPerfect, 1.5, perfect=1
-                    )
+                    return makeSuccessTrack(TTLocalizer.RingGameGroupPerfect, 1.5, perfect=1)
             if isPerfect(self.resultTable, [self.RT_SUCCESS, self.RT_GROUPSUCCESS]):
                 return makeSuccessTrack(TTLocalizer.RingGamePerfect, 1.5, perfect=1)
             return Wait(1.0)
         if not self.isSinglePlayer():
             if self.resultTable[groupIndex] == self.RT_GROUPSUCCESS:
-                return makeSuccessTrack(
-                    TTLocalizer.RingGameGroupBonus, 0.0, fadeDuration=0.4
-                )
+                return makeSuccessTrack(TTLocalizer.RingGameGroupBonus, 0.0, fadeDuration=0.4)
         return None
 
     def __processRingGroupResults(self, results):
@@ -882,20 +876,16 @@ class DistributedRingGame(DistributedMinigame):
 
         if not self.isSinglePlayer():
             if 0 not in results:
-                self.notify.debug("Everyone got their rings!!")
+                self.notify.debug('Everyone got their rings!!')
                 self.resultTable[groupIndex] = self.RT_GROUPSUCCESS
                 self.__updateTallyDisplay(groupIndex)
         successTrack = self.__getSuccessTrack(groupIndex)
         endGameTrack = None
         if groupIndex >= self.__numRingGroups - 1:
 
-            def endTheGame(self=self):
+            def endTheGame(self = self):
                 if not RingGameGlobals.ENDLESS_GAME:
-                    taskMgr.doMethodLater(
-                        self.GAME_END_DELAY,
-                        self.__endGameDolater,
-                        self.END_GAME_WAIT_TASK,
-                    )
+                    taskMgr.doMethodLater(self.GAME_END_DELAY, self.__endGameDolater, self.END_GAME_WAIT_TASK)
 
             endGameTrack = Func(endTheGame)
         if None != successTrack or None != endGameTrack:
@@ -912,7 +902,7 @@ class DistributedRingGame(DistributedMinigame):
     def setRingGroupResults(self, bitfield):
         if not self.hasLocalToon:
             return
-        if self.gameFSM.getCurrentState().getName() != "swim":
+        if self.gameFSM.getCurrentState().getName() != 'swim':
             return
         results = []
         mask = 1

@@ -3,12 +3,10 @@ from direct.distributed import ClockDelta
 from direct.task import Task
 import random
 
-
 class LaserGameMineSweeper(LaserGameBase.LaserGameBase):
+
     def __init__(self, funcSuccess, funcFail, funcSendGrid, funcSetGrid):
-        LaserGameBase.LaserGameBase.__init__(
-            self, funcSuccess, funcFail, funcSendGrid, funcSetGrid
-        )
+        LaserGameBase.LaserGameBase.__init__(self, funcSuccess, funcFail, funcSendGrid, funcSetGrid)
         self.setGridSize(7, 7)
         self.blankGrid()
 
@@ -30,7 +28,8 @@ class LaserGameMineSweeper(LaserGameBase.LaserGameBase):
         LaserGameBase.LaserGameBase.startGrid(self)
         self.hiddenData = []
         for i in range(0, self.gridNumX):
-            self.hiddenData.append([0] * self.gridNumY)
+            self.hiddenData.append([
+                0] * self.gridNumY)
 
         numBombs = int(self.gridNumX * self.gridNumY / 8)
         numBombs += 1
@@ -41,11 +40,7 @@ class LaserGameMineSweeper(LaserGameBase.LaserGameBase):
                 sanity -= 1
                 column = random.randint(0, self.gridNumX - 1)
                 row = random.randint(1, self.gridNumY - 1)
-                if (
-                    self.hiddenData[column][row] != 12
-                    and self.neighborSum(column, row) < 2
-                    and self.rowSum(row) < numBombs / 3
-                ):
+                if self.hiddenData[column][row] != 12 and self.neighborSum(column, row) < 2 and self.rowSum(row) < numBombs / 3:
                     self.hiddenData[column][row] = 12
                     bomb += 1
 
@@ -56,7 +51,7 @@ class LaserGameMineSweeper(LaserGameBase.LaserGameBase):
                 else:
                     self.gridData[column][row] = 10
 
-    def hit(self, hitX, hitY, oldx=-1, oldy=-1):
+    def hit(self, hitX, hitY, oldx = -1, oldy = -1):
         if self.finshed:
             return
 
@@ -71,7 +66,7 @@ class LaserGameMineSweeper(LaserGameBase.LaserGameBase):
             for row in range(0, self.gridNumY):
                 self.neighborReveal(column, row, 1)
 
-    def neighborReveal(self, hitX, hitY, showBomb=0):
+    def neighborReveal(self, hitX, hitY, showBomb = 0):
         if showBomb and self.gridData[hitX][hitY] == 11:
             self.gridData[hitX][hitY] = 12
 

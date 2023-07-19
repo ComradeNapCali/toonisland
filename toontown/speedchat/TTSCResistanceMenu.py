@@ -4,11 +4,11 @@ from otp.speedchat.SCMenuHolder import SCMenuHolder
 from toontown.chat import ResistanceChat
 from .TTSCResistanceTerminal import TTSCResistanceTerminal
 
-
 class TTSCResistanceMenu(SCMenu):
+
     def __init__(self):
         SCMenu.__init__(self)
-        self.accept("resistanceMessagesChanged", self.__resistanceMessagesChanged)
+        self.accept('resistanceMessagesChanged', self.__resistanceMessagesChanged)
         self.__resistanceMessagesChanged()
         submenus = []
 

@@ -2,9 +2,8 @@ from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from direct.task import Task
 
-
 def acquirePetManager():
-    if not hasattr(base, "petManager"):
+    if not hasattr(base, 'petManager'):
         PetManager()
     base.petManager.incRefCount()
 
@@ -14,17 +13,13 @@ def releasePetManager():
 
 
 class PetManager:
-    CollTaskName = "petFloorCollisions"
+    CollTaskName = 'petFloorCollisions'
 
     def __init__(self):
         base.petManager = self
         self.refCount = 0
-        self.cTrav = CollisionTraverser("petFloorCollisions")
-        taskMgr.add(
-            self._doCollisions,
-            PetManager.CollTaskName,
-            priority=ToontownGlobals.PetFloorCollPriority,
-        )
+        self.cTrav = CollisionTraverser('petFloorCollisions')
+        taskMgr.add(self._doCollisions, PetManager.CollTaskName, priority=ToontownGlobals.PetFloorCollPriority)
 
     def _destroy(self):
         taskMgr.remove(PetManager.CollTaskName)

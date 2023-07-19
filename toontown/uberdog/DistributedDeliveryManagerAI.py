@@ -5,7 +5,7 @@ from toontown.catalog import CatalogItem
 
 
 class DistributedDeliveryManagerAI(DistributedObjectGlobalAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDeliveryManagerAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedDeliveryManagerAI')
 
     def sendDeliverGifts(self, avId, now):
         if not avId:
@@ -16,11 +16,5 @@ class DistributedDeliveryManagerAI(DistributedObjectGlobalAI):
             return
 
         _, remainingGifts = av.onGiftOrder.extractDeliveryItems(now)
-        av.sendUpdate(
-            "setGiftSchedule",
-            [
-                remainingGifts.getBlob(
-                    store=CatalogItem.Customization | CatalogItem.DeliveryDate
-                )
-            ],
-        )
+        av.sendUpdate('setGiftSchedule',
+                      [remainingGifts.getBlob(store=CatalogItem.Customization | CatalogItem.DeliveryDate)])

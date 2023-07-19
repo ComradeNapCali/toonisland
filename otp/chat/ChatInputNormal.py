@@ -19,18 +19,19 @@ class ChatInputNormal(DirectObject.DirectObject):
         wantHistory = 0
         if __dev__:
             wantHistory = 1
-        self.wantHistory = base.config.GetBool("want-chat-history", wantHistory)
-        self.history = [""]
-        self.historySize = base.config.GetInt("chat-history-size", 10)
+        self.wantHistory = base.config.GetBool(
+            'want-chat-history', wantHistory)
+        self.history = ['']
+        self.historySize = base.config.GetInt('chat-history-size', 10)
         self.historyIndex = 0
         return
 
     def typeCallback(self, extraArgs):
-        messenger.send("enterNormalChat")
+        messenger.send('enterNormalChat')
 
     def delete(self):
-        self.ignore("arrow_up-up")
-        self.ignore("arrow_down-up")
+        self.ignore('arrow_up-up')
+        self.ignore('arrow_down-up')
         self.chatFrame.destroy()
         del self.chatFrame
         del self.chatButton
@@ -43,41 +44,38 @@ class ChatInputNormal(DirectObject.DirectObject):
         self.toPlayer = toPlayer
         self.whisperAvatarId = whisperAvatarId
         self.whisperAvatarName = base.talkAssistant.findName(
-            self.whisperAvatarId, self.toPlayer
-        )
+            self.whisperAvatarId, self.toPlayer)
         if self.whisperAvatarId:
             self.chatFrame.setPos(self.whisperPos)
-            self.whisperLabel["text"] = (
-                OTPLocalizer.ChatInputWhisperLabel % self.whisperAvatarName
-            )
+            self.whisperLabel['text'] = OTPLocalizer.ChatInputWhisperLabel % self.whisperAvatarName
             self.whisperLabel.show()
         else:
             self.chatFrame.setPos(self.normalPos)
             self.whisperLabel.hide()
-        self.chatEntry["focus"] = 1
+        self.chatEntry['focus'] = 1
         self.chatFrame.show()
         if self.wantHistory:
-            self.accept("arrow_up-up", self.getPrevHistory)
-            self.accept("arrow_down-up", self.getNextHistory)
+            self.accept('arrow_up-up', self.getPrevHistory)
+            self.accept('arrow_down-up', self.getNextHistory)
 
     def deactivate(self):
-        self.chatEntry.set("")
-        self.chatEntry["focus"] = 0
+        self.chatEntry.set('')
+        self.chatEntry['focus'] = 0
         self.chatFrame.hide()
         self.whisperLabel.hide()
         base.win.closeIme()
-        self.ignore("arrow_up-up")
-        self.ignore("arrow_down-up")
+        self.ignore('arrow_up-up')
+        self.ignore('arrow_down-up')
 
     def checkForOverRide(self):
         return False
 
     def sendChat(self, text):
         if self.checkForOverRide():
-            self.chatEntry.enterText("")
+            self.chatEntry.enterText('')
             return
         self.deactivate()
-        self.chatMgr.fsm.request("mainMenu")
+        self.chatMgr.fsm.request('mainMenu')
         if text:
             if self.toPlayer:
                 if self.whisperAvatarId:
@@ -90,9 +88,10 @@ class ChatInputNormal(DirectObject.DirectObject):
                 self.whisperAvatarId = None
             else:
                 if self.chatMgr.execChat:
-                    if text[0] == ">":
+                    if text[0] == '>':
                         text = self.__execMessage(text[1:])
-                        base.localAvatar.setChatAbsolute(text, CFSpeech | CFTimeout)
+                        base.localAvatar.setChatAbsolute(
+                            text, CFSpeech | CFTimeout)
                         return
                 base.talkAssistant.sendOpenTalk(text)
                 if self.wantHistory:
@@ -105,18 +104,19 @@ class ChatInputNormal(DirectObject.DirectObject):
     def __execMessage(self, message):
         if not ChatInputNormal.ExecNamespace:
             ChatInputNormal.ExecNamespace = {}
-            exec("from panda3d.core import *", globals(), self.ExecNamespace)
+            exec('from panda3d.core import *', globals(), self.ExecNamespace)
             self.importExecNamespace()
         try:
+
             return str(eval(message, globals(), ChatInputNormal.ExecNamespace))
         except SyntaxError:
             try:
-                if config.GetBool("isclient-check", False):
+                if config.GetBool('isclient-check', False):
                     if not isClient():
-                        print("EXECWARNING ChatInputNormal exec: %s" % message)
+                        print('EXECWARNING ChatInputNormal exec: %s' % message)
 
                 exec(message, globals(), ChatInputNormal.ExecNamespace)
-                return "ok"
+                return 'ok'
             except:
                 exception = sys.exc_info()[0]
                 extraInfo = sys.exc_info()[1]
@@ -134,8 +134,8 @@ class ChatInputNormal(DirectObject.DirectObject):
                 return str(exception)
 
     def cancelButtonPressed(self):
-        self.chatEntry.set("")
-        self.chatMgr.fsm.request("mainMenu")
+        self.chatEntry.set('')
+        self.chatMgr.fsm.request('mainMenu')
 
     def chatButtonPressed(self):
         self.sendChat(self.chatEntry.get())
@@ -144,7 +144,7 @@ class ChatInputNormal(DirectObject.DirectObject):
         pass
 
     def addToHistory(self, text):
-        self.history = [text] + self.history[: self.historySize - 1]
+        self.history = [text] + self.history[:self.historySize - 1]
         self.historyIndex = 0
 
     def getPrevHistory(self):

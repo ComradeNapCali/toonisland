@@ -1,4 +1,7 @@
+
+
 class PickANamePattern:
+
     def __init__(self, nameStr, gender):
         self._nameStr = nameStr
         self._namePattern = self._compute(self._nameStr, gender)
@@ -15,11 +18,11 @@ class PickANamePattern:
         for i in range(len(nameParts)):
             invNameParts.append(invertDict(nameParts[i]))
 
-        name = ""
+        name = ''
         for i in range(len(pattern)):
             if pattern[i] != -1:
                 if len(name):
-                    name += " "
+                    name += ' '
                 name += invNameParts[i][pattern[i]]
 
         return name
@@ -31,14 +34,16 @@ class PickANamePattern:
 
     def _genWordListSplitPermutations(self, words):
         if not len(words):
+
             return
         if len(words) == 1:
+
             yield words
             return
 
         for permutation in self._genWordListSplitPermutations(words[1:]):
-            yield [words[0]] + permutation
-            yield [(words[0] + " ") + permutation[0]] + permutation[1:]
+            yield [words[0]]+permutation
+            yield [(words[0] + ' ')+permutation[0]]+permutation[1:]
 
     def _genNameSplitPermutations(self, name):
         for splitName in self._genWordListSplitPermutations(name.split()):
@@ -70,26 +75,26 @@ class PickANamePattern:
             newPattern = pattern[:]
             newPattern[nwli] = word2index[words[wi]]
             result = self._recursiveCompute(
-                words, nameParts, wi + 1, nwli + 1, newPattern
-            )
+                words, nameParts, wi + 1, nwli + 1, newPattern)
             if result:
                 return result
         return self._recursiveCompute(words, nameParts, wi, nwli + 1, pattern)
 
 
 class PickANamePatternTwoPartLastName(PickANamePattern):
+
     def getNameString(self, pattern, gender):
         name = PickANamePattern.getNameString(self, pattern, gender)
         if pattern[-2] != -1:
             words = name.split()
-            name = ""
+            name = ''
             for word in words[:-2]:
                 if len(name):
-                    name += " "
+                    name += ' '
                 name += word
 
             if len(name):
-                name += " "
+                name += ' '
             name += words[-2]
             if words[-2] in set(self._getLastNameCapPrefixes()):
                 name += words[-1].capitalize()

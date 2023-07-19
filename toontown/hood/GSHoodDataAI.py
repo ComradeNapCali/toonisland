@@ -6,13 +6,11 @@ from panda3d.core import *
 from panda3d.toontown import *
 from toontown.racing.RaceGlobals import *
 from toontown.classicchars import DistributedGoofySpeedwayAI
-
 if __debug__:
     import pdb
 
-
 class GSHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("GSHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('GSHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.GoofySpeedway
@@ -27,22 +25,20 @@ class GSHoodDataAI(HoodDataAI.HoodDataAI):
         self.cycleDuration = 10
         self.createLeaderBoards()
         self.__cycleLeaderBoards()
-        self.classicChar = DistributedGoofySpeedwayAI.DistributedGoofySpeedwayAI(
-            self.air
-        )
+        self.classicChar = DistributedGoofySpeedwayAI.DistributedGoofySpeedwayAI(self.air)
         self.classicChar.generateWithRequired(self.zoneId)
         self.classicChar.start()
         self.addDistObj(self.classicChar)
-        messenger.send("GSHoodSpawned", [self])
+        messenger.send('GSHoodSpawned', [self])
 
     def shutdown(self):
-        self.notify.debug("shutting down GSHoodDataAI: %s" % self.zoneId)
-        messenger.send("GSHoodDestroyed", [self])
+        self.notify.debug('shutting down GSHoodDataAI: %s' % self.zoneId)
+        messenger.send('GSHoodDestroyed', [self])
         HoodDataAI.HoodDataAI.shutdown(self)
 
     def cleanup(self):
-        self.notify.debug("cleaning up GSHoodDataAI: %s" % self.zoneId)
-        taskMgr.removeTasksMatching(str(self) + "_leaderBoardSwitch")
+        self.notify.debug('cleaning up GSHoodDataAI: %s' % self.zoneId)
+        taskMgr.removeTasksMatching(str(self) + '_leaderBoardSwitch')
         for board in self.leaderBoards:
             board.delete()
 
@@ -51,33 +47,27 @@ class GSHoodDataAI(HoodDataAI.HoodDataAI):
     def createLeaderBoards(self):
         self.leaderBoards = []
         dnaStore = DNAStorage()
-        dnaData = simbase.air.loadDNAFileAI(
-            dnaStore, simbase.air.lookupDNAFileName("goofy_speedway_sz.dna")
-        )
+        dnaData = simbase.air.loadDNAFileAI(dnaStore, simbase.air.lookupDNAFileName('goofy_speedway_sz.dna'))
         if isinstance(dnaData, DNAData):
             self.leaderBoards = self.air.findLeaderBoards(dnaData, self.zoneId)
         for distObj in self.leaderBoards:
             if distObj:
-                if distObj.getName().count("city"):
-                    type = "city"
+                if distObj.getName().count('city'):
+                    type = 'city'
                 else:
-                    if distObj.getName().count("stadium"):
-                        type = "stadium"
+                    if distObj.getName().count('stadium'):
+                        type = 'stadium'
                     else:
-                        if distObj.getName().count("country"):
-                            type = "country"
+                        if distObj.getName().count('country'):
+                            type = 'country'
                 for subscription in LBSubscription[type]:
                     distObj.subscribeTo(subscription)
 
                 self.addDistObj(distObj)
 
     def __cycleLeaderBoards(self, task=None):
-        messenger.send("GS_LeaderBoardSwap" + str(self.zoneId))
-        taskMgr.doMethodLater(
-            self.cycleDuration,
-            self.__cycleLeaderBoards,
-            str(self) + "_leaderBoardSwitch",
-        )
+        messenger.send('GS_LeaderBoardSwap' + str(self.zoneId))
+        taskMgr.doMethodLater(self.cycleDuration, self.__cycleLeaderBoards, str(self) + '_leaderBoardSwitch')
 
     def createStartingBlocks(self):
         self.racingPads = []
@@ -91,12 +81,8 @@ class GSHoodDataAI(HoodDataAI.HoodDataAI):
             dnaData = self.air.dnaDataMap.get(zone[0], None)
             if isinstance(dnaData, DNAData):
                 area = ZoneUtil.getCanonicalZoneId(zoneId)
-                foundRacingPads, foundRacingPadGroups = self.air.findRacingPads(
-                    dnaData, zoneId, area
-                )
-                foundViewingPads, foundViewingPadGroups = self.air.findRacingPads(
-                    dnaData, zoneId, area, type="viewing_pad"
-                )
+                foundRacingPads, foundRacingPadGroups = self.air.findRacingPads(dnaData, zoneId, area)
+                foundViewingPads, foundViewingPadGroups = self.air.findRacingPads(dnaData, zoneId, area, type='viewing_pad')
                 self.racingPads += foundRacingPads
                 self.foundRacingPadGroups += foundRacingPadGroups
                 self.viewingPads += foundViewingPads
@@ -125,7 +111,7 @@ class GSHoodDataAI(HoodDataAI.HoodDataAI):
             self.addDistObj(viewPad)
 
         for racePad in self.racingPads:
-            racePad.request("WaitEmpty")
+            racePad.request('WaitEmpty')
             self.addDistObj(racePad)
 
         return
@@ -134,14 +120,5 @@ class GSHoodDataAI(HoodDataAI.HoodDataAI):
         for sb in self.startingBlocks:
             if sb == startBlock:
                 if not sb.kartPad:
-                    self.notify.warning("%s is in a broken state" % str(self))
-                    self.notify.warning(
-                        "StartingBlocks: %d, RacePads: %s, ViewPads: %s, RacePadGroups: %s, ViewPadGroups: %s"
-                        % (
-                            len(self.startingBlocks),
-                            str(self.racingPads),
-                            str(self.viewingPads),
-                            str(self.foundRacingPadGroups),
-                            str(self.foundViewingPadGroups),
-                        )
-                    )
+                    self.notify.warning('%s is in a broken state' % str(self))
+                    self.notify.warning('StartingBlocks: %d, RacePads: %s, ViewPads: %s, RacePadGroups: %s, ViewPadGroups: %s' % (len(self.startingBlocks), str(self.racingPads), str(self.viewingPads), str(self.foundRacingPadGroups), str(self.foundViewingPadGroups)))

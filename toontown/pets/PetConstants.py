@@ -2,8 +2,7 @@ from panda3d.core import *
 from direct.showbase.PythonUtil import Enum, invertDictLossless
 import math
 from toontown.toonbase import ToontownGlobals
-
-OurPetsMoodChangedKey = "OurPetsMoodChanged"
+OurPetsMoodChangedKey = 'OurPetsMoodChanged'
 ThinkPeriod = 1.5
 MoodDriftPeriod = 300.0
 MovePeriod = 1.0 / 4
@@ -26,7 +25,7 @@ HungerChaseToonScale = 1.2
 FleeFromOwnerScale = 0.5
 GettingAttentionGoalScale = 1.2
 GettingAttentionGoalScaleDur = 7.0
-AnimMoods = Enum("EXCITED, SAD, NEUTRAL")
+AnimMoods = Enum('EXCITED, SAD, NEUTRAL')
 FwdSpeed = 12.0
 RotSpeed = 360.0
 _HappyMult = 1.0
@@ -45,16 +44,18 @@ PET_MOVIE_CALL = 5
 FEED_TIME = 10.0
 SCRATCH_TIME = 8.042
 CALL_TIME = 8.0 / 3
-FEED_DIST = {"long": 4.0, "medium": 4.0, "short": 4.0}
+FEED_DIST = {'long': 4.0,
+ 'medium': 4.0,
+ 'short': 4.0}
 FEED_AMOUNT = 1
-SCRATCH_DIST = {"long": 2.0, "medium": 1.5, "short": 1.0}
+SCRATCH_DIST = {'long': 2.0,
+ 'medium': 1.5,
+ 'short': 1.0}
 TELEPORT_IN_DURATION = 2.34
 TELEPORT_OUT_DURATION = 4.5
-ZoneToCostRange = {
-    ToontownGlobals.ToonIslandCentral: (100, 500),
-    ToontownGlobals.RainbowRise: (600, 1700),
-    ToontownGlobals.WitheringWoods: (1000, 2500),
-    ToontownGlobals.OliveOasis: (1500, 3000),
-    ToontownGlobals.CirrusCircus: (2500, 4000),
-    ToontownGlobals.MintyMines: (3000, 5000),
-}
+ZoneToCostRange = {ToontownGlobals.ToonIslandCentral: (100, 500),
+ ToontownGlobals.RainbowRise: (600, 1700),
+ ToontownGlobals.WitheringWoods: (1000, 2500),
+ ToontownGlobals.OliveOasis: (1500, 3000),
+ ToontownGlobals.CirrusCircus: (2500, 4000),
+ ToontownGlobals.MintyMines: (3000, 5000)}

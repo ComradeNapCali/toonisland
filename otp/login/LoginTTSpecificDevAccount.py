@@ -7,7 +7,8 @@ from .TTAccount import TTAccountException
 
 
 class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
-    notify = DirectNotifyGlobal.directNotify.newCategory("LoginTTSpecificDevAccount")
+    notify = DirectNotifyGlobal.directNotify.newCategory(
+        'LoginTTSpecificDevAccount')
 
     def __init__(self, cr):
         LoginTTAccount.LoginTTAccount.__init__(self, cr)
@@ -33,66 +34,65 @@ class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
 
     def sendLoginMsg(self):
         cr = self.cr
-        tokenString = ""
-        access = base.config.GetString("force-paid-status", "")
-        if access == "":
-            access = "FULL"
-        elif access == "paid":
-            access = "FULL"
-        elif access == "unpaid":
-            access = "VELVET_ROPE"
-        elif access == "VELVET":
-            access = "VELVET_ROPE"
+        tokenString = ''
+        access = base.config.GetString('force-paid-status', '')
+        if access == '':
+            access = 'FULL'
+        elif access == 'paid':
+            access = 'FULL'
+        elif access == 'unpaid':
+            access = 'VELVET_ROPE'
+        elif access == 'VELVET':
+            access = 'VELVET_ROPE'
         else:
             self.notify.error(
-                "don't know what to do with force-paid-status %s" % access
-            )
-        tokenString += "TOONTOWN_ACCESS=%s&" % access
-        tokenString += "TOONTOWN_GAME_KEY=%s&" % self.loginName
-        wlChatEnabled = "YES"
-        if base.config.GetString("otp-whitelist", "YES") == "NO":
-            wlChatEnabled = "NO"
-        tokenString += "WL_CHAT_ENABLED=%s &" % wlChatEnabled
-        openChatEnabled = "NO"
+                "don't know what to do with force-paid-status %s" % access)
+        tokenString += 'TOONTOWN_ACCESS=%s&' % access
+        tokenString += 'TOONTOWN_GAME_KEY=%s&' % self.loginName
+        wlChatEnabled = 'YES'
+        if base.config.GetString('otp-whitelist', 'YES') == 'NO':
+            wlChatEnabled = 'NO'
+        tokenString += 'WL_CHAT_ENABLED=%s &' % wlChatEnabled
+        openChatEnabled = 'NO'
         if cr.openChatAllowed:
-            openChatEnabled = "YES"
-        tokenString += "OPEN_CHAT_ENABLED=%s&" % openChatEnabled
-        createFriendsWithChat = "NO"
+            openChatEnabled = 'YES'
+        tokenString += 'OPEN_CHAT_ENABLED=%s&' % openChatEnabled
+        createFriendsWithChat = 'NO'
         if cr.allowSecretChat:
-            createFriendsWithChat = "CODE"
-        tokenString += "CREATE_FRIENDS_WITH_CHAT=%s&" % createFriendsWithChat
-        chatCodeCreationRule = "No"
+            createFriendsWithChat = 'CODE'
+        tokenString += 'CREATE_FRIENDS_WITH_CHAT=%s&' % createFriendsWithChat
+        chatCodeCreationRule = 'No'
         if cr.allowSecretChat:
-            if base.config.GetBool("secret-chat-needs-parent-password", 0):
-                chatCodeCreationRule = "PARENT"
+            if base.config.GetBool('secret-chat-needs-parent-password', 0):
+                chatCodeCreationRule = 'PARENT'
             else:
-                chatCodeCreationRule = "YES"
-        tokenString += "CHAT_CODE_CREATION_RULE=%s&" % chatCodeCreationRule
-        DISLID = config.GetInt("fake-DISL-PlayerAccountId", 0)
+                chatCodeCreationRule = 'YES'
+        tokenString += 'CHAT_CODE_CREATION_RULE=%s&' % chatCodeCreationRule
+        DISLID = config.GetInt('fake-DISL-PlayerAccountId', 0)
         if not DISLID:
-            NameStringId = "DISLID_%s" % self.loginName
+            NameStringId = 'DISLID_%s' % self.loginName
             DISLID = config.GetInt(NameStringId, 0)
-        tokenString += "ACCOUNT_NUMBER=%d&" % DISLID
-        tokenString += "ACCOUNT_NAME=%s&" % self.loginName
-        tokenString += "GAME_USERNAME=%s&" % self.loginName
-        tokenString += "ACCOUNT_NAME_APPROVED=TRUE&"
-        tokenString += "FAMILY_NUMBER=&"
-        tokenString += "Deployment=US&"
-        withParentAccount = base.config.GetBool("dev-with-parent-account", 0)
+        tokenString += 'ACCOUNT_NUMBER=%d&' % DISLID
+        tokenString += 'ACCOUNT_NAME=%s&' % self.loginName
+        tokenString += 'GAME_USERNAME=%s&' % self.loginName
+        tokenString += 'ACCOUNT_NAME_APPROVED=TRUE&'
+        tokenString += 'FAMILY_NUMBER=&'
+        tokenString += 'Deployment=US&'
+        withParentAccount = base.config.GetBool('dev-with-parent-account', 0)
         if withParentAccount:
-            tokenString += "TOON_ACCOUNT_TYPE=WITH_PARENT_ACCOUNT&"
+            tokenString += 'TOON_ACCOUNT_TYPE=WITH_PARENT_ACCOUNT&'
         else:
-            tokenString += "TOON_ACCOUNT_TYPE=NO_PARENT_ACCOUNT&"
-        tokenString += "valid=true"
-        self.notify.info("tokenString=\n%s" % tokenString)
+            tokenString += 'TOON_ACCOUNT_TYPE=NO_PARENT_ACCOUNT&'
+        tokenString += 'valid=true'
+        self.notify.info('tokenString=\n%s' % tokenString)
         datagram = PyDatagram()
         datagram.addUint16(CLIENT_LOGIN_TOONTOWN)
         playToken = tokenString
         datagram.addString(playToken)
-        datagram.addString("dev")
+        datagram.addString('dev')
         datagram.addUint32(cr.hashVal)
         datagram.addUint32(4)
-        magicWords = base.config.GetString("want-magic-words", "")
+        magicWords = base.config.GetString('want-magic-words', '')
         datagram.addString(magicWords)
         cr.send(datagram)
 
@@ -103,7 +103,7 @@ class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
         return 0
 
     def getAccountData(self, loginName, password):
-        return "Unsupported"
+        return 'Unsupported'
 
     def supportsParentPassword(self):
         return 1

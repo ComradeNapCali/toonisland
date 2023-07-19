@@ -4,4 +4,4 @@ from toontown.safezone.DistributedSZTreasureAI import DistributedSZTreasureAI
 
 
 class DistributedEFlyingTreasureAI(DistributedSZTreasureAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedEFlyingTreasureAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedEFlyingTreasureAI')

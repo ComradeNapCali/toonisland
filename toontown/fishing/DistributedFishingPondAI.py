@@ -6,7 +6,7 @@ from toontown.fishing.DistributedFishingTargetAI import DistributedFishingTarget
 
 
 class DistributedFishingPondAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFishingPondAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFishingPondAI')
 
     def __init__(self, air):
         DistributedObjectAI.__init__(self, air)
@@ -18,7 +18,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
         self.area = area
 
     def d_setArea(self, area):
-        self.sendUpdate("setArea", [area])
+        self.sendUpdate('setArea', [area])
 
     def b_setArea(self, area):
         self.setArea(area)
@@ -45,9 +45,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
             return
 
         if self.targets.get(target) is None:
-            self.air.writeServerEvent(
-                "suspicious", avId, "Toon tried to hit nonexistent fishing target!"
-            )
+            self.air.writeServerEvent('suspicious', avId, 'Toon tried to hit nonexistent fishing target!')
             return
 
         spot = self.hasToon(avId)
@@ -55,9 +53,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
             spot.considerReward(target)
             return
 
-        self.air.writeServerEvent(
-            "suspicious", avId, "Toon tried to catch fish while not fishing!"
-        )
+        self.air.writeServerEvent('suspicious', avId, 'Toon tried to catch fish while not fishing!')
 
     def hasToon(self, avId):
         for spot in self.spots:

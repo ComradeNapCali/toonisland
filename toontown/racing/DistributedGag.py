@@ -6,8 +6,8 @@ from direct.distributed.ClockDelta import *
 from toontown.racing.DistributedVehicle import DistributedVehicle
 from .DroppedGag import *
 
-
 class DistributedGag(DistributedObject.DistributedObject):
+
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         self.nodePath = None
@@ -27,16 +27,11 @@ class DistributedGag(DistributedObject.DistributedObject):
         DistributedObject.DistributedObject.announceGenerate(self)
         if not self.nodePath:
             self.makeNodePath()
-        self.delta = (
-            -globalClockDelta.networkToLocalTime(
-                self.initTime, globalClock.getFrameTime(), 16, 100
-            )
-            + globalClock.getFrameTime()
-        )
+        self.delta = -globalClockDelta.networkToLocalTime(self.initTime, globalClock.getFrameTime(), 16, 100) + globalClock.getFrameTime()
         if self.type == 0:
-            self.name = self.uniqueName("banana")
+            self.name = self.uniqueName('banana')
         elif self.type == 1:
-            self.name = self.uniqueName("pie")
+            self.name = self.uniqueName('pie')
         self.nodePath.reparentTo(self.race.geom)
         if self.ownerId == localAvatar.doId:
             base.race.thrownGags[0].removeNode()
@@ -45,13 +40,9 @@ class DistributedGag(DistributedObject.DistributedObject):
         else:
             startPos = base.cr.doId2do[self.ownerId].getPos(render)
             endPos = Vec3(self.pos[0], self.pos[1], self.pos[2])
-            throwIt = ProjectileInterval(
-                self.nodePath, startPos=startPos, endPos=endPos, duration=1
-            )
+            throwIt = ProjectileInterval(self.nodePath, startPos=startPos, endPos=endPos, duration=1)
             throwIt.start()
-        taskMgr.doMethodLater(
-            0.8 - self.delta, self.addCollider, self.uniqueName("addCollider")
-        )
+        taskMgr.doMethodLater(0.8 - self.delta, self.addCollider, self.uniqueName('addCollider'))
 
     def addCollider(self, t):
         bs = CollisionSphere(0, 0, 0, 2)
@@ -61,20 +52,17 @@ class DistributedGag(DistributedObject.DistributedObject):
         self.bnp.node().addSolid(bs)
         self.bnp.node().setIntoCollideMask(BitMask32(32768))
         self.bnp.node().setFromCollideMask(BitMask32(32768))
-        self.accept("imIn-" + self.name, self.b_imHit)
+        self.accept('imIn-' + self.name, self.b_imHit)
 
     def b_imHit(self, cevent):
         self.ignoreAll()
-        self.sendUpdate(
-            "hitSomebody",
-            [localAvatar.doId, globalClockDelta.getFrameNetworkTime(16, 100)],
-        )
+        self.sendUpdate('hitSomebody', [localAvatar.doId, globalClockDelta.getFrameNetworkTime(16, 100)])
         if self.type == 0:
             base.race.localKart.hitBanana()
         elif self.type == 1:
             base.race.localKart.hitPie()
         self.nodePath.hide()
-        if hasattr(self, "bnp"):
+        if hasattr(self, 'bnp'):
             self.bnp.removeNode()
 
     def hitSomebody(self, avId, timeStamp):
@@ -82,7 +70,7 @@ class DistributedGag(DistributedObject.DistributedObject):
             kart = DistributedVehicle.getKartFromAvId(avId)
             if kart:
                 self.nodePath.hide()
-                if hasattr(self, "bnp"):
+                if hasattr(self, 'bnp'):
                     self.bnp.removeNode()
                 kart.playSpin(timeStamp)
 
@@ -100,12 +88,12 @@ class DistributedGag(DistributedObject.DistributedObject):
 
     def makeNodePath(self):
         if self.type == 0:
-            self.nodePath = DroppedGag(self.uniqueName("gag"), base.race.banana)
+            self.nodePath = DroppedGag(self.uniqueName('gag'), base.race.banana)
             if self.billboard:
                 self.nodePath.setBillboardPointEye()
             self.nodePath.setScale(0.9 * self.scale)
         if self.type == 1:
-            self.nodePath = DroppedGag(self.uniqueName("gag"), base.race.banana)
+            self.nodePath = DroppedGag(self.uniqueName('gag'), base.race.banana)
             if self.billboard:
                 self.nodePath.setBillboardPointEye()
             self.nodePath.setScale(4.0 * self.scale)

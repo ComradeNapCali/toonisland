@@ -6,8 +6,8 @@ from toontown.toonbase import TTLocalizer
 from direct.distributed import DistributedObject
 from toontown.quest import QuestParser
 
-
 class DistributedNPCBlocker(DistributedNPCToonBase):
+
     def __init__(self, cr):
         DistributedNPCToonBase.__init__(self, cr)
         self.cSphereNodePath.setScale(4.5, 1.0, 6.0)
@@ -19,14 +19,14 @@ class DistributedNPCBlocker(DistributedNPCToonBase):
         DistributedNPCToonBase.announceGenerate(self)
 
     def initToonState(self):
-        self.setAnimState("neutral", 0.9, None, None)
+        self.setAnimState('neutral', 0.9, None, None)
         posh = NPCToons.BlockerPositions[self._name]
         self.setPos(posh[0])
         self.setH(posh[1])
         return
 
     def disable(self):
-        if hasattr(self, "movie") and self.movie:
+        if hasattr(self, 'movie') and self.movie:
             self.movie.cleanup()
             del self.movie
             if self.isLocalToon == 1:
@@ -34,18 +34,18 @@ class DistributedNPCBlocker(DistributedNPCToonBase):
         DistributedNPCToonBase.disable(self)
 
     def handleCollisionSphereEnter(self, collEntry):
-        base.cr.playGame.getPlace().fsm.request("quest", [self])
-        self.sendUpdate("avatarEnter", [])
+        base.cr.playGame.getPlace().fsm.request('quest', [self])
+        self.sendUpdate('avatarEnter', [])
 
     def __handleUnexpectedExit(self):
-        self.notify.warning("unexpected exit")
+        self.notify.warning('unexpected exit')
 
     def resetBlocker(self):
         if not self.isLocalToon:
-            return
-
+             return 
+        
         self.cSphereNode.setCollideMask(BitMask32())
-        if hasattr(self, "movie") and self.movie:
+        if hasattr(self, 'movie') and self.movie:
             self.movie.cleanup()
             self.movie = None
         self.startLookAround()
@@ -63,9 +63,7 @@ class DistributedNPCBlocker(DistributedNPCToonBase):
         if mode == NPCToons.BLOCKER_MOVIE_CLEAR:
             return
         elif mode == NPCToons.BLOCKER_MOVIE_START:
-            self.movie = QuestParser.NPCMoviePlayer(
-                "tutorial_blocker", base.localAvatar, self
-            )
+            self.movie = QuestParser.NPCMoviePlayer('tutorial_blocker', base.localAvatar, self)
             self.movie.play()
         elif mode == NPCToons.BLOCKER_MOVIE_TIMEOUT:
             return

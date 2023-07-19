@@ -8,17 +8,15 @@ from toontown.toon import ToonHead
 from toontown.minigame.CannonGameGlobals import *
 from toontown.toonbase import ToontownGlobals
 from toontown.parties.PartyUtils import toRadians, calcVelocity
-
 CANNON_ROTATION_MIN = -70
 CANNON_ROTATION_MAX = 70
 INITIAL_VELOCITY = 80.0
 CANNON_BARREL_TOONHEAD_Y = 6.0
 
-
 class Cannon:
-    notify = directNotify.newCategory("DistributedPartyCannon")
+    notify = directNotify.newCategory('DistributedPartyCannon')
 
-    def __init__(self, parent, pos=Point3(0, 0, 0)):
+    def __init__(self, parent, pos = Point3(0, 0, 0)):
         self.__previousRotation = 0.0
         self.__previousAngle = 0.0
         self._rotation = 0.0
@@ -47,18 +45,14 @@ class Cannon:
 
     def load(self, nodeName):
         self.parentNode = NodePath(nodeName)
-        self.cannonNode = loader.loadModel("phase_4/models/minigames/toon_cannon")
+        self.cannonNode = loader.loadModel('phase_4/models/minigames/toon_cannon')
         self.cannonNode.reparentTo(self.parentNode)
-        self.barrelNode = self.cannonNode.find("**/cannon")
-        self.shadowNode = self.cannonNode.find("**/square_drop_shadow")
-        self.smokeNode = loader.loadModel("phase_4/models/props/test_clouds")
+        self.barrelNode = self.cannonNode.find('**/cannon')
+        self.shadowNode = self.cannonNode.find('**/square_drop_shadow')
+        self.smokeNode = loader.loadModel('phase_4/models/props/test_clouds')
         self.smokeNode.setBillboardPointEye()
-        self.sndCannonMove = base.loader.loadSfx(
-            "phase_4/audio/sfx/MG_cannon_adjust.ogg"
-        )
-        self.sndCannonFire = base.loader.loadSfx(
-            "phase_4/audio/sfx/MG_cannon_fire_alt.ogg"
-        )
+        self.sndCannonMove = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_adjust.ogg')
+        self.sndCannonFire = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_fire_alt.ogg')
         self.collSphere = CollisionSphere(0, 0, 0, self.getSphereRadius())
         self.collSphere.setTangible(1)
         self.collNode = CollisionNode(self.getCollisionName())
@@ -80,7 +74,7 @@ class Cannon:
         self.ignoreAll()
         return
 
-    def updateModel(self, rotation=None, angle=None):
+    def updateModel(self, rotation = None, angle = None):
         if rotation:
             self.rotation = rotation
         if angle:
@@ -97,14 +91,7 @@ class Cannon:
         self.smokeNode.setPos(0, 6, -3)
         self.smokeNode.setScale(0.5)
         self.smokeNode.wrtReparentTo(render)
-        track = Sequence(
-            Parallel(
-                LerpScaleInterval(self.smokeNode, 0.5, 3),
-                LerpColorScaleInterval(self.smokeNode, 0.5, Vec4(2, 2, 2, 0)),
-            ),
-            Func(self.smokeNode.reparentTo, hidden),
-            Func(self.smokeNode.clearColorScale),
-        )
+        track = Sequence(Parallel(LerpScaleInterval(self.smokeNode, 0.5, 3), LerpColorScaleInterval(self.smokeNode, 0.5, Vec4(2, 2, 2, 0))), Func(self.smokeNode.reparentTo, hidden), Func(self.smokeNode.clearColorScale))
         base.playSfx(self.sndCannonFire)
         track.start()
 
@@ -128,13 +115,13 @@ class Cannon:
 
     def __setToonInside(self, toon):
         self.toonInside = toon
-        toonName = "None"
+        toonName = 'None'
         if toon:
             toonName = toon.getName()
         self.toonInside.stopSmooth()
         self.toonOriginalScale = toon.getScale()
         toon.useLOD(1000)
-        self.toonParentNode = render.attachNewNode("toonOriginChange")
+        self.toonParentNode = render.attachNewNode('toonOriginChange')
         self.toonInside.wrtReparentTo(self.toonParentNode)
         self.toonInside.setPosHpr(0, 0, -(self.toonInside.getHeight() / 2.0), 0, -90, 0)
 
@@ -174,9 +161,7 @@ class Cannon:
     def removeToonReadyToFire(self):
         toon = self.toonInside
         self.toonInside.wrtReparentTo(render)
-        y = self.toonHead.getY(self.barrelNode) - (
-            self.toonInside.getHeight() - self.toonHead.getHeight()
-        )
+        y = self.toonHead.getY(self.barrelNode) - (self.toonInside.getHeight() - self.toonHead.getHeight())
         self.toonInside.setPosHpr(self.barrelNode, 0, y, 0, 0, -90, 0)
         return self.__removeToon()
 
@@ -195,12 +180,12 @@ class Cannon:
         return toonNode
 
     def __cleanupToonInside(self):
-        toonName = "None"
+        toonName = 'None'
         if self.toonInside:
             toonName = self.toonInside.getName()
         if self.toonHead != None:
             self.hideToonHead()
-            if hasattr(self.toonInside, "nametag"):
+            if hasattr(self.toonInside, 'nametag'):
                 self.toonInside.nametag.removeNametag(self.toonHead.tag)
             self.toonHead.delete()
             self.toonHead = None
@@ -212,10 +197,10 @@ class Cannon:
         return 1.5
 
     def getCollisionName(self):
-        return self.parentNode.getName() + "Collision"
+        return self.parentNode.getName() + 'Collision'
 
     def getEnterCollisionName(self):
-        return "enter" + self.getCollisionName()
+        return 'enter' + self.getCollisionName()
 
     def isToonInside(self):
         return self.toonHead != None
@@ -238,10 +223,7 @@ class Cannon:
         return self._angle
 
     def hasMoved(self):
-        return (
-            self.__previousRotation != self._rotation
-            or self.__previousAngle != self._angle
-        )
+        return self.__previousRotation != self._rotation or self.__previousAngle != self._angle
 
     def getBarrelHpr(self, node):
         return self.barrelNode.getHpr(node)

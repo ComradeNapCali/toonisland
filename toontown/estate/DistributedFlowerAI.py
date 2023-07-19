@@ -13,7 +13,7 @@ FLOWER_X_OFFSETS = (None, (0,), (-1.5, 1.5), (-3.4, 0, 3.5))
 
 
 class DistributedFlowerAI(DistributedPlantBaseAI, FlowerBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFlowerAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFlowerAI')
 
     def setTypeIndex(self, value):
         DistributedPlantBaseAI.setTypeIndex(self, value)
@@ -51,15 +51,10 @@ class DistributedFlowerAI(DistributedPlantBaseAI, FlowerBase):
         self.update()
 
     def update(self):
-        mapData = list(map(list, self.mgr.data["flowers"]))
-        mapData[self.getFlowerIndex()] = [
-            self.getSpecies(),
-            self.waterLevel,
-            self.lastCheck,
-            self.getGrowthLevel(),
-            self.getVariety(),
-        ]
-        self.mgr.data["flowers"] = mapData
+        mapData = list(map(list, self.mgr.data['flowers']))
+        mapData[self.getFlowerIndex()] = [self.getSpecies(), self.waterLevel, self.lastCheck, self.getGrowthLevel(),
+                                          self.getVariety()]
+        self.mgr.data['flowers'] = mapData
         self.mgr.update()
 
     def removeItem(self, usingPickAll=0):
@@ -69,16 +64,14 @@ class DistributedFlowerAI(DistributedPlantBaseAI, FlowerBase):
 
         if not usingPickAll:
             if avId != self.ownerDoId:
-                self.air.writeServerEvent(
-                    "suspicious", avId, "tried to remove someone else's flower!"
-                )
+                self.air.writeServerEvent('suspicious', avId, 'tried to remove someone else\'s flower!')
                 return
 
             self.d_setMovie(GardenGlobals.MOVIE_REMOVE)
 
-        action = "remove"
+        action = 'remove'
         if self.getGrowthLevel() >= self.growthThresholds[2]:
-            action = "pick"
+            action = 'pick'
 
         def handleRemoveItem(task):
             if not self.air:
@@ -110,14 +103,14 @@ class DistributedFlowerAI(DistributedPlantBaseAI, FlowerBase):
                 plot.d_setMovie(GardenGlobals.MOVIE_FINISHREMOVING, avId)
                 plot.d_setMovie(GardenGlobals.MOVIE_CLEAR, avId)
 
-            self.air.writeServerEvent("%s-flower" % action, avId, plot=self.plot)
+            self.air.writeServerEvent('%s-flower' % action, avId, plot=self.plot)
             self.requestDelete()
             self.mgr.flowers.remove(self)
-            mapData = list(map(list, self.mgr.data["flowers"]))
+            mapData = list(map(list, self.mgr.data['flowers']))
             mapData[self.getFlowerIndex()] = self.mgr.getNullPlant()
-            self.mgr.data["flowers"] = mapData
+            self.mgr.data['flowers'] = mapData
             self.mgr.update()
-            if action == "pick":
+            if action == 'pick':
                 av.b_setShovelSkill(av.getShovelSkill() + self.getValue())
                 av.addFlowerToBasket(self.getSpecies(), self.getVariety())
 
@@ -127,6 +120,4 @@ class DistributedFlowerAI(DistributedPlantBaseAI, FlowerBase):
         if usingPickAll:
             handleRemoveItem(None)
         else:
-            taskMgr.doMethodLater(
-                7, handleRemoveItem, self.uniqueName("handle-remove-item")
-            )
+            taskMgr.doMethodLater(7, handleRemoveItem, self.uniqueName('handle-remove-item'))

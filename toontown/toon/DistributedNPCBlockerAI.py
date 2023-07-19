@@ -4,14 +4,14 @@ from .DistributedNPCToonBaseAI import *
 from . import NPCToons
 from direct.task.Task import Task
 
-
 class DistributedNPCBlockerAI(DistributedNPCToonBaseAI):
+
     def __init__(self, air, npcId):
         DistributedNPCToonBaseAI.__init__(self, air, npcId)
         self.tutorial = 0
 
     def delete(self):
-        taskMgr.remove(self.uniqueName("clearMovie"))
+        taskMgr.remove(self.uniqueName('clearMovie'))
         self.ignoreAll()
         DistributedNPCToonBaseAI.delete(self)
 
@@ -26,46 +26,28 @@ class DistributedNPCBlockerAI(DistributedNPCToonBaseAI):
         DistributedNPCToonBaseAI.avatarEnter(self)
         av = self.air.doId2do.get(avId)
         if av is None:
-            self.notify.warning("toon isnt there! toon: %s" % avId)
+            self.notify.warning('toon isnt there! toon: %s' % avId)
             return
-        self.acceptOnce(
-            self.air.getAvatarExitEvent(avId),
-            self.__handleUnexpectedExit,
-            extraArgs=[avId],
-        )
+        self.acceptOnce(self.air.getAvatarExitEvent(avId), self.__handleUnexpectedExit, extraArgs=[avId])
         self.sendStartMovie(avId)
         return
 
     def sendStartMovie(self, avId):
         self.busy.append(avId)
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.BLOCKER_MOVIE_START,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.BLOCKER_MOVIE_START,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         if not self.tutorial:
-            taskMgr.doMethodLater(
-                NPCToons.CLERK_COUNTDOWN_TIME,
-                self.sendTimeoutMovie,
-                self.uniqueName("clearMovie"),
-            )
+            taskMgr.doMethodLater(NPCToons.CLERK_COUNTDOWN_TIME, self.sendTimeoutMovie, self.uniqueName('clearMovie'))
 
     def sendTimeoutMovie(self, task):
         avId = self.air.getAvatarIdFromSender()
         self.timedOut = 1
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.BLOCKER_MOVIE_TIMEOUT,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.BLOCKER_MOVIE_TIMEOUT,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         self.sendClearMovie(None)
         return Task.done
 
@@ -73,19 +55,14 @@ class DistributedNPCBlockerAI(DistributedNPCToonBaseAI):
         avId = self.air.getAvatarIdFromSender()
         self.busy.remove(avId)
         self.timedOut = 0
-        self.sendUpdate(
-            "setMovie",
-            [
-                NPCToons.BLOCKER_MOVIE_CLEAR,
-                self.npcId,
-                avId,
-                ClockDelta.globalClockDelta.getRealNetworkTime(),
-            ],
-        )
+        self.sendUpdate('setMovie', [NPCToons.BLOCKER_MOVIE_CLEAR,
+         self.npcId,
+         avId,
+         ClockDelta.globalClockDelta.getRealNetworkTime()])
         return Task.done
 
     def __handleUnexpectedExit(self, avId):
-        self.notify.warning("avatar:" + str(avId) + " has exited unexpectedly")
+        self.notify.warning('avatar:' + str(avId) + ' has exited unexpectedly')
         if not self.tutorial:
             self.sendTimeoutMovie(None)
         return

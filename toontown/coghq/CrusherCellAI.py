@@ -1,9 +1,8 @@
 from . import ActiveCellAI
 from direct.directnotify import DirectNotifyGlobal
 
-
 class CrusherCellAI(ActiveCellAI.ActiveCellAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("CrusherCellAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('CrusherCellAI')
 
     def __init__(self, level, entId):
         ActiveCellAI.ActiveCellAI.__init__(self, level, entId)
@@ -11,7 +10,7 @@ class CrusherCellAI(ActiveCellAI.ActiveCellAI):
         self.crushables = []
 
     def destroy(self):
-        self.notify.info("destroy entity %s" % self.entId)
+        self.notify.info('destroy entity %s' % self.entId)
         for entId in self.crushers:
             self.unregisterCrusher(entId)
 
@@ -28,11 +27,8 @@ class CrusherCellAI(ActiveCellAI.ActiveCellAI):
     def unregisterCrusher(self, entId):
         if entId in self.crushers:
             self.crushers.remove(entId)
-            if not hasattr(self, "level"):
-                self.notify.error(
-                    "unregisterCrusher(%s): CrusherCellAI %s has no attrib 'level'"
-                    % (entId, self.entId)
-                )
+            if not hasattr(self, 'level'):
+                self.notify.error("unregisterCrusher(%s): CrusherCellAI %s has no attrib 'level'" % (entId, self.entId))
             ent = self.level.entities.get(entId, None)
             if ent:
                 self.ignore(ent.crushMsg)
@@ -47,16 +43,14 @@ class CrusherCellAI(ActiveCellAI.ActiveCellAI):
             self.crushables.remove(entId)
 
     def doCrush(self, crusherId, axis):
-        self.notify.debug("doCrush %s" % crusherId)
+        self.notify.debug('doCrush %s' % crusherId)
         for occupantId in self.occupantIds:
             if occupantId in self.crushables:
                 crushObj = self.level.entities.get(occupantId, None)
                 if crushObj:
                     crushObj.doCrush(crusherId, axis)
                 else:
-                    self.notify.warning(
-                        "couldn't find crushable object %d" % self.occupantId
-                    )
+                    self.notify.warning("couldn't find crushable object %d" % self.occupantId)
 
         return
 

@@ -4,18 +4,16 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
 from toontown.golf import DistributedGolfCourseAI
 from panda3d.core import *
-
 RequestHole = {}
 
-
 def GolfManagerAI():
-    if not hasattr(simbase, "golf"):
+    if not hasattr(simbase, 'golf'):
         simbase.golf = __GolfManagerAI()
     return simbase.golf
 
 
 class __GolfManagerAI(DirectObject.DirectObject):
-    notify = directNotify.newCategory("GolfManagerAI")
+    notify = directNotify.newCategory('GolfManagerAI')
 
     def __init__(self):
         DirectObject.DirectObject.__init__(self)
@@ -24,22 +22,20 @@ class __GolfManagerAI(DirectObject.DirectObject):
     def delete(self):
         DirectObject.DirectObject.delete(self)
 
-    def readyGolfCourse(self, avIds, courseId=0):
-        self.notify.debug("readyGolfCourse avIds=%s courseId=%d" % (avIds, courseId))
+    def readyGolfCourse(self, avIds, courseId = 0):
+        self.notify.debug('readyGolfCourse avIds=%s courseId=%d' % (avIds, courseId))
         golfZone = simbase.air.allocateZone()
         preferredHoleId = None
         for avId in avIds:
             if avId in RequestHole:
                 preferredHoleId = RequestHole[avId][0]
 
-        newCourse = DistributedGolfCourseAI.DistributedGolfCourseAI(
-            golfZone, avIds, courseId, preferredHoleId
-        )
+        newCourse = DistributedGolfCourseAI.DistributedGolfCourseAI(golfZone, avIds, courseId, preferredHoleId)
         newCourse.generateWithRequired(golfZone)
         self.courseList.append(newCourse)
         golfZone = newCourse.getZoneId()
-        self.notify.debug("%s" % self)
-        self.notify.debug("returning %d" % golfZone)
+        self.notify.debug('%s' % self)
+        self.notify.debug('returning %d' % golfZone)
         return golfZone
 
     def findGolfCourse(self, avId):

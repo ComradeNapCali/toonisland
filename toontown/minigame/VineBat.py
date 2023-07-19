@@ -5,14 +5,13 @@ from panda3d.core import *
 from . import VineGameGlobals
 from direct.interval.SoundInterval import SoundInterval
 
-
 class VineBat(NodePath, DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("VineBat")
+    notify = DirectNotifyGlobal.directNotify.newCategory('VineBat')
     notify.setDebug(True)
     RADIUS = 1.7
 
     def __init__(self, batIndex, timeToTraverseField):
-        NodePath.__init__(self, "VineBat")
+        NodePath.__init__(self, 'VineBat')
         DirectObject.__init__(self)
         pos = Point3(0, 0, 0)
         serialNum = 0
@@ -20,11 +19,11 @@ class VineBat(NodePath, DirectObject):
         self.serialNum = serialNum
         self.batIndex = batIndex
         self.timeToTraverseField = timeToTraverseField
-        gameAssets = loader.loadModel("phase_4/models/minigames/vine_game")
-        bat3 = gameAssets.find("**/bat3")
-        bat2 = gameAssets.find("**/bat2")
-        bat1 = gameAssets.find("**/bat__1")
-        seqNode = SequenceNode("bat")
+        gameAssets = loader.loadModel('phase_4/models/minigames/vine_game')
+        bat3 = gameAssets.find('**/bat3')
+        bat2 = gameAssets.find('**/bat2')
+        bat1 = gameAssets.find('**/bat__1')
+        seqNode = SequenceNode('bat')
         seqNode.addChild(bat1.node())
         seqNode.addChild(bat2.node())
         seqNode.addChild(bat3.node())
@@ -33,7 +32,7 @@ class VineBat(NodePath, DirectObject):
         self.batModel = self.attachNewNode(seqNode)
         self.batModel.reparentTo(self)
         gameAssets.removeNode()
-        self.batModelIcon = self.attachNewNode("batIcon")
+        self.batModelIcon = self.attachNewNode('batIcon')
         self.batModel.copyTo(self.batModelIcon)
         regularCamMask = BitMask32.bit(0)
         self.batModelIcon.hide(regularCamMask)
@@ -42,7 +41,7 @@ class VineBat(NodePath, DirectObject):
         self.batModel.setScale(0.15)
         self.setPos(-100, 0, 0)
         center = Point3(0, 0, 0)
-        self.sphereName = "batSphere-%s-%s" % (gameId, self.serialNum)
+        self.sphereName = 'batSphere-%s-%s' % (gameId, self.serialNum)
         self.collSphere = CollisionSphere(center[0], center[1], center[2], self.RADIUS)
         self.collSphere.setTangible(0)
         self.collNode = CollisionNode(self.sphereName)
@@ -50,23 +49,12 @@ class VineBat(NodePath, DirectObject):
         self.collNode.addSolid(self.collSphere)
         self.collNodePath = self.attachNewNode(self.collNode)
         self.collNodePath.hide()
-        self.accept("enter" + self.sphereName, self.__handleEnterSphere)
-        self.screechSfx = base.loader.loadSfx(
-            "phase_4/audio/sfx/MG_sfx_vine_game_bat_shriek_3.ogg"
-        )
-        self.flySfx = base.loader.loadSfx(
-            "phase_4/audio/sfx/MG_sfx_vine_game_bat_flying_lp.ogg"
-        )
+        self.accept('enter' + self.sphereName, self.__handleEnterSphere)
+        self.screechSfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_vine_game_bat_shriek_3.ogg')
+        self.flySfx = base.loader.loadSfx('phase_4/audio/sfx/MG_sfx_vine_game_bat_flying_lp.ogg')
         self.oldCutoffDistance = base.sfxPlayer.getCutoffDistance()
         base.sfxPlayer.setCutoffDistance(240)
-        self.soundInterval = SoundInterval(
-            self.flySfx,
-            node=self,
-            listenerNode=base.localAvatar,
-            seamlessLoop=True,
-            volume=0.5,
-            cutOff=240,
-        )
+        self.soundInterval = SoundInterval(self.flySfx, node=self, listenerNode=base.localAvatar, seamlessLoop=True, volume=0.5, cutOff=240)
         self.reparentTo(render)
         self.startedFlying = False
         self.warnedForThisLap = False
@@ -92,8 +80,8 @@ class VineBat(NodePath, DirectObject):
 
     def __handleEnterSphere(self, collEntry):
         self.ignoreAll()
-        self.notify.debug("treasuerGrabbed")
-        messenger.send("VineBatGrabbed", [self.serialNum])
+        self.notify.debug('treasuerGrabbed')
+        messenger.send('VineBatGrabbed', [self.serialNum])
 
     def showGrab(self):
         self.reparentTo(hidden)

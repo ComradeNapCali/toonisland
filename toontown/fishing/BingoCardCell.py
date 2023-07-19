@@ -8,31 +8,28 @@ from toontown.toonbase import TTLocalizer
 from toontown.fishing import FishPhoto
 from toontown.fishing import BingoGlobals
 
-
 class BingoCardCell(DirectButton, FSM.FSM):
-    notify = DirectNotifyGlobal.directNotify.newCategory("BingoCardCell")
+    notify = DirectNotifyGlobal.directNotify.newCategory('BingoCardCell')
 
     def __init__(self, cellId, fish, model, color, parent, **kw):
         self.model = model
         self.color = color
-        buttonToUse = self.model.find("**/mickeyButton")
-        optiondefs = (
-            ("relief", None, None),
-            ("state", DGG.DISABLED, None),
-            ("image", buttonToUse, None),
-            ("image_color", self.color, None),
-            ("image_hpr", (0, 90, 0), None),
-            ("image_pos", (0, 0, 0), None),
-            ("pressEffect", False, None),
-        )
+        buttonToUse = self.model.find('**/mickeyButton')
+        optiondefs = (('relief', None, None),
+         ('state', DGG.DISABLED, None),
+         ('image', buttonToUse, None),
+         ('image_color', self.color, None),
+         ('image_hpr', (0, 90, 0), None),
+         ('image_pos', (0, 0, 0), None),
+         ('pressEffect', False, None))
         self.defineoptions(kw, optiondefs)
         DirectButton.__init__(self, parent)
-        FSM.FSM.__init__(self, "BingoCardCell")
+        FSM.FSM.__init__(self, 'BingoCardCell')
         self.initialiseoptions(BingoCardCell)
         self.parent = parent
         self.fish = fish
         self.cellId = cellId
-        self.request("Off")
+        self.request('Off')
         return
 
     def destroy(self):
@@ -43,7 +40,7 @@ class BingoCardCell(DirectButton, FSM.FSM):
         button.setPos(0, 0, 0)
         button.setScale(BingoGlobals.CellImageScale)
         button.setColor(self.color[0], self.color[1], self.color[2], self.color[3])
-        self["image"] = button
+        self['image'] = button
         self.setImage()
 
     def getButtonName(self):
@@ -52,11 +49,11 @@ class BingoCardCell(DirectButton, FSM.FSM):
 
     def generateLogo(self):
         buttonName = self.getButtonName()
-        buttonToUse = self.model.find("**/" + buttonName)
+        buttonToUse = self.model.find('**/' + buttonName)
         self.setImageTo(buttonToUse)
 
     def generateMarkedLogo(self):
-        self.setImageTo(self.model.find("**/mickeyButton"))
+        self.setImageTo(self.model.find('**/mickeyButton'))
 
     def setFish(self, fish):
         if self.fish:
@@ -67,45 +64,41 @@ class BingoCardCell(DirectButton, FSM.FSM):
         return self.fish
 
     def getFishGenus(self):
-        if self.fish == "Free":
+        if self.fish == 'Free':
             return -1
         return self.fish.getGenus()
 
     def getFishSpecies(self):
         return self.fish.getSpecies()
 
-    def enable(self, callback=None):
-        self.request("On", callback)
+    def enable(self, callback = None):
+        self.request('On', callback)
 
     def disable(self):
-        self.request("Off")
-        if not self.fish == "Free":
+        self.request('Off')
+        if not self.fish == 'Free':
             self.generateMarkedLogo()
 
     def enterOff(self):
-        self["state"] = DGG.DISABLED
-        self["command"] = None
+        self['state'] = DGG.DISABLED
+        self['command'] = None
         return
 
     def filterOff(self, request, args):
-        if request == "On":
+        if request == 'On':
             return (request, args)
-        elif request == "Off":
+        elif request == 'Off':
             return request
         else:
-            self.notify.debug(
-                "filterOff: Invalid State Transition from Off to %s" % request
-            )
+            self.notify.debug('filterOff: Invalid State Transition from Off to %s' % request)
 
     def enterOn(self, args):
-        self["state"] = DGG.NORMAL
+        self['state'] = DGG.NORMAL
         if args[0]:
-            self["command"] = Func(args[0], self.cellId).start
+            self['command'] = Func(args[0], self.cellId).start
 
     def filterOn(self, request, args):
-        if request == "Off":
+        if request == 'Off':
             return request
         else:
-            self.notify.debug(
-                "filterOn: Invalid State Transition from Off to %s" % request
-            )
+            self.notify.debug('filterOn: Invalid State Transition from Off to %s' % request)

@@ -7,22 +7,19 @@ from direct.distributed import DistributedObject
 from direct.showbase import AppRunnerGlobal
 from toontown.toonbase import TTLocalizer
 
-
 class StreetSign(DistributedObject.DistributedObject):
-    RedownloadTaskName = "RedownloadStreetSign"
-    StreetSignFileName = config.GetString("street-sign-filename", "texture.jpg")
-    StreetSignBaseDir = config.GetString("street-sign-base-dir", "resources/sign")
-    StreetSignUrl = base.config.GetString(
-        "street-sign-url", "https://TIAline.com/images/"
-    )
-    notify = DirectNotifyGlobal.directNotify.newCategory("StreetSign")
+    RedownloadTaskName = 'RedownloadStreetSign'
+    StreetSignFileName = config.GetString('street-sign-filename', 'texture.jpg')
+    StreetSignBaseDir = config.GetString('street-sign-base-dir', 'resources/sign')
+    StreetSignUrl = base.config.GetString('street-sign-url', 'https://TIAline.com/images/')
+    notify = DirectNotifyGlobal.directNotify.newCategory('StreetSign')
 
     def __init__(self):
         self.downloadingStreetSign = False
         self.percentDownloaded = 0.0
         self.startDownload = datetime.datetime.now()
         self.endDownload = datetime.datetime.now()
-        self.notify.info("Street sign url is %s" % self.StreetSignUrl)
+        self.notify.info('Street sign url is %s' % self.StreetSignUrl)
         self.redownloadStreetSign()
 
     def replaceTexture(self):
@@ -33,7 +30,7 @@ class StreetSign(DistributedObject.DistributedObject):
         self.precentDownload = 0.0
         self.startRedownload = datetime.datetime.now()
         self.downloadingStreetSign = True
-        Filename(self.StreetSignBaseDir + "/.").makeDir()
+        Filename(self.StreetSignBaseDir + '/.').makeDir()
         http = HTTPClient.getGlobalPtr()
         self.url = self.StreetSignUrl + self.StreetSignFileName
         self.ch = http.makeChannel(True)
@@ -49,7 +46,7 @@ class StreetSign(DistributedObject.DistributedObject):
                 localDate = HTTPDate(localFilename.getTimestamp())
                 if localDate.compareTo(date) > 0:
                     outOfDate = False
-                    self.notify.info("Street Sign is up to date")
+                    self.notify.info('Street Sign is up to date')
         if outOfDate and self.ch.isValid():
             self.ch.beginGetDocument(doc)
             self.ch.downloadToFile(localFilename)
@@ -59,11 +56,11 @@ class StreetSign(DistributedObject.DistributedObject):
         if self.ch.run():
             return task.cont
         doc = self.ch.getDocumentSpec()
-        date = ""
+        date = ''
         if doc.hasDate():
             date = doc.getDate().getString()
         if not self.ch.isValid():
             self.redownloadingStreetSign = False
             return task.done
-        self.notify.info("Down downloading street sign")
+        self.notify.info('Down downloading street sign')
         return task.done

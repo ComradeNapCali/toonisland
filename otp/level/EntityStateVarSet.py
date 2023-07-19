@@ -4,6 +4,7 @@ from otp.level.Entity import Entity
 
 
 class EntityStateVarSet(Entity):
+
     def __init__(self, entType):
         self._entType = entType
         self._attribNames = []

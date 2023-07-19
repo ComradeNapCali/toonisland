@@ -6,9 +6,8 @@ from toontown.safezone import DLTreasurePlannerAI
 from toontown.classicchars import DistributedDonaldAI
 from toontown.safezone import ButterflyGlobals
 
-
 class DLHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DLHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DLHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.MintyMines

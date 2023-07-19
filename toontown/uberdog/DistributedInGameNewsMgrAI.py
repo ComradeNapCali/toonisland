@@ -3,17 +3,17 @@ from direct.distributed.DistributedObjectGlobalAI import DistributedObjectGlobal
 
 
 class DistributedInGameNewsMgrAI(DistributedObjectGlobalAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedInGameNewsMgrAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedInGameNewsMgrAI')
 
     def __init__(self, air):
         DistributedObjectGlobalAI.__init__(self, air)
-        self.latestIssueStr = ""
+        self.latestIssueStr = ''
 
     def setLatestIssueStr(self, latestIssueStr):
         self.latestIssueStr = latestIssueStr
 
     def d_setLatestIssueStr(self, latestIssueStr):
-        self.sendUpdate("setLatestIssueStr", [latestIssueStr])
+        self.sendUpdate('setLatestIssueStr', [latestIssueStr])
 
     def b_setLatestIssueStr(self, latestIssueStr):
         self.setLatestIssueStr(latestIssueStr)

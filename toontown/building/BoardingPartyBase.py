@@ -1,7 +1,6 @@
 from otp.otpbase import OTPGlobals
 from toontown.toonbase import ToontownGlobals
 import copy
-
 BOARDCODE_OKAY = 1
 BOARDCODE_MISSING = 0
 BOARDCODE_MINLAFF = -1
@@ -14,8 +13,8 @@ BOARDCODE_PENDING_INVITE = -7
 BOARDCODE_IN_ELEVATOR = -8
 INVITE_ACCEPT_FAIL_GROUP_FULL = -1
 
-
 class BoardingPartyBase:
+
     def __init__(self):
         self.groupListDict = {}
         self.avIdDict = {}
@@ -105,9 +104,7 @@ class BoardingPartyBase:
             return False
 
     def isInGroup(self, memberId, leaderId):
-        if memberId in self.getGroupMemberList(
-            leaderId
-        ) or memberId in self.getGroupInviteList(leaderId):
+        if memberId in self.getGroupMemberList(leaderId) or memberId in self.getGroupInviteList(leaderId):
             return True
         else:
             return False

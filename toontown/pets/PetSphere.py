@@ -3,7 +3,6 @@ from direct.showbase.PythonUtil import reduceAngle
 from otp.movement import Impulse
 from otp.otpbase import OTPGlobals
 
-
 class PetSphere(Impulse.Impulse):
     SerialNum = 0
 
@@ -17,7 +16,7 @@ class PetSphere(Impulse.Impulse):
     def _setMover(self, mover):
         Impulse.Impulse._setMover(self, mover)
         self.cSphere = CollisionSphere(0.0, 0.0, 0.0, self.petRadius)
-        cSphereNode = CollisionNode("PetSphere")
+        cSphereNode = CollisionNode('PetSphere')
         cSphereNode.addSolid(self.cSphere)
         self.cSphereNodePath = hidden.attachNewNode(cSphereNode)
         self.cSphereNodePath.reparentTo(self.nodePath)
@@ -25,8 +24,8 @@ class PetSphere(Impulse.Impulse):
         cSphereNode.setIntoCollideMask(OTPGlobals.WallBitmask)
         self.pusher = CollisionHandlerPusher()
         self.pusher.setHorizontal(1)
-        self.pusher.setInPattern("enter%in")
-        self.pusher.setOutPattern("exit%in")
+        self.pusher.setInPattern('enter%in')
+        self.pusher.setOutPattern('exit%in')
         self.pusher.addCollider(self.cSphereNodePath, self.nodePath)
         self.pusher.addInPattern(self._getCollisionEvent())
         self.collTrav.addCollider(self.cSphereNodePath, self.pusher)
@@ -42,7 +41,7 @@ class PetSphere(Impulse.Impulse):
         del self.cSphereNodePath
 
     def _getCollisionEvent(self):
-        return "petSphereColl-%s" % self.serialNum
+        return 'petSphereColl-%s' % self.serialNum
 
     def _handleCollision(self, collEntry):
         messenger.send(self.mover.getCollisionEventName(), [collEntry])

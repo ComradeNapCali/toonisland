@@ -5,7 +5,7 @@ from toontown.toonbase import TTLocalizer
 
 
 class DistributedLeaderBoardAI(DistributedObjectAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedLeaderBoardAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLeaderBoardAI')
 
     def __init__(self, air, name, x, y, z, h, p, r):
         DistributedObjectAI.__init__(self, air)
@@ -14,11 +14,11 @@ class DistributedLeaderBoardAI(DistributedObjectAI):
         self.subscriptions = []
         self.currentIndex = -1
         self.posHpr = (x, y, z, h, p, r)
-        self.accept("UpdateRaceRecord", self.updateRaceRecord)
+        self.accept('UpdateRaceRecord', self.updateRaceRecord)
 
     def announceGenerate(self):
         DistributedObjectAI.announceGenerate(self)
-        self.accept("GS_LeaderBoardSwap" + str(self.zoneId), self.setDisplay)
+        self.accept('GS_LeaderBoardSwap' + str(self.zoneId), self.setDisplay)
 
     def getName(self):
         return self.name
@@ -28,15 +28,12 @@ class DistributedLeaderBoardAI(DistributedObjectAI):
         if trackId not in self.records:
             return
 
-        self.records[trackId][period] = [
-            (x[0], x[3]) for x in self.air.raceMgr.getRecords(trackId, period)
-        ]
+        self.records[trackId][period] = [(x[0], x[3]) for x in self.air.raceMgr.getRecords(trackId, period)]
 
     def subscribeTo(self, subscription):
-        self.records.setdefault(subscription[0], {})[subscription[1]] = [
-            (x[0], x[3])
-            for x in self.air.raceMgr.getRecords(subscription[0], subscription[1])
-        ]
+        self.records.setdefault(subscription[0], {})[subscription[1]] = [(x[0], x[3]) for x in
+                                                                         self.air.raceMgr.getRecords(subscription[0],
+                                                                                                     subscription[1])]
         self.subscriptions.append(subscription)
 
     def getPosHpr(self):
@@ -47,14 +44,8 @@ class DistributedLeaderBoardAI(DistributedObjectAI):
         if self.currentIndex >= len(self.subscriptions):
             self.currentIndex = 0
 
-        trackName = TTLocalizer.KartRace_TrackNames[
-            self.subscriptions[self.currentIndex][0]
-        ]
-        periodName = TTLocalizer.RecordPeriodStrings[
-            self.subscriptions[self.currentIndex][1]
-        ]
-        leaderList = self.records[self.subscriptions[self.currentIndex][0]][
-            self.subscriptions[self.currentIndex][1]
-        ]
+        trackName = TTLocalizer.KartRace_TrackNames[self.subscriptions[self.currentIndex][0]]
+        periodName = TTLocalizer.RecordPeriodStrings[self.subscriptions[self.currentIndex][1]]
+        leaderList = self.records[self.subscriptions[self.currentIndex][0]][self.subscriptions[self.currentIndex][1]]
 
-        self.sendUpdate("setDisplay", [trackName, periodName, leaderList])
+        self.sendUpdate('setDisplay', [trackName, periodName, leaderList])

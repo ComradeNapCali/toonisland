@@ -5,39 +5,32 @@ from toontown.toonbase import ToontownGlobals
 from direct.showbase.PythonUtil import normalDistrib, lerp
 import random
 
-
 def printAllBossbotInfo():
-    print("roomId: roomName")
-    for roomId, roomName in list(
-        CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName.items()
-    ):
-        print("%s: %s" % (roomId, roomName))
+    print('roomId: roomName')
+    for roomId, roomName in list(CountryClubRoomSpecs.BossbotCountryClubRoomId2RoomName.items()):
+        print('%s: %s' % (roomId, roomName))
 
-    print("\nroomId: numBattles")
+    print('\nroomId: numBattles')
     for roomId, numBattles in list(CountryClubRoomSpecs.roomId2numBattles.items()):
-        print("%s: %s" % (roomId, numBattles))
+        print('%s: %s' % (roomId, numBattles))
 
-    print("\ncountryClubId floor roomIds")
+    print('\ncountryClubId floor roomIds')
     printCountryClubRoomIds()
-    print("\ncountryClubId floor numRooms")
+    print('\ncountryClubId floor numRooms')
     printNumRooms()
-    print("\ncountryClubId floor numForcedBattles")
+    print('\ncountryClubId floor numForcedBattles')
     printNumBattles()
 
 
 def iterateBossbotCountryClubs(func):
     from toontown.toonbase import ToontownGlobals
-
-    for countryClubId in [
-        ToontownGlobals.BossbotCountryClubIntA,
-        ToontownGlobals.BossbotCountryClubIntB,
-        ToontownGlobals.BossbotCountryClubIntC,
-    ]:
+    for countryClubId in [ToontownGlobals.BossbotCountryClubIntA, ToontownGlobals.BossbotCountryClubIntB, ToontownGlobals.BossbotCountryClubIntC]:
         for floorNum in range(ToontownGlobals.CountryClubNumFloors[countryClubId]):
             func(CountryClubLayout(countryClubId, floorNum))
 
 
 def printCountryClubInfo():
+
     def func(ml):
         print(ml)
 
@@ -45,6 +38,7 @@ def printCountryClubInfo():
 
 
 def printCountryClubRoomIds():
+
     def func(ml):
         print(ml.getCountryClubId(), ml.getFloorNum(), ml.getRoomIds())
 
@@ -52,6 +46,7 @@ def printCountryClubRoomIds():
 
 
 def printCountryClubRoomNames():
+
     def func(ml):
         print(ml.getCountryClubId(), ml.getFloorNum(), ml.getRoomNames())
 
@@ -59,6 +54,7 @@ def printCountryClubRoomNames():
 
 
 def printNumRooms():
+
     def func(ml):
         print(ml.getCountryClubId(), ml.getFloorNum(), ml.getNumRooms())
 
@@ -66,6 +62,7 @@ def printNumRooms():
 
 
 def printNumBattles():
+
     def func(ml):
         print(ml.getCountryClubId(), ml.getFloorNum(), ml.getNumBattles())
 
@@ -75,90 +72,73 @@ def printNumBattles():
 ClubLayout3_0 = [(0, 2, 5, 9, 17), (0, 2, 4, 9, 17), (0, 2, 5, 9, 18)]
 ClubLayout3_1 = [(0, 2, 5, 9, 17), (0, 2, 4, 9, 17), (0, 2, 5, 9, 18)]
 ClubLayout3_2 = [(0, 2, 4, 9, 17), (0, 2, 4, 9, 17), (0, 2, 6, 9, 18)]
-ClubLayout6_0 = [
-    (0, 22, 4, 29, 17),
-    (0, 22, 5, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 5, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 5, 29, 18),
-]
-ClubLayout6_1 = [
-    (0, 22, 4, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 4, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 4, 29, 17),
-    (0, 22, 6, 29, 18),
-]
-ClubLayout6_2 = [
-    (0, 22, 4, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 5, 29, 17),
-    (0, 22, 6, 29, 17),
-    (0, 22, 5, 29, 17),
-    (0, 22, 7, 29, 18),
-]
-ClubLayout9_0 = [
-    (0, 32, 4, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 6, 39, 18),
-]
-ClubLayout9_1 = [
-    (0, 32, 4, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 7, 39, 17),
-    (0, 32, 7, 39, 18),
-]
-ClubLayout9_2 = [
-    (0, 32, 5, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 5, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 6, 39, 17),
-    (0, 32, 7, 39, 18),
-]
-countryClubLayouts = [
-    ClubLayout3_0,
-    ClubLayout3_1,
-    ClubLayout3_2,
-    ClubLayout6_0,
-    ClubLayout6_1,
-    ClubLayout6_2,
-    ClubLayout9_0,
-    ClubLayout9_1,
-    ClubLayout9_2,
-]
-testLayout = [
-    ClubLayout3_0,
-    ClubLayout3_0,
-    ClubLayout3_0,
-    ClubLayout6_0,
-    ClubLayout6_0,
-    ClubLayout6_0,
-    ClubLayout9_0,
-    ClubLayout9_0,
-    ClubLayout9_0,
-]
+ClubLayout6_0 = [(0, 22, 4, 29, 17),
+ (0, 22, 5, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 5, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 5, 29, 18)]
+ClubLayout6_1 = [(0, 22, 4, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 4, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 4, 29, 17),
+ (0, 22, 6, 29, 18)]
+ClubLayout6_2 = [(0, 22, 4, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 5, 29, 17),
+ (0, 22, 6, 29, 17),
+ (0, 22, 5, 29, 17),
+ (0, 22, 7, 29, 18)]
+ClubLayout9_0 = [(0, 32, 4, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 6, 39, 18)]
+ClubLayout9_1 = [(0, 32, 4, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 7, 39, 17),
+ (0, 32, 7, 39, 18)]
+ClubLayout9_2 = [(0, 32, 5, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 5, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 6, 39, 17),
+ (0, 32, 7, 39, 18)]
+countryClubLayouts = [ClubLayout3_0,
+ ClubLayout3_1,
+ ClubLayout3_2,
+ ClubLayout6_0,
+ ClubLayout6_1,
+ ClubLayout6_2,
+ ClubLayout9_0,
+ ClubLayout9_1,
+ ClubLayout9_2]
+testLayout = [ClubLayout3_0,
+ ClubLayout3_0,
+ ClubLayout3_0,
+ ClubLayout6_0,
+ ClubLayout6_0,
+ ClubLayout6_0,
+ ClubLayout9_0,
+ ClubLayout9_0,
+ ClubLayout9_0]
 countryClubLayouts = testLayout
 
-
 class CountryClubLayout:
-    notify = DirectNotifyGlobal.directNotify.newCategory("CountryClubLayout")
+    notify = DirectNotifyGlobal.directNotify.newCategory('CountryClubLayout')
 
     def __init__(self, countryClubId, floorNum, layoutIndex):
         self.countryClubId = countryClubId
@@ -188,9 +168,7 @@ class CountryClubLayout:
         middleRoomIds = []
         middleRoomsLeft = self.numRooms - 2
 
-        numBattles2middleRoomIds = invertDictLossless(
-            CountryClubRoomSpecs.middleRoomId2numBattles
-        )
+        numBattles2middleRoomIds = invertDictLossless(CountryClubRoomSpecs.middleRoomId2numBattles)
 
         allBattleRooms = []
         for num, roomIds in list(numBattles2middleRoomIds.items()):
@@ -199,13 +177,12 @@ class CountryClubLayout:
         while 1:
             allBattleRoomIds = list(allBattleRooms)
             rng.shuffle(allBattleRoomIds)
-            battleRoomIds = self._chooseBattleRooms(numBattlesLeft, allBattleRoomIds)
+            battleRoomIds = self._chooseBattleRooms(numBattlesLeft,
+                                                    allBattleRoomIds)
             if battleRoomIds is not None:
                 break
 
-            CountryClubLayout.notify.info(
-                "could not find a valid set of battle rooms, trying again"
-            )
+            CountryClubLayout.notify.info('could not find a valid set of battle rooms, trying again')
 
         middleRoomIds.extend(battleRoomIds)
         middleRoomsLeft -= len(battleRoomIds)
@@ -222,7 +199,7 @@ class CountryClubLayout:
         roomIds.append(rng.choice(startingRoomIDs))
 
         middleRoomIds.sort()
-        print("middleRoomIds=%s" % middleRoomIds)
+        print('middleRoomIds=%s' % middleRoomIds)
         roomIds.extend(middleRoomIds)
 
         roomIds.append(finalRoomId)
@@ -267,27 +244,20 @@ class CountryClubLayout:
     def getRng(self):
         return random.Random(self.countryClubId * self.floorNum)
 
-    def _chooseBattleRooms(
-        self, numBattlesLeft, allBattleRoomIds, baseIndex=0, chosenBattleRooms=None
-    ):
+    def _chooseBattleRooms(self, numBattlesLeft, allBattleRoomIds, baseIndex = 0, chosenBattleRooms = None):
         if chosenBattleRooms is None:
             chosenBattleRooms = []
         while baseIndex < len(allBattleRoomIds):
             nextRoomId = allBattleRoomIds[baseIndex]
             baseIndex += 1
-            newNumBattlesLeft = (
-                numBattlesLeft
-                - CountryClubRoomSpecs.middleRoomId2numBattles[nextRoomId]
-            )
+            newNumBattlesLeft = numBattlesLeft - CountryClubRoomSpecs.middleRoomId2numBattles[nextRoomId]
             if newNumBattlesLeft < 0:
                 continue
             elif newNumBattlesLeft == 0:
                 chosenBattleRooms.append(nextRoomId)
                 return chosenBattleRooms
             chosenBattleRooms.append(nextRoomId)
-            result = self._chooseBattleRooms(
-                newNumBattlesLeft, allBattleRoomIds, baseIndex, chosenBattleRooms
-            )
+            result = self._chooseBattleRooms(newNumBattlesLeft, allBattleRoomIds, baseIndex, chosenBattleRooms)
             if result is not None:
                 return result
             else:
@@ -298,16 +268,11 @@ class CountryClubLayout:
         return
 
     def __str__(self):
-        return (
-            "CountryClubLayout: id=%s, layoutIndex=%s, floor=%s, numRooms=%s, numBattles=%s"
-            % (
-                self.countryClubId,
-                self.layoutIndex,
-                self.floorNum,
-                self.getNumRooms(),
-                self.getNumBattles(),
-            )
-        )
+        return 'CountryClubLayout: id=%s, layoutIndex=%s, floor=%s, numRooms=%s, numBattles=%s' % (self.countryClubId,
+         self.layoutIndex,
+         self.floorNum,
+         self.getNumRooms(),
+         self.getNumBattles())
 
     def __repr__(self):
         return str(self)

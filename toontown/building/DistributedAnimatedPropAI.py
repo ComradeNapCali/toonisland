@@ -5,24 +5,11 @@ from direct.fsm import ClassicFSM, State
 from direct.distributed import DistributedObjectAI
 from direct.fsm import State
 
-
 class DistributedAnimatedPropAI(DistributedObjectAI.DistributedObjectAI):
+
     def __init__(self, air, propId):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
-        self.fsm = ClassicFSM.ClassicFSM(
-            "DistributedAnimatedPropAI",
-            [
-                State.State("off", self.enterOff, self.exitOff, ["playing"]),
-                State.State(
-                    "attract", self.enterAttract, self.exitAttract, ["playing"]
-                ),
-                State.State(
-                    "playing", self.enterPlaying, self.exitPlaying, ["attract"]
-                ),
-            ],
-            "off",
-            "off",
-        )
+        self.fsm = ClassicFSM.ClassicFSM('DistributedAnimatedPropAI', [State.State('off', self.enterOff, self.exitOff, ['playing']), State.State('attract', self.enterAttract, self.exitAttract, ['playing']), State.State('playing', self.enterPlaying, self.exitPlaying, ['attract'])], 'off', 'off')
         self.fsm.enterInitialState()
         self.propId = propId
         self.avatarId = 0
@@ -39,10 +26,7 @@ class DistributedAnimatedPropAI(DistributedObjectAI.DistributedObjectAI):
         return self.avatarId
 
     def getInitialState(self):
-        return [
-            self.fsm.getCurrentState().getName(),
-            globalClockDelta.getRealNetworkTime(),
-        ]
+        return [self.fsm.getCurrentState().getName(), globalClockDelta.getRealNetworkTime()]
 
     def getOwnerDoId(self):
         return self.ownerDoId
@@ -50,29 +34,26 @@ class DistributedAnimatedPropAI(DistributedObjectAI.DistributedObjectAI):
     def requestInteract(self):
         avatarId = self.air.getAvatarIdFromSender()
         stateName = self.fsm.getCurrentState().getName()
-        if stateName != "playing":
-            self.sendUpdate("setAvatarInteract", [avatarId])
+        if stateName != 'playing':
+            self.sendUpdate('setAvatarInteract', [avatarId])
             self.avatarId = avatarId
-            self.fsm.request("playing")
+            self.fsm.request('playing')
         else:
-            self.sendUpdateToAvatarId(avatarId, "rejectInteract", [])
+            self.sendUpdateToAvatarId(avatarId, 'rejectInteract', [])
 
     def requestExit(self):
         avatarId = self.air.getAvatarIdFromSender()
         if avatarId == self.avatarId:
             stateName = self.fsm.getCurrentState().getName()
-            if stateName == "playing":
-                self.sendUpdate("avatarExit", [avatarId])
-                self.fsm.request("attract")
+            if stateName == 'playing':
+                self.sendUpdate('avatarExit', [avatarId])
+                self.fsm.request('attract')
 
     def getState(self):
-        return [
-            self.fsm.getCurrentState().getName(),
-            globalClockDelta.getRealNetworkTime(),
-        ]
+        return [self.fsm.getCurrentState().getName(), globalClockDelta.getRealNetworkTime()]
 
     def d_setState(self, state):
-        self.sendUpdate("setState", [state, globalClockDelta.getRealNetworkTime()])
+        self.sendUpdate('setState', [state, globalClockDelta.getRealNetworkTime()])
 
     def enterOff(self):
         pass
@@ -81,13 +62,13 @@ class DistributedAnimatedPropAI(DistributedObjectAI.DistributedObjectAI):
         pass
 
     def enterAttract(self):
-        self.d_setState("attract")
+        self.d_setState('attract')
 
     def exitAttract(self):
         pass
 
     def enterPlaying(self):
-        self.d_setState("playing")
+        self.d_setState('playing')
 
     def exitPlaying(self):
         pass

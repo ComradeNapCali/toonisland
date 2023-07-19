@@ -3,9 +3,8 @@ from toontown.coghq import DistributedCogHQDoor
 from toontown.toonbase import TTLocalizer
 from . import CogDisguiseGlobals
 
-
 class DistributedSellbotHQDoor(DistributedCogHQDoor.DistributedCogHQDoor):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedSellbotHQDoor")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedSellbotHQDoor')
 
     def __init__(self, cr):
         DistributedCogHQDoor.DistributedCogHQDoor.__init__(self, cr)
@@ -20,8 +19,6 @@ class DistributedSellbotHQDoor(DistributedCogHQDoor.DistributedCogHQDoor):
             popupMsg = TTLocalizer.SellbotCogSuitHasMeritsMessage
         else:
             popupMsg = TTLocalizer.FADoorCodes_SB_DISGUISE_INCOMPLETE
-        localAvatar.elevatorNotifier.showMeWithoutStopping(
-            popupMsg, pos=(0, 0, 0.26), ttDialog=True
-        )
+        localAvatar.elevatorNotifier.showMeWithoutStopping(popupMsg, pos=(0, 0, 0.26), ttDialog=True)
         localAvatar.elevatorNotifier.setOkButton()
         localAvatar.elevatorNotifier.doneButton.setZ(-0.3)

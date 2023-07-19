@@ -2,6 +2,7 @@ from . import Entity
 
 
 class VisibilityExtender(Entity.Entity):
+
     def __init__(self, level, entId):
         Entity.Entity.__init__(self, level, entId)
         self.initVisExt()

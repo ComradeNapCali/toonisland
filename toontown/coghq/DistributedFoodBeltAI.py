@@ -3,15 +3,12 @@ from direct.fsm import FSM
 from direct.directnotify import DirectNotifyGlobal
 from toontown.coghq import FoodBeltBase
 
-
-class DistributedFoodBeltAI(
-    DistributedObjectAI.DistributedObjectAI, FSM.FSM, FoodBeltBase.FoodBeltBase
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFoodBeltAI")
+class DistributedFoodBeltAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM, FoodBeltBase.FoodBeltBase):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFoodBeltAI')
 
     def __init__(self, air, boss, index):
         DistributedObjectAI.DistributedObjectAI.__init__(self, air)
-        FSM.FSM.__init__(self, "DistributedFoodBeltAI")
+        FSM.FSM.__init__(self, 'DistributedFoodBeltAI')
         self.boss = boss
         self.index = index
 
@@ -29,28 +26,28 @@ class DistributedFoodBeltAI(
 
     def d_setState(self, state):
         newState = state
-        if state == "On":
-            newState = "N"
-        elif state == "Off":
-            newState = "F"
-        elif state == "Inactive":
-            newState = "I"
-        elif state == "Toonup":
-            newState = "T"
-        self.sendUpdate("setState", [newState])
+        if state == 'On':
+            newState = 'N'
+        elif state == 'Off':
+            newState = 'F'
+        elif state == 'Inactive':
+            newState = 'I'
+        elif state == 'Toonup':
+            newState = 'T'
+        self.sendUpdate('setState', [newState])
 
     def b_setState(self, state):
         self.request(state)
         self.d_setState(state)
 
     def turnOn(self):
-        self.b_setState("On")
+        self.b_setState('On')
 
     def goInactive(self):
-        self.b_setState("Inactive")
+        self.b_setState('Inactive')
 
     def goToonup(self):
-        self.b_setState("Toonup")
+        self.b_setState('Toonup')
 
     def enterOn(self):
         pass

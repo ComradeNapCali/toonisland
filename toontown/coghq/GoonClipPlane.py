@@ -2,8 +2,8 @@ from panda3d.core import *
 from direct.interval.IntervalGlobal import *
 from otp.level import BasicEntities
 
-
 class GoonClipPlane(BasicEntities.NodePathEntity):
+
     def __init__(self, level, entId):
         BasicEntities.NodePathEntity.__init__(self, level, entId)
         self.zoneNum = self.getZoneEntity().getZoneNum()
@@ -30,7 +30,7 @@ class GoonClipPlane(BasicEntities.NodePathEntity):
                 clipList.remove(self.entId)
 
     def initPlane(self):
-        self.coneClip = PlaneNode("coneClip")
+        self.coneClip = PlaneNode('coneClip')
         self.coneClip.setPlane(Plane(Vec3(1, 0, 0), Point3(0, 0, 0)))
         self.coneClipPath = self.attachNewNode(self.coneClip)
 

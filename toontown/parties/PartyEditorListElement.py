@@ -6,38 +6,31 @@ from toontown.parties import PartyGlobals
 from toontown.parties.PartyEditorGridElement import PartyEditorGridElement
 from toontown.parties.PartyUtils import getPartyActivityIcon
 
-
 class PartyEditorListElement(DirectButton):
-    notify = directNotify.newCategory("PartyEditorListElement")
+    notify = directNotify.newCategory('PartyEditorListElement')
 
-    def __init__(self, partyEditor, id, isDecoration=False, **kw):
+    def __init__(self, partyEditor, id, isDecoration = False, **kw):
         self.partyEditor = partyEditor
         self.id = id
         self.isDecoration = isDecoration
         self.unreleased = self.calcUnreleased(id)
         self.comingSoonTextScale = 1.0
         if self.isDecoration:
-            self.name = TTLocalizer.PartyDecorationNameDict[self.id]["editor"]
-            colorList = (
-                (1.0, 0.0, 1.0, 1.0),
-                (0.0, 0.0, 1.0, 1.0),
-                (0.0, 1.0, 1.0, 1.0),
-                (0.5, 0.5, 0.5, 1.0),
-            )
+            self.name = TTLocalizer.PartyDecorationNameDict[self.id]['editor']
+            colorList = ((1.0, 0.0, 1.0, 1.0),
+             (0.0, 0.0, 1.0, 1.0),
+             (0.0, 1.0, 1.0, 1.0),
+             (0.5, 0.5, 0.5, 1.0))
             assetName = PartyGlobals.DecorationIds.getString(self.id)
-            if assetName == "Hydra":
-                assetName = "StageSummer"
-            geom = self.partyEditor.decorationModels.find(
-                "**/partyDecoration_%s" % assetName
-            )
+            if assetName == 'Hydra':
+                assetName = 'StageSummer'
+            geom = self.partyEditor.decorationModels.find('**/partyDecoration_%s' % assetName)
             if geom.isEmpty() or self.unreleased:
-                helpGui = loader.loadModel("phase_3.5/models/gui/tt_m_gui_brd_help")
-                helpImageList = (
-                    helpGui.find("**/tt_t_gui_brd_helpUp"),
-                    helpGui.find("**/tt_t_gui_brd_helpDown"),
-                    helpGui.find("**/tt_t_gui_brd_helpHover"),
-                    helpGui.find("**/tt_t_gui_brd_helpDown"),
-                )
+                helpGui = loader.loadModel('phase_3.5/models/gui/tt_m_gui_brd_help')
+                helpImageList = (helpGui.find('**/tt_t_gui_brd_helpUp'),
+                 helpGui.find('**/tt_t_gui_brd_helpDown'),
+                 helpGui.find('**/tt_t_gui_brd_helpHover'),
+                 helpGui.find('**/tt_t_gui_brd_helpDown'))
                 geom = helpImageList[2]
                 geom3_color = (0.5, 0.5, 0.5, 1.0)
                 scale = Vec3(2.5, 2.5, 2.5)
@@ -47,74 +40,44 @@ class PartyEditorListElement(DirectButton):
                 geom_pos = (0.0, 0.0, -3.0)
                 geom3_color = (0.5, 0.5, 0.5, 1.0)
                 scale = Vec3(0.06, 0.0001, 0.06)
-                if self.id in [
-                    PartyGlobals.DecorationIds.CogStatueVictory,
-                    PartyGlobals.DecorationIds.TubeCogVictory,
-                    PartyGlobals.DecorationIds.CogIceCreamVictory,
-                ]:
+                if self.id in [PartyGlobals.DecorationIds.CogStatueVictory, PartyGlobals.DecorationIds.TubeCogVictory, PartyGlobals.DecorationIds.CogIceCreamVictory]:
                     geom_pos = (0.0, 0.0, -3.9)
                     scale = Vec3(0.05, 0.0001, 0.05)
         else:
-            self.name = TTLocalizer.PartyActivityNameDict[self.id]["editor"]
-            colorList = (
-                (0.0, 0.0, 0.0, 1.0),
-                (0.0, 1.0, 0.0, 1.0),
-                (1.0, 1.0, 0.0, 1.0),
-                (0.5, 0.5, 0.5, 1.0),
-            )
+            self.name = TTLocalizer.PartyActivityNameDict[self.id]['editor']
+            colorList = ((0.0, 0.0, 0.0, 1.0),
+             (0.0, 1.0, 0.0, 1.0),
+             (1.0, 1.0, 0.0, 1.0),
+             (0.5, 0.5, 0.5, 1.0))
             iconString = PartyGlobals.ActivityIds.getString(self.id)
             if self.id == PartyGlobals.ActivityIds.PartyJukebox40:
-                iconString = PartyGlobals.ActivityIds.getString(
-                    PartyGlobals.ActivityIds.PartyJukebox
-                )
+                iconString = PartyGlobals.ActivityIds.getString(PartyGlobals.ActivityIds.PartyJukebox)
             elif self.id == PartyGlobals.ActivityIds.PartyDance20:
-                iconString = PartyGlobals.ActivityIds.getString(
-                    PartyGlobals.ActivityIds.PartyDance
-                )
+                iconString = PartyGlobals.ActivityIds.getString(PartyGlobals.ActivityIds.PartyDance)
             geom = getPartyActivityIcon(self.partyEditor.activityIconsModel, iconString)
             scale = 0.35
             geom3_color = (0.5, 0.5, 0.5, 1.0)
             geom_pos = (0.0, 0.0, 0.0)
             self.comingSoonTextScale = 0.25
-        optiondefs = (
-            ("geom", geom, None),
-            ("geom3_color", geom3_color, None),
-            ("geom_pos", geom_pos, None),
-            ("relief", None, None),
-        )
+        optiondefs = (('geom', geom, None),
+         ('geom3_color', geom3_color, None),
+         ('geom_pos', geom_pos, None),
+         ('relief', None, None))
         self.defineoptions(kw, optiondefs)
         DirectButton.__init__(self, self.partyEditor.elementList)
         self.initialiseoptions(PartyEditorListElement)
-        self.setName("%sListElement" % self.name)
+        self.setName('%sListElement' % self.name)
         self.setScale(scale)
         self.bind(DirectGuiGlobals.B1PRESS, self.clicked)
         self.bind(DirectGuiGlobals.B1RELEASE, self.released)
         self.partyEditorGridElements = []
         if self.isDecoration:
-            for i in range(
-                PartyGlobals.DecorationInformationDict[self.id]["limitPerParty"]
-            ):
-                self.partyEditorGridElements.append(
-                    PartyEditorGridElement(
-                        self.partyEditor,
-                        self.id,
-                        self.isDecoration,
-                        self.checkSoldOutAndPaidStatusAndAffordability,
-                    )
-                )
+            for i in range(PartyGlobals.DecorationInformationDict[self.id]['limitPerParty']):
+                self.partyEditorGridElements.append(PartyEditorGridElement(self.partyEditor, self.id, self.isDecoration, self.checkSoldOutAndPaidStatusAndAffordability))
 
         else:
-            for i in range(
-                PartyGlobals.ActivityInformationDict[self.id]["limitPerParty"]
-            ):
-                self.partyEditorGridElements.append(
-                    PartyEditorGridElement(
-                        self.partyEditor,
-                        self.id,
-                        self.isDecoration,
-                        self.checkSoldOutAndPaidStatusAndAffordability,
-                    )
-                )
+            for i in range(PartyGlobals.ActivityInformationDict[self.id]['limitPerParty']):
+                self.partyEditorGridElements.append(PartyEditorGridElement(self.partyEditor, self.id, self.isDecoration, self.checkSoldOutAndPaidStatusAndAffordability))
 
         self.activeGridElementIndex = -1
         self.adjustForUnreleased()
@@ -132,15 +95,8 @@ class PartyEditorListElement(DirectButton):
     def adjustForUnreleased(self):
         if self.unreleased:
             textScale = self.comingSoonTextScale
-            comingSoon = DirectLabel(
-                parent=self,
-                text=TTLocalizer.PartyPlannerComingSoon,
-                text_scale=textScale,
-                text_fg=(1.0, 0, 0, 1.0),
-                text_shadow=(0, 0, 0, 1),
-                relief=None,
-            )
-            self["state"] = DirectGuiGlobals.DISABLED
+            comingSoon = DirectLabel(parent=self, text=TTLocalizer.PartyPlannerComingSoon, text_scale=textScale, text_fg=(1.0, 0, 0, 1.0), text_shadow=(0, 0, 0, 1), relief=None)
+            self['state'] = DirectGuiGlobals.DISABLED
         return
 
     def clearPartyGrounds(self):
@@ -148,31 +104,15 @@ class PartyEditorListElement(DirectButton):
             gridElement.removeFromGrid()
 
     def elementSelectedFromList(self):
-        PartyEditorListElement.notify.debug("Element %s clicked" % self.name)
+        PartyEditorListElement.notify.debug('Element %s clicked' % self.name)
         if self.isDecoration:
-            self.partyEditor.partyPlanner.elementDescriptionNode.setText(
-                TTLocalizer.PartyDecorationNameDict[self.id]["description"]
-            )
-            self.partyEditor.partyPlanner.elementPriceNode.setText(
-                "%d %s"
-                % (
-                    PartyGlobals.DecorationInformationDict[self.id]["cost"],
-                    TTLocalizer.PartyPlannerBeans,
-                )
-            )
-            self.partyEditor.partyPlanner.elementTitleLabel["text"] = self.name
+            self.partyEditor.partyPlanner.elementDescriptionNode.setText(TTLocalizer.PartyDecorationNameDict[self.id]['description'])
+            self.partyEditor.partyPlanner.elementPriceNode.setText('%d %s' % (PartyGlobals.DecorationInformationDict[self.id]['cost'], TTLocalizer.PartyPlannerBeans))
+            self.partyEditor.partyPlanner.elementTitleLabel['text'] = self.name
         else:
-            self.partyEditor.partyPlanner.elementDescriptionNode.setText(
-                TTLocalizer.PartyActivityNameDict[self.id]["description"]
-            )
-            self.partyEditor.partyPlanner.elementPriceNode.setText(
-                "%d %s"
-                % (
-                    PartyGlobals.ActivityInformationDict[self.id]["cost"],
-                    TTLocalizer.PartyPlannerBeans,
-                )
-            )
-            self.partyEditor.partyPlanner.elementTitleLabel["text"] = self.name
+            self.partyEditor.partyPlanner.elementDescriptionNode.setText(TTLocalizer.PartyActivityNameDict[self.id]['description'])
+            self.partyEditor.partyPlanner.elementPriceNode.setText('%d %s' % (PartyGlobals.ActivityInformationDict[self.id]['cost'], TTLocalizer.PartyPlannerBeans))
+            self.partyEditor.partyPlanner.elementTitleLabel['text'] = self.name
         self.checkSoldOutAndPaidStatusAndAffordability()
 
     def checkSoldOutAndPaidStatusAndAffordability(self):
@@ -184,14 +124,10 @@ class PartyEditorListElement(DirectButton):
             infoDict = PartyGlobals.DecorationInformationDict
         else:
             infoDict = PartyGlobals.ActivityInformationDict
-        if not base.cr.isPaid() and infoDict[self.id]["paidOnly"]:
+        if not base.cr.isPaid() and infoDict[self.id]['paidOnly']:
             self.setOffLimits()
             return
-        if (
-            infoDict[self.id]["cost"]
-            > self.partyEditor.partyPlanner.totalMoney
-            - self.partyEditor.partyPlanner.totalCost
-        ):
+        if infoDict[self.id]['cost'] > self.partyEditor.partyPlanner.totalMoney - self.partyEditor.partyPlanner.totalCost:
             self.setTooExpensive(True)
             tooExpensive = True
         else:
@@ -207,55 +143,33 @@ class PartyEditorListElement(DirectButton):
         return
 
     def setOffLimits(self):
-        self["state"] = DirectGuiGlobals.DISABLED
-        self.partyEditor.partyPlanner.elementBuyButton[
-            "text"
-        ] = TTLocalizer.PartyPlannerPaidOnly
-        self.partyEditor.partyPlanner.elementBuyButton[
-            "state"
-        ] = DirectGuiGlobals.DISABLED
-        self.partyEditor.partyPlanner.elementBuyButton["text_scale"] = 0.04
+        self['state'] = DirectGuiGlobals.DISABLED
+        self.partyEditor.partyPlanner.elementBuyButton['text'] = TTLocalizer.PartyPlannerPaidOnly
+        self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.DISABLED
+        self.partyEditor.partyPlanner.elementBuyButton['text_scale'] = 0.04
 
     def setTooExpensive(self, value):
-        self.partyEditor.partyPlanner.elementBuyButton[
-            "text"
-        ] = TTLocalizer.PartyPlannerBuy
+        self.partyEditor.partyPlanner.elementBuyButton['text'] = TTLocalizer.PartyPlannerBuy
         if value:
-            self["state"] = DirectGuiGlobals.DISABLED
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "state"
-            ] = DirectGuiGlobals.DISABLED
+            self['state'] = DirectGuiGlobals.DISABLED
+            self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.DISABLED
         else:
-            self["state"] = DirectGuiGlobals.NORMAL
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "state"
-            ] = DirectGuiGlobals.NORMAL
+            self['state'] = DirectGuiGlobals.NORMAL
+            self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.NORMAL
 
     def setSoldOut(self, value):
         if value:
-            self["state"] = DirectGuiGlobals.DISABLED
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "text"
-            ] = TTLocalizer.PartyPlannerSoldOut
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "state"
-            ] = DirectGuiGlobals.DISABLED
+            self['state'] = DirectGuiGlobals.DISABLED
+            self.partyEditor.partyPlanner.elementBuyButton['text'] = TTLocalizer.PartyPlannerSoldOut
+            self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.DISABLED
         else:
-            self["state"] = DirectGuiGlobals.NORMAL
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "text"
-            ] = TTLocalizer.PartyPlannerBuy
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "state"
-            ] = DirectGuiGlobals.NORMAL
+            self['state'] = DirectGuiGlobals.NORMAL
+            self.partyEditor.partyPlanner.elementBuyButton['text'] = TTLocalizer.PartyPlannerBuy
+            self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.NORMAL
         if self.unreleased:
-            self["state"] = DirectGuiGlobals.DISABLED
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "text"
-            ] = TTLocalizer.PartyPlannerCantBuy
-            self.partyEditor.partyPlanner.elementBuyButton[
-                "state"
-            ] = DirectGuiGlobals.DISABLED
+            self['state'] = DirectGuiGlobals.DISABLED
+            self.partyEditor.partyPlanner.elementBuyButton['text'] = TTLocalizer.PartyPlannerCantBuy
+            self.partyEditor.partyPlanner.elementBuyButton['state'] = DirectGuiGlobals.DISABLED
 
     def clicked(self, mouseEvent):
         PartyEditorListElement.notify.debug("Element %s's icon was clicked" % self.name)
@@ -266,7 +180,7 @@ class PartyEditorListElement(DirectButton):
                 self.activeGridElementIndex = i
                 return
 
-    def buyButtonClicked(self, desiredXY=None):
+    def buyButtonClicked(self, desiredXY = None):
         for i in range(len(self.partyEditorGridElements)):
             if not self.partyEditorGridElements[i].overValidSquare:
                 if self.partyEditorGridElements[i].placeInPartyGrounds(desiredXY):
@@ -277,9 +191,7 @@ class PartyEditorListElement(DirectButton):
                     return False
 
     def released(self, mouseEvent):
-        PartyEditorListElement.notify.debug(
-            "Element %s's icon was released" % self.name
-        )
+        PartyEditorListElement.notify.debug("Element %s's icon was released" % self.name)
         self.partyEditor.listElementReleased()
         if self.activeGridElementIndex != -1:
             self.partyEditorGridElements[self.activeGridElementIndex].detach(mouseEvent)

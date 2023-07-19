@@ -9,62 +9,27 @@ from toontown.town import TownBattle
 from toontown.suit import Suit
 from panda3d.core import *
 
-
 class CogHQLoader(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory("CogHQLoader")
+    notify = DirectNotifyGlobal.directNotify.newCategory('CogHQLoader')
 
     def __init__(self, hood, parentFSMState, doneEvent):
         StateData.StateData.__init__(self, doneEvent)
         self.hood = hood
         self.parentFSMState = parentFSMState
-        self.placeDoneEvent = "cogHQLoaderPlaceDone"
-        self.townBattleDoneEvent = "town-battle-done"
-        self.fsm = ClassicFSM.ClassicFSM(
-            "CogHQLoader",
-            [
-                State.State(
-                    "start",
-                    None,
-                    None,
-                    ["quietZone", "cogHQExterior", "cogHQBossBattle"],
-                ),
-                State.State(
-                    "cogHQExterior",
-                    self.enterCogHQExterior,
-                    self.exitCogHQExterior,
-                    ["quietZone", "cogHQLobby"],
-                ),
-                State.State(
-                    "cogHQLobby",
-                    self.enterCogHQLobby,
-                    self.exitCogHQLobby,
-                    ["quietZone", "cogHQExterior", "cogHQBossBattle"],
-                ),
-                State.State(
-                    "cogHQBossBattle",
-                    self.enterCogHQBossBattle,
-                    self.exitCogHQBossBattle,
-                    ["quietZone"],
-                ),
-                State.State(
-                    "quietZone",
-                    self.enterQuietZone,
-                    self.exitQuietZone,
-                    ["cogHQExterior", "cogHQLobby", "cogHQBossBattle"],
-                ),
-                State.State("final", None, None, ["start"]),
-            ],
-            "start",
-            "final",
-        )
+        self.placeDoneEvent = 'cogHQLoaderPlaceDone'
+        self.townBattleDoneEvent = 'town-battle-done'
+        self.fsm = ClassicFSM.ClassicFSM('CogHQLoader', [State.State('start', None, None, ['quietZone', 'cogHQExterior', 'cogHQBossBattle']),
+         State.State('cogHQExterior', self.enterCogHQExterior, self.exitCogHQExterior, ['quietZone', 'cogHQLobby']),
+         State.State('cogHQLobby', self.enterCogHQLobby, self.exitCogHQLobby, ['quietZone', 'cogHQExterior', 'cogHQBossBattle']),
+         State.State('cogHQBossBattle', self.enterCogHQBossBattle, self.exitCogHQBossBattle, ['quietZone']),
+         State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['cogHQExterior', 'cogHQLobby', 'cogHQBossBattle']),
+         State.State('final', None, None, ['start'])], 'start', 'final')
         return
 
     def load(self, zoneId):
         self.parentFSMState.addChild(self.fsm)
         self.music = base.loader.loadMusic(self.musicFile)
-        self.battleMusic = base.loader.loadMusic(
-            "phase_9/audio/bgm/encntr_suit_winning.ogg"
-        )
+        self.battleMusic = base.loader.loadMusic('phase_9/audio/bgm/encntr_suit_winning.ogg')
         self.townBattle = TownBattle.TownBattle(self.townBattleDoneEvent)
         self.townBattle.load()
         Suit.loadSuits(3)
@@ -93,13 +58,13 @@ class CogHQLoader(StateData.StateData):
 
     def enter(self, requestStatus):
         self.fsm.enterInitialState()
-        self.fsm.request(requestStatus["where"], [requestStatus])
+        self.fsm.request(requestStatus['where'], [requestStatus])
 
     def exit(self):
         self.ignoreAll()
 
     def enterQuietZone(self, requestStatus):
-        self.quietZoneDoneEvent = uniqueName("quietZoneDone")
+        self.quietZoneDoneEvent = uniqueName('quietZoneDone')
         self.acceptOnce(self.quietZoneDoneEvent, self.handleQuietZoneDone)
         self.quietZoneStateData = QuietZoneState.QuietZoneState(self.quietZoneDoneEvent)
         self.quietZoneStateData.load()
@@ -115,7 +80,7 @@ class CogHQLoader(StateData.StateData):
 
     def handleQuietZoneDone(self):
         status = self.quietZoneStateData.getRequestStatus()
-        self.fsm.request(status["where"], [status])
+        self.fsm.request(status['where'], [status])
 
     def enterPlace(self, requestStatus):
         self.acceptOnce(self.placeDoneEvent, self.placeDone)
@@ -135,29 +100,29 @@ class CogHQLoader(StateData.StateData):
     def placeDone(self):
         self.requestStatus = self.place.doneStatus
         status = self.place.doneStatus
-        if status.get("shardId") == None and self.isInThisHq(status):
+        if status.get('shardId') == None and self.isInThisHq(status):
             self.unloadPlaceGeom()
-            zoneId = status["zoneId"]
+            zoneId = status['zoneId']
             self.loadPlaceGeom(zoneId)
-            self.fsm.request("quietZone", [status])
+            self.fsm.request('quietZone', [status])
         else:
             self.doneStatus = status
             messenger.send(self.doneEvent)
         return
 
     def isInThisHq(self, status):
-        if ZoneUtil.isDynamicZone(status["zoneId"]):
-            return status["hoodId"] == self.hood.hoodId
+        if ZoneUtil.isDynamicZone(status['zoneId']):
+            return status['hoodId'] == self.hood.hoodId
         else:
-            return ZoneUtil.getHoodId(status["zoneId"]) == self.hood.hoodId
+            return ZoneUtil.getHoodId(status['zoneId']) == self.hood.hoodId
 
     def enterCogHQExterior(self, requestStatus):
         self.placeClass = self.getExteriorPlaceClass()
         self.enterPlace(requestStatus)
-        self.hood.spawnTitleText(requestStatus["zoneId"])
+        self.hood.spawnTitleText(requestStatus['zoneId'])
 
     def exitCogHQExterior(self):
-        taskMgr.remove("titleText")
+        taskMgr.remove('titleText')
         self.hood.hideTitleText()
         self.exitPlace()
         self.placeClass = None
@@ -166,10 +131,10 @@ class CogHQLoader(StateData.StateData):
     def enterCogHQLobby(self, requestStatus):
         self.placeClass = CogHQLobby.CogHQLobby
         self.enterPlace(requestStatus)
-        self.hood.spawnTitleText(requestStatus["zoneId"])
+        self.hood.spawnTitleText(requestStatus['zoneId'])
 
     def exitCogHQLobby(self):
-        taskMgr.remove("titleText")
+        taskMgr.remove('titleText')
         self.hood.hideTitleText()
         self.exitPlace()
         self.placeClass = None

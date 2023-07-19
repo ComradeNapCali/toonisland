@@ -18,53 +18,20 @@ from toontown.building import ToonInterior
 from toontown.hood import QuietZoneState
 from toontown.distributed.DiscordRPC import *
 
-
 class SafeZoneLoader(StateData.StateData):
-    notify = DirectNotifyGlobal.directNotify.newCategory("SafeZoneLoader")
+    notify = DirectNotifyGlobal.directNotify.newCategory('SafeZoneLoader')
 
     def __init__(self, hood, parentFSMState, doneEvent):
         StateData.StateData.__init__(self, doneEvent)
         self.hood = hood
         self.parentFSMState = parentFSMState
-        self.fsm = ClassicFSM.ClassicFSM(
-            "SafeZoneLoader",
-            [
-                State.State(
-                    "start",
-                    self.enterStart,
-                    self.exitStart,
-                    ["quietZone", "playground", "toonInterior"],
-                ),
-                State.State(
-                    "playground",
-                    self.enterPlayground,
-                    self.exitPlayground,
-                    ["quietZone"],
-                ),
-                State.State(
-                    "toonInterior",
-                    self.enterToonInterior,
-                    self.exitToonInterior,
-                    ["quietZone"],
-                ),
-                State.State(
-                    "quietZone",
-                    self.enterQuietZone,
-                    self.exitQuietZone,
-                    ["playground", "toonInterior"],
-                ),
-                State.State(
-                    "golfcourse",
-                    self.enterGolfcourse,
-                    self.exitGolfcourse,
-                    ["quietZone", "playground"],
-                ),
-                State.State("final", self.enterFinal, self.exitFinal, ["start"]),
-            ],
-            "start",
-            "final",
-        )
-        self.placeDoneEvent = "placeDone"
+        self.fsm = ClassicFSM.ClassicFSM('SafeZoneLoader', [State.State('start', self.enterStart, self.exitStart, ['quietZone', 'playground', 'toonInterior']),
+         State.State('playground', self.enterPlayground, self.exitPlayground, ['quietZone']),
+         State.State('toonInterior', self.enterToonInterior, self.exitToonInterior, ['quietZone']),
+         State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['playground', 'toonInterior']),
+         State.State('golfcourse', self.enterGolfcourse, self.exitGolfcourse, ['quietZone', 'playground']),
+         State.State('final', self.enterFinal, self.exitFinal, ['start'])], 'start', 'final')
+        self.placeDoneEvent = 'placeDone'
         self.place = None
         self.playgroundClass = None
         return
@@ -94,11 +61,11 @@ class SafeZoneLoader(StateData.StateData):
 
     def enter(self, requestStatus):
         self.fsm.enterInitialState()
-        messenger.send("enterSafeZone")
-        self.setState(requestStatus["where"], requestStatus)
+        messenger.send('enterSafeZone')
+        self.setState(requestStatus['where'], requestStatus)
 
     def exit(self):
-        messenger.send("exitSafeZone")
+        messenger.send('exitSafeZone')
 
     def setState(self, stateName, requestStatus):
         self.fsm.request(stateName, [requestStatus])
@@ -120,10 +87,10 @@ class SafeZoneLoader(StateData.StateData):
         self.makeDictionaries(self.hood.dnaStore)
         self.createAnimatedProps(self.nodeList)
         self.holidayPropTransforms = {}
-        npl = self.geom.findAllMatches("**/=DNARoot=holiday_prop")
+        npl = self.geom.findAllMatches('**/=DNARoot=holiday_prop')
         for i in range(npl.getNumPaths()):
             np = npl.getPath(i)
-            np.setTag("transformIndex", repr(i))
+            np.setTag('transformIndex', repr(i))
             self.holidayPropTransforms[i] = np.getNetTransform()
 
         self.geom.flattenMedium()
@@ -136,9 +103,9 @@ class SafeZoneLoader(StateData.StateData):
         for i in range(dnaStore.getNumDNAVisGroups()):
             groupFullName = dnaStore.getDNAVisGroupName(i)
             groupName = base.cr.hoodMgr.extractGroupName(groupFullName)
-            groupNode = self.geom.find("**/" + groupFullName)
+            groupNode = self.geom.find('**/' + groupFullName)
             if groupNode.isEmpty():
-                self.notify.error("Could not find visgroup")
+                self.notify.error('Could not find visgroup')
             self.nodeList.append(groupNode)
 
         self.removeLandmarkBlockNodes()
@@ -148,7 +115,7 @@ class SafeZoneLoader(StateData.StateData):
         self.hood.dnaStore.resetDNAVisGroupsAI()
 
     def removeLandmarkBlockNodes(self):
-        npc = self.geom.findAllMatches("**/suit_building_origin")
+        npc = self.geom.findAllMatches('**/suit_building_origin')
         for i in range(npc.getNumPaths()):
             npc.getPath(i).removeNode()
 
@@ -175,24 +142,19 @@ class SafeZoneLoader(StateData.StateData):
 
     def handlePlaygroundDone(self):
         status = self.place.doneStatus
-        teleportDebug(status, "handlePlaygroundDone, doneStatus=%s" % (status,))
-        if (
-            ZoneUtil.getBranchZone(status["zoneId"]) == self.hood.hoodId
-            and status["shardId"] == None
-        ):
-            teleportDebug(status, "same branch")
-            self.fsm.request("quietZone", [status])
+        teleportDebug(status, 'handlePlaygroundDone, doneStatus=%s' % (status,))
+        if ZoneUtil.getBranchZone(status['zoneId']) == self.hood.hoodId and status['shardId'] == None:
+            teleportDebug(status, 'same branch')
+            self.fsm.request('quietZone', [status])
         else:
             self.doneStatus = status
-            teleportDebug(status, "different hood")
+            teleportDebug(status, 'different hood')
             messenger.send(self.doneEvent)
         return
 
     def enterToonInterior(self, requestStatus):
         self.acceptOnce(self.placeDoneEvent, self.handleToonInteriorDone)
-        self.place = ToonInterior.ToonInterior(
-            self, self.fsm.getStateNamed("toonInterior"), self.placeDoneEvent
-        )
+        self.place = ToonInterior.ToonInterior(self, self.fsm.getStateNamed('toonInterior'), self.placeDoneEvent)
         base.cr.playGame.setPlace(self.place)
         self.place.load()
         self.place.enter(requestStatus)
@@ -207,18 +169,15 @@ class SafeZoneLoader(StateData.StateData):
 
     def handleToonInteriorDone(self):
         status = self.place.doneStatus
-        if (
-            ZoneUtil.getBranchZone(status["zoneId"]) == self.hood.hoodId
-            and status["shardId"] == None
-        ):
-            self.fsm.request("quietZone", [status])
+        if ZoneUtil.getBranchZone(status['zoneId']) == self.hood.hoodId and status['shardId'] == None:
+            self.fsm.request('quietZone', [status])
         else:
             self.doneStatus = status
             messenger.send(self.doneEvent)
         return
 
     def enterQuietZone(self, requestStatus):
-        self.quietZoneDoneEvent = uniqueName("quietZoneDone")
+        self.quietZoneDoneEvent = uniqueName('quietZoneDone')
         self.acceptOnce(self.quietZoneDoneEvent, self.handleQuietZoneDone)
         self.quietZoneStateData = QuietZoneState.QuietZoneState(self.quietZoneDoneEvent)
         self.quietZoneStateData.load()
@@ -234,11 +193,11 @@ class SafeZoneLoader(StateData.StateData):
 
     def handleQuietZoneDone(self):
         status = self.quietZoneStateData.getRequestStatus()
-        if status["where"] == "estate":
+        if status['where'] == 'estate':
             self.doneStatus = status
             messenger.send(self.doneEvent)
         else:
-            self.fsm.request(status["where"], [status])
+            self.fsm.request(status['where'], [status])
 
     def enterFinal(self):
         pass
@@ -249,28 +208,28 @@ class SafeZoneLoader(StateData.StateData):
     def createAnimatedProps(self, nodeList):
         self.animPropDict = {}
         for i in nodeList:
-            animPropNodes = i.findAllMatches("**/animated_prop_*")
+            animPropNodes = i.findAllMatches('**/animated_prop_*')
             numAnimPropNodes = animPropNodes.getNumPaths()
             for j in range(numAnimPropNodes):
                 animPropNode = animPropNodes.getPath(j)
-                if animPropNode.getName().startswith("animated_prop_generic"):
-                    className = "GenericAnimatedProp"
+                if animPropNode.getName().startswith('animated_prop_generic'):
+                    className = 'GenericAnimatedProp'
                 else:
                     className = animPropNode.getName()[14:-8]
                 symbols = {}
-                base.cr.importModule(symbols, "toontown.hood", [className])
+                base.cr.importModule(symbols, 'toontown.hood', [className])
                 classObj = getattr(symbols[className], className)
                 animPropObj = classObj(animPropNode)
                 animPropList = self.animPropDict.setdefault(i, [])
                 animPropList.append(animPropObj)
 
-            interactivePropNodes = i.findAllMatches("**/interactive_prop_*")
+            interactivePropNodes = i.findAllMatches('**/interactive_prop_*')
             numInteractivePropNodes = interactivePropNodes.getNumPaths()
             for j in range(numInteractivePropNodes):
                 interactivePropNode = interactivePropNodes.getPath(j)
-                className = "GenericAnimatedProp"
+                className = 'GenericAnimatedProp'
                 symbols = {}
-                base.cr.importModule(symbols, "toontown.hood", [className])
+                base.cr.importModule(symbols, 'toontown.hood', [className])
                 classObj = getattr(symbols[className], className)
                 interactivePropObj = classObj(interactivePropNode)
                 animPropList = self.animPropDict.get(i)

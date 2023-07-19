@@ -1,8 +1,8 @@
 from . import FishBase
 from . import FishGlobals
 
-
 class FishCollection:
+
     def __init__(self):
         self.fishList = []
 
@@ -44,10 +44,7 @@ class FishCollection:
 
     def __collect(self, newFish, updateCollection):
         for fish in self.fishList:
-            if (
-                fish.getGenus() == newFish.getGenus()
-                and fish.getSpecies() == newFish.getSpecies()
-            ):
+            if fish.getGenus() == newFish.getGenus() and fish.getSpecies() == newFish.getSpecies():
                 if fish.getWeight() < newFish.getWeight():
                     if updateCollection:
                         fish.setWeight(newFish.getWeight())
@@ -67,8 +64,8 @@ class FishCollection:
 
     def __str__(self):
         numFish = len(self.fishList)
-        txt = "Fish Collection (%s fish):" % numFish
+        txt = 'Fish Collection (%s fish):' % numFish
         for fish in self.fishList:
-            txt += "\n" + str(fish)
+            txt += '\n' + str(fish)
 
         return txt

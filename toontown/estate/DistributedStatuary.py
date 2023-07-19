@@ -8,30 +8,27 @@ from toontown.toontowngui import TTDialog
 from toontown.toonbase import TTLocalizer
 from panda3d.core import NodePath, Point3
 
-
 class DistributedStatuary(DistributedLawnDecor.DistributedLawnDecor):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedStatuary")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStatuary')
 
     def __init__(self, cr):
-        self.notify.debug("constructing DistributedStatuary")
+        self.notify.debug('constructing DistributedStatuary')
         DistributedLawnDecor.DistributedLawnDecor.__init__(self, cr)
         self.confirmDialog = None
         self.resultDialog = None
         return
 
     def loadModel(self):
-        self.rotateNode = self.plantPath.attachNewNode("rotate")
+        self.rotateNode = self.plantPath.attachNewNode('rotate')
         self.model = loader.loadModel(self.modelPath)
-        colNode = self.model.find("**/+CollisionNode")
+        colNode = self.model.find('**/+CollisionNode')
         if not colNode.isEmpty():
-            score, multiplier = ToontownGlobals.PinballScoring[
-                ToontownGlobals.PinballStatuary
-            ]
+            score, multiplier = ToontownGlobals.PinballScoring[ToontownGlobals.PinballStatuary]
             if self.pinballScore:
                 score = self.pinballScore[0]
                 multiplier = self.pinballScore[1]
-            scoreNodePath = NodePath("statuary-%d-%d" % (score, multiplier))
-            colNode.setName("statuaryCol")
+            scoreNodePath = NodePath('statuary-%d-%d' % (score, multiplier))
+            colNode.setName('statuaryCol')
             scoreNodePath.reparentTo(colNode.getParent())
             colNode.reparentTo(scoreNodePath)
         self.model.setScale(self.worldScale)
@@ -41,15 +38,15 @@ class DistributedStatuary(DistributedLawnDecor.DistributedLawnDecor):
 
     def setTypeIndex(self, typeIndex):
         self.typeIndex = typeIndex
-        self.name = GardenGlobals.PlantAttributes[typeIndex]["name"]
-        self.plantType = GardenGlobals.PlantAttributes[typeIndex]["plantType"]
-        self.modelPath = GardenGlobals.PlantAttributes[typeIndex]["model"]
+        self.name = GardenGlobals.PlantAttributes[typeIndex]['name']
+        self.plantType = GardenGlobals.PlantAttributes[typeIndex]['plantType']
+        self.modelPath = GardenGlobals.PlantAttributes[typeIndex]['model']
         self.pinballScore = None
-        if "pinballScore" in GardenGlobals.PlantAttributes[typeIndex]:
-            self.pinballScore = GardenGlobals.PlantAttributes[typeIndex]["pinballScore"]
+        if 'pinballScore' in GardenGlobals.PlantAttributes[typeIndex]:
+            self.pinballScore = GardenGlobals.PlantAttributes[typeIndex]['pinballScore']
         self.worldScale = 1.0
-        if "worldScale" in GardenGlobals.PlantAttributes[typeIndex]:
-            self.worldScale = GardenGlobals.PlantAttributes[typeIndex]["worldScale"]
+        if 'worldScale' in GardenGlobals.PlantAttributes[typeIndex]:
+            self.worldScale = GardenGlobals.PlantAttributes[typeIndex]['worldScale']
         return
 
     def getTypeIndex(self):
@@ -72,12 +69,12 @@ class DistributedStatuary(DistributedLawnDecor.DistributedLawnDecor):
         minPt = Point3(0, 0, 0)
         maxPt = Point3(0, 0, 0)
         self.model.calcTightBounds(minPt, maxPt)
-        self.notify.debug("max=%s min=%s" % (maxPt, minPt))
+        self.notify.debug('max=%s min=%s' % (maxPt, minPt))
         xDiff = maxPt[0] - minPt[0]
         yDiff = maxPt[1] - minPt[1]
         radius = (xDiff * xDiff + yDiff * yDiff) ** 0.5
         radius /= 3
-        self.notify.debug("xDiff=%s yDiff=%s radius = %s" % (xDiff, yDiff, radius))
+        self.notify.debug('xDiff=%s yDiff=%s radius = %s' % (xDiff, yDiff, radius))
         self.colSphereNode.setScale(radius)
 
     def getShovelCommand(self):
@@ -86,27 +83,23 @@ class DistributedStatuary(DistributedLawnDecor.DistributedLawnDecor):
     def getShovelAction(self):
         return TTLocalizer.GardeningRemove
 
-    def handleEnterPlot(self, colEntry=None):
+    def handleEnterPlot(self, colEntry = None):
         if self.canBePicked():
-            self.notify.debug("entering if")
+            self.notify.debug('entering if')
             base.localAvatar.addShovelRelatedDoId(self.doId)
             base.localAvatar.setShovelAbility(TTLocalizer.GardeningRemove)
         else:
-            self.notify.debug("entering else")
+            self.notify.debug('entering else')
 
     def handlePicking(self):
         fullName = self.name
-        messenger.send("wakeup")
-        self.confirmDialog = TTDialog.TTDialog(
-            style=TTDialog.YesNo,
-            text=TTLocalizer.ConfirmRemoveStatuary % {"item": fullName},
-            command=self.confirmCallback,
-        )
+        messenger.send('wakeup')
+        self.confirmDialog = TTDialog.TTDialog(style=TTDialog.YesNo, text=TTLocalizer.ConfirmRemoveStatuary % {'item': fullName}, command=self.confirmCallback)
         self.confirmDialog.show()
         base.cr.playGame.getPlace().detectedGardenPlotUse()
 
     def confirmCallback(self, value):
-        self.notify.debug("value=%d" % value)
+        self.notify.debug('value=%d' % value)
         if self.confirmDialog:
             self.confirmDialog.destroy()
         self.confirmDialog = None
@@ -122,20 +115,18 @@ class DistributedStatuary(DistributedLawnDecor.DistributedLawnDecor):
             return
         self.handleRemove()
 
-    def handleExitPlot(self, entry=None):
+    def handleExitPlot(self, entry = None):
         DistributedLawnDecor.DistributedLawnDecor.handleExitPlot(self, entry)
         base.localAvatar.removeShovelRelatedDoId(self.doId)
 
     def doResultDialog(self):
         self.startInteraction()
-        itemName = GardenGlobals.PlantAttributes[self.typeIndex]["name"]
+        itemName = GardenGlobals.PlantAttributes[self.typeIndex]['name']
         stringToShow = TTLocalizer.getResultPlantedSomethingSentence(itemName)
-        self.resultDialog = TTDialog.TTDialog(
-            style=TTDialog.Acknowledge, text=stringToShow, command=self.resultsCallback
-        )
+        self.resultDialog = TTDialog.TTDialog(style=TTDialog.Acknowledge, text=stringToShow, command=self.resultsCallback)
 
     def resultsCallback(self, value):
-        self.notify.debug("value=%d" % value)
+        self.notify.debug('value=%d' % value)
         if self.resultDialog:
             self.resultDialog.destroy()
             self.resultDialog = None

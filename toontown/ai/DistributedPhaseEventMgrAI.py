@@ -1,7 +1,6 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
-
 class DistributedPhaseEventMgrAI(DistributedObjectAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPhaseEventMgrAI")
 
@@ -16,3 +15,4 @@ class DistributedPhaseEventMgrAI(DistributedObjectAI):
 
     def setIsRunning(self, todo0):
         pass
+

@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.parties.DistributedPartyActivityAI import DistributedPartyActivityAI
 
-
 class DistributedPartyCannonActivityAI(DistributedPartyActivityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedPartyCannonActivityAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyCannonActivityAI")
 
     def setMovie(self, todo0, todo1):
         pass
@@ -28,25 +25,10 @@ class DistributedPartyCannonActivityAI(DistributedPartyActivityAI):
     def setCloudHit(self, todo0, todo1, todo2, todo3):
         pass
 
-    def setToonTrajectoryAi(
-        self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8, todo9
-    ):
+    def setToonTrajectoryAi(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8, todo9):
         pass
 
-    def setToonTrajectory(
-        self,
-        todo0,
-        todo1,
-        todo2,
-        todo3,
-        todo4,
-        todo5,
-        todo6,
-        todo7,
-        todo8,
-        todo9,
-        todo10,
-    ):
+    def setToonTrajectory(self, todo0, todo1, todo2, todo3, todo4, todo5, todo6, todo7, todo8, todo9, todo10):
         pass
 
     def updateToonTrajectoryStartVelAi(self, todo0, todo1, todo2):
@@ -54,3 +36,4 @@ class DistributedPartyCannonActivityAI(DistributedPartyActivityAI):
 
     def updateToonTrajectoryStartVel(self, todo0, todo1, todo2, todo3):
         pass
+

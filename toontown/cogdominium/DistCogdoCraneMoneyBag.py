@@ -6,9 +6,8 @@ from otp.otpbase import OTPGlobals
 from toontown.cogdominium.DistCogdoCraneObject import DistCogdoCraneObject
 from toontown.cogdominium import CogdoCraneGameConsts as GameConsts
 
-
 class DistCogdoCraneMoneyBag(DistCogdoCraneObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistCogdoCraneMoneyBag")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistCogdoCraneMoneyBag')
     grabPos = (0, 0, GameConsts.Settings.MoneyBagGrabHeight.get())
     craneFrictionCoef = 0.2
     craneSlideSpeed = 11
@@ -17,38 +16,26 @@ class DistCogdoCraneMoneyBag(DistCogdoCraneObject):
 
     def __init__(self, cr):
         DistCogdoCraneObject.__init__(self, cr)
-        NodePath.__init__(self, "object")
+        NodePath.__init__(self, 'object')
         self.index = None
-        self.flyToMagnetSfx = loader.loadSfx("phase_5/audio/sfx/TL_rake_throw_only.ogg")
-        self.hitMagnetSfx = loader.loadSfx("phase_5/audio/sfx/AA_drop_safe.ogg")
-        self.toMagnetSoundInterval = Parallel(
-            SoundInterval(
-                self.flyToMagnetSfx,
-                duration=ToontownGlobals.CashbotBossToMagnetTime,
-                node=self,
-            ),
-            Sequence(
-                Wait(ToontownGlobals.CashbotBossToMagnetTime - 0.02),
-                SoundInterval(self.hitMagnetSfx, duration=1.0, node=self),
-            ),
-        )
-        self.hitFloorSfx = loader.loadSfx(
-            "phase_5/audio/sfx/AA_drop_bigweight_miss.ogg"
-        )
+        self.flyToMagnetSfx = loader.loadSfx('phase_5/audio/sfx/TL_rake_throw_only.ogg')
+        self.hitMagnetSfx = loader.loadSfx('phase_5/audio/sfx/AA_drop_safe.ogg')
+        self.toMagnetSoundInterval = Parallel(SoundInterval(self.flyToMagnetSfx, duration=ToontownGlobals.CashbotBossToMagnetTime, node=self), Sequence(Wait(ToontownGlobals.CashbotBossToMagnetTime - 0.02), SoundInterval(self.hitMagnetSfx, duration=1.0, node=self)))
+        self.hitFloorSfx = loader.loadSfx('phase_5/audio/sfx/AA_drop_bigweight_miss.ogg')
         self.hitFloorSoundInterval = SoundInterval(self.hitFloorSfx, node=self)
         return
 
     def announceGenerate(self):
         DistCogdoCraneObject.announceGenerate(self)
-        self.name = "moneyBag-%s" % self.doId
+        self.name = 'moneyBag-%s' % self.doId
         self.setName(self.name)
         self.craneGame.moneyBag.copyTo(self)
-        self.shadow = NodePath("notAShadow")
-        self.collisionNode.setName("moneyBag")
+        self.shadow = NodePath('notAShadow')
+        self.collisionNode.setName('moneyBag')
         cs = CollisionSphere(0, 0, 4, 4)
         self.collisionNode.addSolid(cs)
         self.craneGame.moneyBags[self.index] = self
-        self.setupPhysics("moneyBag")
+        self.setupPhysics('moneyBag')
         self.resetToInitialPosition()
 
     def disable(self):
@@ -80,13 +67,13 @@ class DistCogdoCraneMoneyBag(DistCogdoCraneObject):
         self.index = index
 
     def setObjectState(self, state, avId, craneId):
-        if state == "I":
-            self.demand("Initial")
+        if state == 'I':
+            self.demand('Initial')
         else:
             DistCogdoCraneObject.setObjectState(self, state, avId, craneId)
 
     def d_requestInitial(self):
-        self.sendUpdate("requestInitial")
+        self.sendUpdate('requestInitial')
 
     def enterInitial(self):
         self.resetToInitialPosition()

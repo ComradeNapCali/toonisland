@@ -4,12 +4,11 @@ from direct.interval.IntervalGlobal import *
 from .OrthoDrive import *
 from direct.directnotify import DirectNotifyGlobal
 
-
 class OrthoWalk:
-    notify = DirectNotifyGlobal.directNotify.newCategory("OrthoWalk")
-    BROADCAST_POS_TASK = "OrthoWalkBroadcastPos"
+    notify = DirectNotifyGlobal.directNotify.newCategory('OrthoWalk')
+    BROADCAST_POS_TASK = 'OrthoWalkBroadcastPos'
 
-    def __init__(self, orthoDrive, collisions=1, broadcast=1, broadcastPeriod=0.2):
+    def __init__(self, orthoDrive, collisions = 1, broadcast = 1, broadcastPeriod = 0.2):
         self.orthoDrive = orthoDrive
         self.collisions = collisions
         self.broadcast = broadcast
@@ -22,7 +21,7 @@ class OrthoWalk:
         del self.orthoDrive
 
     def start(self):
-        self.notify.debug("OrthoWalk start")
+        self.notify.debug('OrthoWalk start')
         if self.collisions:
             self.initCollisions()
         if self.broadcast:
@@ -30,27 +29,27 @@ class OrthoWalk:
         self.orthoDrive.start()
 
     def stop(self):
-        self.notify.debug("OrthoWalk stop")
+        self.notify.debug('OrthoWalk stop')
         self.shutdownCollisions()
         self.shutdownBroadcast()
         self.orthoDrive.stop()
 
     def initCollisions(self):
-        self.notify.debug("OrthoWalk initCollisions")
+        self.notify.debug('OrthoWalk initCollisions')
         lt = base.localAvatar
         lt.collisionsOn()
         self.__collisionsOn = 1
 
     def shutdownCollisions(self):
-        if not hasattr(self, "_OrthoWalk__collisionsOn"):
+        if not hasattr(self, '_OrthoWalk__collisionsOn'):
             return
         del self.__collisionsOn
-        self.notify.debug("OrthoWalk shutdownCollisions")
+        self.notify.debug('OrthoWalk shutdownCollisions')
         lt = base.localAvatar
         lt.collisionsOff()
 
     def initBroadcast(self):
-        self.notify.debug("OrthoWalk initBroadcast")
+        self.notify.debug('OrthoWalk initBroadcast')
         self.timeSinceLastPosBroadcast = 0.0
         self.lastPosBroadcast = self.lt.getPos()
         self.lastHprBroadcast = self.lt.getHpr()
@@ -62,7 +61,7 @@ class OrthoWalk:
         taskMgr.add(self.doBroadcast, self.BROADCAST_POS_TASK, priority=self.priority)
 
     def shutdownBroadcast(self):
-        self.notify.debug("OrthoWalk shutdownBroadcast")
+        self.notify.debug('OrthoWalk shutdownBroadcast')
         taskMgr.remove(self.BROADCAST_POS_TASK)
 
     def doBroadcast(self, task):

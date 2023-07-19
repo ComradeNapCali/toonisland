@@ -1,19 +1,19 @@
-# from panda3d.core import listProcessModules
+#from panda3d.core import listProcessModules
 from direct.task import Task
 from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 
-
 class ToontownAccess:
+
     def __init__(self):
         self.startupModules = []
 
     def initModuleInfo(self):
         self.startupModules = self.getModuleList()
-        taskMgr.doMethodLater(300, self.checkModuleInfo, "moduleListTask")
+        taskMgr.doMethodLater(300, self.checkModuleInfo, 'moduleListTask')
 
     def delete(self):
-        taskMgr.remove("moduleListTask")
+        taskMgr.remove('moduleListTask')
         del self.startupModules
 
     def checkModuleInfo(self, task):
@@ -24,36 +24,32 @@ class ToontownAccess:
                 self.startupModules.insert(0, module)
                 newModules.insert(0, module)
 
-        self.sendUpdate("setModuleInfo", [newModules])
+        self.sendUpdate('setModuleInfo', [newModules])
         return task.again
 
     def getModuleList(self):
-        # moduleString = listProcessModules()
-        # moduleList = []
-        # if moduleString:
+        #moduleString = listProcessModules()
+        #moduleList = []
+        #if moduleString:
         #    moduleList = moduleString.split(',')
-        # return moduleList
+        #return moduleList
         return []
 
-    def sendUpdate(self, fieldName, args=[], sendToId=None):
-        if base.cr and hasattr(base, "localAvatar"):
-            dg = base.localAvatar.dclass.clientFormatUpdate(
-                fieldName, sendToId or base.localAvatar.doId, args
-            )
+    def sendUpdate(self, fieldName, args = [], sendToId = None):
+        if base.cr and hasattr(base, 'localAvatar'):
+            dg = base.localAvatar.dclass.clientFormatUpdate(fieldName, sendToId or base.localAvatar.doId, args)
             base.cr.send(dg)
 
-    def canAccess(self, zoneId=None):
+    def canAccess(self, zoneId = None):
         if base.cr.isPaid():
             return True
         allowed = False
-        allowedZones = [
-            ToontownGlobals.ToonIslandCentral,
-            ToontownGlobals.MyEstate,
-            ToontownGlobals.GoofySpeedway,
-            ToontownGlobals.Tutorial,
-        ]
+        allowedZones = [ToontownGlobals.ToonIslandCentral,
+         ToontownGlobals.MyEstate,
+         ToontownGlobals.GoofySpeedway,
+         ToontownGlobals.Tutorial]
         specialZones = [ToontownGlobals.SellbotLobby]
-        if hasattr(base.cr, "newsManager") and base.cr.newsManager:
+        if hasattr(base.cr, 'newsManager') and base.cr.newsManager:
             holidayIds = base.cr.newsManager.getHolidayIdList()
             if ToontownGlobals.SELLBOT_NERF_HOLIDAY in holidayIds:
                 specialZones.append(ToontownGlobals.SellbotHQ)
@@ -62,7 +58,7 @@ class ToontownAccess:
             myHoodId = ZoneUtil.getCanonicalHoodId(zoneId)
         else:
             myHoodId = ZoneUtil.getCanonicalHoodId(place.zoneId)
-        if hasattr(place, "id"):
+        if hasattr(place, 'id'):
             myHoodId = place.id
         if myHoodId in allowedZones:
             allowed = True

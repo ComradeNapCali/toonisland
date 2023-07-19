@@ -4,9 +4,8 @@ from toontown.battle import SuitBattleGlobals
 from . import DistributedSuitBaseAI
 from . import SuitDialog
 
-
 class DistributedFactorySuitAI(DistributedSuitBaseAI.DistributedSuitBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedFactorySuitAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFactorySuitAI')
 
     def __init__(self, air, suitPlanner):
         DistributedSuitBaseAI.DistributedSuitBaseAI.__init__(self, air, suitPlanner)
@@ -48,25 +47,15 @@ class DistributedFactorySuitAI(DistributedSuitBaseAI.DistributedSuitBaseAI):
     def requestBattle(self, x, y, z, h, p, r):
         toonId = self.air.getAvatarIdFromSender()
         if self.notify.getDebug():
-            self.notify.debug(
-                str(self.getDoId())
-                + str(self.zoneId)
-                + ": request battle with toon: %d" % toonId
-            )
+            self.notify.debug(str(self.getDoId()) + str(self.zoneId) + ': request battle with toon: %d' % toonId)
         self.confrontPos = Point3(x, y, z)
         self.confrontHpr = Vec3(h, p, r)
         if self.sp.requestBattle(self, toonId):
             if self.notify.getDebug():
-                self.notify.debug(
-                    "Suit %d requesting battle in zone %d with toon %d"
-                    % (self.getDoId(), self.zoneId, toonId)
-                )
+                self.notify.debug('Suit %d requesting battle in zone %d with toon %d' % (self.getDoId(), self.zoneId, toonId))
         else:
             if self.notify.getDebug():
-                self.notify.debug(
-                    "requestBattle from suit %d, toon %d- denied by battle manager"
-                    % (toonId, self.getDoId())
-                )
+                self.notify.debug('requestBattle from suit %d, toon %d- denied by battle manager' % (toonId, self.getDoId()))
             self.b_setBrushOff(SuitDialog.getBrushOffIndex(self.getStyleName()))
             self.d_denyBattle(toonId)
 
@@ -74,15 +63,10 @@ class DistributedFactorySuitAI(DistributedSuitBaseAI.DistributedSuitBaseAI):
         return (self.confrontPos, self.confrontHpr)
 
     def setBattleCellIndex(self, battleCellIndex):
-        self.sp.suitBattleCellChange(
-            self, oldCell=self.battleCellIndex, newCell=battleCellIndex
-        )
+        self.sp.suitBattleCellChange(self, oldCell=self.battleCellIndex, newCell=battleCellIndex)
         self.battleCellIndex = battleCellIndex
         self.attachBattleBlocker()
-        self.accept(
-            self.sp.getBattleBlockerEvent(self.battleCellIndex),
-            self.attachBattleBlocker,
-        )
+        self.accept(self.sp.getBattleBlockerEvent(self.battleCellIndex), self.attachBattleBlocker)
 
     def getBattleCellIndex(self):
         return self.battleCellIndex
@@ -99,27 +83,27 @@ class DistributedFactorySuitAI(DistributedSuitBaseAI.DistributedSuitBaseAI):
                 if self.sp.battleMgr.cellHasBattle(self.battleCellIndex):
                     pass
                 else:
-                    self.sendUpdate("setConfrontToon", [avId])
+                    self.sendUpdate('setConfrontToon', [avId])
 
     def setStrayed(self):
         if self.chasing > 0:
             self.chasing = 0
-            self.sendUpdate("setReturn", [])
+            self.sendUpdate('setReturn', [])
 
     def resume(self):
-        self.notify.debug("Suit %s resume" % self.doId)
+        self.notify.debug('Suit %s resume' % self.doId)
         if self.currHP <= 0:
             messenger.send(self.getDeathEvent())
-            self.notify.debug("Suit %s dead after resume" % self.doId)
+            self.notify.debug('Suit %s dead after resume' % self.doId)
             self.requestRemoval()
         else:
-            self.sendUpdate("setReturn", [])
+            self.sendUpdate('setReturn', [])
         return None
 
     def isForeman(self):
         return self.boss
 
-    def setVirtual(self, isVirtual=1):
+    def setVirtual(self, isVirtual = 1):
         self.virtual = isVirtual
 
     def getVirtual(self):

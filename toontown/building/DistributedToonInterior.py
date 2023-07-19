@@ -14,32 +14,17 @@ from . import ToonInteriorColors
 from toontown.hood import ZoneUtil
 from toontown.toon import ToonDNA
 from toontown.toon import ToonHead
-
 SIGN_LEFT = -4
 SIGN_RIGHT = 4
 SIGN_BOTTOM = -3.5
 SIGN_TOP = 1.5
 FrameScale = 1.4
 
-
 class DistributedToonInterior(DistributedObject.DistributedObject):
+
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
-        self.fsm = ClassicFSM.ClassicFSM(
-            "DistributedToonInterior",
-            [
-                State.State("toon", self.enterToon, self.exitToon, ["beingTakenOver"]),
-                State.State(
-                    "beingTakenOver",
-                    self.enterBeingTakenOver,
-                    self.exitBeingTakenOver,
-                    [],
-                ),
-                State.State("off", self.enterOff, self.exitOff, []),
-            ],
-            "toon",
-            "off",
-        )
+        self.fsm = ClassicFSM.ClassicFSM('DistributedToonInterior', [State.State('toon', self.enterToon, self.exitToon, ['beingTakenOver']), State.State('beingTakenOver', self.enterBeingTakenOver, self.exitBeingTakenOver, []), State.State('off', self.enterOff, self.exitOff, [])], 'toon', 'off')
         self.fsm.enterInitialState()
 
     def generate(self):
@@ -65,68 +50,62 @@ class DistributedToonInterior(DistributedObject.DistributedObject):
         return findFunc(code)
 
     def replaceRandomInModel(self, model):
-        baseTag = "random_"
-        npc = model.findAllMatches("**/" + baseTag + "???_*")
+        baseTag = 'random_'
+        npc = model.findAllMatches('**/' + baseTag + '???_*')
         for i in range(npc.getNumPaths()):
             np = npc.getPath(i)
             name = np.getName()
             b = len(baseTag)
-            category = name[b + 4 :]
+            category = name[b + 4:]
             key1 = name[b]
             key2 = name[b + 1]
-            if key1 == "m":
+            if key1 == 'm':
                 model = self.randomDNAItem(category, self.dnaStore.findNode)
                 newNP = model.copyTo(np)
-                c = render.findAllMatches("**/collision")
+                c = render.findAllMatches('**/collision')
                 c.stash()
-                if key2 == "r":
+                if key2 == 'r':
                     self.replaceRandomInModel(newNP)
-            elif key1 == "t":
+            elif key1 == 't':
                 texture = self.randomDNAItem(category, self.dnaStore.findTexture)
                 np.setTexture(texture, 100)
                 newNP = np
-            if key2 == "c":
-                if category == "TI_wallpaper" or category == "TI_wallpaper_border":
+            if key2 == 'c':
+                if category == 'TI_wallpaper' or category == 'TI_wallpaper_border':
                     self.randomGenerator.seed(self.zoneId)
-                    newNP.setColorScale(
-                        self.randomGenerator.choice(self.colors[category])
-                    )
+                    newNP.setColorScale(self.randomGenerator.choice(self.colors[category]))
                 else:
-                    newNP.setColorScale(
-                        self.randomGenerator.choice(self.colors[category])
-                    )
+                    newNP.setColorScale(self.randomGenerator.choice(self.colors[category]))
 
     def setup(self):
         self.dnaStore = base.cr.playGame.dnaStore
         self.randomGenerator = random.Random()
         self.randomGenerator.seed(self.zoneId)
-        interior = self.randomDNAItem("TI_room", self.dnaStore.findNode)
+        interior = self.randomDNAItem('TI_room', self.dnaStore.findNode)
         self.interior = interior.copyTo(render)
         hoodId = ZoneUtil.getCanonicalHoodId(self.zoneId)
         self.colors = ToonInteriorColors.colors[hoodId]
         self.replaceRandomInModel(self.interior)
-        doorModelName = "door_double_round_ul"
-        if doorModelName[-1:] == "r":
-            doorModelName = doorModelName[:-1] + "l"
+        doorModelName = 'door_double_round_ul'
+        if doorModelName[-1:] == 'r':
+            doorModelName = doorModelName[:-1] + 'l'
         else:
-            doorModelName = doorModelName[:-1] + "r"
+            doorModelName = doorModelName[:-1] + 'r'
         door = self.dnaStore.findNode(doorModelName)
-        door_origin = render.find("**/door_origin;+s")
+        door_origin = render.find('**/door_origin;+s')
         doorNP = door.copyTo(door_origin)
         door_origin.setScale(0.8, 0.8, 0.8)
         door_origin.setPos(door_origin, 0, -0.025, 0)
-        color = self.randomGenerator.choice(self.colors["TI_door"])
-        DNADoor.setupDoor(
-            doorNP, self.interior, door_origin, self.dnaStore, str(self.block), color
-        )
-        doorFrame = doorNP.find("door_*_flat")
+        color = self.randomGenerator.choice(self.colors['TI_door'])
+        DNADoor.setupDoor(doorNP, self.interior, door_origin, self.dnaStore, str(self.block), color)
+        doorFrame = doorNP.find('door_*_flat')
         doorFrame.wrtReparentTo(self.interior)
         doorFrame.setColor(color)
-        sign = hidden.find("**/tb%s:*_landmark_*_DNARoot/**/sign;+s" % (self.block,))
+        sign = hidden.find('**/tb%s:*_landmark_*_DNARoot/**/sign;+s' % (self.block,))
         if not sign.isEmpty():
-            signOrigin = self.interior.find("**/sign_origin;+s")
+            signOrigin = self.interior.find('**/sign_origin;+s')
             newSignNP = sign.copyTo(signOrigin)
-            # newSignNP.setDepthWrite(1, 1)
+            #newSignNP.setDepthWrite(1, 1)
             mat = self.dnaStore.getSignTransformFromBlockNumber(int(self.block))
             inv = Mat4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             inv.invertFrom(mat)
@@ -143,18 +122,8 @@ class DistributedToonInterior(DistributedObject.DistributedObject):
                 scale = min(xScale, zScale)
                 xCenter = (ur[0] + ll[0]) / 2.0
                 zCenter = (ur[2] + ll[2]) / 2.0
-                newSignNP.setPosHprScale(
-                    (SIGN_RIGHT + SIGN_LEFT) / 2.0 - xCenter * scale,
-                    -0.1,
-                    (SIGN_TOP + SIGN_BOTTOM) / 2.0 - zCenter * scale,
-                    0.0,
-                    0.0,
-                    0.0,
-                    scale,
-                    scale,
-                    scale,
-                )
-        trophyOrigin = self.interior.find("**/trophy_origin")
+                newSignNP.setPosHprScale((SIGN_RIGHT + SIGN_LEFT) / 2.0 - xCenter * scale, -0.1, (SIGN_TOP + SIGN_BOTTOM) / 2.0 - zCenter * scale, 0.0, 0.0, 0.0, scale, scale, scale)
+        trophyOrigin = self.interior.find('**/trophy_origin')
         trophy = self.buildTrophy()
         if trophy:
             trophy.reparentTo(trophyOrigin)
@@ -175,7 +144,7 @@ class DistributedToonInterior(DistributedObject.DistributedObject):
             return
         numToons = len(self.savedBy)
         pos = 1.25 - 1.25 * numToons
-        trophy = hidden.attachNewNode("trophy")
+        trophy = hidden.attachNewNode('trophy')
         for avId, name, dnaNetString, isGM in self.savedBy:
             frame = self.buildFrame(name, dnaNetString)
             frame.reparentTo(trophy)
@@ -185,26 +154,26 @@ class DistributedToonInterior(DistributedObject.DistributedObject):
         return trophy
 
     def buildFrame(self, name, dnaNetString):
-        frame = loader.loadModel("phase_3.5/models/modules/trophy_frame")
+        frame = loader.loadModel('phase_3.5/models/modules/trophy_frame')
         dna = ToonDNA.ToonDNA(dnaNetString)
         head = ToonHead.ToonHead()
         head.setupHead(dna)
         head.setPosHprScale(0, -0.05, -0.05, 180, 0, 0, 0.55, 0.02, 0.55)
-        if dna.head[0] == "r":
+        if dna.head[0] == 'r':
             head.setZ(-0.15)
-        elif dna.head[0] == "h":
+        elif dna.head[0] == 'h':
             head.setZ(0.05)
-        elif dna.head[0] == "m":
+        elif dna.head[0] == 'm':
             head.setScale(0.45, 0.02, 0.45)
         head.reparentTo(frame)
-        nameText = TextNode("trophy")
+        nameText = TextNode('trophy')
         nameText.setFont(ToontownGlobals.getToonFont())
         nameText.setAlign(TextNode.ACenter)
         nameText.setTextColor(0, 0, 0, 1)
         nameText.setWordwrap(5.36 * FrameScale)
         nameText.setText(name)
         namePath = frame.attachNewNode(nameText.generate())
-        namePath.setPos(0, -0.03, -0.6)
+        namePath.setPos(0, -0.03, -.6)
         namePath.setScale(0.186 / FrameScale)
         frame.setScale(FrameScale, 1.0, FrameScale)
         return frame
@@ -225,7 +194,7 @@ class DistributedToonInterior(DistributedObject.DistributedObject):
         pass
 
     def enterBeingTakenOver(self, ts):
-        messenger.send("clearOutToonInterior")
+        messenger.send('clearOutToonInterior')
 
     def exitBeingTakenOver(self):
         pass

@@ -4,8 +4,8 @@ from direct.task import Task
 from toontown.toonbase import TTLocalizer
 from . import PlayingCardGlobals
 
-
 class PlayingCardBase:
+
     def __init__(self, value):
         self.faceUp = 1
         self.setValue(value)
@@ -53,10 +53,11 @@ class PlayingCardBase:
 
 
 class PlayingCardNodePath(NodePath, PlayingCardBase):
+
     def __init__(self, style, value):
         self.image = None
         self.style = style
-        NodePath.__init__(self, "PlayingCard")
+        NodePath.__init__(self, 'PlayingCard')
         PlayingCardBase.__init__(self, value)
         return
 
@@ -71,6 +72,7 @@ class PlayingCardNodePath(NodePath, PlayingCardBase):
 
 
 class PlayingCardButton(PlayingCardBase, DirectButton):
+
     def __init__(self, style, value):
         PlayingCardBase.__init__(self, value)
         self.style = style
@@ -85,14 +87,14 @@ class PlayingCardButton(PlayingCardBase, DirectButton):
             image = PlayingCardGlobals.getImage(self.style, self.suit, self.rank)
         else:
             image = PlayingCardGlobals.getBack(self.style)
-        self["image"] = image
+        self['image'] = image
 
     def dragStart(self, event):
-        taskMgr.remove(self.taskName("dragTask"))
+        taskMgr.remove(self.taskName('dragTask'))
         vWidget2render2d = self.getPos(render2d)
         vMouse2render2d = Point3(event.getMouse()[0], 0, event.getMouse()[1])
         editVec = Vec3(vWidget2render2d - vMouse2render2d)
-        task = taskMgr.add(self.dragTask, self.taskName("dragTask"))
+        task = taskMgr.add(self.dragTask, self.taskName('dragTask'))
         task.editVec = editVec
 
     def dragTask(self, task):
@@ -104,9 +106,9 @@ class PlayingCardButton(PlayingCardBase, DirectButton):
         return Task.cont
 
     def dragStop(self, event):
-        taskMgr.remove(self.taskName("dragTask"))
-        messenger.send("PlayingCardDrop", sentArgs=[self])
+        taskMgr.remove(self.taskName('dragTask'))
+        messenger.send('PlayingCardDrop', sentArgs=[self])
 
     def destroy(self):
-        taskMgr.remove(self.taskName("dragTask"))
+        taskMgr.remove(self.taskName('dragTask'))
         DirectButton.destroy(self)

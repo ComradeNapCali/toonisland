@@ -4,9 +4,8 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.suit import GoonPathData
 from otp.level import PathEntity
 
-
 class PathMasterEntity(PathEntity.PathEntity):
-    notify = DirectNotifyGlobal.directNotify.newCategory("PathMasterEntity")
+    notify = DirectNotifyGlobal.directNotify.newCategory('PathMasterEntity')
 
     def __init__(self, level, entId):
         self.pathScale = 1.0
@@ -15,36 +14,43 @@ class PathMasterEntity(PathEntity.PathEntity):
         self.initPath()
 
     def initPath(self):
-        self.pathTargetList = [None, None, None, None, None, None, None, None]
-        if not hasattr(self, "pathTarget0"):
+        self.pathTargetList = [None,
+         None,
+         None,
+         None,
+         None,
+         None,
+         None,
+         None]
+        if not hasattr(self, 'pathTarget0'):
             self.pathTarget0 = None
         else:
             self.pathTargetList[0] = self.pathTarget0
-        if not hasattr(self, "pathTarget1"):
+        if not hasattr(self, 'pathTarget1'):
             self.pathTarget1 = None
         else:
             self.pathTargetList[1] = self.pathTarget1
-        if not hasattr(self, "pathTarget2"):
+        if not hasattr(self, 'pathTarget2'):
             self.pathTarget2 = None
         else:
             self.pathTargetList[2] = self.pathTarget2
-        if not hasattr(self, "pathTarget3"):
+        if not hasattr(self, 'pathTarget3'):
             self.pathTarget3 = None
         else:
             self.pathTargetList[3] = self.pathTarget3
-        if not hasattr(self, "pathTarget4"):
+        if not hasattr(self, 'pathTarget4'):
             self.pathTarget4 = None
         else:
             self.pathTargetList[4] = self.pathTarget4
-        if not hasattr(self, "pathTarget5"):
+        if not hasattr(self, 'pathTarget5'):
             self.pathTarget5 = None
         else:
             self.pathTargetList[5] = self.pathTarget5
-        if not hasattr(self, "pathTarget6"):
+        if not hasattr(self, 'pathTarget6'):
             self.pathTarget6 = None
         else:
             self.pathTargetList[6] = self.pathTarget6
-        if not hasattr(self, "pathTarget7"):
+        if not hasattr(self, 'pathTarget7'):
             self.pathTarget7 = None
         else:
             self.pathTargetList[7] = self.pathTarget7
@@ -118,11 +124,11 @@ class PathMasterEntity(PathEntity.PathEntity):
             if __dev__:
                 messenger.send(self.getChangeEvent())
         else:
-            PathEntity.notify.warning("invalid pathIndex: %s" % pathIndex)
+            PathEntity.notify.warning('invalid pathIndex: %s' % pathIndex)
             self.path = None
         return
 
-    def makePathTrack(self, node, velocity, name, turnTime=1, lookAroundNode=None):
+    def makePathTrack(self, node, velocity, name, turnTime = 1, lookAroundNode = None):
         track = Sequence(name=name)
         self.path = self.getReducedPath()
         if self.path is None or len(self.path) < 1:
@@ -139,15 +145,11 @@ class PathMasterEntity(PathEntity.PathEntity):
             track.append(LerpHprInterval(node, turnTime, Vec3(theta, 0, 0)))
             distance = Vec3(v).length()
             duration = distance / velocity
-            track.append(
-                LerpPosInterval(
-                    node, duration=duration, pos=endPoint, startPos=startPoint
-                )
-            )
+            track.append(LerpPosInterval(node, duration=duration, pos=endPoint, startPos=startPoint))
 
         return track
 
-    def makePathTrackBak(self, node, velocity, name, turnTime=1, lookAroundNode=None):
+    def makePathTrackBak(self, node, velocity, name, turnTime = 1, lookAroundNode = None):
         track = Sequence(name=name)
         if self.path is None:
             track.append(WaitInterval(1.0))
@@ -163,18 +165,14 @@ class PathMasterEntity(PathEntity.PathEntity):
             track.append(LerpHprInterval(node, turnTime, Vec3(theta, 0, 0)))
             distance = Vec3(v).length()
             duration = distance / velocity
-            track.append(
-                LerpPosInterval(
-                    node, duration=duration, pos=endPoint, startPos=startPoint
-                )
-            )
+            track.append(LerpPosInterval(node, duration=duration, pos=endPoint, startPos=startPoint))
 
         return track
 
     if __dev__:
 
         def getChangeEvent(self):
-            return self.getUniqueName("pathChanged")
+            return self.getUniqueName('pathChanged')
 
         def setPathScale(self, pathScale):
             self.pathScale = pathScale

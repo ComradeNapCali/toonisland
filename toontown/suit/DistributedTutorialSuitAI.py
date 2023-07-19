@@ -7,7 +7,7 @@ from toontown.tutorial.DistributedBattleTutorialAI import DistributedBattleTutor
 
 
 class TutorialBattleManager:
-    notify = DirectNotifyGlobal.directNotify.newCategory("TutorialBattleManager")
+    notify = DirectNotifyGlobal.directNotify.newCategory('TutorialBattleManager')
 
     def __init__(self, avId):
         self.avId = avId
@@ -15,18 +15,18 @@ class TutorialBattleManager:
     def destroy(self, battle):
         if battle.suitsKilledThisBattle:
             if self.avId in list(simbase.air.tutorialManager.avId2fsm.keys()):
-                simbase.air.tutorialManager.avId2fsm[self.avId].demand("HQ")
+                simbase.air.tutorialManager.avId2fsm[self.avId].demand('HQ')
 
         battle.requestDelete()
 
 
 class DistributedTutorialSuitAI(DistributedSuitBaseAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedTutorialSuitAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedTutorialSuitAI')
 
     def __init__(self, air):
         DistributedSuitBaseAI.__init__(self, air, None)
         suitDNA = SuitDNA()
-        suitDNA.newSuit("f")
+        suitDNA.newSuit('f')
         self.dna = suitDNA
         self.setLevel(1)
         self.confrontPosHpr = (0, 0, 0, 0, 0, 0)
@@ -40,16 +40,8 @@ class DistributedTutorialSuitAI(DistributedSuitBaseAI):
             return
 
         self.confrontPosHpr = (LPoint3f(x, y, z), LPoint3f(h, p, r))
-        battle = DistributedBattleTutorialAI(
-            self.air,
-            TutorialBattleManager(avId),
-            LPoint3f(x, y, z),
-            self,
-            avId,
-            20001,
-            maxSuits=1,
-            tutorialFlag=1,
-        )
+        battle = DistributedBattleTutorialAI(self.air, TutorialBattleManager(avId), LPoint3f(x, y, z), self, avId,
+                                             20001, maxSuits=1, tutorialFlag=1)
         battle.generateWithRequired(self.zoneId)
         battle.battleCellId = 0
 

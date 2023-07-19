@@ -6,12 +6,10 @@ from toontown.toonbase import ToontownGlobals
 from . import CogdoUtil
 from . import CogdoFlyingGameGlobals as Globals
 
-
 class CogdoFlyingProgressGui(DirectFrame):
-    def __init__(self, parent, level, pos2d=Globals.Gui.ProgressPos2D):
-        DirectFrame.__init__(
-            self, relief=None, state=DGG.NORMAL, sortOrder=DGG.BACKGROUND_SORT_INDEX
-        )
+
+    def __init__(self, parent, level, pos2d = Globals.Gui.ProgressPos2D):
+        DirectFrame.__init__(self, relief=None, state=DGG.NORMAL, sortOrder=DGG.BACKGROUND_SORT_INDEX)
         self._parent = parent
         self._level = level
         self.reparentTo(self._parent)
@@ -29,25 +27,25 @@ class CogdoFlyingProgressGui(DirectFrame):
         DirectFrame.destroy(self)
 
     def _initModel(self):
-        self._laffMeterModel = loader.loadModel("phase_3/models/gui/laff_o_meter")
-        self._model = CogdoUtil.loadFlyingModel("progressMeter", group="gui")
+        self._laffMeterModel = loader.loadModel('phase_3/models/gui/laff_o_meter')
+        self._model = CogdoUtil.loadFlyingModel('progressMeter', group='gui')
         self._model.reparentTo(self)
-        self._model.setBin("fixed", 0)
-        self._lineStart = self._model.find("**/start_loc").getZ()
-        self._lineEnd = self._model.find("**/end_loc").getZ()
+        self._model.setBin('fixed', 0)
+        self._lineStart = self._model.find('**/start_loc').getZ()
+        self._lineEnd = self._model.find('**/end_loc').getZ()
         self._lineDistance = abs(self._lineEnd - self._lineStart)
 
     def addToon(self, toon):
-        marker = NodePath("toon_marker-%i" % toon.doId)
+        marker = NodePath('toon_marker-%i' % toon.doId)
         marker.reparentTo(self)
         self._getToonMarker(toon).copyTo(marker)
         marker.setColor(toon.style.getHeadColor())
         if toon.isLocal():
             marker.setScale(Globals.Gui.LocalMarkerScale)
-            marker.setBin("fixed", 10)
+            marker.setBin('fixed', 10)
         else:
             marker.setScale(Globals.Gui.MarkerScale)
-            marker.setBin("fixed", 5)
+            marker.setBin('fixed', 5)
         marker.flattenStrong()
         self._toonMarkers[toon] = marker
 
@@ -59,32 +57,21 @@ class CogdoFlyingProgressGui(DirectFrame):
         return
 
     def _getToonMarker(self, toon):
-        marker = self._laffMeterModel.find("**/" + toon.style.getType() + "head")
+        marker = self._laffMeterModel.find('**/' + toon.style.getType() + 'head')
         if marker.isEmpty():
-            marker = self._laffMeterModel.find("**/bunnyhead")
+            marker = self._laffMeterModel.find('**/bunnyhead')
         return marker
 
     def update(self):
         for toon, marker in list(self._toonMarkers.items()):
-            progress = clamp(
-                (toon.getY() - self._levelStartY) / self._levelDistance,
-                self._levelStartY,
-                self._levelEndY,
-            )
-            marker.setZ(
-                clamp(
-                    self._lineStart + self._lineDistance * progress,
-                    self._lineStart,
-                    self._lineEnd,
-                )
-            )
+            progress = clamp((toon.getY() - self._levelStartY) / self._levelDistance, self._levelStartY, self._levelEndY)
+            marker.setZ(clamp(self._lineStart + self._lineDistance * progress, self._lineStart, self._lineEnd))
 
 
 class CogdoFlyingFuelGui(DirectFrame):
+
     def __init__(self, parent):
-        DirectFrame.__init__(
-            self, relief=None, state=DGG.NORMAL, sortOrder=DGG.BACKGROUND_SORT_INDEX
-        )
+        DirectFrame.__init__(self, relief=None, state=DGG.NORMAL, sortOrder=DGG.BACKGROUND_SORT_INDEX)
         self.reparentTo(parent)
         self.active = 0
         self._initModel()
@@ -93,74 +80,56 @@ class CogdoFlyingFuelGui(DirectFrame):
 
     def _initModel(self):
         self.setPos(Globals.Gui.FuelPos2D[0], 0.0, Globals.Gui.FuelPos2D[1])
-        self.gui = CogdoUtil.loadFlyingModel("propellerMeter", group="gui")
+        self.gui = CogdoUtil.loadFlyingModel('propellerMeter', group='gui')
         self.gui.reparentTo(self)
-        self.gui.setBin("fixed", 0)
-        self.healthBar = self.gui.find("**/healthBar")
-        self.healthBar.setBin("fixed", 1)
+        self.gui.setBin('fixed', 0)
+        self.healthBar = self.gui.find('**/healthBar')
+        self.healthBar.setBin('fixed', 1)
         self.healthBar.setColor(*Globals.Gui.FuelNormalColor)
-        bottomBarLocator = self.gui.find("**/bottomOfBar_loc")
+        bottomBarLocator = self.gui.find('**/bottomOfBar_loc')
         bottomBarPos = bottomBarLocator.getPos(render)
-        topBarLocator = self.gui.find("**/topOfBar_loc")
+        topBarLocator = self.gui.find('**/topOfBar_loc')
         topBarPos = topBarLocator.getPos(render)
         zDist = topBarPos.getZ() - bottomBarPos.getZ()
-        self.fuelLowIndicator = self.gui.find("**/fuelLowIndicator")
-        self.fuelLowIndicator.setBin("fixed", 2)
+        self.fuelLowIndicator = self.gui.find('**/fuelLowIndicator')
+        self.fuelLowIndicator.setBin('fixed', 2)
         pos = self.fuelLowIndicator.getPos(render)
         newPos = pos
         newPos.setZ(bottomBarPos.getZ() + zDist * Globals.Gameplay.FuelLowAmt)
         self.fuelLowIndicator.setPos(render, newPos)
-        self.fuelVeryLowIndicator = self.gui.find("**/fuelVeryLowIndicator")
-        self.fuelVeryLowIndicator.setBin("fixed", 2)
+        self.fuelVeryLowIndicator = self.gui.find('**/fuelVeryLowIndicator')
+        self.fuelVeryLowIndicator.setBin('fixed', 2)
         pos = self.fuelVeryLowIndicator.getPos(render)
         newPos = pos
         newPos.setZ(bottomBarPos.getZ() + zDist * Globals.Gameplay.FuelVeryLowAmt)
         self.fuelVeryLowIndicator.setPos(render, newPos)
-        self.propellerMain = self.gui.find("**/propellers")
-        self.propellerMain.setBin("fixed", 3)
-        self.propellerHead = self.gui.find("**/propellerHead")
-        self.propellerHead.setBin("fixed", 4)
+        self.propellerMain = self.gui.find('**/propellers')
+        self.propellerMain.setBin('fixed', 3)
+        self.propellerHead = self.gui.find('**/propellerHead')
+        self.propellerHead.setBin('fixed', 4)
         self.blades = []
         self.activeBlades = []
         index = 1
-        blade = self.propellerMain.find("**/propeller%d" % index)
+        blade = self.propellerMain.find('**/propeller%d' % index)
         while not blade.isEmpty():
             self.blades.append(blade)
             index += 1
-            blade = self.propellerMain.find("**/propeller%d" % index)
+            blade = self.propellerMain.find('**/propeller%d' % index)
 
         for blade in self.blades:
             self.activeBlades.append(blade)
 
-        self.bladeNumberLabel = DirectLabel(
-            parent=self.propellerHead,
-            relief=None,
-            pos=(
-                Globals.Gui.FuelNumBladesPos2D[0],
-                0,
-                Globals.Gui.FuelNumBladesPos2D[1],
-            ),
-            scale=Globals.Gui.FuelNumBladesScale,
-            text=str(len(self.activeBlades)),
-            text_align=TextNode.ACenter,
-            text_fg=(0.0, 0.0, -0.002, 1),
-            text_shadow=(0.75, 0.75, 0.75, 1),
-            text_font=ToontownGlobals.getInterfaceFont(),
-        )
-        self.bladeNumberLabel.setBin("fixed", 5)
+        self.bladeNumberLabel = DirectLabel(parent=self.propellerHead, relief=None, pos=(Globals.Gui.FuelNumBladesPos2D[0], 0, Globals.Gui.FuelNumBladesPos2D[1]), scale=Globals.Gui.FuelNumBladesScale, text=str(len(self.activeBlades)), text_align=TextNode.ACenter, text_fg=(0.0,
+         0.0,
+         -0.002,
+         1), text_shadow=(0.75, 0.75, 0.75, 1), text_font=ToontownGlobals.getInterfaceFont())
+        self.bladeNumberLabel.setBin('fixed', 5)
         return
 
     def _initIntervals(self):
-        self._healthIval = LerpFunctionInterval(
-            self.healthBar.setSz, fromData=0.0, toData=1.0, duration=2.0
-        )
+        self._healthIval = LerpFunctionInterval(self.healthBar.setSz, fromData=0.0, toData=1.0, duration=2.0)
         self.baseSpinDuration = 2.0
-        self._spinIval = LerpFunctionInterval(
-            self.propellerMain.setR,
-            fromData=0.0,
-            toData=-360.0,
-            duration=self.baseSpinDuration,
-        )
+        self._spinIval = LerpFunctionInterval(self.propellerMain.setR, fromData=0.0, toData=-360.0, duration=self.baseSpinDuration)
 
     def show(self):
         DirectFrame.show(self)
@@ -189,7 +158,7 @@ class CogdoFlyingFuelGui(DirectFrame):
                 self.activeBlades.append(blade)
                 blade.unstash()
 
-            self.bladeNumberLabel["text"] = str(len(self.activeBlades))
+            self.bladeNumberLabel['text'] = str(len(self.activeBlades))
             self.bladeNumberLabel.setText()
         self.updateHealthBarColor()
 
@@ -197,7 +166,7 @@ class CogdoFlyingFuelGui(DirectFrame):
         if len(self.activeBlades) > 0:
             blade = self.activeBlades.pop()
             blade.stash()
-            self.bladeNumberLabel["text"] = str(len(self.activeBlades))
+            self.bladeNumberLabel['text'] = str(len(self.activeBlades))
             self.bladeNumberLabel.setText()
         self.updateHealthBarColor()
 

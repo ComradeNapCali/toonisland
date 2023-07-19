@@ -6,7 +6,7 @@ from toontown.racing.KartShopGlobals import KartGlobals
 
 
 class DistributedViewPadAI(DistributedKartPadAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedViewPadAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedViewPadAI')
 
     def __init__(self, air):
         DistributedKartPadAI.__init__(self, air)
@@ -16,7 +16,7 @@ class DistributedViewPadAI(DistributedKartPadAI):
         self.lastEntered = lastEntered
 
     def d_setLastEntered(self, lastEntered):
-        self.sendUpdate("setLastEntered", [lastEntered])
+        self.sendUpdate('setLastEntered', [lastEntered])
 
     def b_setLastEntered(self, lastEntered):
         self.setLastEntered(lastEntered)
@@ -32,12 +32,8 @@ class DistributedViewPadAI(DistributedKartPadAI):
 
         if not startingBlock.avId:
             self.b_setLastEntered(globalClockDelta.getRealNetworkTime())
-            taskMgr.doMethodLater(
-                KartGlobals.COUNTDOWN_TIME,
-                self.kickAvatar,
-                startingBlock.uniqueName("viewTimer"),
-                extraArgs=[avId, startingBlock],
-            )
+            taskMgr.doMethodLater(KartGlobals.COUNTDOWN_TIME, self.kickAvatar,
+                                  startingBlock.uniqueName('viewTimer'), extraArgs=[avId, startingBlock])
             return KartGlobals.ERROR_CODE.success
         else:
             return KartGlobals.ERROR_CODE.eOccupied
@@ -50,7 +46,7 @@ class DistributedViewPadAI(DistributedKartPadAI):
                 startingBlock.normalExit()
 
     def removeAvBlock(self, avId, startingBlock):
-        taskMgr.remove(startingBlock.uniqueName("viewTimer"))
+        taskMgr.remove(startingBlock.uniqueName('viewTimer'))
 
     def kartMovieDone(self):
         pass

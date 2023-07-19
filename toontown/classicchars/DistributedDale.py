@@ -7,30 +7,16 @@ from . import CharStateDatas
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 
-
 class DistributedDale(DistributedCCharBase.DistributedCCharBase):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedDale")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedDale')
 
     def __init__(self, cr):
         try:
             self.DistributedDale_initialized
         except:
             self.DistributedDale_initialized = 1
-            DistributedCCharBase.DistributedCCharBase.__init__(
-                self, cr, TTLocalizer.Dale, "da"
-            )
-            self.fsm = ClassicFSM.ClassicFSM(
-                self.getName(),
-                [
-                    State.State("Off", self.enterOff, self.exitOff, ["Neutral"]),
-                    State.State(
-                        "Neutral", self.enterNeutral, self.exitNeutral, ["Walk"]
-                    ),
-                    State.State("Walk", self.enterWalk, self.exitWalk, ["Neutral"]),
-                ],
-                "Off",
-                "Off",
-            )
+            DistributedCCharBase.DistributedCCharBase.__init__(self, cr, TTLocalizer.Dale, 'da')
+            self.fsm = ClassicFSM.ClassicFSM(self.getName(), [State.State('Off', self.enterOff, self.exitOff, ['Neutral']), State.State('Neutral', self.enterNeutral, self.exitNeutral, ['Walk']), State.State('Walk', self.enterWalk, self.exitWalk, ['Neutral'])], 'Off', 'Off')
             self.fsm.enterInitialState()
             self.handleHolidays()
 
@@ -57,16 +43,14 @@ class DistributedDale(DistributedCCharBase.DistributedCCharBase):
         DistributedCCharBase.DistributedCCharBase.generate(self)
         self.setX(self.getX() + ToontownGlobals.DaleOrbitDistance)
         name = self.getName()
-        self.neutralDoneEvent = self.taskName(name + "-neutral-done")
+        self.neutralDoneEvent = self.taskName(name + '-neutral-done')
         self.neutral = CharStateDatas.CharNeutralState(self.neutralDoneEvent, self)
-        self.walkDoneEvent = self.taskName(name + "-walk-done")
-        self.fsm.request("Neutral")
+        self.walkDoneEvent = self.taskName(name + '-walk-done')
+        self.fsm.request('Neutral')
 
     def announceGenerate(self):
         DistributedCCharBase.DistributedCCharBase.announceGenerate(self)
-        self.walk = CharStateDatas.CharFollowChipState(
-            self.walkDoneEvent, self, self.chipId
-        )
+        self.walk = CharStateDatas.CharFollowChipState(self.walkDoneEvent, self, self.chipId)
 
     def enterOff(self):
         pass
@@ -91,12 +75,12 @@ class DistributedDale(DistributedCCharBase.DistributedCCharBase):
         self.walk.exit()
 
     def __decideNextState(self, doneStatus):
-        self.fsm.request("Neutral")
+        self.fsm.request('Neutral')
 
-    def setWalk(self, srcNode, destNode, timestamp, offsetX=0, offsetY=0):
+    def setWalk(self, srcNode, destNode, timestamp, offsetX = 0, offsetY = 0):
         if destNode and not destNode == srcNode:
             self.walk.setWalk(srcNode, destNode, timestamp, offsetX, offsetY)
-            self.fsm.request("Walk")
+            self.fsm.request('Walk')
 
     def walkSpeed(self):
         return ToontownGlobals.DaleSpeed
@@ -104,7 +88,7 @@ class DistributedDale(DistributedCCharBase.DistributedCCharBase):
     def setFollowChip(self, srcNode, destNode, timestamp, offsetX, offsetY):
         if destNode and not destNode == srcNode:
             self.walk.setWalk(srcNode, destNode, timestamp, offsetX, offsetY)
-            self.fsm.request("Walk")
+            self.fsm.request('Walk')
 
     def setChipId(self, chipId):
         self.chipId = chipId

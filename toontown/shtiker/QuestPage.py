@@ -9,13 +9,15 @@ from toontown.toonbase import TTLocalizer
 from toontown.quest import QuestBookPoster
 from direct.directnotify import DirectNotifyGlobal
 
-
 class QuestPage(ShtikerPage.ShtikerPage):
-    notify = DirectNotifyGlobal.directNotify.newCategory("QuestPage")
+    notify = DirectNotifyGlobal.directNotify.newCategory('QuestPage')
 
     def __init__(self):
         ShtikerPage.ShtikerPage.__init__(self)
-        self.quests = {0: None, 1: None, 2: None, 3: None}
+        self.quests = {0: None,
+         1: None,
+         2: None,
+         3: None}
         self.textRolloverColor = Vec4(1, 1, 0, 1)
         self.textDownColor = Vec4(0.5, 0.9, 1, 1)
         self.textDisabledColor = Vec4(0.4, 0.8, 0.4, 1)
@@ -24,20 +26,26 @@ class QuestPage(ShtikerPage.ShtikerPage):
         return
 
     def load(self):
-        self.title = DirectLabel(
-            parent=self,
-            relief=None,
-            text=TTLocalizer.QuestPageToonTasks,
-            text_scale=0.12,
-            textMayChange=0,
-            pos=(0, 0, 0.6),
-        )
-        questFramePlaceList = (
-            (-0.45, 0, 0.25, 0, 0, 0),
-            (-0.45, 0, -0.35, 0, 0, 0),
-            (0.45, 0, 0.25, 0, 0, 0),
-            (0.45, 0, -0.35, 0, 0, 0),
-        )
+        self.title = DirectLabel(parent=self, relief=None, text=TTLocalizer.QuestPageToonTasks, text_scale=0.12, textMayChange=0, pos=(0, 0, 0.6))
+        questFramePlaceList = ((-0.45,
+          0,
+          0.25,
+          0,
+          0,
+          0),
+         (-0.45,
+          0,
+          -0.35,
+          0,
+          0,
+          0),
+         (0.45, 0, 0.25, 0, 0, 0),
+         (0.45,
+          0,
+          -0.35,
+          0,
+          0,
+          0))
         self.questFrames = []
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
             frame = QuestBookPoster.QuestBookPoster(reverse=i > 1, mapIndex=i + 1)
@@ -46,7 +54,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
             frame.setScale(1.06)
             self.questFrames.append(frame)
 
-        self.accept("questsChanged", self.updatePage)
+        self.accept('questsChanged', self.updatePage)
         return
 
     def acceptOnscreenHooks(self):
@@ -58,11 +66,11 @@ class QuestPage(ShtikerPage.ShtikerPage):
         self.ignore(ToontownGlobals.QuestsHotkeyOff)
 
     def unload(self):
-        self.ignore("questsChanged")
+        self.ignore('questsChanged')
         del self.title
         del self.quests
         del self.questFrames
-        loader.unloadModel("phase_3.5/models/gui/stickerbook_gui")
+        loader.unloadModel('phase_3.5/models/gui/stickerbook_gui')
         ShtikerPage.ShtikerPage.unload(self)
 
     def clearQuestFrame(self, index):
@@ -82,7 +90,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
         return -1
 
     def updatePage(self):
-        self.notify.debug("updatePage()")
+        self.notify.debug('updatePage()')
         newQuests = base.localAvatar.quests
         carryLimit = base.localAvatar.getQuestCarryLimit()
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
@@ -111,7 +119,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
             else:
                 self.questFrames[i].unbindMouseEnter()
 
-        messenger.send("questPageUpdated")
+        messenger.send('questPageUpdated')
         return
 
     def enter(self):
@@ -126,7 +134,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
         self.showQuestsOnscreen()
 
     def showQuestsOnscreen(self):
-        messenger.send("wakeup")
+        messenger.send('wakeup')
         timedif = globalClock.getRealTime() - self.lastQuestTime
         if timedif < 0.7:
             return
@@ -135,7 +143,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
             return
         self.onscreen = 1
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
-            if hasattr(self.questFrames[i], "mapIndex"):
+            if hasattr(self.questFrames[i], 'mapIndex'):
                 self.questFrames[i].mapIndex.show()
 
         self.updatePage()
@@ -152,7 +160,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
             return
         self.onscreen = 0
         for i in range(ToontownGlobals.MaxQuestCarryLimit):
-            if hasattr(self.questFrames[i], "mapIndex"):
+            if hasattr(self.questFrames[i], 'mapIndex'):
                 self.questFrames[i].mapIndex.hide()
 
         self.reparentTo(self.book)
@@ -160,9 +168,7 @@ class QuestPage(ShtikerPage.ShtikerPage):
         self.hide()
 
     def canDeleteQuest(self, questDesc):
-        return (
-            Quests.isQuestJustForFun(questDesc[0], questDesc[3]) and self.onscreen == 0
-        )
+        return Quests.isQuestJustForFun(questDesc[0], questDesc[3]) and self.onscreen == 0
 
     def __deleteQuest(self, questDesc):
         base.localAvatar.d_requestDeleteQuest(questDesc)

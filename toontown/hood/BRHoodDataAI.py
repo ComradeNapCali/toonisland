@@ -6,9 +6,8 @@ from toontown.safezone import BRTreasurePlannerAI
 from toontown.classicchars import DistributedPlutoAI
 from toontown.toon import DistributedNPCFishermanAI
 
-
 class BRHoodDataAI(HoodDataAI.HoodDataAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("BRHoodDataAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('BRHoodDataAI')
 
     def __init__(self, air, zoneId=None):
         hoodId = ToontownGlobals.CirrusCircus

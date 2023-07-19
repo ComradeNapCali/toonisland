@@ -8,9 +8,8 @@ from toontown.toonbase import TTLocalizer
 from . import HouseGlobals
 from . import Estate
 
-
 class EstateManager(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("EstateManager")
+    notify = DirectNotifyGlobal.directNotify.newCategory('EstateManager')
     neverDisable = 1
 
     def __init__(self, cr):
@@ -21,7 +20,7 @@ class EstateManager(DistributedObject.DistributedObject):
 
     def disable(self):
         self.notify.debug("i'm disabling EstateManager rightnow.")
-        self.ignore("getLocalEstateZone")
+        self.ignore('getLocalEstateZone')
         self.ignoreAll()
         if self.popupInfo:
             self.popupInfo.destroy()
@@ -33,22 +32,22 @@ class EstateManager(DistributedObject.DistributedObject):
         self.getLocalEstateZone(base.localAvatar.getDoId())
 
     def getLocalEstateZone(self, avId):
-        name = ""
-        self.sendUpdate("getEstateZone", [avId, name])
+        name = ''
+        self.sendUpdate('getEstateZone', [avId, name])
 
     def setEstateZone(self, ownerId, zoneId):
-        self.notify.debug("setEstateZone(%s, %s)" % (ownerId, zoneId))
-        messenger.send("setLocalEstateZone", [ownerId, zoneId])
+        self.notify.debug('setEstateZone(%s, %s)' % (ownerId, zoneId))
+        messenger.send('setLocalEstateZone', [ownerId, zoneId])
 
     def generate(self):
-        self.notify.debug("BASE: generate")
+        self.notify.debug('BASE: generate')
         DistributedObject.DistributedObject.generate(self)
         base.cr.estateMgr = self
-        self.accept("getLocalEstateZone", self.getLocalEstateZone)
-        self.announceGenerateName = self.uniqueName("generate")
+        self.accept('getLocalEstateZone', self.getLocalEstateZone)
+        self.announceGenerateName = self.uniqueName('generate')
 
     def setAvHouseId(self, avId, houseIds):
-        self.notify.debug("setAvHouseId %d" % base.localAvatar.doId)
+        self.notify.debug('setAvHouseId %d' % base.localAvatar.doId)
         for av in base.cr.avList:
             if av.id == avId:
                 houseId = houseIds[av.position]
@@ -58,18 +57,18 @@ class EstateManager(DistributedObject.DistributedObject):
                 return
 
     def sendAvToPlayground(self, avId, retCode):
-        self.notify.debug("sendAvToPlayground: %d" % avId)
-        messenger.send("kickToPlayground", [retCode])
+        self.notify.debug('sendAvToPlayground: %d' % avId)
+        messenger.send('kickToPlayground', [retCode])
 
     def leaveEstate(self):
         if self.isDisabled():
-            self.notify.warning("EstateManager disabled; unable to leave estate.")
+            self.notify.warning('EstateManager disabled; unable to leave estate.')
             return
-        self.sendUpdate("exitEstate")
+        self.sendUpdate('exitEstate')
 
     def removeFriend(self, ownerId, avId):
-        self.notify.debug("removeFriend ownerId = %s, avId = %s" % (ownerId, avId))
-        self.sendUpdate("removeFriend", [ownerId, avId])
+        self.notify.debug('removeFriend ownerId = %s, avId = %s' % (ownerId, avId))
+        self.sendUpdate('removeFriend', [ownerId, avId])
 
     def startAprilFools(self):
         if isinstance(base.cr.playGame.getPlace(), Estate.Estate):

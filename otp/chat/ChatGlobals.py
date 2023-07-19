@@ -1,5 +1,4 @@
 import string
-
 NORMAL_CHAT = 1
 WHISPER_CHAT = 2
 GUILD_CHAT = 3
@@ -27,16 +26,16 @@ GUILD_UPDATE = 11
 AVATAR_UNAVAILABLE = 12
 SHIPPVPCHAT = 13
 GMCHAT = 14
-ChatEvent = "ChatEvent"
-NormalChatEvent = "NormalChatEvent"
-SCChatEvent = "SCChatEvent"
-SCCustomChatEvent = "SCCustomChatEvent"
-SCEmoteChatEvent = "SCEmoteChatEvent"
-SCQuestEvent = "SCQuestEvent"
+ChatEvent = 'ChatEvent'
+NormalChatEvent = 'NormalChatEvent'
+SCChatEvent = 'SCChatEvent'
+SCCustomChatEvent = 'SCCustomChatEvent'
+SCEmoteChatEvent = 'SCEmoteChatEvent'
+SCQuestEvent = 'SCQuestEvent'
 OnScreen = 0
 OffScreen = 1
 Thought = 2
-ThoughtPrefix = "."
+ThoughtPrefix = '.'
 
 
 def isThought(message):
@@ -50,6 +49,6 @@ def isThought(message):
 
 def removeThoughtPrefix(message):
     if isThought(message):
-        return message[len(ThoughtPrefix) :]
+        return message[len(ThoughtPrefix):]
     else:
         return message

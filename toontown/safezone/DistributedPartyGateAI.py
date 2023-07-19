@@ -1,7 +1,6 @@
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
-
 class DistributedPartyGateAI(DistributedObjectAI):
     notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyGateAI")
 
@@ -19,3 +18,4 @@ class DistributedPartyGateAI(DistributedObjectAI):
 
     def setParty(self, todo0):
         pass
+

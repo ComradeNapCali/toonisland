@@ -2,9 +2,8 @@ from panda3d.core import *
 from otp.level import BasicEntities
 from direct.directnotify import DirectNotifyGlobal
 
-
 class ActiveCell(BasicEntities.DistributedNodePathEntity):
-    notify = DirectNotifyGlobal.directNotify.newCategory("ActiveCell")
+    notify = DirectNotifyGlobal.directNotify.newCategory('ActiveCell')
 
     def __init__(self, cr):
         BasicEntities.DistributedNodePathEntity.__init__(self, cr)
@@ -19,10 +18,8 @@ class ActiveCell(BasicEntities.DistributedNodePathEntity):
         if 0 and __debug__:
             grid = self.level.entities.get(self.gridId, None)
             if grid:
-                pos = grid.getPos() + Vec3(
-                    self.col * grid.cellSize, self.row * grid.cellSize, 0
-                )
-                model = loader.loadModel("phase_5/models/modules/suit_walls.bam")
+                pos = grid.getPos() + Vec3(self.col * grid.cellSize, self.row * grid.cellSize, 0)
+                model = loader.loadModel('phase_5/models/modules/suit_walls.bam')
                 model.setScale(grid.cellSize, 1, grid.cellSize)
                 model.setP(-90)
                 model.flattenMedium()
@@ -39,7 +36,7 @@ class ActiveCell(BasicEntities.DistributedNodePathEntity):
     if __dev__:
 
         def attribChanged(self, *args):
-            model = self.find("*")
+            model = self.find('*')
             if not model.isEmpty():
                 model.removeNode()
             self.loadModel()

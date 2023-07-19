@@ -5,16 +5,15 @@ from toontown.pets import PetMood, PetTricks
 from toontown.toonbase import ToontownGlobals
 import string
 
-
 class DistributedPetProxy(DistributedObject.DistributedObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPetProxy")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPetProxy')
 
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         self.__funcsToDelete = []
         self.__generateDistTraitFuncs()
         self.__generateDistMoodFuncs()
-        self.dominantMood = "neutral"
+        self.dominantMood = 'neutral'
         self.sendGenerateMessage = 0
         self.trickAptitudes = []
         self.ghostMode = False
@@ -25,8 +24,8 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
         self.traitList = [0] * PetTraits.PetTraits.NumTraits
         self.requiredMoodComponents = {}
 
-    def getSetterName(self, valueName, prefix="set"):
-        return "%s%s%s" % (prefix, string.upper(valueName[0]), valueName[1:])
+    def getSetterName(self, valueName, prefix = 'set'):
+        return '%s%s%s' % (prefix, string.upper(valueName[0]), valueName[1:])
 
     def setOwnerId(self, ownerId):
         self.ownerId = ownerId
@@ -48,46 +47,46 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
             traitName = PetTraits.getTraitNames()[i]
             setterName = self.getSetterName(traitName)
 
-            def traitSetter(value, self=self, i=i):
+            def traitSetter(value, self = self, i = i):
                 self.traitList[i] = value
 
             self.__dict__[setterName] = traitSetter
             self.__funcsToDelete.append(setterName)
 
     def setHead(self, head):
-        DistributedPetProxy.notify.debug("setHead: %s" % head)
+        DistributedPetProxy.notify.debug('setHead: %s' % head)
         self.head = head
 
     def setEars(self, ears):
-        DistributedPetProxy.notify.debug("setEars: %s" % ears)
+        DistributedPetProxy.notify.debug('setEars: %s' % ears)
         self.ears = ears
 
     def setNose(self, nose):
-        DistributedPetProxy.notify.debug("setNose: %s" % nose)
+        DistributedPetProxy.notify.debug('setNose: %s' % nose)
         self.nose = nose
 
     def setTail(self, tail):
-        DistributedPetProxy.notify.debug("setTail: %s" % tail)
+        DistributedPetProxy.notify.debug('setTail: %s' % tail)
         self.tail = tail
 
     def setBodyTexture(self, bodyTexture):
-        DistributedPetProxy.notify.debug("setBodyTexture: %s" % bodyTexture)
+        DistributedPetProxy.notify.debug('setBodyTexture: %s' % bodyTexture)
         self.bodyTexture = bodyTexture
 
     def setColor(self, color):
-        DistributedPetProxy.notify.debug("setColor: %s" % color)
+        DistributedPetProxy.notify.debug('setColor: %s' % color)
         self.color = color
 
     def setColorScale(self, colorScale):
-        DistributedPetProxy.notify.debug("setColorScale: %s" % colorScale)
+        DistributedPetProxy.notify.debug('setColorScale: %s' % colorScale)
         self.colorScale = colorScale
 
     def setEyeColor(self, eyeColor):
-        DistributedPetProxy.notify.debug("setEyeColor: %s" % eyeColor)
+        DistributedPetProxy.notify.debug('setEyeColor: %s' % eyeColor)
         self.eyeColor = eyeColor
 
     def setGender(self, gender):
-        DistributedPetProxy.notify.debug("setGender: %s" % gender)
+        DistributedPetProxy.notify.debug('setGender: %s' % gender)
         self.gender = gender
 
     def getDNA(self):
@@ -100,7 +99,7 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
         return ToontownGlobals.getToonFont()
 
     def setLastSeenTimestamp(self, timestamp):
-        DistributedPetProxy.notify.debug("setLastSeenTimestamp: %s" % timestamp)
+        DistributedPetProxy.notify.debug('setLastSeenTimestamp: %s' % timestamp)
         self.lastSeenTimestamp = timestamp
 
     def getTimeSinceLastSeen(self):
@@ -120,7 +119,7 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
         for compName in PetMood.PetMood.Components:
             setterName = self.getSetterName(compName)
 
-            def moodSetter(value, self=self, compName=compName):
+            def moodSetter(value, self = self, compName = compName):
                 self.__handleMoodSet(compName, value)
 
             self.__dict__[setterName] = moodSetter
@@ -141,26 +140,22 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
             self.mood.setComponent(mood, value, announce=0)
 
         self.requiredMoodComponents = {}
-        DistributedPetProxy.notify.debug(
-            "time since last seen: %s" % self.getTimeSinceLastSeen()
-        )
-        self.style = [
-            self.head,
-            self.ears,
-            self.nose,
-            self.tail,
-            self.bodyTexture,
-            self.color,
-            self.colorScale,
-            self.eyeColor,
-            self.gender,
-        ]
+        DistributedPetProxy.notify.debug('time since last seen: %s' % self.getTimeSinceLastSeen())
+        self.style = [self.head,
+         self.ears,
+         self.nose,
+         self.tail,
+         self.bodyTexture,
+         self.color,
+         self.colorScale,
+         self.eyeColor,
+         self.gender]
         self.setLastSeenTimestamp(self.lastSeenTimestamp)
         self.updateOfflineMood()
         self.sendGenerateMessage = 1
 
     def disable(self):
-        if hasattr(self, "lastKnownMood"):
+        if hasattr(self, 'lastKnownMood'):
             self.lastKnownMood.destroy()
             del self.lastKnownMood
         self.mood.destroy()
@@ -177,7 +172,7 @@ class DistributedPetProxy(DistributedObject.DistributedObject):
     def setDominantMood(self, dominantMood):
         self.dominantMood = dominantMood
         if self.sendGenerateMessage == 1:
-            proxyGenerateMessage = "petProxy-%d-generated" % self.doId
+            proxyGenerateMessage = 'petProxy-%d-generated' % self.doId
             messenger.send(proxyGenerateMessage)
             self.sendGenerateMessage = 0
 

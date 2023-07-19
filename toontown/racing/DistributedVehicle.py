@@ -22,15 +22,11 @@ import random
 from direct.showbase.PythonUtil import randFloat
 from direct.task.Task import Task
 import math
-
 iceTurnFactor = 0.25
 iceAccelFactor = 0.4
 
-
-class DistributedVehicle(
-    DistributedSmoothNode.DistributedSmoothNode, Kart.Kart, FSM.FSM
-):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedVehicle")
+class DistributedVehicle(DistributedSmoothNode.DistributedSmoothNode, Kart.Kart, FSM.FSM):
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedVehicle')
     cheatFactor = 1.0
     proRacer = 0
     physicsCalculationsPerSecond = 60
@@ -44,55 +40,39 @@ class DistributedVehicle(
     if proRacer:
         accelerationMult = 35
         accelerationBase = 30
-    surfaceModifiers = {
-        "asphalt": {
-            "shake": 0.1,
-            "driftMin": 65,
-            "windResistance": 0.2,
-            "particleColor": Vec4(0.7, 0.7, 0.7, 1.0),
-        },
-        "gravel": {
-            "shake": 0.2,
-            "driftMin": 65,
-            "windResistance": 0.2,
-            "particleColor": Vec4(0.53, 0.53, 0.53, 1.0),
-        },
-        "dirt": {
-            "shake": 0.4,
-            "driftMin": 35,
-            "windResistance": 0.3,
-            "particleColor": Vec4(1.0, 1.0, 1.0, 1.0),
-        },
-        "grass": {
-            "shake": 0.8,
-            "driftMin": 15,
-            "windResistance": 0.4,
-            "particleColor": Vec4(0.8, 0.42, 0.8, 1.0),
-        },
-        "ice": {
-            "shake": 0.0,
-            "driftMin": 0,
-            "windResistance": 0.01,
-            "particleColor": Vec4(1.0, 1.0, 1.0, 1.0),
-        },
-        "": {
-            "shake": 0,
-            "driftMin": 1,
-            "windResistance": 0.2,
-            "particleColor": Vec4(1.0, 1.0, 1.0, 1.0),
-        },
-    }
-    SFX_BaseDir = "phase_6/audio/sfx/"
-    SFX_WallHits = [
-        SFX_BaseDir + "KART_Hitting_Wood_Fence.ogg",
-        SFX_BaseDir + "KART_Hitting_Wood_Fence_1.ogg",
-        SFX_BaseDir + "KART_Hitting_Metal_Fence.ogg",
-        SFX_BaseDir + "KART_Hitting_Wall.ogg",
-    ]
-    SFX_SkidLoop_Grass = SFX_BaseDir + "KART_Skidding_On_Grass.ogg"
-    SFX_SkidLoop_Asphalt = SFX_BaseDir + "KART_Skidding_On_Asphalt.ogg"
-    SFX_TurboStart = SFX_BaseDir + "KART_turboStart.ogg"
-    SFX_TurboLoop = SFX_BaseDir + "KART_turboLoop.ogg"
+    surfaceModifiers = {'asphalt': {'shake': 0.1,
+                 'driftMin': 65,
+                 'windResistance': 0.2,
+                 'particleColor': Vec4(0.7, 0.7, 0.7, 1.0)},
+     'gravel': {'shake': 0.2,
+                'driftMin': 65,
+                'windResistance': 0.2,
+                'particleColor': Vec4(0.53, 0.53, 0.53, 1.0)},
+     'dirt': {'shake': 0.4,
+              'driftMin': 35,
+              'windResistance': 0.3,
+              'particleColor': Vec4(1.0, 1.0, 1.0, 1.0)},
+     'grass': {'shake': 0.8,
+               'driftMin': 15,
+               'windResistance': 0.4,
+               'particleColor': Vec4(0.8, 0.42, 0.8, 1.0)},
+     'ice': {'shake': 0.0,
+             'driftMin': 0,
+             'windResistance': 0.01,
+             'particleColor': Vec4(1.0, 1.0, 1.0, 1.0)},
+     '': {'shake': 0,
+          'driftMin': 1,
+          'windResistance': 0.2,
+          'particleColor': Vec4(1.0, 1.0, 1.0, 1.0)}}
+    SFX_BaseDir = 'phase_6/audio/sfx/'
+    SFX_WallHits = [SFX_BaseDir + 'KART_Hitting_Wood_Fence.ogg',
+     SFX_BaseDir + 'KART_Hitting_Wood_Fence_1.ogg',
+     SFX_BaseDir + 'KART_Hitting_Metal_Fence.ogg',
+     SFX_BaseDir + 'KART_Hitting_Wall.ogg']
+    SFX_SkidLoop_Grass = SFX_BaseDir + 'KART_Skidding_On_Grass.ogg'
+    SFX_SkidLoop_Asphalt = SFX_BaseDir + 'KART_Skidding_On_Asphalt.ogg'
+    SFX_TurboStart = SFX_BaseDir + 'KART_turboStart.ogg'
+    SFX_TurboLoop = SFX_BaseDir + 'KART_turboLoop.ogg'
     AvId2kart = {}
 
     @classmethod
@@ -101,9 +81,9 @@ class DistributedVehicle(
 
     def __init__(self, cr):
         DistributedSmoothNode.DistributedSmoothNode.__init__(self, cr)
-        FSM.FSM.__init__(self, "DistributedVehicle")
+        FSM.FSM.__init__(self, 'DistributedVehicle')
         Kart.Kart.__init__(self)
-        if base.config.GetBool("want-racer", 0) == 1:
+        if base.config.GetBool('want-racer', 0) == 1:
             DistributedVehicle.proRacer = 1
             DistributedVehicle.accelerationMult = 35
             DistributedVehicle.accelerationBase = 30
@@ -114,7 +94,7 @@ class DistributedVehicle(
         self.stopped = False
         self.rightHeld = 0
         self.canRace = False
-        self.groundType = "gravel"
+        self.groundType = 'gravel'
         self.offGround = 0
         self.turbo = False
         self.ownerId = 0
@@ -153,34 +133,34 @@ class DistributedVehicle(
         for piece in range(self.numPieChunks):
             self.pieSlideSpeed.append(randFloat(0.0, 0.2))
 
-        self.wantSmoke = ConfigVariableBool("want-kart-smoke", 1).getValue()
-        self.wantSparks = ConfigVariableBool("want-kart-sparks", 1).getValue()
+        self.wantSmoke = ConfigVariableBool('want-kart-smoke', 1).getValue()
+        self.wantSparks = ConfigVariableBool('want-kart-sparks', 1).getValue()
         self.__loadTextures()
         return
 
     def __loadTextures(self):
-        self.pieSplatter = loader.loadModel("phase_6/models/karting/pie_splat_1.bam")
+        self.pieSplatter = loader.loadModel('phase_6/models/karting/pie_splat_1.bam')
 
     def announceGenerate(self):
         DistributedSmoothNode.DistributedSmoothNode.announceGenerate(self)
         self.generateKart()
-        self.name = self.uniqueName("vehicle")
-        self.posHprBroadcastName = self.uniqueName("vehicleBroadcast")
+        self.name = self.uniqueName('vehicle')
+        self.posHprBroadcastName = self.uniqueName('vehicleBroadcast')
         self.LODnode.forceSwitch(self.LODnode.getHighestSwitch())
-        self.cameraNode = NodePath("cameraNode")
+        self.cameraNode = NodePath('cameraNode')
         self.cameraNode.reparentTo(self)
         if self.proRacer:
-            self.cameraArmNode = render.attachNewNode("cameraArm")
+            self.cameraArmNode = render.attachNewNode('cameraArm')
             self.cameraArmNode.reparentTo(self)
             self.cameraNode.reparentTo(self.cameraArmNode)
-        self.proCameraDummyNode = render.attachNewNode("proCameraDummy")
+        self.proCameraDummyNode = render.attachNewNode('proCameraDummy')
         self.proCameraDummyNode.reparentTo(render)
         self.localVehicle = self.ownerId == localAvatar.doId
         if self.localVehicle:
             self.setupPhysics()
             self.setupParticles()
             self.__enableCollisions()
-        self.forward = NodePath("forward")
+        self.forward = NodePath('forward')
         self.forward.setPos(0, 1, 0)
         self.wallHitsSfx = []
         for wallHit in self.SFX_WallHits:
@@ -194,7 +174,7 @@ class DistributedVehicle(
         self.turboLoopSfx = base.loader.loadSfx(self.SFX_TurboLoop)
         self.turboLoopSfx.setLoop()
         self.forward.reparentTo(self.geom[0])
-        self.anvil = globalPropPool.getProp("anvil")
+        self.anvil = globalPropPool.getProp('anvil')
         self.anvil.setScale(5)
         self.anvil.reparentTo(hidden)
         self.anvil.setColor(1, 1, 1, 1)
@@ -208,14 +188,14 @@ class DistributedVehicle(
         self.lastPhysicsFrame = 0
         integrator = LinearEulerIntegrator()
         self.physicsMgr.attachLinearIntegrator(integrator)
-        fn = ForceNode("windResistance")
+        fn = ForceNode('windResistance')
         fnp = NodePath(fn)
         fnp.reparentTo(render)
         windResistance = LinearFrictionForce(0.2)
         fn.addForce(windResistance)
         self.physicsMgr.addLinearForce(windResistance)
         self.windResistance = windResistance
-        fn = ForceNode("engine")
+        fn = ForceNode('engine')
         fnp = NodePath(fn)
         fnp.reparentTo(self)
         engine = LinearVectorForce(0, 0, 0)
@@ -226,7 +206,7 @@ class DistributedVehicle(
     def disable(self):
         DistributedVehicle.AvId2kart.pop(self.ownerId)
         self.finishMovies()
-        self.request("Off")
+        self.request('Off')
         self.stopSkid()
         self.stopSmooth()
         if self.localVehicle:
@@ -235,7 +215,7 @@ class DistributedVehicle(
             self.physicsMgr.clearLinearForces()
         self.detachNode()
         DistributedSmoothNode.DistributedSmoothNode.disable(self)
-        taskMgr.remove("slidePies")
+        taskMgr.remove('slidePies')
 
     def delete(self):
         self.stopSmooth()
@@ -243,14 +223,14 @@ class DistributedVehicle(
         DistributedSmoothNode.DistributedSmoothNode.delete(self)
         if self.localVehicle:
             self.ignoreAll()
-            if hasattr(self, "piePieces"):
+            if hasattr(self, 'piePieces'):
                 for piece in self.piePieces:
                     del piece
 
     def getVelocity(self):
         return self.actorNode.getPhysicsObject().getVelocity()
 
-    def __updateWallCollision(self, entry=None):
+    def __updateWallCollision(self, entry = None):
         vol = self.curSpeed / 160
         for wallHit in self.wallHitsSfx:
             wallHit.setVolume(vol)
@@ -266,19 +246,19 @@ class DistributedVehicle(
         curSpeed = self.actorNode.getPhysicsObject().getVelocity().length()
         if self.wantSparks and curSpeed > 10:
             if entry.getSurfaceNormal(self)[0] < 0:
-                self.fireSparkParticles("right")
+                self.fireSparkParticles('right')
             else:
-                self.fireSparkParticles("left")
+                self.fireSparkParticles('left')
 
-    def __wallCollisionStop(self, entry=None):
+    def __wallCollisionStop(self, entry = None):
         self.hittingWall = 0
         if self.wallCollideTrack:
             self.wallCollideTrack.pause()
 
     def __setupCollisions(self):
-        self.cWallTrav = CollisionTraverser("KartWall")
+        self.cWallTrav = CollisionTraverser('KartWall')
         self.cWallTrav.setRespectPrevTransform(True)
-        self.collisionNode = CollisionNode(self.uniqueName("vehicle"))
+        self.collisionNode = CollisionNode(self.uniqueName('vehicle'))
         self.collisionNode.setFromCollideMask(OTPGlobals.WallBitmask)
         self.collisionNode.setIntoCollideMask(ToontownGlobals.PieBitmask)
         cs = CollisionSphere(0, 0, 4, 4)
@@ -288,27 +268,27 @@ class DistributedVehicle(
         self.wallHandler.setStaticFrictionCoef(0.0)
         self.wallHandler.setDynamicFrictionCoef(0.1)
         self.wallHandler.addCollider(self.collisionNodePath, self)
-        self.wallHandler.setInPattern("enterWallCollision")
-        self.wallHandler.setOutPattern("exitWallCollision")
+        self.wallHandler.setInPattern('enterWallCollision')
+        self.wallHandler.setOutPattern('exitWallCollision')
         self.cWallTrav.addCollider(self.collisionNodePath, self.wallHandler)
-        self.accept("enterWallCollision", self.__wallCollisionStart)
-        self.accept("exitWallCollision", self.__wallCollisionStop)
+        self.accept('enterWallCollision', self.__wallCollisionStart)
+        self.accept('exitWallCollision', self.__wallCollisionStop)
         cRay = CollisionRay(0.0, 0.0, 40000.0, 0.0, 0.0, -1.0)
-        cRayNode = CollisionNode(self.uniqueName("vehicle-FloorRay"))
+        cRayNode = CollisionNode(self.uniqueName('vehicle-FloorRay'))
         cRayNode.addSolid(cRay)
         cRayNode.setFromCollideMask(OTPGlobals.FloorBitmask)
         cRayNode.setIntoCollideMask(BitMask32.allOff())
         self.cRayNodePath = self.attachNewNode(cRayNode)
         self.lifter = CollisionHandlerGravity()
         self.lifter.setGravity(32.174 * 3.0)
-        self.lifter.addInPattern("floorCollision")
-        self.lifter.addAgainPattern("floorCollision")
+        self.lifter.addInPattern('floorCollision')
+        self.lifter.addAgainPattern('floorCollision')
         self.lifter.setOffset(OTPGlobals.FloorOffset)
         self.lifter.setReach(40.0)
         self.lifter.addCollider(self.cRayNodePath, self)
         base.cTrav.addCollider(self.cRayNodePath, self.lifter)
-        self.accept("floorCollision", self.__groundCollision)
-        self.accept("imIn-banana", self.hitBanana)
+        self.accept('floorCollision', self.__groundCollision)
+        self.accept('imIn-banana', self.hitBanana)
         base.localAvatar.collisionsOff()
 
     def __undoCollisions(self):
@@ -317,13 +297,13 @@ class DistributedVehicle(
 
     def __groundCollision(self, entry):
         ground = entry.getIntoNodePath()
-        if ground.getNetTag("surface") == "":
+        if ground.getNetTag('surface') == '':
             return
-        self.groundType = ground.getNetTag("surface")
+        self.groundType = ground.getNetTag('surface')
 
     def __enableCollisions(self):
         self.cQueue = []
-        self.cRays = NodePath("stickVehicleToFloor")
+        self.cRays = NodePath('stickVehicleToFloor')
         self.cRays.reparentTo(self.geom[0])
         for wheelNode in self.wheelBases:
             rayNode = CollisionNode(wheelNode.getName())
@@ -343,9 +323,9 @@ class DistributedVehicle(
     def setupLapCollisions(self):
         self.lapBit = BitMask32(32768)
         self.lapHandler = CollisionHandlerEvent()
-        self.lapHandler.addInPattern("imIn-%in")
+        self.lapHandler.addInPattern('imIn-%in')
         self.cSphere = CollisionSphere(0, 0, 0, 3)
-        self.lapNode = CollisionNode("lapChecker")
+        self.lapNode = CollisionNode('lapChecker')
         self.lapNode.addSolid(self.cSphere)
         self.lapNode.setIntoCollideMask(BitMask32.allOff())
         self.lapNode.setFromCollideMask(self.lapBit)
@@ -354,11 +334,11 @@ class DistributedVehicle(
         self.cWallTrav.addCollider(self.lapNodePath, self.lapHandler)
 
     def __disableCollisions(self):
-        self.ignore("imIn-startLine")
-        self.ignore("imIn-quarterLine")
-        self.ignore("imIn-midLine")
+        self.ignore('imIn-startLine')
+        self.ignore('imIn-quarterLine')
+        self.ignore('imIn-midLine')
 
-    def __handleCollisionSphereEnter(self, collEntry=None):
+    def __handleCollisionSphereEnter(self, collEntry = None):
         self.d_requestControl()
 
     def setupParticles(self):
@@ -378,48 +358,19 @@ class DistributedVehicle(
             self.cleanupSparkParticles()
 
     def setupDriftParticles(self):
-        smokeMount = self.geom[0].attachNewNode("Smoke Effect")
-        backLeft = smokeMount.attachNewNode("Back Left Smokemount")
-        backLeft.setPos(
-            self.geom[0].find("**/" + self.wheelData[self.LRWHEEL]["node"]).getPos()
-            + Vec3(-0.25, -1.0, -0.5)
-        )
-        backRight = smokeMount.attachNewNode("Back Right Smokemount")
-        backRight.setPos(
-            self.geom[0].find("**/" + self.wheelData[self.RRWHEEL]["node"]).getPos()
-            + Vec3(0.25, -1.0, -0.5)
-        )
+        smokeMount = self.geom[0].attachNewNode('Smoke Effect')
+        backLeft = smokeMount.attachNewNode('Back Left Smokemount')
+        backLeft.setPos(self.geom[0].find('**/' + self.wheelData[self.LRWHEEL]['node']).getPos() + Vec3(-0.25, -1.0, -0.5))
+        backRight = smokeMount.attachNewNode('Back Right Smokemount')
+        backRight.setPos(self.geom[0].find('**/' + self.wheelData[self.RRWHEEL]['node']).getPos() + Vec3(0.25, -1.0, -0.5))
         driftEffects = (Drift(backLeft, backLeft), Drift(backRight, backRight))
         for x in driftEffects:
             x.start()
 
         self.drifts = driftEffects
-        self.driftSeq = Sequence(
-            Func(backLeft.show),
-            Func(backRight.show),
-            Wait(1000000),
-            Func(
-                self.drifts[0]
-                .effect.getParticlesNamed("particles-1")
-                .getRenderer()
-                .setColor,
-                Vec4(1.0, 1.0, 1.0, 1.0),
-            ),
-            Func(
-                self.drifts[1]
-                .effect.getParticlesNamed("particles-1")
-                .getRenderer()
-                .setColor,
-                Vec4(1.0, 1.0, 1.0, 1.0),
-            ),
-            Func(backLeft.hide),
-            Func(backRight.hide),
-        )
+        self.driftSeq = Sequence(Func(backLeft.show), Func(backRight.show), Wait(1000000), Func(self.drifts[0].effect.getParticlesNamed('particles-1').getRenderer().setColor, Vec4(1.0, 1.0, 1.0, 1.0)), Func(self.drifts[1].effect.getParticlesNamed('particles-1').getRenderer().setColor, Vec4(1.0, 1.0, 1.0, 1.0)), Func(backLeft.hide), Func(backRight.hide))
         self.driftSeqStarted = False
-        self.driftParticleForces = [
-            x.effect.getParticlesNamed("particles-1").getLinearForce(0)
-            for x in self.drifts
-        ]
+        self.driftParticleForces = [ x.effect.getParticlesNamed('particles-1').getLinearForce(0) for x in self.drifts ]
         self.smokeMount = smokeMount
         backLeft.hide()
         backRight.hide()
@@ -449,82 +400,49 @@ class DistributedVehicle(
     def setupSparkParticles(self):
         bodyType = self.kartDNA[KartDNA.bodyType]
         endPts = KartDict[bodyType][7]
-        self.sparkMount = self.geom[0].attachNewNode("Spark Effect")
-        left = self.sparkMount.attachNewNode("Left Sparkmount")
-        left.setPos(
-            (
-                self.geom[0].find("**/" + self.wheelData[self.LFWHEEL]["node"]).getPos()
-                + self.geom[0]
-                .find("**/" + self.wheelData[self.LRWHEEL]["node"])
-                .getPos()
-            )
-            / 2.0
-            + Vec3(0.0, -1.0, 1.0)
-        )
+        self.sparkMount = self.geom[0].attachNewNode('Spark Effect')
+        left = self.sparkMount.attachNewNode('Left Sparkmount')
+        left.setPos((self.geom[0].find('**/' + self.wheelData[self.LFWHEEL]['node']).getPos() + self.geom[0].find('**/' + self.wheelData[self.LRWHEEL]['node']).getPos()) / 2.0 + Vec3(0.0, -1.0, 1.0))
         left.setScale(0.5)
-        right = self.sparkMount.attachNewNode("Right Sparkmount")
-        right.setPos(
-            (
-                self.geom[0].find("**/" + self.wheelData[self.RFWHEEL]["node"]).getPos()
-                + self.geom[0]
-                .find("**/" + self.wheelData[self.RRWHEEL]["node"])
-                .getPos()
-            )
-            / 2.0
-            + Vec3(0.0, -1.0, 1.0)
-        )
+        right = self.sparkMount.attachNewNode('Right Sparkmount')
+        right.setPos((self.geom[0].find('**/' + self.wheelData[self.RFWHEEL]['node']).getPos() + self.geom[0].find('**/' + self.wheelData[self.RRWHEEL]['node']).getPos()) / 2.0 + Vec3(0.0, -1.0, 1.0))
         right.setScale(0.5)
         self.sparks = (Sparks(right, self.sparkMount), Sparks(left, self.sparkMount))
-        self.sparks[0].effect.getParticlesNamed(
-            "particles-1"
-        ).getEmitter().setEndpoint1(endPts[0])
-        self.sparks[0].effect.getParticlesNamed(
-            "particles-1"
-        ).getEmitter().setEndpoint2(endPts[1])
-        self.sparks[0].effect.getParticlesNamed("particles-1").getLinearForce(
-            0
-        ).setAmplitude(-50)
-        self.sparks[1].effect.getParticlesNamed(
-            "particles-1"
-        ).getEmitter().setEndpoint1(Point3(-endPts[0][0], endPts[0][1], endPts[0][2]))
-        self.sparks[1].effect.getParticlesNamed(
-            "particles-1"
-        ).getEmitter().setEndpoint2(Point3(-endPts[1][0], endPts[1][1], endPts[1][2]))
-        self.sparks[1].effect.getParticlesNamed("particles-1").getLinearForce(
-            0
-        ).setAmplitude(50)
+        self.sparks[0].effect.getParticlesNamed('particles-1').getEmitter().setEndpoint1(endPts[0])
+        self.sparks[0].effect.getParticlesNamed('particles-1').getEmitter().setEndpoint2(endPts[1])
+        self.sparks[0].effect.getParticlesNamed('particles-1').getLinearForce(0).setAmplitude(-50)
+        self.sparks[1].effect.getParticlesNamed('particles-1').getEmitter().setEndpoint1(Point3(-endPts[0][0], endPts[0][1], endPts[0][2]))
+        self.sparks[1].effect.getParticlesNamed('particles-1').getEmitter().setEndpoint2(Point3(-endPts[1][0], endPts[1][1], endPts[1][2]))
+        self.sparks[1].effect.getParticlesNamed('particles-1').getLinearForce(0).setAmplitude(50)
 
     def fireSparkParticles(self, side):
-        spark = self.sparks[{"right": 0, "left": 1}[side]]
+        spark = self.sparks[{'right': 0,
+         'left': 1}[side]]
         if not spark.effect.isEnabled():
-            spark.effect.getParticlesNamed("particles-1").setBirthRate(0.02)
+            spark.effect.getParticlesNamed('particles-1').setBirthRate(0.02)
             spark.start()
-            taskMgr.doMethodLater(
-                0.25, self.stopSparkParticles, "sparkTimer-" + side, extraArgs=[side]
-            )
+            taskMgr.doMethodLater(0.25, self.stopSparkParticles, 'sparkTimer-' + side, extraArgs=[side])
 
-    def stopSparkParticles(self, side=None):
-        sides = {0: "right", 1: "left"}
+    def stopSparkParticles(self, side = None):
+        sides = {0: 'right',
+         1: 'left'}
         if side == None:
             for x in list(sides.keys()):
-                self.sparks[x].effect.getParticlesNamed("particles-1").setBirthRate(
-                    1000
-                )
-                taskMgr.doMethodLater(
-                    0.75, self.sparks[x].stop, "stopSparks-" + sides[x], extraArgs=[]
-                )
+                self.sparks[x].effect.getParticlesNamed('particles-1').setBirthRate(1000)
+                taskMgr.doMethodLater(0.75, self.sparks[x].stop, 'stopSparks-' + sides[x], extraArgs=[])
 
         else:
-            spark = self.sparks[{"right": 0, "left": 1}[side]]
-            spark.effect.getParticlesNamed("particles-1").setBirthRate(1000)
-            taskMgr.doMethodLater(0.75, spark.stop, "stopSparks-" + side, extraArgs=[])
+            spark = self.sparks[{'right': 0,
+             'left': 1}[side]]
+            spark.effect.getParticlesNamed('particles-1').setBirthRate(1000)
+            taskMgr.doMethodLater(0.75, spark.stop, 'stopSparks-' + side, extraArgs=[])
         return
 
     def cleanupSparkParticles(self):
-        taskMgr.remove("sparkTimer-left")
-        taskMgr.remove("sparkTimer-right")
-        taskMgr.remove("stopSparks-left")
-        taskMgr.remove("stopSparks-right")
+        taskMgr.remove('sparkTimer-left')
+        taskMgr.remove('sparkTimer-right')
+        taskMgr.remove('stopSparks-left')
+        taskMgr.remove('stopSparks-right')
         for x in self.sparks:
             x.destroy()
 
@@ -533,19 +451,19 @@ class DistributedVehicle(
         del self.sparkMount
 
     def setState(self, state, avId):
-        self.notify.debug("SetState received: %s avId: %s" % (state, avId))
-        if state == "C":
-            self.demand("Controlled", avId)
-        elif state == "P":
-            self.demand("Parked")
+        self.notify.debug('SetState received: %s avId: %s' % (state, avId))
+        if state == 'C':
+            self.demand('Controlled', avId)
+        elif state == 'P':
+            self.demand('Parked')
         else:
-            self.notify.error("Invalid state from AI: %s" % state)
+            self.notify.error('Invalid state from AI: %s' % state)
 
     def d_requestControl(self):
-        self.sendUpdate("requestControl")
+        self.sendUpdate('requestControl')
 
     def d_requestParked(self):
-        self.sendUpdate("requestParked")
+        self.sendUpdate('requestParked')
 
     def enterOff(self):
         pass
@@ -565,16 +483,16 @@ class DistributedVehicle(
         if self.toon:
             self.toon.stopSmooth()
             self.toon.stopPosHprBroadcast()
-            for feet in self.toon.getPieces(("legs", "feet")):
+            for feet in self.toon.getPieces(('legs', 'feet')):
                 feet.hide()
 
             self.toon.reparentTo(self.toonSeat)
             self.toon.dropShadow.hide()
-            self.notify.debug("setting pos of toon%s" % self.toon.doId)
+            self.notify.debug('setting pos of toon%s' % self.toon.doId)
             self.toon.setPosHpr(0, 0, 0, 0, 0, 0)
-            self.toon.loop("sit")
+            self.toon.loop('sit')
             if self.toon.doId == localAvatar.doId:
-                self.notify.debug("calling send currentPosition")
+                self.notify.debug('calling send currentPosition')
                 self.toon.sendCurrentPosition()
             self.doHeadScale(self.toon, 1.75)
             self.toon.setShear(0, 0, 0)
@@ -590,10 +508,8 @@ class DistributedVehicle(
             self.engineSfxTrack.start()
         else:
             self.startSmooth()
-            taskName = "updateNonlocalVehicle-%s" % avId
-            self.updateNonLocalTask = taskMgr.add(
-                self.__updateNonlocalVehicle, taskName
-            )
+            taskName = 'updateNonlocalVehicle-%s' % avId
+            self.updateNonLocalTask = taskMgr.add(self.__updateNonlocalVehicle, taskName)
         return
 
     def exitControlled(self):
@@ -614,11 +530,11 @@ class DistributedVehicle(
             self.toon.dropShadow.show()
             self.doHeadScale(self.toon, None)
             self.toon.setPosHpr(self.geom[0], 0, 8, 0, 0, 0, 0)
-            for feet in self.toon.getPieces(("legs", "feet")):
+            for feet in self.toon.getPieces(('legs', 'feet')):
                 feet.show()
 
             self.toon.reparentTo(render)
-            self.toon.loop("neutral")
+            self.toon.loop('neutral')
             self.toon.startSmooth()
         NametagGlobals.setOnscreenChatForced(0)
         return
@@ -636,20 +552,7 @@ class DistributedVehicle(
     def __createPieWindshield(self):
         self.piePieces = []
         for piece in range(self.numPieChunks):
-            self.piePieces.append(
-                DirectLabel(
-                    relief=None,
-                    pos=(0.0, 0.0, 0.0),
-                    image=self.pieSplatter,
-                    image_scale=(0.5, 0.5, 0.5),
-                    text=" ",
-                    text_scale=0.18,
-                    text_fg=(1, 0, 1, 1),
-                    text_pos=(-0.0, 0.0, 0),
-                    text_font=ToontownGlobals.getSignFont(),
-                    textMayChange=1,
-                )
-            )
+            self.piePieces.append(DirectLabel(relief=None, pos=(0.0, 0.0, 0.0), image=self.pieSplatter, image_scale=(0.5, 0.5, 0.5), text=' ', text_scale=0.18, text_fg=(1, 0, 1, 1), text_pos=(-0.0, 0.0, 0), text_font=ToontownGlobals.getSignFont(), textMayChange=1))
             self.piePieces[piece].hide()
 
         return
@@ -657,9 +560,7 @@ class DistributedVehicle(
     def showPieces(self):
         xRange = 0.3
         for piece in self.piePieces:
-            piece.setPos(
-                randFloat(-xRange, xRange), randFloat(-0.1, 3.5), randFloat(-0.9, 0.9)
-            )
+            piece.setPos(randFloat(-xRange, xRange), randFloat(-0.1, 3.5), randFloat(-0.9, 0.9))
             piece.setScale(randFloat(1.1, 2.0), 1, randFloat(1.1, 2.0))
             piece.show()
             xRange += 2.5 / self.numPieChunks
@@ -671,29 +572,25 @@ class DistributedVehicle(
         self.showPieces()
         if self.pieCount == 0:
             self.pieCount = 15
-            taskMgr.doMethodLater(1, self.__countPies, " ", extraArgs=[])
-            taskMgr.add(self.__slidePies, "slidePies", priority=25)
+            taskMgr.doMethodLater(1, self.__countPies, ' ', extraArgs=[])
+            taskMgr.add(self.__slidePies, 'slidePies', priority=25)
         else:
             self.pieCount = 15
 
     def __countPies(self):
         if self.pieCount > 0:
-            taskMgr.doMethodLater(1, self.__countPies, " ", extraArgs=[])
+            taskMgr.doMethodLater(1, self.__countPies, ' ', extraArgs=[])
             self.pieCount -= 1
         else:
             for piece in self.piePieces:
                 piece.hide()
 
-    def __slidePies(self, optional=None):
+    def __slidePies(self, optional = None):
         dt = globalClock.getDt()
         for piece in range(self.numPieChunks):
             self.pieSlideSpeed[piece] += randFloat(0.0, 0.25 * dt)
             pieSpeed = self.pieSlideSpeed[piece] * dt
-            self.piePieces[piece].setPos(
-                self.piePieces[piece].getPos()[0],
-                self.piePieces[piece].getPos()[1] - pieSpeed,
-                self.piePieces[piece].getPos()[2] - pieSpeed,
-            )
+            self.piePieces[piece].setPos(self.piePieces[piece].getPos()[0], self.piePieces[piece].getPos()[1] - pieSpeed, self.piePieces[piece].getPos()[2] - pieSpeed)
 
         if self.pieCount == 0:
             return Task.done
@@ -703,18 +600,16 @@ class DistributedVehicle(
     def __enableControlInterface(self):
         if self.canRace:
             self.enableControls()
-        taskMgr.remove("watchVehicleControls")
-        taskMgr.add(self.__watchControls, "watchVehicleControls", priority=25)
+        taskMgr.remove('watchVehicleControls')
+        taskMgr.add(self.__watchControls, 'watchVehicleControls', priority=25)
         if not self.speedometer:
-            cm = CardMaker("speed")
+            cm = CardMaker('speed')
             cm.setFrame(-0.5, 0.5, -0.5, 0.5)
-            self.speedometerImages = base.a2dBottomRight.attachNewNode(
-                "SpeedometerImages"
-            )
+            self.speedometerImages = base.a2dBottomRight.attachNewNode('SpeedometerImages')
             self.speedometerImages.setTransparency(True)
             self.speedometerImages.setPos(-0.0933334, 0, 0.02)
             self.speedometerImages.setScale(0.75)
-            m = loader.loadModel("phase_6/models/karting/speedometer")
+            m = loader.loadModel('phase_6/models/karting/speedometer')
             if self.getBodyColor() == InvalidEntry:
                 bodyColor = getDefaultColor()
             else:
@@ -723,39 +618,20 @@ class DistributedVehicle(
                 accColor = getDefaultColor()
             else:
                 accColor = getAccessory(self.getAccessoryColor())
-            self.speedometerImages.attachNewNode(
-                m.find("**/*gauge").node()
-            ).setColorScale(1, 1, 1, 1)
-            self.speedGauge = self.speedometerImages.attachNewNode(
-                m.find("**/*spin").node()
-            )
+            self.speedometerImages.attachNewNode(m.find('**/*gauge').node()).setColorScale(1, 1, 1, 1)
+            self.speedGauge = self.speedometerImages.attachNewNode(m.find('**/*spin').node())
             self.speedGauge.setColor(1, 1, 1, 1)
             c = (Vec4(1, 1, 1, 1) + accColor) / 2.0
             c.setW(1.0)
-            self.speedometerImages.attachNewNode(
-                m.find("**/*face").node()
-            ).setColorScale(c)
+            self.speedometerImages.attachNewNode(m.find('**/*face').node()).setColorScale(c)
             c = (Vec4(2, 2, 2, 2) - accColor) / 2.0
             c = (bodyColor + Vec4(1, 1, 1, 1)) / 2.0
             c.setW(1.0)
-            self.speedometerImages.attachNewNode(
-                m.find("**/*tics").node()
-            ).setColorScale(c)
+            self.speedometerImages.attachNewNode(m.find('**/*tics').node()).setColorScale(c)
             c = (bodyColor + Vec4(1, 1, 1, 1)) / 2.0
             c.setW(1.0)
-            self.speedometerImages.attachNewNode(
-                m.find("**/*ring").node()
-            ).setColorScale(c)
-            self.speedometer = DirectLabel(
-                relief=None,
-                parent=base.a2dBottomRight,
-                pos=(-0.0933334, 0, 0.02),
-                text=str(0),
-                text_scale=0.18,
-                text_fg=bodyColor,
-                text_pos=(-0.04, 0.02, 0),
-                text_font=ToontownGlobals.getSignFont(),
-            )
+            self.speedometerImages.attachNewNode(m.find('**/*ring').node()).setColorScale(c)
+            self.speedometer = DirectLabel(relief=None, parent=base.a2dBottomRight, pos=(-0.0933334, 0, 0.02), text=str(0), text_scale=0.18, text_fg=bodyColor, text_pos=(-0.04, 0.02, 0), text_font=ToontownGlobals.getSignFont())
         else:
             self.showSpeedometer()
         self.arrowVert = 0
@@ -776,7 +652,7 @@ class DistributedVehicle(
         self.hideSpeedometer()
         self.disableControls()
         self.stopSmooth()
-        taskMgr.remove("watchVehicleControls")
+        taskMgr.remove('watchVehicleControls')
 
     def __deleteControlInterface(self):
         if self.speedometer:
@@ -808,35 +684,12 @@ class DistributedVehicle(
         startFov = base.camLens.getMinFov()
         if self.cameraTrack:
             self.cameraTrack.pause()
-        cameraZoomIn = Parallel(
-            LerpPosInterval(camera, 2, newCameraPos),
-            LerpFunc(
-                base.camLens.setMinFov,
-                fromData=startFov,
-                toData=newCameraFov / (4.0 / 3.0),
-                duration=2,
-            ),
-        )
-        cameraToNormal = Parallel(
-            LerpPosInterval(camera, 1, Point3(0, -33, 16), newCameraPos),
-            LerpFunc(
-                base.camLens.setMinFov,
-                fromData=newCameraFov / (4.0 / 3.0),
-                toData=ToontownGlobals.DefaultCameraFov / (4.0 / 3.0),
-                duration=1,
-            ),
-        )
-        self.cameraTrack = Sequence(
-            Func(self.turboStartSfx.play),
-            cameraZoomIn,
-            Func(lambda: self.setTurbo(True)),
-            Wait(turboDuration),
-            Func(self.__stopTurbo),
-            cameraToNormal,
-        )
+        cameraZoomIn = Parallel(LerpPosInterval(camera, 2, newCameraPos), LerpFunc(base.camLens.setMinFov, fromData=startFov, toData=newCameraFov / (4. / 3.), duration=2))
+        cameraToNormal = Parallel(LerpPosInterval(camera, 1, Point3(0, -33, 16), newCameraPos), LerpFunc(base.camLens.setMinFov, fromData=newCameraFov / (4. / 3.), toData=ToontownGlobals.DefaultCameraFov / (4. / 3.), duration=1))
+        self.cameraTrack = Sequence(Func(self.turboStartSfx.play), cameraZoomIn, Func(lambda : self.setTurbo(True)), Wait(turboDuration), Func(self.__stopTurbo), cameraToNormal)
         self.cameraTrack.start()
 
-    def __stopTurbo(self, task=None):
+    def __stopTurbo(self, task = None):
         self.setTurbo(False)
 
     def __controlPressed(self):
@@ -873,7 +726,7 @@ class DistributedVehicle(
             self.arrowHorz = 0
             self.leftHeld = 0
 
-    def __updateNonlocalVehicle(self, task=None):
+    def __updateNonlocalVehicle(self, task = None):
         self.curSpeed = self.smoother.getSmoothForwardVelocity()
         rotSpeed = -1 * self.smoother.getSmoothRotationalVelocity()
         self.leanAmount = self.curSpeed * rotSpeed / 500.0
@@ -891,10 +744,10 @@ class DistributedVehicle(
         if self.localVehicle:
             if self.lifter.isOnGround():
                 if self.offGround > 10:
-                    kart = self.geom[0].find("**/main*")
+                    kart = self.geom[0].find('**/main*')
                     bumpDown1 = kart.posInterval(0.1, Vec3(0, 0, -1))
                     bumpUp1 = kart.posInterval(0.15, Vec3(0, 0, 0))
-                    bumpDown2 = kart.posInterval(0.5, Vec3(0, 0, -0.4))
+                    bumpDown2 = kart.posInterval(0.5, Vec3(0, 0, -.4))
                     bumpUp2 = kart.posInterval(0.7, Vec3(0, 0, 0))
                     bumpSeq = Sequence(bumpDown1, bumpUp1, bumpDown2, bumpUp2)
                     bumpSeq.start()
@@ -902,12 +755,12 @@ class DistributedVehicle(
             else:
                 self.offGround += 1
         if self.offGround == 0:
-            modifier = self.surfaceModifiers[self.groundType]["shake"] * (speed / 50.0)
+            modifier = self.surfaceModifiers[self.groundType]['shake'] * (speed / 50.0)
         else:
             modifier = 1
         roll = self.leanAmount * 1.5
         roll += (random.random() * 2 - 1) * modifier
-        pitch = self.acceleration * -0.005
+        pitch = self.acceleration * -.005
         pitch += (random.random() * 2 - 1) * modifier
         self.rollSuspension(roll)
         self.pitchSuspension(pitch)
@@ -916,40 +769,33 @@ class DistributedVehicle(
     def __clampPosition(self):
         retVal = False
         if self.getX() < -3276:
-            self.notify.debug("clamping X %d" % self.getX())
+            self.notify.debug('clamping X %d' % self.getX())
             self.setX(-3276)
             retVal = True
         if self.getX() > 3276:
-            self.notify.debug("clamping X %d" % self.getX())
+            self.notify.debug('clamping X %d' % self.getX())
             self.setX(3276)
             retVal = True
         if self.getY() < -3276:
-            self.notify.debug("clamping Y %d" % self.getY())
+            self.notify.debug('clamping Y %d' % self.getY())
             self.setY(-3276)
             retVal = True
         if self.getY() > 3276:
-            self.notify.debug("clamping Y %d" % self.getY())
+            self.notify.debug('clamping Y %d' % self.getY())
             self.setY(3276)
             retVal = True
         if self.getZ() < -3276:
-            self.notify.debug("clamping Z %d" % self.getZ())
+            self.notify.debug('clamping Z %d' % self.getZ())
             self.setZ(-3276)
             retVal = True
         if self.getZ() > 3276:
-            self.notify.debug("clamping Z %d" % self.getZ())
+            self.notify.debug('clamping Z %d' % self.getZ())
             self.setZ(3276)
             retVal = True
         return retVal
 
     def amIClampingPosition(self):
-        return (
-            self.getX() == -3276
-            or self.getX() == 3276
-            or self.getY() == -3276
-            or self.getY() == 3276
-            or self.getZ() == -3276
-            or self.getZ() == 3276
-        )
+        return self.getX() == -3276 or self.getX() == 3276 or self.getY() == -3276 or self.getY() == 3276 or self.getZ() == -3276 or self.getZ() == 3276
 
     def __computeTurnRatio(self, speed):
         effectiveSpeed = speed
@@ -961,16 +807,12 @@ class DistributedVehicle(
             turnRatio = 1.0 * (effectiveSpeed * (self.speedMaxTurn / speed))
 
     def __updateWheelPos(self, dt, curSpeed):
-        ratioIntoMax = (curSpeed - self.speedMinTurn) / (
-            self.speedMaxTurn - self.speedMinTurn
-        )
+        ratioIntoMax = (curSpeed - self.speedMinTurn) / (self.speedMaxTurn - self.speedMinTurn)
         if ratioIntoMax > 1.0:
             ratioIntoMax = 1.0
         if ratioIntoMax < 0.0:
             ratioIntoMax = 0.0
-        maxWheelDeflection = self.wheelMaxTurn * ratioIntoMax + self.wheelMinTurn * (
-            1.0 - ratioIntoMax
-        )
+        maxWheelDeflection = self.wheelMaxTurn * ratioIntoMax + self.wheelMinTurn * (1.0 - ratioIntoMax)
         if self.wheelPosition * self.arrowHorz > 0:
             self.wheelPosition += self.arrowHorz * dt / self.wheelTurnTime
         else:
@@ -1012,10 +854,7 @@ class DistributedVehicle(
                 effectiveSpeed = curSpeed
                 if effectiveSpeed > self.speedMinTurn:
                     effectiveSpeed = self.speedMinTurn
-                rotation = -goingBack * (
-                    self.wheelPosition * dt * self.turnRatio * -1.8 * curSpeed / 100
-                    + turnHelp * dt * self.turnRatio * -1.2
-                )
+                rotation = -goingBack * (self.wheelPosition * dt * self.turnRatio * -1.8 * curSpeed / 100 + turnHelp * dt * self.turnRatio * -1.2)
                 self.outPutCounter += 1
                 if self.outPutCounter > 5:
                     self.outPutCounter = 0
@@ -1025,67 +864,54 @@ class DistributedVehicle(
             newH = (oldH + rotation) % 360
             self.setH(newH)
             newHForTurning = newH
-            if self.groundType == "ice":
+            if self.groundType == 'ice':
                 newHForTurning = (oldH + rotation * iceTurnFactor) % 360
         pitch = -self.getP() + 5
         accelBase = self.accelerationBase
         pitch += accelBase
         pitch = clampScalar(pitch, accelBase - 5, accelBase + 5)
         self.accelerationMult = pitch * 2
-        if self.groundType == "ice":
+        if self.groundType == 'ice':
             self.accelerationMult *= iceAccelFactor
         if self.stopped:
             self.acceleration = 0
         else:
-            self.acceleration = (
-                self.arrowVert * self.accelerationMult * self.cheatFactor
-            )
+            self.acceleration = self.arrowVert * self.accelerationMult * self.cheatFactor
             if self.proRacer:
                 if self.skidding:
-                    self.acceleration = (
-                        self.arrowVert * self.accelerationMult * self.cheatFactor * 0.5
-                    )
+                    self.acceleration = self.arrowVert * self.accelerationMult * self.cheatFactor * 0.5
             if self.turbo:
                 self.acceleration += self.accelerationMult * 1.5
         self.engine.setVector(Vec3(0, self.acceleration, 0))
-        if self.groundType == "ice":
+        if self.groundType == 'ice':
             rotMat = Mat3.rotateMatNormaxis(newHForTurning, Vec3.up())
         else:
             rotMat = Mat3.rotateMatNormaxis(self.getH(), Vec3.up())
         curHeading = rotMat.xform(Vec3.forward())
         push = (3 - self.getP()) * 0.02
-        curHeading.setZ(curHeading.getZ() - min(0.2, max(-0.2, push)))
-        onScreenDebug.append("vehicle curHeading = %s\n" % curHeading.pPrintValues())
-        onScreenDebug.append(
-            "vehicle H = %s  newHForTurning=%f\n" % (self.getH(), newHForTurning)
-        )
-        windResistance = self.surfaceModifiers[self.groundType]["windResistance"]
+        curHeading.setZ(curHeading.getZ() - min(0.2, max(-.2, push)))
+        onScreenDebug.append('vehicle curHeading = %s\n' % curHeading.pPrintValues())
+        onScreenDebug.append('vehicle H = %s  newHForTurning=%f\n' % (self.getH(), newHForTurning))
+        windResistance = self.surfaceModifiers[self.groundType]['windResistance']
         self.windResistance.setCoef(windResistance)
-        physicsFrame = int(
-            (globalClock.getFrameTime() - self.physicsEpoch)
-            * self.physicsCalculationsPerSecond
-        )
+        physicsFrame = int((globalClock.getFrameTime() - self.physicsEpoch) * self.physicsCalculationsPerSecond)
         numFrames = min(physicsFrame - self.lastPhysicsFrame, self.maxPhysicsFrames)
         self.lastPhysicsFrame = physicsFrame
         leanIncrement = self.arrowHorz * self.physicsDt * self.turnRatio
         if self.stopped:
             leanIncrement = 0
-        driftMin = self.surfaceModifiers[self.groundType]["driftMin"]
+        driftMin = self.surfaceModifiers[self.groundType]['driftMin']
         if self.proRacer:
-            driftMin = self.surfaceModifiers[self.groundType]["driftMin"] * 0.2
+            driftMin = self.surfaceModifiers[self.groundType]['driftMin'] * 0.2
             if self.skidding:
-                driftMin = self.surfaceModifiers[self.groundType]["driftMin"]
+                driftMin = self.surfaceModifiers[self.groundType]['driftMin']
         for i in range(int(numFrames)):
             self.physicsMgr.doPhysics(self.physicsDt)
             curVelocity = self.actorNode.getPhysicsObject().getVelocity()
             idealVelocity = curHeading * curSpeed
             curVelocity *= self.imHitMult
-            driftVal = (
-                abs(self.leanAmount) * 16 / self.cheatFactor + 15 / self.cheatFactor
-            )
-            curVelocity = Vec3(
-                (curVelocity * driftVal + idealVelocity) / (driftVal + 1)
-            )
+            driftVal = abs(self.leanAmount) * 16 / self.cheatFactor + 15 / self.cheatFactor
+            curVelocity = Vec3((curVelocity * driftVal + idealVelocity) / (driftVal + 1))
             curSpeed = curVelocity.length()
             curVelocity.normalize()
             curVelocity *= min(curSpeed, 600)
@@ -1138,14 +964,9 @@ class DistributedVehicle(
             if curSpeed > self.speedMinTurn:
                 cameraTightener = self.cameraTightener
             else:
-                cameraTightener = 1.0 + curSpeed / self.speedMinTurn * (
-                    self.cameraTightener - 1.0
-                )
+                cameraTightener = 1.0 + curSpeed / self.speedMinTurn * (self.cameraTightener - 1.0)
             swingSpeedRatio = speedDif / 90
-            swingSpeed = (
-                self.armSwingSpeedPerp * swingSpeedRatio
-                + self.armSwingSpeedPara * (1 - swingSpeedRatio)
-            )
+            swingSpeed = self.armSwingSpeedPerp * swingSpeedRatio + self.armSwingSpeedPara * (1 - swingSpeedRatio)
             self.proCameraHeading += dif * cameraTightener * (dt / swingSpeed)
             self.cameraArmNode.setH(self.proCameraHeading - self.getH())
         elif not self.stopped:
@@ -1156,33 +977,33 @@ class DistributedVehicle(
         else:
             self.stopSkid()
         if self.speedometer:
-            self.speedometer["text"] = str(int(curSpeed / 3))
+            self.speedometer['text'] = str(int(curSpeed / 3))
             self.speedGauge.setR(min(110, max(0, curSpeed / 3 / 120 * 110)))
         if not self.stopped:
             self.stickCarToGround()
         if self.__clampPosition():
-            self.notify.debug("did a clampPosition on %d" % self.doId)
+            self.notify.debug('did a clampPosition on %d' % self.doId)
         return Task.cont
 
     def enableControls(self):
         self.canRace = True
-        self.accept("control", self.__controlPressed)
-        self.accept("control-up", self.__controlReleased)
-        self.accept("InputState-forward", self.__upArrow)
-        self.accept("InputState-reverse", self.__downArrow)
-        self.accept("InputState-turnLeft", self.__leftArrow)
-        self.accept("InputState-turnRight", self.__rightArrow)
+        self.accept('control', self.__controlPressed)
+        self.accept('control-up', self.__controlReleased)
+        self.accept('InputState-forward', self.__upArrow)
+        self.accept('InputState-reverse', self.__downArrow)
+        self.accept('InputState-turnLeft', self.__leftArrow)
+        self.accept('InputState-turnRight', self.__rightArrow)
 
     def disableControls(self):
         self.arrowVert = 0
         self.arrowHorz = 0
-        self.ignore("control")
-        self.ignore("control-up")
-        self.ignore("tab")
-        self.ignore("InputState-forward")
-        self.ignore("InputState-reverse")
-        self.ignore("InputState-turnLeft")
-        self.ignore("InputState-turnRight")
+        self.ignore('control')
+        self.ignore('control-up')
+        self.ignore('tab')
+        self.ignore('InputState-forward')
+        self.ignore('InputState-reverse')
+        self.ignore('InputState-turnLeft')
+        self.ignore('InputState-turnRight')
 
     def setInput(self, on):
         if localAvatar.doId == self.ownerId:
@@ -1192,11 +1013,11 @@ class DistributedVehicle(
                 self.disableControls()
 
     def shakeWheel(self, nWheel, floorNode):
-        groundType = floorNode.getNetTag("surface")
-        modifier = self.surfaceModifiers[groundType]["shake"]
+        groundType = floorNode.getNetTag('surface')
+        modifier = self.surfaceModifiers[groundType]['shake']
         shakeFactor = (random.random() * 2 - 1) * modifier
         shakeFactor *= self.curSpeed / 200
-        node = self.wheelCenters[nWheel].find("*Wheel")
+        node = self.wheelCenters[nWheel].find('*Wheel')
         node.setZ(shakeFactor)
 
     def stickCarToGround(self):
@@ -1274,19 +1095,9 @@ class DistributedVehicle(
 
     def stopCar(self, level):
         self.imHitMult = level
-        if hasattr(self, "cameraTrack") and self.cameraTrack:
+        if hasattr(self, 'cameraTrack') and self.cameraTrack:
             self.cameraTrack.pause()
-            cameraToNormal = Parallel(
-                LerpPosInterval(
-                    camera, 0.05, Point3(0, -33, 16), startPos=camera.getPos()
-                ),
-                LerpFunc(
-                    base.camLens.setMinFov,
-                    fromData=base.camLens.getMinFov(),
-                    toData=ToontownGlobals.DefaultCameraFov / (4.0 / 3.0),
-                    duration=0.05,
-                ),
-            )
+            cameraToNormal = Parallel(LerpPosInterval(camera, 0.05, Point3(0, -33, 16), startPos=camera.getPos()), LerpFunc(base.camLens.setMinFov, fromData=base.camLens.getMinFov(), toData=ToontownGlobals.DefaultCameraFov / (4. / 3.), duration=0.05))
             cameraToNormal.start()
         self.__stopTurbo()
         self.stopped = True
@@ -1304,15 +1115,8 @@ class DistributedVehicle(
         self.geom[0].setH(2 * spin)
 
     def playSpin(self, timeStamp):
-        delta = (
-            -globalClockDelta.networkToLocalTime(
-                timeStamp, globalClock.getFrameTime(), 16, 100
-            )
-            + globalClock.getFrameTime()
-        )
-        self.spinAnim = LerpFunc(
-            self.spinCar, fromData=0, toData=360, duration=min(1 - delta, 0)
-        )
+        delta = -globalClockDelta.networkToLocalTime(timeStamp, globalClock.getFrameTime(), 16, 100) + globalClock.getFrameTime()
+        self.spinAnim = LerpFunc(self.spinCar, fromData=0, toData=360, duration=min(1 - delta, 0))
         self.spinAnim.start()
 
     def __throwGag(self):
@@ -1322,32 +1126,14 @@ class DistributedVehicle(
         self.anvil.setScale(7, 9, 7)
         self.anvil.setPos(0, 0, 75)
         self.anvil.reparentTo(self)
-        anvilDrop = ProjectileInterval(
-            self.anvil, startPos=Point3(0, 0, 100), endPos=Point3(0, 0, 0), duration=1
-        )
+        anvilDrop = ProjectileInterval(self.anvil, startPos=Point3(0, 0, 100), endPos=Point3(0, 0, 0), duration=1)
         shadowScale = self.dropShadow.scaleInterval(1, self.ShadowScale * 2)
         fadeOut = LerpFunc(self.anvil.setAlphaScale, fromData=1, toData=0, duration=0.5)
         flattenMe = self.geom[0].scaleInterval(0.08, Vec3(1, 1, 0.1))
-        unFlatten = Sequence(
-            self.geom[0].scaleInterval(0.2, Vec3(1, 1, 2)),
-            self.geom[0].scaleInterval(0.1, 1),
-        )
-        anvilSquish = Parallel(
-            Parallel(anvilDrop, shadowScale), Sequence(Wait(0.92), flattenMe)
-        )
-        anvilStretchFade = Sequence(
-            Parallel(self.anvil.scaleInterval(0.2, Vec3(7, 9, 5)), Func(self.lookUp)),
-            fadeOut,
-        )
-        self.gagMovie = Sequence(
-            anvilSquish,
-            Func(self.stopCar, 0.9),
-            anvilStretchFade,
-            Wait(0.5),
-            Parallel(unFlatten, Func(self.lookNormal)),
-            Func(self.startCar),
-            Func(self.hideAnvil),
-        )
+        unFlatten = Sequence(self.geom[0].scaleInterval(0.2, Vec3(1, 1, 2)), self.geom[0].scaleInterval(0.1, 1))
+        anvilSquish = Parallel(Parallel(anvilDrop, shadowScale), Sequence(Wait(0.92), flattenMe))
+        anvilStretchFade = Sequence(Parallel(self.anvil.scaleInterval(0.2, Vec3(7, 9, 5)), Func(self.lookUp)), fadeOut)
+        self.gagMovie = Sequence(anvilSquish, Func(self.stopCar, 0.9), anvilStretchFade, Wait(0.5), Parallel(unFlatten, Func(self.lookNormal)), Func(self.startCar), Func(self.hideAnvil))
         self.gagMovie.start()
 
     def lookUp(self):
@@ -1383,7 +1169,7 @@ class DistributedVehicle(
 
     def updateSkid(self):
         if self.skidding:
-            if self.groundType == "grass":
+            if self.groundType == 'grass':
                 self.skidLoopGrassSfx.setVolume(1)
                 self.skidLoopAsphaltSfx.setVolume(0)
             else:
@@ -1394,51 +1180,31 @@ class DistributedVehicle(
         self.anvil.setScale(10, 13, 10)
         self.anvil.setPos(0, 0, 75)
         self.anvil.reparentTo(self)
-        anvilDrop = ProjectileInterval(
-            self.anvil, startPos=Point3(0, 0, 100), endPos=Point3(0, 0, 0), duration=1
-        )
+        anvilDrop = ProjectileInterval(self.anvil, startPos=Point3(0, 0, 100), endPos=Point3(0, 0, 0), duration=1)
         shadowScale = self.dropShadow.scaleInterval(1, self.ShadowScale * 4)
         fadeOut = LerpFunc(self.anvil.setAlphaScale, fromData=1, toData=0, duration=0.5)
         flattenMe = self.geom[0].scaleInterval(0.08, Vec3(1, 1, 0.1))
-        unFlatten = Sequence(
-            self.geom[0].scaleInterval(0.2, Vec3(1, 1, 2)),
-            self.geom[0].scaleInterval(0.1, 1),
-        )
-        anvilSquish = Parallel(
-            Parallel(anvilDrop, shadowScale), Sequence(Wait(0.92), flattenMe)
-        )
-        anvilStretchFade = Sequence(
-            Parallel(self.anvil.scaleInterval(0.2, Vec3(10, 13, 4)), Func(self.lookUp)),
-            fadeOut,
-        )
-        self.gagMovie = Sequence(
-            anvilSquish,
-            anvilStretchFade,
-            Wait(0.5),
-            Parallel(unFlatten, Func(self.lookNormal)),
-            Func(self.hideAnvil),
-        )
+        unFlatten = Sequence(self.geom[0].scaleInterval(0.2, Vec3(1, 1, 2)), self.geom[0].scaleInterval(0.1, 1))
+        anvilSquish = Parallel(Parallel(anvilDrop, shadowScale), Sequence(Wait(0.92), flattenMe))
+        anvilStretchFade = Sequence(Parallel(self.anvil.scaleInterval(0.2, Vec3(10, 13, 4)), Func(self.lookUp)), fadeOut)
+        self.gagMovie = Sequence(anvilSquish, anvilStretchFade, Wait(0.5), Parallel(unFlatten, Func(self.lookNormal)), Func(self.hideAnvil))
         self.gagMovie.start()
 
     def hitBanana(self):
         if self.wipeOut:
             self.wipeOut.pause()
-            spinAnim = LerpFunc(
-                self.spinCar, fromData=self.geom[0].getH(), toData=360, duration=1
-            )
+            spinAnim = LerpFunc(self.spinCar, fromData=self.geom[0].getH(), toData=360, duration=1)
         else:
             spinAnim = LerpFunc(self.spinCar, fromData=0, toData=360, duration=1)
         self.wipeOut = Sequence(Func(self.stopCar, 0.99), spinAnim, Func(self.startCar))
         self.wipeOut.start()
 
     def hitPie(self):
-        print("yar, got Me with pi!")
+        print('yar, got Me with pi!')
         self.splatPie()
         if self.wipeOut:
             self.wipeOut.pause()
-            spinAnim = LerpFunc(
-                self.spinCar, fromData=self.geom[0].getH(), toData=1080, duration=0.5
-            )
+            spinAnim = LerpFunc(self.spinCar, fromData=self.geom[0].getH(), toData=1080, duration=0.5)
         else:
             spinAnim = LerpFunc(self.spinCar, fromData=0, toData=1080, duration=0.5)
         self.wipeOut = Sequence(Func(self.stopCar, 0.99), spinAnim, Func(self.startCar))

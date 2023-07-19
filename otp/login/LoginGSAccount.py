@@ -6,6 +6,7 @@ from direct.distributed.PyDatagram import PyDatagram
 
 
 class LoginGSAccount(LoginBase.LoginBase):
+
     def __init__(self, cr):
         LoginBase.LoginBase.__init__(self, cr)
 
@@ -29,9 +30,9 @@ class LoginGSAccount(LoginBase.LoginBase):
         return 1
 
     def sendLoginMsg(self):
-        DISLID = config.GetInt("fake-DISL-PlayerAccountId", 0)
+        DISLID = config.GetInt('fake-DISL-PlayerAccountId', 0)
         if not DISLID:
-            NameStringId = "DISLID_%s" % self.loginName
+            NameStringId = 'DISLID_%s' % self.loginName
             DISLID = config.GetInt(NameStringId, 0)
         cr = self.cr
         datagram = PyDatagram()
@@ -49,7 +50,7 @@ class LoginGSAccount(LoginBase.LoginBase):
         datagram.addString(cr.validateDownload)
         datagram.addString(cr.wantMagicWords)
         datagram.addUint32(DISLID)
-        datagram.addString(config.GetString("otp-whitelist", "YES"))
+        datagram.addString(config.GetString('otp-whitelist', 'YES'))
         cr.send(datagram)
 
     def resendPlayToken(self):
@@ -59,7 +60,7 @@ class LoginGSAccount(LoginBase.LoginBase):
         return 0
 
     def getAccountData(self, loginName, password):
-        return "Unsupported"
+        return 'Unsupported'
 
     def supportsParentPassword(self):
         return 1
@@ -67,9 +68,7 @@ class LoginGSAccount(LoginBase.LoginBase):
     def authenticateParentPassword(self, loginName, password, parentPassword):
         return (password == parentPassword, None)
 
-    def authenticateParentUsernameAndPassword(
-        self, loginName, password, parentUsername, parentPassword
-    ):
+    def authenticateParentUsernameAndPassword(self, loginName, password, parentUsername, parentPassword):
         return (password == parentPassword, None)
 
     def supportsAuthenticateDelete(self):

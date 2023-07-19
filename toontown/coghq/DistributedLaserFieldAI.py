@@ -13,66 +13,55 @@ from toontown.coghq import LaserGameAvoid
 from toontown.coghq import LaserGameDrag
 import random
 
+class DistributedLaserFieldAI(BattleBlockerAI.BattleBlockerAI, NodePath, BasicEntities.NodePathAttribs):
 
-class DistributedLaserFieldAI(
-    BattleBlockerAI.BattleBlockerAI, NodePath, BasicEntities.NodePathAttribs
-):
     def __init__(self, level, entId):
         BattleBlockerAI.BattleBlockerAI.__init__(self, level, entId)
-        node = hidden.attachNewNode("DistributedLaserFieldAI")
+        node = hidden.attachNewNode('DistributedLaserFieldAI')
         NodePath.__init__(self, node)
-        if not hasattr(self, "switchId"):
+        if not hasattr(self, 'switchId'):
             self.switchId = 0
         self.gridScale = 1
-        self.game = LaserGameRoll.LaserGameRoll(
-            self.trapDisable, self.trapFire, self.sendField, self.setGrid
-        )
-        if not hasattr(self, "gridGame"):
-            self.gridGame = "Roll"
+        self.game = LaserGameRoll.LaserGameRoll(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
+        if not hasattr(self, 'gridGame'):
+            self.gridGame = 'Roll'
         self.enabled = 1
         self.hasShownSuits = 0
         self.healReady = 1
         self.playedSound = 0
         self.canButton = 1
-        self.title = "MemTag: This is a laserField %s" % random.random()
+        self.title = 'MemTag: This is a laserField %s' % random.random()
 
     def setGridGame(self, gameName):
-        if gameName == "Random":
-            gameName = random.choice(["MineSweeper", "Roll", "Avoid", "Drag"])
+        if gameName == 'Random':
+            gameName = random.choice(['MineSweeper',
+             'Roll',
+             'Avoid',
+             'Drag'])
         self.gridGame = gameName
-        if hasattr(self, "game"):
+        if hasattr(self, 'game'):
             self.game.delete()
             self.game = None
-        if gameName == "Drag":
-            self.game = LaserGameDrag.LaserGameDrag(
-                self.trapDisable, self.trapFire, self.sendField, self.setGrid
-            )
-        elif gameName == "MineSweeper":
-            self.game = LaserGameMineSweeper.LaserGameMineSweeper(
-                self.trapDisable, self.trapFire, self.sendField, self.setGrid
-            )
-        elif gameName == "Roll":
-            self.game = LaserGameRoll.LaserGameRoll(
-                self.trapDisable, self.trapFire, self.sendField, self.setGrid
-            )
-        elif gameName == "Avoid":
-            self.game = LaserGameAvoid.LaserGameAvoid(
-                self.trapDisable, self.trapFire, self.sendField, self.setGrid
-            )
+        if gameName == 'Drag':
+            self.game = LaserGameDrag.LaserGameDrag(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
+        elif gameName == 'MineSweeper':
+            self.game = LaserGameMineSweeper.LaserGameMineSweeper(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
+        elif gameName == 'Roll':
+            self.game = LaserGameRoll.LaserGameRoll(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
+        elif gameName == 'Avoid':
+            self.game = LaserGameAvoid.LaserGameAvoid(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
         else:
-            self.game = LaserGameMineSweeper.LaserGameMineSweeper(
-                self.trapDisable, self.trapFire, self.sendField, self.setGrid
-            )
+            self.game = LaserGameMineSweeper.LaserGameMineSweeper(self.trapDisable, self.trapFire, self.sendField, self.setGrid)
         self.game.startGrid()
         self.sendField()
-        self.sendUpdate("setGridGame", [gameName])
+        self.sendUpdate('setGridGame', [gameName])
         return
 
     def generate(self):
         BattleBlockerAI.BattleBlockerAI.generate(self)
         if self.switchId != 0:
             self.accept(self.getOutputEventName(self.switchId), self.reactToSwitch)
-        self.detectName = "laserField %s" % self.doId
+        self.detectName = 'laserField %s' % self.doId
         taskMgr.doMethodLater(1.0, self.__detect, self.detectName)
         self.setPos(self.pos)
         self.setHpr(self.hpr)
@@ -91,7 +80,7 @@ class DistributedLaserFieldAI(
         return
 
     def destroy(self):
-        self.notify.info("destroy entity(laserField) %s" % self.entId)
+        self.notify.info('destroy entity(laserField) %s' % self.entId)
         BattleBlockerAI.BattleBlockerAI.destroy(self)
 
     def setGrid(self, gridNumX, gridNumY):
@@ -111,11 +100,11 @@ class DistributedLaserFieldAI(
         return fieldData
 
     def sendField(self):
-        self.sendUpdate("setField", [self.getField()])
+        self.sendUpdate('setField', [self.getField()])
 
     def __detect(self, task):
         isThereAnyToons = False
-        if hasattr(self, "level"):
+        if hasattr(self, 'level'):
             toonInRange = 0
             for avId in self.level.presentAvIds:
                 if avId in self.air.doId2do:
@@ -139,7 +128,7 @@ class DistributedLaserFieldAI(
         self.gridNumX = random.randint(1, 4)
         self.gridNumY = random.randint(1, 4)
         self.gridScale = random.randint(1, 4)
-        self.sendUpdate("setGrid", [self.gridNumX, self.gridNumY, self.gridScale])
+        self.sendUpdate('setGrid', [self.gridNumX, self.gridNumY, self.gridScale])
 
     def reactToSwitch(self, on):
         if on and self.canButton:
@@ -154,19 +143,19 @@ class DistributedLaserFieldAI(
         self.healReady = 0
         if not __dev__ and 1:
             self.canButton = 0
-        self.sendUpdate("setActiveLF", [0])
+        self.sendUpdate('setActiveLF', [0])
         if not self.playedSound:
-            self.sendUpdate("setSuccess", [0])
+            self.sendUpdate('setSuccess', [0])
         self.playedSound = 1
 
     def setBattleFinished(self):
-        print("battle Finished")
+        print('battle Finished')
         BattleBlockerAI.BattleBlockerAI.setBattleFinished(self)
         messenger.send(self.getOutputEventName(), [1])
         self.switchFire()
 
     def switchFire(self):
-        print("switchFire")
+        print('switchFire')
         if self.switchId != 0:
             switch = self.level.getEntity(self.switchId)
             if switch:
@@ -180,7 +169,7 @@ class DistributedLaserFieldAI(
             for suit in suits:
                 suit.requestRemoval()
 
-        self.sendUpdate("setActiveLF", [0])
+        self.sendUpdate('setActiveLF', [0])
         stage = self.air.getDo(self.level.stageDoId)
         reward = stage.getPuzzelReward()
         if self.healReady:
@@ -192,7 +181,7 @@ class DistributedLaserFieldAI(
             stage.increasePuzzelReward()
         self.healReady = 0
         if not self.playedSound:
-            self.sendUpdate("setSuccess", [1])
+            self.sendUpdate('setSuccess', [1])
         self.playedSound = 1
         self.switchFire()
 
@@ -203,7 +192,7 @@ class DistributedLaserFieldAI(
             suitArray.append(suit.doId)
 
         if suitArray:
-            self.sendUpdate("hideSuit", [suitArray])
+            self.sendUpdate('hideSuit', [suitArray])
 
     def showSuits(self):
         if self.hasShownSuits == 0:
@@ -214,9 +203,9 @@ class DistributedLaserFieldAI(
                 suitArray.append(suit.doId)
 
             if suitArray:
-                self.sendUpdate("showSuit", [suitArray])
+                self.sendUpdate('showSuit', [suitArray])
         self.hasShownSuits = 1
 
     def addSuit(self, suit):
-        print("Adding Suit %s" % suit.doId)
+        print('Adding Suit %s' % suit.doId)
         BattleBlockerAI.BattleBlockerAI.addSuit(self, suit)

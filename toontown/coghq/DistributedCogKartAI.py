@@ -4,15 +4,17 @@ from toontown.building import DistributedElevatorExtAI
 from toontown.building import ElevatorConstants
 from toontown.toonbase import ToontownGlobals
 
-
 class DistributedCogKartAI(DistributedElevatorExtAI.DistributedElevatorExtAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedCogKartAI")
+    notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCogKartAI')
 
     def __init__(self, air, index, x, y, z, h, p, r, bldg, minLaff):
-        self.posHpr = (x, y, z, h, p, r)
-        DistributedElevatorExtAI.DistributedElevatorExtAI.__init__(
-            self, air, bldg, minLaff=minLaff
-        )
+        self.posHpr = (x,
+         y,
+         z,
+         h,
+         p,
+         r)
+        DistributedElevatorExtAI.DistributedElevatorExtAI.__init__(self, air, bldg, minLaff=minLaff)
         self.type = ElevatorConstants.ELEVATOR_COUNTRY_CLUB
         self.courseIndex = index
         if self.courseIndex == 0:
@@ -39,14 +41,12 @@ class DistributedCogKartAI(DistributedElevatorExtAI.DistributedElevatorExtAI):
             for seatIndex in range(len(self.seats)):
                 avId = self.seats[seatIndex]
                 if avId:
-                    self.sendUpdateToAvatarId(
-                        avId, "setCountryClubInteriorZone", [countryClubZone]
-                    )
+                    self.sendUpdateToAvatarId(avId, 'setCountryClubInteriorZone', [countryClubZone])
                     self.clearFullNow(seatIndex)
 
         else:
-            self.notify.warning("The elevator left, but was empty.")
-        self.fsm.request("closed")
+            self.notify.warning('The elevator left, but was empty.')
+        self.fsm.request('closed')
         return
 
     def sendAvatarsToDestination(self, avIdList):
@@ -54,13 +54,11 @@ class DistributedCogKartAI(DistributedElevatorExtAI.DistributedElevatorExtAI):
             countryClubZone = self.bldg.createCountryClub(self.countryClubId, avIdList)
             for avId in avIdList:
                 if avId:
-                    self.sendUpdateToAvatarId(
-                        avId, "setCountryClubInteriorZoneForce", [countryClubZone]
-                    )
+                    self.sendUpdateToAvatarId(avId, 'setCountryClubInteriorZoneForce', [countryClubZone])
 
     def getCountryClubId(self):
         return self.countryClubId
 
     def enterClosed(self):
         DistributedElevatorExtAI.DistributedElevatorExtAI.enterClosed(self)
-        self.fsm.request("opening")
+        self.fsm.request('opening')

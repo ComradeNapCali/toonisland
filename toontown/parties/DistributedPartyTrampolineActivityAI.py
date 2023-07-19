@@ -1,11 +1,8 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.parties.DistributedPartyActivityAI import DistributedPartyActivityAI
 
-
 class DistributedPartyTrampolineActivityAI(DistributedPartyActivityAI):
-    notify = DirectNotifyGlobal.directNotify.newCategory(
-        "DistributedPartyTrampolineActivityAI"
-    )
+    notify = DirectNotifyGlobal.directNotify.newCategory("DistributedPartyTrampolineActivityAI")
 
     def awardBeans(self, todo0, todo1):
         pass
@@ -30,3 +27,4 @@ class DistributedPartyTrampolineActivityAI(DistributedPartyActivityAI):
 
     def removeBeansEcho(self, todo0):
         pass
+

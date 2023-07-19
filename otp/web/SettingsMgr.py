@@ -4,7 +4,7 @@ from otp.web.SettingsMgrBase import SettingsMgrBase
 
 
 class SettingsMgr(DistributedObjectGlobal, SettingsMgrBase):
-    notify = directNotify.newCategory("SettingsMgr")
+    notify = directNotify.newCategory('SettingsMgr')
 
     def announceGenerate(self):
         DistributedObjectGlobal.announceGenerate(self)
@@ -24,8 +24,7 @@ class SettingsMgr(DistributedObjectGlobal, SettingsMgrBase):
         if self._sracs:
             self._sracs.destroy()
         self._sracs = FrameDelayedCall(
-            "requestAllChangedSettings", self.sendRequestAllChangedSettings
-        )
+            'requestAllChangedSettings', self.sendRequestAllChangedSettings)
 
     def delete(self):
         self.ignore(self._crConnectEvent)
@@ -35,10 +34,11 @@ class SettingsMgr(DistributedObjectGlobal, SettingsMgrBase):
         DistributedObjectGlobal.delete(self)
 
     def sendRequestAllChangedSettings(self):
-        self.sendUpdate("requestAllChangedSettings", [])
+        self.sendUpdate('requestAllChangedSettings', [])
 
     def settingChange(self, settingName, valueStr):
         if valueStr == self._getCurrentValueRepr(settingName):
             return
-        self.notify.info("got setting change: %s -> %s" % (settingName, valueStr))
+        self.notify.info('got setting change: %s -> %s' %
+                         (settingName, valueStr))
         self._changeSetting(settingName, valueStr)

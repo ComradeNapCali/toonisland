@@ -5,7 +5,6 @@ from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPLocalizer
 from direct.interval.IntervalGlobal import *
 
-
 class CatalogPetTrickItem(CatalogItem.CatalogItem):
     sequenceNumber = 0
     petPicture = None
@@ -18,13 +17,7 @@ class CatalogPetTrickItem(CatalogItem.CatalogItem):
         return 1
 
     def reachedPurchaseLimit(self, avatar):
-        if (
-            self in avatar.onOrder
-            or self in avatar.mailboxContents
-            or self in avatar.onGiftOrder
-            or self in avatar.awardMailboxContents
-            or self in avatar.onAwardOrder
-        ):
+        if self in avatar.onOrder or self in avatar.mailboxContents or self in avatar.onGiftOrder or self in avatar.awardMailboxContents or self in avatar.onAwardOrder:
             return 1
         return self.trickId in avatar.petTrickPhrases
 
@@ -50,7 +43,6 @@ class CatalogPetTrickItem(CatalogItem.CatalogItem):
 
     def getPicture(self, avatar):
         from toontown.pets import PetDNA, Pet
-
         pet = Pet.Pet(forGui=1)
         dna = avatar.petDNA
         if dna == None:
@@ -61,14 +53,12 @@ class CatalogPetTrickItem(CatalogItem.CatalogItem):
         pet.setScale(2.0)
         pet.setP(-40)
         track = PetTricks.getTrickIval(pet, self.trickId)
-        name = "petTrick-item-%s" % self.sequenceNumber
+        name = 'petTrick-item-%s' % self.sequenceNumber
         CatalogPetTrickItem.sequenceNumber += 1
         if track != None:
-            track = Sequence(
-                Sequence(track), ActorInterval(pet, "neutral", duration=2), name=name
-            )
+            track = Sequence(Sequence(track), ActorInterval(pet, 'neutral', duration=2), name=name)
         else:
-            pet.animFSM.request("neutral")
+            pet.animFSM.request('neutral')
             track = Sequence(Wait(4), name=name)
         self.petPicture = pet
         self.hasPicture = True
@@ -80,11 +70,8 @@ class CatalogPetTrickItem(CatalogItem.CatalogItem):
         self.petPicture = None
         return
 
-    def output(self, store=-1):
-        return "CatalogPetTrickItem(%s%s)" % (
-            self.trickId,
-            self.formatOptionalData(store),
-        )
+    def output(self, store = -1):
+        return 'CatalogPetTrickItem(%s%s)' % (self.trickId, self.formatOptionalData(store))
 
     def compareTo(self, other):
         return self.trickId - other.trickId

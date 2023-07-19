@@ -11,44 +11,28 @@ from .CogdoMazeLocalPlayer import CogdoMazeLocalPlayer
 from .CogdoMazeGuiManager import CogdoMazeGuiManager
 from .CogdoGameAudioManager import CogdoGameAudioManager
 from .CogdoMazeGameObjects import CogdoMazeExit, CogdoMazeDrop
-from .CogdoMazeSuits import (
-    CogdoMazeSuit,
-    CogdoMazeSlowMinionSuit,
-    CogdoMazeFastMinionSuit,
-    CogdoMazeBossSuit,
-)
+from .CogdoMazeSuits import CogdoMazeSuit, CogdoMazeSlowMinionSuit, CogdoMazeFastMinionSuit, CogdoMazeBossSuit
 from .CogdoMazeGameMovies import CogdoMazeGameIntro, CogdoMazeGameFinish
 from . import CogdoMazeGameGlobals as Globals
 from . import CogdoUtil
 import math
 import random
 
-
 class CogdoMazeGame(DirectObject):
-    notify = directNotify.newCategory("CogdoMazeGame")
-    UpdateTaskName = "CogdoMazeGameUpdateTask"
-    RemoveGagTaskName = "CogdoMazeGameRemoveGag"
-    PlayerCoolerCollision = "%s-into-%s" % (
-        Globals.LocalPlayerCollisionName,
-        Globals.WaterCoolerCollisionName,
-    )
-    PlayerDropCollision = "%s-into-%s" % (
-        Globals.LocalPlayerCollisionName,
-        Globals.DropCollisionName,
-    )
+    notify = directNotify.newCategory('CogdoMazeGame')
+    UpdateTaskName = 'CogdoMazeGameUpdateTask'
+    RemoveGagTaskName = 'CogdoMazeGameRemoveGag'
+    PlayerCoolerCollision = '%s-into-%s' % (Globals.LocalPlayerCollisionName, Globals.WaterCoolerCollisionName)
+    PlayerDropCollision = '%s-into-%s' % (Globals.LocalPlayerCollisionName, Globals.DropCollisionName)
 
     def __init__(self, distGame):
         self.distGame = distGame
-        self._allowSuitsHitToons = base.config.GetBool(
-            "cogdomaze-suits-hit-toons", True
-        )
+        self._allowSuitsHitToons = base.config.GetBool('cogdomaze-suits-hit-toons', True)
 
     def load(self, cogdoMazeFactory, numSuits, bossCode):
         self._initAudio()
         self.maze = cogdoMazeFactory.createCogdoMaze()
-        suitSpawnSpot = self.maze.createRandomSpotsList(
-            numSuits, self.distGame.randomNumGen
-        )
+        suitSpawnSpot = self.maze.createRandomSpotsList(numSuits, self.distGame.randomNumGen)
         self.guiMgr = CogdoMazeGuiManager(self.maze, bossCode)
         self.suits = []
         self.suitsById = {}
@@ -68,26 +52,20 @@ class CogdoMazeGame(DirectObject):
         serialNum = 0
         for i in range(numSuits[0]):
             suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeBossSuit(
-                serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[0][i]
-            )
+            suit = CogdoMazeBossSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[0][i])
             self.addSuit(suit)
             self.guiMgr.mazeMapGui.addSuit(suit.suit)
             serialNum += 1
 
         for i in range(numSuits[1]):
             suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeFastMinionSuit(
-                serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[1][i]
-            )
+            suit = CogdoMazeFastMinionSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[1][i])
             self.addSuit(suit)
             serialNum += 1
 
         for i in range(numSuits[2]):
             suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeSlowMinionSuit(
-                serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[2][i]
-            )
+            suit = CogdoMazeSlowMinionSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[2][i])
             self.addSuit(suit)
             serialNum += 1
 
@@ -110,19 +88,15 @@ class CogdoMazeGame(DirectObject):
             self._collNode2waterCooler[waterCooler.collNode] = waterCooler
 
         self.pickups = []
-        self.gagModel = CogdoUtil.loadMazeModel("waterBalloon")
-        self._movie = CogdoMazeGameIntro(
-            self.maze, self._exit, self.distGame.randomNumGen
-        )
+        self.gagModel = CogdoUtil.loadMazeModel('waterBalloon')
+        self._movie = CogdoMazeGameIntro(self.maze, self._exit, self.distGame.randomNumGen)
         self._movie.load()
         return
 
     def _initAudio(self):
-        self._audioMgr = CogdoGameAudioManager(
-            Globals.MusicFiles, Globals.SfxFiles, camera, cutoff=Globals.AudioCutoff
-        )
-        self._quakeSfx1 = self._audioMgr.createSfx("quake")
-        self._quakeSfx2 = self._audioMgr.createSfx("quake")
+        self._audioMgr = CogdoGameAudioManager(Globals.MusicFiles, Globals.SfxFiles, camera, cutoff=Globals.AudioCutoff)
+        self._quakeSfx1 = self._audioMgr.createSfx('quake')
+        self._quakeSfx2 = self._audioMgr.createSfx('quake')
 
     def _destroyAudio(self):
         self._quakeSfx1.destroy()
@@ -190,18 +164,18 @@ class CogdoMazeGame(DirectObject):
 
     def startIntro(self):
         self._movie.play()
-        self._audioMgr.playMusic("normal")
+        self._audioMgr.playMusic('normal')
 
     def endIntro(self):
         self._movie.end()
         self._movie.unload()
         del self._movie
-        base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov / (4.0 / 3.0))
+        base.camLens.setMinFov(ToontownGlobals.DefaultCameraFov / (4. / 3.))
         for player in self.players:
             self.placePlayer(player)
             if player.toon is localAvatar:
                 localAvatar.sendCurrentPosition()
-            player.request("Ready")
+            player.request('Ready')
 
     def startFinish(self):
         self._movie = CogdoMazeGameFinish(self.localPlayer, self._exit)
@@ -224,9 +198,7 @@ class CogdoMazeGame(DirectObject):
             toon = self.distGame.getToon(toonId)
             if toon is not None:
                 if toon.isLocal():
-                    player = CogdoMazeLocalPlayer(
-                        len(self.players), base.localAvatar, self, self.guiMgr
-                    )
+                    player = CogdoMazeLocalPlayer(len(self.players), base.localAvatar, self, self.guiMgr)
                     self.localPlayer = player
                 else:
                     player = CogdoMazePlayer(len(self.players), toon)
@@ -240,9 +212,7 @@ class CogdoMazeGame(DirectObject):
         self.accept(CogdoMazeExit.EnterEventName, self.handleLocalToonEntersDoor)
         self.accept(CogdoMemo.EnterEventName, self.handleLocalToonMeetsPickup)
         if self._allowSuitsHitToons:
-            self.accept(
-                CogdoMazeSuit.COLLISION_EVENT_NAME, self.handleLocalToonMeetsSuit
-            )
+            self.accept(CogdoMazeSuit.COLLISION_EVENT_NAME, self.handleLocalToonMeetsSuit)
         self.accept(CogdoMazePlayer.GagHitEventName, self.handleToonMeetsGag)
         self.accept(CogdoMazeSuit.GagHitEventName, self.handleLocalSuitMeetsGag)
         self.accept(CogdoMazeSuit.DeathEventName, self.handleSuitDeath)
@@ -252,7 +222,7 @@ class CogdoMazeGame(DirectObject):
         self.__startUpdateTask()
         for player in self.players:
             player.handleGameStart()
-            player.request("Normal")
+            player.request('Normal')
 
         for suit in self.suits:
             suit.onstage()
@@ -282,7 +252,7 @@ class CogdoMazeGame(DirectObject):
         self.finished = True
         self.localPlayer.handleGameExit()
         for player in self.players:
-            player.request("Done")
+            player.request('Done')
 
         self.guiMgr.hideTimer()
         self.guiMgr.hideMazeMap()
@@ -314,15 +284,13 @@ class CogdoMazeGame(DirectObject):
 
     def __stopUpdateTask(self):
         taskMgr.remove(CogdoMazeGame.UpdateTaskName)
-        taskMgr.remove("loopSecondQuakeSound")
+        taskMgr.remove('loopSecondQuakeSound')
 
     def __updateTask(self, task):
         dt = globalClock.getDt()
         self.localPlayer.update(dt)
         for player in self.players:
-            curTX, curTY = self.maze.world2tileClipped(
-                player.toon.getX(), player.toon.getY()
-            )
+            curTX, curTY = self.maze.world2tileClipped(player.toon.getX(), player.toon.getY())
             self.guiMgr.mazeMapGui.updateToon(player.toon, curTX, curTY)
 
         self.__updateGags()
@@ -356,34 +324,25 @@ class CogdoMazeGame(DirectObject):
         volume = 3.0 * shake / Globals.CameraShakeMax
         if volume > 3.0:
             volume = 3.0
-        if (
-            self._quakeSfx1.getAudioSound().status()
-            != self._quakeSfx1.getAudioSound().PLAYING
-        ):
+        if self._quakeSfx1.getAudioSound().status() != self._quakeSfx1.getAudioSound().PLAYING:
             self._quakeSfx1.loop(volume=volume)
         else:
             self._quakeSfx1.getAudioSound().setVolume(volume)
         volume = shake * shake / Globals.CameraShakeMax
-        if (
-            not self.hackTemp
-            and self._quakeSfx2.getAudioSound().status()
-            != self._quakeSfx2.getAudioSound().PLAYING
-        ):
-            taskMgr.doMethodLater(
-                1.5, self._quakeSfx2.loop, "loopSecondQuakeSound", extraArgs=[]
-            )
+        if not self.hackTemp and self._quakeSfx2.getAudioSound().status() != self._quakeSfx2.getAudioSound().PLAYING:
+            taskMgr.doMethodLater(1.5, self._quakeSfx2.loop, 'loopSecondQuakeSound', extraArgs=[])
             self.hackTemp = True
         else:
             self._quakeSfx2.getAudioSound().setVolume(volume)
 
     def handleLocalToonMeetsSuit(self, suitType, suitNum):
-        if self.localPlayer.state == "Normal" and not self.localPlayer.invulnerable:
+        if self.localPlayer.state == 'Normal' and not self.localPlayer.invulnerable:
             self.distGame.b_toonHitBySuit(suitType, suitNum)
 
-    def toonHitBySuit(self, toonId, suitType, suitNum, elapsedTime=0.0):
+    def toonHitBySuit(self, toonId, suitType, suitNum, elapsedTime = 0.0):
         player = self.toonId2Player[toonId]
-        if player.state == "Normal":
-            player.request("Hit", elapsedTime)
+        if player.state == 'Normal':
+            player.request('Hit', elapsedTime)
 
     def handleSuitDeath(self, suitType, suitNum):
         suit = self.suitsById[suitNum]
@@ -455,7 +414,7 @@ class CogdoMazeGame(DirectObject):
         if Globals.DropShakeEnabled:
             self.shakeCamera(node, Globals.DropShakeStrength, Globals.DropMaxDistance)
 
-    def shakeCamera(self, node, strength, distanceCutoff=60.0):
+    def shakeCamera(self, node, strength, distanceCutoff = 60.0):
         distance = self.localPlayer.toon.getDistance(node)
         shake = strength * (1 - distance / distanceCutoff)
         if shake > 0:
@@ -463,9 +422,9 @@ class CogdoMazeGame(DirectObject):
 
     def handleLocalToonMeetsDrop(self, collEntry):
         fcabinet = collEntry.getIntoNodePath()
-        if fcabinet.getTag("isFalling") == str("False"):
+        if fcabinet.getTag('isFalling') == str('False'):
             return
-        if self.localPlayer.state == "Normal" and not self.localPlayer.invulnerable:
+        if self.localPlayer.state == 'Normal' and not self.localPlayer.invulnerable:
             self.distGame.b_toonHitByDrop()
 
     def toonHitByDrop(self, toonId):
@@ -476,23 +435,19 @@ class CogdoMazeGame(DirectObject):
         if self.localPlayer.equippedGag != None:
             return
         into = collEntry.getIntoNodePath()
-        if into.hasPythonTag("id"):
-            id = into.getPythonTag("id")
+        if into.hasPythonTag('id'):
+            id = into.getPythonTag('id')
             self.distGame.d_sendRequestGagPickUp(id)
         return
 
-    def hasGag(self, toonId, elapsedTime=0.0):
+    def hasGag(self, toonId, elapsedTime = 0.0):
         player = self.toonId2Player[toonId]
         player.equipGag()
 
     def handleLocalToonMeetsWaterCooler(self, collEntry):
         if self.localPlayer.equippedGag != None:
             return
-        if (
-            self.lastBalloonTimestamp
-            and globalClock.getFrameTime() - self.lastBalloonTimestamp
-            < Globals.BalloonDelay
-        ):
+        if self.lastBalloonTimestamp and globalClock.getFrameTime() - self.lastBalloonTimestamp < Globals.BalloonDelay:
             return
         collNode = collEntry.getIntoNode()
         waterCooler = self._collNode2waterCooler[collNode]
@@ -503,7 +458,7 @@ class CogdoMazeGame(DirectObject):
     def requestUseGag(self, x, y, h):
         self.distGame.b_toonUsedGag(x, y, h)
 
-    def toonUsedGag(self, toonId, x, y, h, elapsedTime=0.0):
+    def toonUsedGag(self, toonId, x, y, h, elapsedTime = 0.0):
         player = self.toonId2Player[toonId]
         heading = h
         pos = Point3(x, y, 0)
@@ -516,10 +471,8 @@ class CogdoMazeGame(DirectObject):
         self.removeGag(gag)
         self.distGame.b_toonHitByGag(playerId)
 
-    def toonHitByGag(self, toonId, hitToon, elapsedTime=0.0):
-        if toonId not in list(self.toonId2Player.keys()) or hitToon not in list(
-            self.toonId2Player.keys()
-        ):
+    def toonHitByGag(self, toonId, hitToon, elapsedTime = 0.0):
+        if toonId not in list(self.toonId2Player.keys()) or hitToon not in list(self.toonId2Player.keys()):
             return
         player = self.toonId2Player[hitToon]
         player.hitByGag()
@@ -529,7 +482,7 @@ class CogdoMazeGame(DirectObject):
         self.localPlayer.hitSuit(suitType)
         self.distGame.b_suitHitByGag(suitType, suitNum)
 
-    def suitHitByGag(self, toonId, suitType, suitNum, elapsedTime=0.0):
+    def suitHitByGag(self, toonId, suitType, suitNum, elapsedTime = 0.0):
         if suitType == Globals.SuitTypes.Boss:
             self.guiMgr.showBossHit(suitNum)
         if suitNum in list(self.suitsById.keys()):
@@ -543,7 +496,7 @@ class CogdoMazeGame(DirectObject):
         self._exit.revealed = True
 
     def openDoor(self, timeLeft):
-        self._audioMgr.playMusic("timeRunningOut")
+        self._audioMgr.playMusic('timeRunningOut')
         if not self._exit.isOpen():
             self._exit.open()
             self.localPlayer.handleOpenDoor(self._exit)
@@ -555,17 +508,17 @@ class CogdoMazeGame(DirectObject):
         self.guiMgr.showTimer(timeLeft, self._handleTimerExpired)
 
     def timeAlert(self):
-        self._audioMgr.playMusic("timeRunningOut")
+        self._audioMgr.playMusic('timeRunningOut')
 
     def _handleTimerExpired(self):
-        self.localPlayer.request("Done")
+        self.localPlayer.request('Done')
 
     def toonEntersDoor(self, toonId):
         player = self.toonId2Player[toonId]
         self.guiMgr.mazeMapGui.removeToon(player.toon)
         self._exit.playerEntersDoor(player)
         self.localPlayer.handleToonEntersDoor(toonId, self._exit)
-        player.request("Done")
+        player.request('Done')
 
     def generatePickup(self, x, y):
         pickup = CogdoMemo(len(self.pickups), pitch=-90)
@@ -578,7 +531,7 @@ class CogdoMazeGame(DirectObject):
         pickup.disable()
         self.distGame.d_sendRequestPickUp(pickup.serialNum)
 
-    def pickUp(self, toonId, pickupNum, elapsedTime=0.0):
+    def pickUp(self, toonId, pickupNum, elapsedTime = 0.0):
         self.notify.debugCall()
         player = self.toonId2Player[toonId]
         pickup = self.pickups[pickupNum]
