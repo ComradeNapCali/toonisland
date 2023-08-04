@@ -1,5 +1,5 @@
 from direct.gui.DirectGui import OnscreenImage, OnscreenText, DirectButton
-from panda3d.core import TransparencyAttrib, Vec4, TextNode
+from panda3d.core import TransparencyAttrib, Vec4, TextNode, Vec3, NodePath
 from direct.interval.IntervalGlobal import Wait
 from direct.interval.IntervalGlobal import Sequence, LerpColorScaleInterval
 from direct.showbase.DirectObject import DirectObject
@@ -14,9 +14,13 @@ class Introduction(FSM):
         DirectObject.__init__(self)
         FSM.__init__(self, self.__class__.__name__)
         font = ToontownGlobals.getMinnieFont()
-        self.label = OnscreenText('', parent=hidden, font=font, fg=Vec4(1, 1, 1, 1), scale=0.06, align=TextNode.ACenter, wordwrap=35)
+        self.label = OnscreenText('', parent=hidden, font=font, fg=Vec4(1, 1, 1, 1), scale=0.10, align=TextNode.ACenter, wordwrap=35)
         self.label.setColorScale(Vec4(0, 0, 0, 0))
+
+        self.label2 = OnscreenText('', parent=hidden, font=font, fg=Vec4(1, 1, 1, 1), scale=0.055, align=TextNode.ACenter, wordwrap=35)
+        self.label2.setColorScale(Vec4(0, 0, 0, 0))
         gui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui.bam')
+        
         shuffleUp = gui.find('**/tt_t_gui_mat_shuffleUp')
         shuffleDown = gui.find('**/tt_t_gui_mat_shuffleDown')
         okUp = gui.find('**/tt_t_gui_mat_okUp')
@@ -70,6 +74,8 @@ class Introduction(FSM):
                                                                                                                                                                                                              0,
                                                                                                                                                                                                              1))
         self.disclaimerTrack = None
+        self.poweredTrack = None
+        self.image1Track = None
         self.presentsTrack = None
         self.lock = None
         self.accept('lock-client', self.lockClient)
@@ -85,6 +91,9 @@ class Introduction(FSM):
         if self.disclaimerTrack is not None:
             self.disclaimerTrack.finish()
             self.disclaimerTrack = None
+        if self.poweredTrack is not None:
+            self.poweredTrack.finish()
+            self.poweredTrack = None
         if self.noButton is not None:
             self.noButton.destroy()
             self.noButton = None
@@ -97,34 +106,89 @@ class Introduction(FSM):
         if self.label is not None:
             self.label.destroy()
             self.label = None
+        if self.image1Track is not None:
+            self.image1Track.destroy()
+            self.image1Track = None
         return
 
     def calcLabelY(self):
         sy = self.label.getScale()[1]
         height = self.label.textNode.getHeight()
-        return height * sy / 2.0
+        return height * sy / 2
+
+    def calcLabelY1(self):
+        sy = self.label.getScale()[1]
+        height = self.label.textNode.getHeight()
+        return height * sy / 2 + .45
+
+    def calcLabelY2(self):
+        sy = self.label.getScale()[1]
+        height = self.label.textNode.getHeight()
+        return height * sy / 2 - .45
+    
+    def calcLabelY3(self):
+        sy = self.label.getScale()[1]
+        height = self.label.textNode.getHeight()
+        return height * sy / 2 - .42
 
     def enterOff(self):
         pass
 
     def enterDisclaimer(self):
         self.label.setText(TTLocalizer.IntroDisclaimer)
-        self.label.setPos(0, self.calcLabelY())
+        self.label.setPos(0, self.calcLabelY1())
         self.label.reparentTo(aspect2d)
+
+        self.label2.setText(TTLocalizer.IntroPowered)
+        self.label2.setPos(0, self.calcLabelY2())
+        self.label2.reparentTo(aspect2d)
+
         if self.disclaimerTrack is not None:
             self.disclaimerTrack.finish()
             self.disclaimerTrack = None
-        self.disclaimerTrack = Sequence(LerpColorScaleInterval(self.label, 2, Vec4(1, 1, 1, 1), Vec4(0, 0, 0, 0), blendType='easeIn'), Wait(3), LerpColorScaleInterval(self.label, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
+
+        if self.poweredTrack is not None:
+            self.poweredTrack.finish()
+            self.poweredTrack = None
+
+        if self.image1Track is not None:
+            self.image1Track.finish()
+            self.image1Track = None
+
+        self.disclaimerTrack = Sequence(LerpColorScaleInterval(self.label, 2, Vec4(1, 1, 1, 1), Vec4(0, 0, 0, 0), blendType='easeIn'), Wait(6), LerpColorScaleInterval(self.label, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
+        self.poweredTrack = Sequence(LerpColorScaleInterval(self.label2, 2, Vec4(1, 1, 1, 1), Vec4(0, 0, 0, 0), blendType='easeIn'), Wait(6), LerpColorScaleInterval(self.label2, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
+
         self.disclaimerTrack.start()
+        self.poweredTrack.start()
+
+        self.png = OnscreenImage(image='phase_3/maps/p3d.png', scale=(0.262, 0.125, 0.125), pos=(0, 0, -0.65))
+        self.image1Track = Sequence(LerpColorScaleInterval(self.png, 2, Vec4(1, 1, 1, 1), Vec4(1, 1, 1, 1), blendType='easeIn'), Wait(6), LerpColorScaleInterval(self.png, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
+        self.image1Track.start()
+
         return
 
     def exitDisclaimer(self):
         if self.disclaimerTrack is not None:
             self.disclaimerTrack.finish()
             self.disclaimerTrack = None
+        if self.poweredTrack is not None:
+            self.poweredTrack.finish()
+            self.poweredTrack = None
+        if self.image1Track is not None:
+            self.image1Track.finish()
+            self.image1Track = None
         self.label.reparentTo(hidden)
+        self.label2.reparentTo(hidden)
+
         self.label.setPos(0, 0)
+        self.label2.setPos(0, 0)
+
         self.label.setText('')
+        self.label2.setText('')
+        
+        self.png.reparentTo(hidden)
+        self.png.setPos(0, 0)
+        self.png.setText('')
         return
 
     def enterPresents(self):
@@ -134,6 +198,12 @@ class Introduction(FSM):
         if self.presentsTrack is not None:
             self.presentsTrack.finish()
             self.presentsTrack = None
+        if self.poweredTrack is not None:
+            self.poweredTrack.finish()
+            self.poweredTrack = None
+        if self.image1Track is not None:
+            self.image1Track.finish()
+            self.image1Track = None
         self.presentsTrack = Sequence(LerpColorScaleInterval(self.label, 2, Vec4(1, 1, 1, 1), Vec4(0, 0, 0, 0), blendType='easeIn'), Wait(3), LerpColorScaleInterval(self.label, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
         self.presentsTrack.start()
         return
@@ -142,9 +212,21 @@ class Introduction(FSM):
         if self.presentsTrack is not None:
             self.presentsTrack.finish()
             self.presentsTrack = None
+        if self.poweredTrack is not None:
+            self.poweredTrack.finish()
+            self.poweredTrack = None
+        if self.image1Track is not None:
+            self.image1Track.finish()
+            self.image1Track = None
         self.label.reparentTo(hidden)
         self.label.setPos(0, 0)
         self.label.setText('')
+        self.label2.reparentTo(hidden)
+        self.label2.setPos(0, 0)
+        self.label2.setText('')
+        self.png.reparentTo(hidden)
+        self.png.setPos(0, 0)
+        self.png.setText('')
         return
 
     def enterLabel(self, text):
@@ -224,7 +306,9 @@ class Introduction(FSM):
         if self.lock:
             self.lock.start()
             return
+        self.png = OnscreenImage(parent=hidden)
         base.cr.clickToStart.start()
 
     def exitClickToStart(self):
         base.cr.clickToStart.stop()
+        exit()
