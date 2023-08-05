@@ -187,8 +187,6 @@ class Introduction(FSM):
         self.label2.setText('')
         
         self.png.reparentTo(hidden)
-        self.png.setPos(0, 0)
-        self.png.setText('')
         return
 
     def enterPresents(self):
@@ -225,8 +223,6 @@ class Introduction(FSM):
         self.label2.setPos(0, 0)
         self.label2.setText('')
         self.png.reparentTo(hidden)
-        self.png.setPos(0, 0)
-        self.png.setText('')
         return
 
     def enterLabel(self, text):
