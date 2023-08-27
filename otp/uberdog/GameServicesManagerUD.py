@@ -7,6 +7,7 @@ from datetime import datetime
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectGlobalUD import DistributedObjectGlobalUD
 from direct.distributed.PyDatagram import *
+from direct.distributed.MsgTypes import *
 from direct.fsm.FSM import FSM
 
 from otp.distributed import OtpDoGlobals

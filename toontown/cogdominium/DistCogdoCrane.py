@@ -1,3 +1,5 @@
+import sys
+
 from direct.gui.DirectGui import *
 from panda3d.core import *
 from panda3d.physics import *
@@ -390,8 +392,12 @@ class DistCogdoCrane(DistributedObject.DistributedObject, FSM.FSM):
 
     def __enableControlInterface(self):
         gui = loader.loadModel('phase_3.5/models/gui/avatar_panel_gui')
-        self.accept('control', self.__controlPressed)
-        self.accept('control-up', self.__controlReleased)
+        if sys.platform == "darwin":
+            self.accept('lalt', self.__controlPressed)
+            self.accept('lalt-up', self.__controlReleased)
+        else:
+            self.accept('control', self.__controlPressed)
+            self.accept('control-up', self.__controlReleased)
         self.accept('InputState-forward', self.__upArrow)
         self.accept('InputState-reverse', self.__downArrow)
         self.accept('InputState-turnLeft', self.__leftArrow)
