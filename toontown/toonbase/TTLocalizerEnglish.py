@@ -502,10 +502,12 @@ QuestsItemDict = {
  40: ["Vacation Ticket", "Vacation Tickets", 'a '],
  41: ["Key", "Keys", 'a '],
  42: ["Evidence", "Evidence", 'some '],
- 43: ["Cannoball", "Cannoballs", "some "],
+ 43: ["Cannonball", "Cannonballs", "some "],
  44: ["Anti Invisiblity Shampoo", "Anti Invisiblity Shampoo", "bottles of "],
  45: ["Invisiblity Spray", "Invisiblity Spray", "cans of "],
  46: ["Jellybean", "Jellybeans", "50 "],
+ 47: ["Fishing Equipment", "Fishing Equipment", "pieces of "],
+ 48: ["Bait", "Bait", "some "],
  110: ['TIP Clothing Ticket', 'Clothing Tickets', 'a '],
  1000: ['Clothing Ticket', 'Clothing Tickets', 'a '],
  2001: ['Inner Tube', 'Inner Tubes', 'an '],
@@ -996,7 +998,7 @@ QuestDialogDict = {
   3170: {QUEST: "Thanks! It took you long enough, though.\x07Well, while I'm taking a shower, why don't you go recover my real invisibility spray so no one has to suffer this fate again?\x07You can find them on any cogs in Rainbow Rise.",
          COMPLETE: "It worked! Wow, you did me a good deed here today, _avName_! You deserve a reward."}, # add this in later -> and also an Invisibility Spray. The invisibility spray will allow you to be an invisible toon whenever you want. You can switch out your cheesy effects by opening your sticker book."}, 
 
-  # Task 4: You Cant Sea Me
+  # Task 4: A Grassy Accident
   # Reward: +4 Laff Boost + Invisible Toon Cheesy Effect
   3171: {QUEST: "Report to Reef Blowers Lawn Care and speak to Bob Square.\x07He needs your help._where_"},
   3172: {QUEST: "Oh no, please no!\x07Are you a lawyer?\x07Did Nayla send you?!\x07Okay, you are not.\x07Well, can you help me?\x07You see, me and my employees run a lawn service here.\x07We cut all the toons around here's grass, and we made a mistake.\x07We accidentally cut the wrong yard\x07Nayla's yard—and now they are mad at us.\x07Can you try to talk to her and calm her down so they won't pursue legal action?_where_"},
@@ -1005,6 +1007,13 @@ QuestDialogDict = {
   3175: {QUEST: "50 Jellybeans?!\x07That's all he can give?\x07Is this a joke?\x07I'll tell you what, if you help me out with something,\x07I'll forgive him.\x07But you must help me out first.\x07Some cogs keep breaking into my shop and waking me up while I'm trying to sleep.\x07I haven't been able to sleep in a couple of days\x07and it's what's making me so cranky lately.\x07If you can defeat some of them, I'll forgive Bob Square."},
   3176: {QUEST: "Okay, that will be good enough.\x07Go talk to Bob Square\x07Tell him I will not be pursuing any legal actions against himand his crew._where_",
          COMPLETE: "You're a blessing in disguise.\x07Thanks a lot, _avName_!"},
+
+  # Task 5: Swimming in the Ocean
+  # Reward: Gag Pouch 50
+  3177: {QUEST: "Nar Whal is having a seaside issue. Can you go SEA them _avName_._where_"},
+  3178: {QUEST: "Narwhals\x07Narwhals\x07Swimming in trhe ocean causing a.....\x07oh\x07Im so sorry\x07Yeah my singing is TERRIBLE.\x07but hey you came from my singing\x07No?\x07Oh Toon HQ sent you\x07Right I might of underestimated my singing\x07Can you help me with a seaside issue.\x07You see\x07A Bunch of cogs came in here and stole all my FISHING EQUIPMENT!\x07If you help me recover it, ill reward you.\x07You can find my equipment on any cog here in Rainbow Rise (i think)"},
+  3179: {QUEST: "Good job _avName\x07But i have one other teensy tiny problem\x07While you were gone, some big Two-Face came in and stole ALL MY BAIT!\x07If you can recover those, then I can help you out with a SICKER reward.\x07Get to it, lol.",
+         COMPLETE: "You totally rock dudette.\x07Here have my backpack i use to store bait.\x07It could be very useful to store some gags.\x07Thank you for your help, _avName_."},
 
 
  # ==========================
@@ -6987,7 +6996,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  1811: ("What's Canoe With You?", ''),
  1813: ('Pier Pressure Plumbing', ''),
  1814: ('The Yo Ho Stop and Go', ''),
- 1815: ("What's Up, Dock?", ''),
+ 1815: ("Ocean Commotion Fishing Equipment?", ''),
  1818: ('Seven Seas Cafe', ''),
  1819: ("Docker's Diner", ''),
  1820: ('Hook, Line, and Sinker Prank Shop', ''),
@@ -9023,3 +9032,4 @@ IntroExitButton = 'Exit'
 IntroYesButton = 'Yes'
 IntroNoButton = 'No'
 ClickToStartLabel = '\x01shadow\x01Click to begin your journey!\x02'
+CreatedBy = "By Nayla and the Toon Island Crew"

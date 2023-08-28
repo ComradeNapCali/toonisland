@@ -41,6 +41,7 @@ def teleportDebug(requestStatus, msg, onlyIfToAv = True):
 SLEEP_STRING = TTLocalizer.ToonSleepString
 DogDialogueArray = []
 CatDialogueArray = []
+DeerDialogueArray = []
 HorseDialogueArray = []
 RabbitDialogueArray = []
 MouseDialogueArray = []
@@ -440,6 +441,11 @@ def loadDialog():
     for file in pigDialogueFiles:
         PigDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
 
+    deerDialogueFiles = ('AV_deer_short', 'AV_deer_med', 'AV_deer_long', 'AV_deer_question', 'AV_deer_exclaim', 'AV_deer_howl')
+    global DeerDialogueArray
+    for file in deerDialogueFiles:
+        DeerDialogueArray.append(base.loader.loadSfx(loadPath + file + '.ogg'))
+
     suitCostumeFiles = ('COG_VO_grunt', 'COG_VO_murmur', 'COG_VO_statement', 'COG_VO_question', 'COG_VO_grunt', 'COG_VO_grunt')
     global SuitCostumeArray
     for file in suitCostumeFiles:
@@ -453,6 +459,7 @@ def unloadDialog():
     global RabbitDialogueArray
     global MouseDialogueArray
     global DogDialogueArray
+    global DeerDialgoueArray
     global HorseDialogueArray
     global MonkeyDialogueArray
     global SuitCostumeArray
@@ -465,6 +472,7 @@ def unloadDialog():
     MonkeyDialogueArray = []
     BearDialogueArray = []
     PigDialogueArray = []
+    DeerDialogueArray = []
     AxolotlDialogueArray = []
 
 
@@ -1245,6 +1253,8 @@ class Toon(Avatar.Avatar, ToonHead):
             dialogueArray = BearDialogueArray
         elif animalType == 'pig':
             dialogueArray = PigDialogueArray
+        elif animalType == 'deer':
+            dialogueArray = DeerDialogueArray
         else:
             dialogueArray = None
         if self.isDisguised:

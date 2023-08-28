@@ -54,6 +54,7 @@ QuestDictRewardIndex = 5
 QuestDictNextQuestIndex = 6
 QuestDictDialogIndex = 7
 VeryEasy = 100
+SemiEasy = 90
 Easy = 75
 Medium = 50
 Hard = 25
@@ -2499,6 +2500,13 @@ QuestDict = {
     3174: (RR_TIER + 1, Cont, (DeliverItemQuest, 46), Same, 1312, NA, 3175, TTLocalizer.QuestDialogDict[3174]),
     3175: (RR_TIER + 1, Cont, (CogQuest, ToontownGlobals.RainbowRise, 20, Any),  Same, Same, NA, 3176, TTLocalizer.QuestDialogDict[3175]),
     3176: (RR_TIER + 1, Cont, (VisitQuest,), Any, 1104, 102, NA, TTLocalizer.QuestDialogDict[3176]),
+
+    # Task 5: Swimming in the Ocean
+    # Reward: Gag Pouch 50
+    3177: (RR_TIER + 1, Start, (VisitQuest,), Any, 1319, NA, 3178, TTLocalizer.QuestDialogDict[3177]),
+    3178: (RR_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 10, 47, Medium, Any), Same, Same, NA, 3179, TTLocalizer.QuestDialogDict[3178]),
+    3179: (RR_TIER + 1, Cont, (RecoverItemQuest, Anywhere, 10, 48, Easy, Any), Same, Same, 202, NA, TTLocalizer.QuestDialogDict[3179]),
+
 
 }
 Tier2QuestsDict = {}

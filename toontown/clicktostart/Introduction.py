@@ -14,10 +14,10 @@ class Introduction(FSM):
         DirectObject.__init__(self)
         FSM.__init__(self, self.__class__.__name__)
         font = ToontownGlobals.getMinnieFont()
-        self.label = OnscreenText('', parent=hidden, font=font, fg=Vec4(1, 1, 1, 1), scale=0.10, align=TextNode.ACenter, wordwrap=35)
+        self.label = OnscreenText('', parent=hidden, font=font, fg=Vec4(0, 0, 0, 1), scale=0.10, align=TextNode.ACenter, wordwrap=35)
         self.label.setColorScale(Vec4(0, 0, 0, 0))
 
-        self.label2 = OnscreenText('', parent=hidden, font=font, fg=Vec4(1, 1, 1, 1), scale=0.055, align=TextNode.ACenter, wordwrap=35)
+        self.label2 = OnscreenText('', parent=hidden, font=font, fg=Vec4(0, 0, 0, 1), scale=0.055, align=TextNode.ACenter, wordwrap=35)
         self.label2.setColorScale(Vec4(0, 0, 0, 0))
         gui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui.bam')
         
@@ -124,7 +124,7 @@ class Introduction(FSM):
     def calcLabelY2(self):
         sy = self.label.getScale()[1]
         height = self.label.textNode.getHeight()
-        return height * sy / 2 - .45
+        return height * sy / 2 - .49
     
     def calcLabelY3(self):
         sy = self.label.getScale()[1]
@@ -161,7 +161,8 @@ class Introduction(FSM):
         self.disclaimerTrack.start()
         self.poweredTrack.start()
 
-        self.png = OnscreenImage(image='phase_3/maps/p3d.png', scale=(0.262, 0.125, 0.125), pos=(0, 0, -0.65))
+        self.png = OnscreenImage(image='phase_3/maps/p3d.png', scale=(0.370, 0.125, 0.125), pos=(0, 0, -0.65))
+        self.png.setTransparency(TransparencyAttrib.MAlpha)
         self.image1Track = Sequence(LerpColorScaleInterval(self.png, 2, Vec4(1, 1, 1, 1), Vec4(1, 1, 1, 1), blendType='easeIn'), Wait(6), LerpColorScaleInterval(self.png, 2, Vec4(0, 0, 0, 0), Vec4(1, 1, 1, 1), blendType='easeOut'))
         self.image1Track.start()
 
@@ -179,13 +180,10 @@ class Introduction(FSM):
             self.image1Track = None
         self.label.reparentTo(hidden)
         self.label2.reparentTo(hidden)
-
         self.label.setPos(0, 0)
         self.label2.setPos(0, 0)
-
         self.label.setText('')
         self.label2.setText('')
-        
         self.png.reparentTo(hidden)
         return
 

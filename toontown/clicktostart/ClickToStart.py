@@ -6,11 +6,12 @@
 ##################################################
 
 from direct.gui.DirectGui import OnscreenImage, OnscreenText
-from panda3d.core import TransparencyAttrib, Point3, Vec4, Vec3, TextNode
+from panda3d.core import TransparencyAttrib, Point3, Vec4, Vec3, TextNode, CardMaker, Texture
 from direct.interval.IntervalGlobal import LerpPosInterval, Wait, Func
 from direct.interval.IntervalGlobal import Sequence, LerpColorScaleInterval
 from direct.interval.IntervalGlobal import LerpScaleInterval
 from direct.showbase.DirectObject import DirectObject
+from direct.showbase.ShowBase import ShowBase
 from toontown.toonbase import TTLocalizer, ToontownGlobals
 
 class ClickToStart(DirectObject):
@@ -18,21 +19,28 @@ class ClickToStart(DirectObject):
 
     def __init__(self, version = 'n/a'):
         DirectObject.__init__(self)
-        self.logo = OnscreenImage(parent=base.a2dTopCenter, image='phase_3/maps/toontown-logo.png', scale=(0.9, 1, 0.4), pos=(0, 0, -0.9))
-        self.logo.setTransparency(TransparencyAttrib.MAlpha)
         clickToStartText = TTLocalizer.ClickToStartLabel
         font = ToontownGlobals.getMinnieFont()
-        self.label = OnscreenText(clickToStartText, parent=base.a2dBottomCenter, font=font, fg=Vec4(0.2, 1.0, 0, 0.8), scale=0.13, align=TextNode.ACenter)
+        self.label = OnscreenText(clickToStartText, parent=base.a2dBottomCenter, font=font, fg=Vec4(0.0, 0.0, 0, 0.8), scale=0.13, align=TextNode.ACenter)
         self.label.setZ(0.35)
-        self.versionLabel = OnscreenText('\x01white_shadow\x01%s\x02' % version, parent=base.a2dBottomRight, font=ToontownGlobals.getMinnieFont(), fg=Vec4(0, 0, 0, 1), scale=0.06, align=TextNode.ARight)
+        self.versionLabel = OnscreenText('\x01black_shadow\x01%s\x02' % version, parent=base.a2dBottomRight, font=ToontownGlobals.getMinnieFont(), fg=Vec4(0, 0, 0, 1), scale=0.06, align=TextNode.ARight)
         self.versionLabel.setPos(-0.025, 0.025)
         self.setColorScale(Vec4(0, 0, 0, 0))
+        # very hacky but works
+        screen_width = base.win.getProperties().getXSize()
+        screen_height = base.win.getProperties().getYSize()
+        self.background = OnscreenImage(parent=base.a2dTopCenter, image='phase_3/maps/loading_bg_clouds.jpg', scale=(screen_width / 400, 1, screen_height / 300), pos=(0, 0, 0))
+        
+        self.logo = OnscreenImage(parent=base.a2dTopCenter, image='phase_3/maps/toontown-logo.png', scale=(1, 1, 0.4), pos=(9, 0, -0.9))
+        self.logo.setTransparency(TransparencyAttrib.MAlpha)
         self.fadeTrack = None
         self.logoPosTrack = None
         self.logoScaleTrack = None
         self.labelPosTrack = None
         self.labelColorScaleTrack = None
         return
+        
+
 
     def delete(self):
         if self.labelColorScaleTrack is not None:
@@ -59,11 +67,14 @@ class ClickToStart(DirectObject):
         if self.logo is not None:
             self.logo.destroy()
             self.logo = None
+        if self.background is not None:
+            self.background.destroy()
+            self.background = None
         return
 
     def start(self):
         base.transitions.fadeOut(t=0)
-        self.setColorScale(Vec4(1, 1, 1, 1))
+        self.setColorScale(Vec4(0, 0, 0, 1))
         if self.fadeTrack is not None:
             self.fadeTrack.finish()
             self.fadeTrack = None
@@ -107,6 +118,9 @@ class ClickToStart(DirectObject):
         if self.fadeTrack is not None:
             self.fadeTrack.finish()
             self.fadeTrack = None
+        if self.background is not None:
+            self.background.destroy()
+            self.background = None
         self.setColorScale(Vec4(0, 0, 0, 0))
         return
 
@@ -120,6 +134,5 @@ class ClickToStart(DirectObject):
         return
 
     def setColorScale(self, *args, **kwargs):
-        self.logo.setColorScale(*args, **kwargs)
         self.label.setColorScale(*args, **kwargs)
         self.versionLabel.setColorScale(*args, **kwargs)

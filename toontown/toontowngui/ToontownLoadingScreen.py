@@ -31,15 +31,15 @@ class ToontownLoadingScreen:
         base.a2dLeft + (base.a2dRight / 4.95), base.a2dRight - (base.a2dRight / 4.95), 0, -0.10), pos=(0, 0, 0.20),
                                      text='', frameColor=(1, 1, 1, 0.75), barColor=(0.2, 1.0, 0, 0.8))
         self.waitBar.setTransparency(TransparencyAttrib.MAlpha)
-        logoScale = 0.5625  # Scale for our locked aspect ratio (2:1).
+        logoScale = 0.3625  # Scale for our locked aspect ratio (2:1).
         self.logo = OnscreenImage(
             image='phase_3/maps/toontown-logo.png',
-            scale=(logoScale * 2.0, 1, logoScale))
+            scale=(1, 1, 0.35))
         self.logo.reparentTo(hidden)
         self.logo.setTransparency(TransparencyAttrib.MAlpha)
         scale = self.logo.getScale()
-        # self.logo.setPos(scale[0], 0, -scale[2])
         self.logo.setPos(0, 0, -scale[2])
+
 
     def destroy(self):
         # self.tip.destroy()
