@@ -45,7 +45,7 @@ class LaffMeter(DirectFrame):
             elif hType == 'rabbit':
                 headModel = gui.find('**/bunnyhead')
             elif hType == 'duck':
-                headModel = gui.find('**/deerhead')
+                headModel = gui.find('**/duckhead')
             elif hType == 'monkey':
                 headModel = gui.find('**/monkeyhead')
             elif hType == 'bear':

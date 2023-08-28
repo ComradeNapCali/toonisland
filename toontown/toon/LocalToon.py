@@ -369,7 +369,6 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
             self.laffMeter.setPos(0.133, 0.0, 0.13)
         self.laffMeter.stop()
         self.questMap = QuestMap.QuestMap(self)
-        self.laffMeter.setZ(0.215)
         self.questMap.stop()
         if not base.cr.isPaid():
             guiButton = loader.loadModel('phase_3/models/gui/quit_button')
